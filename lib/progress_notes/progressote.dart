@@ -17,7 +17,7 @@ import 'package:http/http.dart' as http;
 class ProgressNotesActivity extends StatefulWidget {
   final String childid;
 
-  ProgressNotesActivity({this.childid});
+  ProgressNotesActivity({required this.childid});
   @override
   _ProgressNotesActivityState createState() => _ProgressNotesActivityState();
 }
@@ -147,7 +147,7 @@ class _ProgressNotesActivityState extends State<ProgressNotesActivity> {
                         height: 40,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]),
+                            border: Border.all(color: Constants.greyColor),
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: Padding(
@@ -315,7 +315,7 @@ class _ProgressNotesActivityState extends State<ProgressNotesActivity> {
                                                             };
                                                             final response =
                                                                 await http.post(
-                                                                    _toSend,
+                                                                    Uri.parse(_toSend),
                                                                     body: jsonEncode(
                                                                         objTOSend),
                                                                     headers: {

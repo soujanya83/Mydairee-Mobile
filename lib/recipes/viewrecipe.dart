@@ -9,7 +9,7 @@ import 'package:mykronicle_mobile/utils/videoitem.dart';
 
 class ViewRecipe extends StatefulWidget {
   final String id;
-  ViewRecipe({this.id});
+  ViewRecipe({required this.id});
 
   @override
   _ViewRecipeState createState() => _ViewRecipeState();

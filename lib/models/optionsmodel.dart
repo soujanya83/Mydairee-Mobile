@@ -5,9 +5,9 @@ class OptionsModel{
   String title;
 
   OptionsModel({
-    this.id,
-    this.idsubactivity,
-    this.title
+    required this.id,
+    required this.idsubactivity,
+    required this.title
     });
 
   static OptionsModel fromJson(Map<String,dynamic> json){

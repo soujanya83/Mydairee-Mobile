@@ -178,7 +178,7 @@ class _ViewPlanState extends State<ViewPlan> {
                                 decoration: InputDecoration(
                                     hintText: 'Add your comment here',
                                     hintStyle:
-                                        TextStyle(color: Colors.grey[300]),
+                                        TextStyle(color: Constants.greyColor),
                                     suffixIcon: IconButton(
                                       icon: Icon(Icons.send),
                                       onPressed: () async {

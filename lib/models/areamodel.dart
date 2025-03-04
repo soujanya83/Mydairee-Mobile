@@ -5,7 +5,7 @@ class AreaModel {
   String about;
   double resultPer;
 
-  AreaModel({this.id, this.title, this.color, this.about, this.resultPer});
+  AreaModel({required this.id,required  this.title,required  this.color,required  this.about,required  this.resultPer});
 
   static AreaModel fromJson(Map<String, dynamic> json) {
     return AreaModel(

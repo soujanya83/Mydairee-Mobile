@@ -3,7 +3,7 @@ import 'package:mykronicle_mobile/models/childmodel.dart';
 class RoomsModel {
   List<ChildModel> child;
   RoomsDescModel room;
-  RoomsModel({this.child, this.room});
+  RoomsModel({required this.child, required this.room});
 }
 
 class RoomsDescModel {
@@ -20,17 +20,17 @@ class RoomsDescModel {
   String centerid;
 
   RoomsDescModel(
-      {this.id,
-      this.name,
-      this.capacity,
-      this.userId,
-      this.color,
-      this.occupancy,
-      this.ageFrom,
-      this.ageTo,
-      this.userName,
-      this.status,
-      this.centerid});
+      {required this.id,
+      required this.name,
+      required this.capacity,
+      required this.userId,
+      required this.color,
+      required this.occupancy,
+      required this.ageFrom,
+      required this.ageTo,
+      required this.userName,
+      required this.status,
+      required this.centerid});
 
   static RoomsDescModel fromJson(Map<String, dynamic> json) {
     return RoomsDescModel(

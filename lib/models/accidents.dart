@@ -6,11 +6,11 @@ class AccidentsModel {
   String incidentDate;
 
   AccidentsModel(
-      {this.id,
-      this.childName,
-      this.childGender,
-      this.roomid,
-      this.incidentDate});
+      {required this.id,
+     required  this.childName,
+     required  this.childGender,
+     required  this.roomid,
+    required   this.incidentDate});
 
   static AccidentsModel fromJson(Map<String, dynamic> json) {
     return AccidentsModel(

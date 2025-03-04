@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/areamodel.dart';
@@ -40,8 +40,8 @@ class _StandardsState extends State<Standards> {
   bool discuss = true;
   TextEditingController add = TextEditingController();
   var comments = [];
-  int currentIndex;
-  List<StandardsModel> standards;
+late int currentIndex;
+late List<StandardsModel> standards;
 
   @override
   void initState() {
@@ -113,7 +113,7 @@ class _StandardsState extends State<Standards> {
                   height: 40,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]),
+                     border: Border.all(color: Colors.grey.shade300),
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Padding(
@@ -543,7 +543,7 @@ class _StandardsState extends State<Standards> {
                                                                                                         Checkbox(
                                                                                                             value: _allObservations[index].boolCheck,
                                                                                                             onChanged: (val) {
-                                                                                                              _allObservations[index].boolCheck = val;
+                                                                                                              _allObservations[index].boolCheck = val??false;
                                                                                                               setState(() {});
                                                                                                             })
                                                                                                       ],
@@ -647,7 +647,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -783,7 +783,7 @@ class _StandardsState extends State<Standards> {
                                                                                                         Checkbox(
                                                                                                             value: _allReflections[index].boolCheck,
                                                                                                             onChanged: (val) {
-                                                                                                              _allReflections[index].boolCheck = val;
+                                                                                                              _allReflections[index].boolCheck = val??false;
                                                                                                               setState(() {});
                                                                                                             })
                                                                                                       ],
@@ -854,7 +854,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -999,7 +999,7 @@ class _StandardsState extends State<Standards> {
                                                                                                         Checkbox(
                                                                                                             value: _allResources[index].boolCheck,
                                                                                                             onChanged: (val) {
-                                                                                                              _allResources[index].boolCheck = val;
+                                                                                                              _allResources[index].boolCheck = val!;
                                                                                                               setState(() {});
                                                                                                             })
                                                                                                       ],
@@ -1058,7 +1058,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -1090,9 +1090,7 @@ class _StandardsState extends State<Standards> {
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
-                                                              child: Icon(
-                                                                  MaterialCommunityIcons
-                                                                      .map_search_outline),
+                                                              child: Icon(Icons.search, color: Colors.black),
                                                               onTap: () async {
                                                                 var _objToSend =
                                                                     {
@@ -1263,7 +1261,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -1467,7 +1465,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -1835,7 +1833,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -1865,7 +1863,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });
@@ -1895,7 +1893,7 @@ class _StandardsState extends State<Standards> {
                                                                                                  "elementid":standards[index].elements[i].id,     
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
-                                                                                              final response = await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+                                                                                              final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
                                                                                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                                                                                                 'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                                                                               });

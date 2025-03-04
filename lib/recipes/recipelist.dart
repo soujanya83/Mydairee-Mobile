@@ -46,7 +46,7 @@ class _RecipeListState extends State<RecipeList> {
     if (!dt.containsKey('error')) {
       print('dataa' + dt.toString());
       var res = dt['Centers'];
-      centers = new List();
+      centers = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -153,7 +153,7 @@ class _RecipeListState extends State<RecipeList> {
                                 height: 30,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey[300]),
+                                    border: Border.all(color: Constants.greyColor),
                                     color: Colors.white,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(8))),

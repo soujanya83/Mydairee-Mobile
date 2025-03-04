@@ -163,7 +163,7 @@ class _FloatingButtonState extends State<FloatingButton> {
                           height: 40,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]),
+                              border: Border.all(color: Constants.greyColor),
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8))),
@@ -219,7 +219,7 @@ class _FloatingButtonState extends State<FloatingButton> {
                   ),
                   onChanged: (value) {
                     setState(() {
-                      searchString = value;
+                      searchString = value!;
                     });
                   },
                 ),

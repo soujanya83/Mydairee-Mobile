@@ -13,14 +13,14 @@ class AssesmentsTabs extends StatefulWidget {
   final IndexCallback changeTab;
   final Map assesData;
   final Map viewData;
-  AssesmentsTabs({this.changeTab, this.assesData, this.viewData});
+  AssesmentsTabs({required this.changeTab, required this.assesData, required this.viewData});
   @override
   _AssesmentsTabsState createState() => _AssesmentsTabsState();
 }
 
 class _AssesmentsTabsState extends State<AssesmentsTabs>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
   // var data;
   // int load = 0;
 
@@ -55,7 +55,7 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -107,7 +107,7 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
                           data: widget.assesData['Montessori']['Subjects'],
                           totaldata: obs.data,
                           changeTab: (v) {
-                            _controller.index = 1;
+                            _controller?.index = 1;
                           },
                         ),
                       if (widget.viewData['eylf'] == '1')
@@ -116,7 +116,7 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
                           data: widget.assesData['EYLF']['outcome'],
                           totaldata: obs.data,
                           changeTab: (v) {
-                            _controller.index = 2;
+                            _controller?.index = 2;
                           },
                         ),
                       if (widget.viewData['devmile'] == '1')

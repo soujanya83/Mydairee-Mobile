@@ -9,14 +9,14 @@ class ReflectionModel {
   bool boolCheck;
 
   ReflectionModel(
-      {this.id,
-      this.title,
-      this.about,
-      this.status,
-      this.createdAt,
-      this.createdBy,
-      this.checked,
-      this.boolCheck});
+      {required this.id,
+      required this.title,
+      required this.about,
+      required this.status,
+      required this.createdAt,
+      required this.createdBy,
+      required this.checked,
+      required this.boolCheck});
 
   static ReflectionModel fromJson(Map<String, dynamic> json) {
     return ReflectionModel(

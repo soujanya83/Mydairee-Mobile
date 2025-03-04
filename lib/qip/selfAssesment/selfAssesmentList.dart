@@ -122,7 +122,7 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(
@@ -193,7 +193,7 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                                   if (assesments[index].educators.length - 1 >
                                       0)
                                     CircleAvatar(
-                                      backgroundColor: Colors.grey[300],
+                                      backgroundColor: Constants.greyColor,
                                       child: Text("+" +
                                           (assesments[index].educators.length -
                                                   1)

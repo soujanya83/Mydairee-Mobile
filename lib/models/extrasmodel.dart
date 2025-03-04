@@ -7,12 +7,12 @@ class ExtrasModel {
   String addedBy;
 
   ExtrasModel(
-      {this.idExtra,
-      this.idSubActivity,
-      this.title,
-      this.checked,
-      this.addedAt,
-      this.addedBy});
+      {required this.idExtra,
+      required this.idSubActivity,
+      required this.title,
+      required this.checked,
+      required this.addedAt,
+      required this.addedBy});
 
   static ExtrasModel fromJson(Map<String, dynamic> json) {
     return ExtrasModel(

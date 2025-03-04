@@ -1,6 +1,7 @@
 {
-    "editor.rulers": [],
-    "[dart]":{
-        "editor.rulers": []
-    }
+  "editor.rulers": [],
+  "[dart]": {
+    "editor.rulers": []
+  },
+  "dart.flutterSdkPath": ".fvm/versions/3.29.0"
 }

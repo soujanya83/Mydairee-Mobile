@@ -10,15 +10,15 @@ class SurveyModel {
   bool boolCheck;
 
   SurveyModel(
-      {this.id,
-      this.title,
-      this.description,
-      this.response,
-      this.createdBy,
-      this.createdByName,
-      this.createdAt,
-      this.checked,
-      this.boolCheck});
+      {required this.id,
+      required this.title,
+      required this.description,
+      required this.response,
+      required this.createdBy,
+      required this.createdByName,
+      required this.createdAt,
+      required this.checked,
+      required this.boolCheck});
 
   static SurveyModel fromJson(Map<String, dynamic> json) {
     return SurveyModel(

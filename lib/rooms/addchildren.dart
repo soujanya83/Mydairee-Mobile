@@ -20,14 +20,14 @@ class AddChildren extends StatefulWidget {
   final String id;
   final String childid;
   final String type;
-  AddChildren({this.id, this.childid, this.type});
+  AddChildren({required this.id, required this.childid, required this.type});
 
   @override
   _AddChildrenState createState() => _AddChildrenState();
 }
 
 class _AddChildrenState extends State<AddChildren> {
-  TextEditingController first, last;
+  TextEditingController? first, last;
 
   String _chosenValue = 'Active';
   String _gender = 'Male';
@@ -37,7 +37,7 @@ class _AddChildrenState extends State<AddChildren> {
   String doj = '';
   String imageUrl = '';
   bool mon = true, tue = true, wed = true, thu = true, fri = true;
-  File _image;
+  File? _image;
 
   Future<File> compressAndGetFile(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
@@ -286,9 +286,9 @@ class _AddChildrenState extends State<AddChildren> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                onChanged: (String? value) {
                                   setState(() {
-                                    _gender = value;
+                                    _gender = value??'';
                                   });
                                 },
                               ),
@@ -444,9 +444,9 @@ class _AddChildrenState extends State<AddChildren> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                 onChanged: (String? value)  {
                                   setState(() {
-                                    _chosenValue = value;
+                                    _chosenValue = value!;
                                   });
                                 },
                               ),
@@ -682,7 +682,7 @@ class _AddChildrenState extends State<AddChildren> {
                                 }
                                 print(mp);
 
-                                final response = await http.post(_toSend,
+                                final response = await http.post(Uri.parse(_toSend),
                                     body: jsonEncode(mp),
                                     headers: {
                                       'X-DEVICE-ID':

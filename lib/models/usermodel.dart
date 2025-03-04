@@ -16,21 +16,21 @@ class UserModel {
   String relation;
 
   UserModel(
-      {this.userid,
-      this.emailid,
-      this.id,
-      this.dob,
-      this.password,
-      this.contactNo,
-      this.name,
-      this.imageUrl,
-      this.userType,
-      this.title,
-      this.authToken,
-      this.deviceid,
-      this.devicetype,
-      this.companyLogo,
-      this.relation});
+      {required this.userid,
+      required this.emailid,
+      required this.id,
+      required this.dob,
+      required this.password,
+      required this.contactNo,
+      required this.name,
+      required this.imageUrl,
+      required this.userType,
+      required this.title,
+      required this.authToken,
+      required this.deviceid,
+      required this.devicetype,
+      required this.companyLogo,
+      required this.relation});
 
   static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(

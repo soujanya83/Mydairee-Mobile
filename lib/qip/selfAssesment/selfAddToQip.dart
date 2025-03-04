@@ -161,7 +161,7 @@ class _SelfAddToQipState extends State<SelfAddToQip> {
                                     width: MediaQuery.of(context).size.width,
                                     decoration: BoxDecoration(
                                         border:
-                                            Border.all(color: Colors.grey[300]),
+                                            Border.all(color: Constants.greyColor),
                                         color: Colors.white,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8))),
@@ -207,7 +207,7 @@ class _SelfAddToQipState extends State<SelfAddToQip> {
                                     width: MediaQuery.of(context).size.width,
                                     decoration: BoxDecoration(
                                         border:
-                                            Border.all(color: Colors.grey[300]),
+                                            Border.all(color: Constants.greyColor),
                                         color: Colors.white,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8))),
@@ -256,7 +256,7 @@ class _SelfAddToQipState extends State<SelfAddToQip> {
                                     width: MediaQuery.of(context).size.width,
                                     decoration: BoxDecoration(
                                         border:
-                                            Border.all(color: Colors.grey[300]),
+                                            Border.all(color: Constants.greyColor),
                                         color: Colors.white,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8))),

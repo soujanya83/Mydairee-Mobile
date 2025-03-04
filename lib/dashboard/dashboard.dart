@@ -1,4 +1,4 @@
-import 'package:calendarro/calendarro.dart';
+
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/announcements/announcementslist.dart';
 import 'package:mykronicle_mobile/api/dashboardapi.dart';
@@ -13,8 +13,10 @@ import 'package:mykronicle_mobile/utils/day_tile_builder.dart';
 import 'package:mykronicle_mobile/utils/floatingButton.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class Dashboard extends StatefulWidget {
   static String Tag = Constants.DASHBOARD_TAG;
@@ -46,9 +48,13 @@ class _DashboardState extends State<Dashboard> {
   var details;
   var dateDetails = new Map();
 
+  late final WebViewController _webViewController;
   @override
   void initState() {
     _fetchData();
+    _webViewController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse("https://flutter.dev"));
     super.initState();
   }
 
@@ -140,7 +146,6 @@ class _DashboardState extends State<Dashboard> {
       }
       if (this.mounted) setState(() {});
       //print(_allQips[0].name);
-
     } else {
       MyApp.Show401Dialog(context);
     }
@@ -369,13 +374,10 @@ class _DashboardState extends State<Dashboard> {
               //observation count not added
 
               Container(
-                  width: MediaQuery.of(context).size.width * 0.92,
-                  height: 300,
-                  child: WebView(
-                    initialUrl:
-                        'https://www.sunsmart.com.au/uvalert/default.asp',
-                    javascriptMode: JavascriptMode.unrestricted,
-                  )),
+                width: MediaQuery.of(context).size.width * 0.92,
+                height: 300,
+                child: WebViewWidget(controller: _webViewController),
+              ),
               Container(
                 height: 20,
               ),
@@ -434,60 +436,53 @@ class _DashboardState extends State<Dashboard> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Calendarro(
-                            startDate: DateTime(int.parse(year), month, 1),
-                            endDate: DateTime(int.parse(year), month + 1, 0),
-                            displayMode: DisplayMode.MONTHS,
-                            selectionMode: SelectionMode.MULTI,
-                            selectedDates: dates,
-                            dayTileBuilder: CustomDayTileBuilder(),
-                            onTap: (DateTime t) {
-                              print(t);
-                              print(dateDetails.containsKey(t));
-                              if (dateDetails.containsKey(t)) {
-                                print(dateDetails[t]);
+                          child: TableCalendar(
+                            firstDay: DateTime.utc(2000, 1, 1),
+                            lastDay: DateTime.utc(2100, 12, 31),
+                            focusedDay: DateTime(int.parse(year), month, 1),
+                            selectedDayPredicate: (day) => dates.contains(day),
+                            calendarFormat: CalendarFormat.month,
+                            availableGestures: AvailableGestures.all,
+                            onDaySelected: (selectedDay, focusedDay) {
+                              if (dateDetails.containsKey(selectedDay)) {
                                 showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(DateFormat.yMMMMd('en_US')
-                                            .format(t)),
-                                        content: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.3,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.75,
-                                          child: ListView.builder(
-                                              padding: const EdgeInsets.all(0),
-                                              itemCount: dateDetails[t].length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Transform(
-                                                  transform:
-                                                      Matrix4.translationValues(
-                                                          0, 0.0, 0.0),
-                                                  child: ListTile(
-                                                    title: Text(dateDetails[t]
-                                                        [index]['extra']),
-                                                  ),
-                                                );
-                                              }),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(DateFormat.yMMMMd('en_US')
+                                          .format(selectedDay)),
+                                      content: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.75,
+                                        child: ListView.builder(
+                                          itemCount: dateDetails[selectedDay]
+                                                  ?.length ??
+                                              0,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return ListTile(
+                                              title: Text(dateDetails[
+                                                      selectedDay]![index]
+                                                  ['extra']!),
+                                            );
+                                          },
                                         ),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('ok'),
-                                          ),
-                                        ],
-                                      );
-                                    });
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               }
                             },
                           ),

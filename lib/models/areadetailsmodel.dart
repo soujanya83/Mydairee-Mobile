@@ -11,11 +11,11 @@ class AreaDetailsModel{
   List<StandardModel> standards;
 
   AreaDetailsModel({
-    this.area,
-    this.laws,
-    this.name,
-    this.previews,
-    this.standards
+   required  this.area,
+   required  this.laws,
+   required  this.name,
+   required  this.previews,
+   required  this.standards
     });
 
   static AreaDetailsModel fromJson(Map<String,dynamic> json){

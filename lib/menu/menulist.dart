@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/menuapi.dart';
 import 'package:mykronicle_mobile/api/recipeapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -22,18 +22,19 @@ class MenuList extends StatefulWidget {
 }
 
 class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
-  TabController _controller;
-  DateTime currentCreateDate;
-  List<CentersModel> centers;
-  bool centersFetched = false;
-  int currentIndex = 0;
-  List<bool> selected;
+ late TabController _controller;
+DateTime? currentCreateDate;
+List<CentersModel> centers = [];
+bool centersFetched = false;
+int currentIndex = 0;
+List<bool> selected = [];
 
-  bool recipedataFetched = false;
-  List<RecipeModel> _lunch;
-  List<RecipeModel> _breakfast;
-  List<RecipeModel> _snacks;
-  String choose;
+bool recipedataFetched = false;
+List<RecipeModel> _lunch = [];
+List<RecipeModel> _breakfast = [];
+List<RecipeModel> _snacks = [];
+String? choose;
+
   var menuData;
   bool loading =true;
   bool menuDataFetched = false;
@@ -74,9 +75,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
         }
 
         var res = data['Recipes'];
-        _lunch = new List();
-        _breakfast = new List();
-        _snacks = new List();
+       _lunch = [];
+_breakfast = [];
+_snacks = [];
+
         try {
           assert(res is List);
           for (int i = 0; i < res.length; i++) {
@@ -109,10 +111,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
     MenuAPIHandler apiHandler = MenuAPIHandler({
       'url': centers[currentIndex].id +
           '/' +
-          DateFormat("yyyy-MM-dd").format(currentCreateDate).toString() +
+          DateFormat("yyyy-MM-dd").format(currentCreateDate!).toString() +
           '/' +
           DateFormat("yyyy-MM-dd")
-              .format(currentCreateDate.add(Duration(days: 4)))
+              .format(currentCreateDate!.add(Duration(days: 4)))
               .toString()
     });
 
@@ -139,7 +141,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
     if (!dt.containsKey('error')) {
       print('dataa' + dt.toString());
       var res = dt['Centers'];
-      centers = new List();
+      centers = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -198,6 +200,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   trailing: Checkbox(
                                     value: selected[index],
                                     onChanged: (v) {
+                                      if(v==null)return;
                                       selected[index] = v;
                                       setState(() {});
                                     },
@@ -212,7 +215,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                               GestureDetector(
                                 onTap: () async {
                                   var dt = DateFormat("yyyy-MM-dd")
-                                      .format(currentCreateDate.add(Duration(
+                                      .format(currentCreateDate! .add(Duration(
                                           days: int.parse(
                                               _controller.index.toString()))))
                                       .toString();
@@ -236,7 +239,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   };
 
                                   print(objToSend);
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -246,9 +249,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   print(response.body);
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("updated", context);
-                                    _lunch = null;
-                                    _breakfast = null;
-                                    _snacks = null;
+                                    _lunch = [];
+_breakfast = [];
+_snacks = [];
+
                                     recipedataFetched = false;
                                     choose = null;
                                     _fetchData();
@@ -310,6 +314,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   trailing: Checkbox(
                                     value: selected[index],
                                     onChanged: (v) {
+                                      if(v==null)return;
                                       selected[index] = v;
                                       setState(() {});
                                     },
@@ -324,7 +329,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                               GestureDetector(
                                 onTap: () async {
                                   var dt = DateFormat("yyyy-MM-dd")
-                                      .format(currentCreateDate.add(Duration(
+                                      .format(currentCreateDate!.add(Duration(
                                           days: int.parse(
                                               _controller.index.toString()))))
                                       .toString();
@@ -348,7 +353,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   };
 
                                   print(objToSend);
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -358,9 +363,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   print(response.body);
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("updated", context);
-                                    _lunch = null;
-                                    _breakfast = null;
-                                    _snacks = null;
+                                    _lunch = [];
+_breakfast = [];
+_snacks = [];
+
                                     recipedataFetched = false;
                                     choose = null;
                                     _fetchData();
@@ -422,6 +428,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   trailing: Checkbox(
                                     value: selected[index],
                                     onChanged: (v) {
+                                      if(v==null)return;
                                       selected[index] = v;
                                       setState(() {});
                                     },
@@ -436,7 +443,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                               GestureDetector(
                                 onTap: () async {
                                   var dt = DateFormat("yyyy-MM-dd")
-                                      .format(currentCreateDate.add(Duration(
+                                      .format(currentCreateDate!.add(Duration(
                                           days: int.parse(
                                               _controller.index.toString()))))
                                       .toString();
@@ -460,7 +467,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   };
 
                                   print(objToSend);
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -470,9 +477,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   print(response.body);
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("updated", context);
-                                    _lunch = null;
-                                    _breakfast = null;
-                                    _snacks = null;
+                                    _lunch = [];
+_breakfast = [];
+_snacks = [];
+
                                     recipedataFetched = false;
                                     choose = null;
                                     _fetchData();
@@ -539,7 +547,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                         Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: Colors.grey[300])),
+                              border: Border.all(color: Constants.greyColor)),
                           height: 35,
                           width: 120,
                           child: Padding(
@@ -549,7 +557,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                 Text(
                                   currentCreateDate != null
                                       ? DateFormat("dd-MM-yyyy")
-                                          .format(currentCreateDate)
+                                          .format(currentCreateDate!)
                                       : '',
                                   style: TextStyle(
                                       fontSize: 14.0, color: Colors.black),
@@ -557,8 +565,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                 Spacer(),
                                 GestureDetector(
                                     onTap: () async {
-                                      DateTime monday = await _selectDate(
-                                          context, currentCreateDate);
+                                      DateTime? monday = await _selectDate(
+                                          context, currentCreateDate!);
                                       if (monday != null) {
                                         setState(() {
                                           currentCreateDate = monday;
@@ -584,7 +592,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                             height: 30,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -605,9 +613,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                       if (centers[i].id == value) {
                                         setState(() {
                                           currentIndex = i;
-                                          _lunch = null;
-                                          _breakfast = null;
-                                          _snacks = null;
+                                          _lunch = [];
+_breakfast = [];
+_snacks = [];
+
                                           recipedataFetched = false;
                                           choose = null;
                                           _fetchData();
@@ -710,7 +719,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                     selected.add(false);
                                                   }
                                                   key.currentState
-                                                      .openEndDrawer();
+                                                     !.openEndDrawer();
                                                   choose = 'breakfast';
                                                   setState(() {});
                                                   // Navigator.push(context,MaterialPageRoute(
@@ -913,7 +922,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                     selected.add(false);
                                                   }
                                                   key.currentState
-                                                      .openEndDrawer();
+                                                      !.openEndDrawer();
                                                   choose = 'lunch';
                                                   setState(() {});
                                                   // Navigator.push(context,MaterialPageRoute(
@@ -1111,7 +1120,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                     selected.add(false);
                                                   }
                                                   key.currentState
-                                                      .openEndDrawer();
+                                                      !.openEndDrawer();
                                                   choose = 'snacks';
                                                   setState(() {});
                                                   // Navigator.push(context,MaterialPageRoute(
@@ -1294,8 +1303,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                 ]))));
   }
 
-  Future<DateTime> _selectDate(BuildContext context, DateTime dateTime) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context, DateTime dateTime) async {
+    final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: dateTime,
         firstDate: new DateTime(1800),

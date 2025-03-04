@@ -1,7 +1,6 @@
 import 'package:mykronicle_mobile/models/accidents.dart';
 import 'package:mykronicle_mobile/models/childaccidentmodel.dart';
 import 'package:mykronicle_mobile/models/roommodel.dart';
-
 class AccidentsListModel {
   String status;
   int centerid;
@@ -13,34 +12,38 @@ class AccidentsListModel {
   List<ChildsAccidentsModel> childs;
   List<AccidentsModel> accidents;
 
-  AccidentsListModel(
-      {this.status,
-      this.centerid,
-      this.date,
-      this.roomid,
-      this.roomname,
-      this.roomcolor,
-      this.rooms,
-      this.childs,
-      this.accidents});
+  AccidentsListModel({
+    required this.centerid,
+    required this.status,
+    required this.date,
+    required this.roomid,
+    required this.roomname,
+    required this.roomcolor,
+    required this.rooms,
+    required this.childs,
+    required this.accidents,
+  });
 
-  static  AccidentsListModel fromJson(Map<String, dynamic> json) {
+  static AccidentsListModel fromJson(Map<String, dynamic> json) {
     return AccidentsListModel(
-      status : json['Status'],
-      centerid : json['centerid'],
-      date : json['date'],
-      roomid : json['roomid'],
-      roomname : json['roomname'],
-      roomcolor : json['roomcolor'],
-      rooms: json['rooms'],
-      childs: json['childs'],
-      accidents: json['accidents']
+      centerid: json['centerid'] ?? 0,
+      status: json['Status'] ?? '',
+      date: json['date'] ?? '',
+      roomid: json['roomid'] ?? 0,
+      roomname: json['roomname'] ?? '',
+      roomcolor: json['roomcolor'] ?? '',
+      rooms: (json['rooms'] as List<dynamic>?)
+              ?.map((e) => RoomAccidentsModel.fromJson(e))
+              .toList() ??
+          [],
+      childs: (json['childs'] as List<dynamic>?)
+              ?.map((e) => ChildsAccidentsModel.fromJson(e))
+              .toList() ??
+          [],
+      accidents: (json['accidents'] as List<dynamic>?)
+              ?.map((e) => AccidentsModel.fromJson(e))
+              .toList() ??
+          [],
     );
-
-    
-   
-    
   }
-
-  
 }

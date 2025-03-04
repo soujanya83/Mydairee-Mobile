@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -83,11 +84,11 @@ class _RoomsListState extends State<RoomsList> {
             data['permissions']['viewRoom'] == '1') {
           print('HEE' + data['permission'].toString());
           var res = data['rooms'];
-          _rooms = new List();
+          _rooms = [];
           try {
             assert(res is List);
             for (int i = 0; i < res.length; i++) {
-              List<ChildModel> childs = new List();
+              List<ChildModel> childs = [];
               for (int j = 0; j < res[i]['childs'].length; j++) {
                 ChildModel p = ChildModel.fromJson(res[i]['childs'][j]);
                 childs.add(p);
@@ -103,7 +104,7 @@ class _RoomsListState extends State<RoomsList> {
             print(e);
           }
           var r = data['users'];
-          _users = new List();
+          _users = [];
           try {
             assert(r is List);
             for (int i = 0; i < r.length; i++) {
@@ -138,7 +139,7 @@ class _RoomsListState extends State<RoomsList> {
     if (!dt.containsKey('error')) {
       print(dt);
       var res = dt['Centers'];
-      centers = new List();
+      centers = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -190,7 +191,7 @@ class _RoomsListState extends State<RoomsList> {
                                       "rooms": statList,
                                     };
                                     print(jsonEncode(objToSend));
-                                    final response = await http.post(_toSend,
+                                    final response = await http.post(Uri.parse(_toSend),
                                         body: jsonEncode(objToSend),
                                         headers: {
                                           'X-DEVICE-ID':
@@ -267,7 +268,7 @@ class _RoomsListState extends State<RoomsList> {
                             height: 30,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -308,7 +309,7 @@ class _RoomsListState extends State<RoomsList> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
                                 border: Border.all(
-                                  color: Colors.grey[300],
+                                  color: Constants.greyColor,
                                   width: 1,
                                   style: BorderStyle.solid,
                                 ),
@@ -347,7 +348,7 @@ class _RoomsListState extends State<RoomsList> {
                             height: 30,
                             width: 120,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -364,9 +365,9 @@ class _RoomsListState extends State<RoomsList> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) async {
+                                 onChanged: (String? value)  async {
                                   setState(() {
-                                    _chosenValue = value;
+                                    _chosenValue = value!;
                                   });
                                   if (_chosenValue == 'Select') {
                                     MyApp.ShowToast("choose status", context);
@@ -381,7 +382,7 @@ class _RoomsListState extends State<RoomsList> {
                                     };
 
                                     print(jsonEncode(objToSend));
-                                    final response = await http.post(_toSend,
+                                    final response = await http.post(Uri.parse(_toSend),
                                         body: jsonEncode(objToSend),
                                         headers: {
                                           'X-DEVICE-ID':

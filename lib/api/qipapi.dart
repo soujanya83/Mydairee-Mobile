@@ -90,7 +90,7 @@ class QipAPIHandler {
 
   Future<dynamic> deleteListItem() async {
     var deleteItemUrl =
-        _deleteItemUrl + MyApp.LOGIN_ID_VALUE + '/' + data['id'];
+        _deleteItemUrl + MyApp.LOGIN_ID_VALUE + '/' + '${data['id']??""}';
     ServiceWithHeader helper = ServiceWithHeader(deleteItemUrl);
     var d = await helper.data();
     return d;

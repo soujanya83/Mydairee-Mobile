@@ -8,13 +8,13 @@ class MenuMediaModel {
   String uploadedDate;
 
   MenuMediaModel(
-      {this.id,
-      this.filename,
-      this.type,
-      this.caption,
-      this.userid,
-      this.centerid,
-      this.uploadedDate});
+      {required this.id,
+      required this.filename,
+      required this.type,
+      required this.caption,
+      required this.userid,
+      required this.centerid,
+      required this.uploadedDate});
 
   static MenuMediaModel fromJson(Map<String, dynamic> json) {
     return MenuMediaModel(

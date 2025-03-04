@@ -6,7 +6,7 @@ class VideoItem extends StatefulWidget {
   final double height;
   final String url;
 
-  VideoItem({this.url, this.height, this.width});
+  VideoItem({required this.url, required this.height, required this.width});
   @override
   _VideoItemState createState() => _VideoItemState();
 }

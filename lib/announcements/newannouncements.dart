@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:html_editor/html_editor.dart';
 import 'package:mykronicle_mobile/api/announcementsapi.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -11,23 +10,27 @@ import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:html_editor_enhanced/html_editor.dart';
 
 class NewAnnouncements extends StatefulWidget {
   final String type;
   final String id;
   final String centerid;
-  NewAnnouncements({this.type, this.id, this.centerid});
+  NewAnnouncements(
+      {required this.type, required this.id, required this.centerid});
   @override
   _NewAnnouncementsState createState() => _NewAnnouncementsState();
 }
 
 class _NewAnnouncementsState extends State<NewAnnouncements> {
-  TextEditingController title;
-  GlobalKey<HtmlEditorState> keyEditor;
-  String _date;
-  String date;
+  late TextEditingController title;
+  GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  HtmlEditorController editorController = HtmlEditorController();
+  late String _date;
+  late String date;
   bool childrensFetched = false;
-  List<ChildModel> _allChildrens;
+  late List<ChildModel> _allChildrens;
+
   var dataDetail;
   List<ChildModel> _selectedChildrens = [];
   Map<String, bool> childValues = {};
@@ -48,7 +51,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
     var data = await h.getChildList();
     if (!data.containsKey('error')) {
       var child = data['records'];
-      _allChildrens = new List();
+      _allChildrens = [];
       try {
         assert(child is List);
         for (int i = 0; i < child.length; i++) {
@@ -85,7 +88,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
         textData = dataDetail['text'];
 
         var child = dataDetail['children'];
-        _selectedChildrens = new List();
+        _selectedChildrens = [];
         try {
           assert(child is List);
           for (int i = 0; i < child.length; i++) {
@@ -119,10 +122,10 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                   title: Text('Select All'),
                   value: selectAll,
                   onChanged: (value) {
-                    selectAll = value;
+                    selectAll = value ?? false;
                     for (var i = 0; i < childValues.length; i++) {
                       String key = childValues.keys.elementAt(i);
-                      childValues[key] = value;
+                      childValues[key] = value ?? false;
                       if (value == true) {
                         if (!_selectedChildrens.contains(_allChildrens[i])) {
                           _selectedChildrens.add(_allChildrens[i]);
@@ -170,7 +173,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                                         }
                                       }
                                       childValues[_allChildrens[index].id] =
-                                          value;
+                                          value!;
 
                                       setState(() {});
                                     }),
@@ -230,7 +233,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                     SizedBox(height: 5),
                     GestureDetector(
                       onTap: () {
-                        key.currentState.openEndDrawer();
+                        key.currentState?.openEndDrawer();
                       },
                       child: Container(
                           height: 40,
@@ -298,14 +301,11 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                       child: textData != ''
                           ? HtmlEditor(
                               key: keyEditor,
-                              value: textData,
-                              showBottomToolbar: false,
-                              height: MediaQuery.of(context).size.height * 0.4,
+                              controller: editorController,
                             )
                           : HtmlEditor(
                               key: keyEditor,
-                              showBottomToolbar: false,
-                              height: MediaQuery.of(context).size.height * 0.4,
+                              controller: editorController,
                             ),
                     ),
                     SizedBox(height: 5),
@@ -316,7 +316,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                     SizedBox(height: 5),
                     GestureDetector(
                       onTap: () {
-                        _selectDate();
+                        _selectDate(context);
                       },
                       child: Container(
                         height: 50,
@@ -333,174 +333,173 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                     SizedBox(
                       height: 15,
                     ),
-                    if(MyApp.USER_TYPE_VALUE!='Parent') 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              width: 80,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                //    color: Constants.kButton,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'CANCEL',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            final txt = await keyEditor.currentState.getText();
-                            String s = txt;
-
-                            List<String> ids = [];
-                            for (var i = 0;
-                                i < _selectedChildrens.length;
-                                i++) {
-                              ids.add(_selectedChildrens[i].id);
-                            }
-                            print(ids);
-
-                            if (widget.type == 'update') {
-                              String _toSend = Constants.BASE_URL +
-                                  'announcements/updateAnnouncement';
-                              var objToSend = {
-                                "userid": MyApp.LOGIN_ID_VALUE,
-                                "announcementId": widget.id,
-                                "title": title.text.toString(),
-                                "description": s,
-                                "date": _date,
-                                "children": ids,
-                              };
-                              print(jsonEncode(objToSend));
-                              final response = await http.post(_toSend,
-                                  body: jsonEncode(objToSend),
-                                  headers: {
-                                    'X-DEVICE-ID':
-                                        await MyApp.getDeviceIdentity(),
-                                    'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                  });
-                              print(response.body);
-                              if (response.statusCode == 200) {
-                                MyApp.ShowToast("updated", context);
-                                print('created');
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
-                              } else if (response.statusCode == 401) {
-                                MyApp.Show401Dialog(context);
-                              }
-                            } else {
-                              String _toSend = Constants.BASE_URL +
-                                  'announcements/createAnnouncement/';
-                              var objToSend = {
-                                "childId": ids,
-                                "title": title.text.toString(),
-                                "text": s,
-                                "eventDate": _date,
-                                "user": MyApp.NAME_VALUE,
-                                "createdOn": DateTime.now().toString(),
-                                "createdBy": MyApp.LOGIN_ID_VALUE,
-                                "userid": MyApp.LOGIN_ID_VALUE,
-                                'centerid': widget.centerid
-                              };
-                              await MyApp.getDeviceIdentity()
-                                  .then((value) => print(value));
-                              print(jsonEncode(objToSend));
-                              print(MyApp.AUTH_TOKEN_VALUE);
-
-                              final response = await http.post(_toSend,
-                                  body: jsonEncode(objToSend),
-                                  headers: {
-                                    'X-DEVICE-ID':
-                                        await MyApp.getDeviceIdentity(),
-                                    'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                  });
-                              print(response.body);
-                              if (response.statusCode == 200) {
-                                MyApp.ShowToast("Saved", context);
-                                print('created');
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
-                              } else if (response.statusCode == 401) {
-                                MyApp.Show401Dialog(context);
-                              }
-                            }
-                          },
-                          child: Container(
-                              width: 60,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                  color: Constants.kButton,
+                    if (MyApp.USER_TYPE_VALUE != 'Parent')
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                                width: 80,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  //    color: Constants.kButton,
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(8))),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'SEND',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
+                                      BorderRadius.all(Radius.circular(8.0)),
                                 ),
-                              )),
-                        ),
-                      ],
-                    )
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'CANCEL',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                           final txt = await editorController.getText(); 
+                              String s = txt;
+
+                              List<String> ids = [];
+                              for (var i = 0;
+                                  i < _selectedChildrens.length;
+                                  i++) {
+                                ids.add(_selectedChildrens[i].id);
+                              }
+                              print(ids);
+
+                              if (widget.type == 'update') {
+                                String _toSend = Constants.BASE_URL +
+                                    'announcements/updateAnnouncement';
+                                var objToSend = {
+                                  "userid": MyApp.LOGIN_ID_VALUE,
+                                  "announcementId": widget.id,
+                                  "title": title.text.toString(),
+                                  "description": s,
+                                  "date": _date,
+                                  "children": ids,
+                                };
+                                print(jsonEncode(objToSend));
+                                final response = await http.post(
+                                    Uri.parse(_toSend),
+                                    body: jsonEncode(objToSend),
+                                    headers: {
+                                      'X-DEVICE-ID':
+                                          await MyApp.getDeviceIdentity(),
+                                      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                    });
+                                print(response.body);
+                                if (response.statusCode == 200) {
+                                  MyApp.ShowToast("updated", context);
+                                  print('created');
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                } else if (response.statusCode == 401) {
+                                  MyApp.Show401Dialog(context);
+                                }
+                              } else {
+                                String _toSend = Constants.BASE_URL +
+                                    'announcements/createAnnouncement/';
+                                var objToSend = {
+                                  "childId": ids,
+                                  "title": title.text.toString(),
+                                  "text": s,
+                                  "eventDate": _date,
+                                  "user": MyApp.NAME_VALUE,
+                                  "createdOn": DateTime.now().toString(),
+                                  "createdBy": MyApp.LOGIN_ID_VALUE,
+                                  "userid": MyApp.LOGIN_ID_VALUE,
+                                  'centerid': widget.centerid
+                                };
+                                await MyApp.getDeviceIdentity()
+                                    .then((value) => print(value));
+                                print(jsonEncode(objToSend));
+                                print(MyApp.AUTH_TOKEN_VALUE);
+
+                                final response = await http.post(
+                                    Uri.parse(_toSend),
+                                    body: jsonEncode(objToSend),
+                                    headers: {
+                                      'X-DEVICE-ID':
+                                          await MyApp.getDeviceIdentity(),
+                                      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                    });
+                                print(response.body);
+                                if (response.statusCode == 200) {
+                                  MyApp.ShowToast("Saved", context);
+                                  print('created');
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                } else if (response.statusCode == 401) {
+                                  MyApp.Show401Dialog(context);
+                                }
+                              }
+                            },
+                            child: Container(
+                                width: 60,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                    color: Constants.kButton,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'SEND',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                          ),
+                        ],
+                      )
                   ],
                 )))));
   }
 
-  _selectDate() async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(1930),
-        lastDate: new DateTime(2050),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              primaryColor: Theme.of(context).primaryColor,
-              accentColor: Theme.of(context).primaryColor,
-              colorScheme:
-                  ColorScheme.light(primary: Theme.of(context).primaryColor),
-              buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-            ),
-            child: child,
-          );
-        });
-    if (picked != null)
-      setState(() {
-        //    var _value=picked.toString();
-        final DateFormat formatter = DateFormat('yyyy-MM-dd');
-        final String formatted = formatter.format(picked);
+ void _selectDate(BuildContext context) async {
+  DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1930),
+    lastDate: DateTime(2050),
+    builder: (BuildContext context, Widget? child) { // ✅ child should be nullable (Widget?)
+      return Theme(
+        data: ThemeData.light().copyWith(
+          primaryColor: Theme.of(context).primaryColor,
+          colorScheme: ColorScheme.light(primary: Theme.of(context).primaryColor),
+          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+        ),
+        child: child ?? SizedBox(), // ✅ Use null check (child!)
+      );
+    },
+  );
 
-        var inputFormat = DateFormat("yyyy-MM-dd");
-        final DateFormat formati = DateFormat('dd-MM-yyyy');
-        var date1 = inputFormat.parse(formatted);
-        date = formati.format(date1);
+  if (picked != null) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(picked);
 
-        _date = formatted;
-        print(formatted);
-      });
+    final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
+    final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
+    final DateTime date1 = inputFormat.parse(formatted);
+    final String date = outputFormat.format(date1);
+
+    print("Formatted Date: $formatted");
   }
+}
 }

@@ -99,7 +99,7 @@ class ObservationsAPIHandler {
 
   Future<dynamic> getObservationDetails() async {
     var viewObservationURL =
-        _viewObservationURL + MyApp.LOGIN_ID_VALUE + '/' + data['id'] + '/';
+        _viewObservationURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['id']??""}' + '/';
     ServiceWithHeader helper = ServiceWithHeader(viewObservationURL);
     var d = await helper.data();
     return d;
@@ -115,7 +115,7 @@ class ObservationsAPIHandler {
   Future<dynamic> getLinksList() async {
     var viewLinksDataURL = _viewLinksDataURL + MyApp.LOGIN_ID_VALUE + '/';
     if (data['id'] != '') {
-      viewLinksDataURL = viewLinksDataURL + data['id'] + '/';
+      viewLinksDataURL = viewLinksDataURL + '${data['id']??""}' + '/';
     }
     ServiceWithHeader helper = ServiceWithHeader(viewLinksDataURL);
     var d = await helper.data();
@@ -172,7 +172,7 @@ class ObservationsAPIHandler {
 
   Future<dynamic> deleteMedia() async {
     var deleteMediaURL =
-        _deleteMediaURL + MyApp.LOGIN_ID_VALUE + '/' + data['mediaid'];
+        _deleteMediaURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['mediaid']??""}';
     ServiceWithHeader helper = ServiceWithHeader(deleteMediaURL);
     var d = await helper.data();
     print(d);

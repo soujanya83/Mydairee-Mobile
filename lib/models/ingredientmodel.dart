@@ -4,8 +4,8 @@ class IngredientModel{
   String name;
 
   IngredientModel({
-    this.id,
-    this.name,
+    required this.id,
+    required this.name,
     });
 
   static IngredientModel fromJson(Map<String,dynamic> json){

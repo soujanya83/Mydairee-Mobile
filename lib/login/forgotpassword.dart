@@ -11,13 +11,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loggingIn = false;
   bool isSignInDisabled = false;
-  String loginEmail, loginPassword;
+  String? loginEmail, loginPassword;
   String errorText = "";
   TextEditingController nameController = new TextEditingController();
   bool back = false;
 
-  String _validateName(String val) {
-    if (val.trim().length == 0)
+  String? _validateName(String? val) {
+    if (val?.trim().length == 0)
       return "Enter Name";
     else
       return null;
@@ -45,7 +45,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 onPressed: null)),
         validator: _validateName,
-        onSaved: (String val) {
+        onSaved: (String? val) {
           //  loginEmail = val.trim();
         },
       ),
@@ -55,19 +55,24 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: ButtonTheme(
         height: 42.0,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Constants.kButton,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
-          color: Constants.kButton,
-          child: Text("Back",
-              style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
+          child: Text(
+            "Back",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -76,38 +81,44 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: ButtonTheme(
         height: 42.0,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
-          onPressed: () async {
-            loginEmail = nameController.text;
-            var loginBody = {
-              "email": "${loginEmail.trim()}",
-            };
+        child: ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Constants.kButton,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+    ),
+  ),
+  onPressed: () async {
+    loginEmail = nameController.text;
+    var loginBody = {
+      "email": "${loginEmail?.trim()}",
+    };
 
-            LoginAPIHandler login = LoginAPIHandler(loginBody);
-            var result = await login.forgotpwd();
+    LoginAPIHandler login = LoginAPIHandler(loginBody);
+    var result = await login.forgotpwd();
 
-            if (!result.containsKey('error')) {
-              errorText = 'Reset link has been sent to your mail';
-              back = true;
-              setState(() {});
-              //Navigator.pop(context);
-            } else {
-              isSignInDisabled = false;
-              errorText = result['error'];
-              setState(() {});
-              print('issue');
-            }
-          },
-          color: Constants.kButton,
-          child: Text("Update",
-              style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-        ),
+    if (!result.containsKey('error')) {
+      errorText = 'Reset link has been sent to your mail';
+      back = true;
+      setState(() {});
+      //Navigator.pop(context);
+    } else {
+      isSignInDisabled = false;
+      errorText = result['error'];
+      setState(() {});
+      print('issue');
+    }
+  },
+  child: Text(
+    "Update",
+    style: TextStyle(
+      fontSize: 20.0,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+),
+
       ),
     );
 

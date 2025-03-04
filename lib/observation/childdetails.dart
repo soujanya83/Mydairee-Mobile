@@ -17,7 +17,7 @@ class ChildDetails extends StatefulWidget {
   final String centerId;
   final String childId;
 
-  ChildDetails({@required this.centerId, @required this.childId});
+  ChildDetails({required this.centerId, required this.childId});
 
   @override
   _ChildDetailsState createState() => _ChildDetailsState();
@@ -76,7 +76,7 @@ class _ChildDetailsState extends State<ChildDetails> {
     var dataX = await handlerX.getChildrens();
     if (!dataX.containsKey('error')) {
       var child = dataX['ChildList'];
-      _allChildrens = new List();
+      _allChildrens = [];
       try {
         assert(child is List);
         for (int i = 0; i < child.length; i++) {
@@ -110,8 +110,8 @@ class _ChildDetailsState extends State<ChildDetails> {
       if (!data.containsKey('error')) {
         var relative = data['Relatives'];
         var res = data['Observations'];
-        _allRelatives = new List();
-        _allObservations = new List();
+        _allRelatives = [];
+        _allObservations = [];
         try {
           assert(relative is List);
           for (int i = 0; i < relative.length; i++) {
@@ -153,7 +153,7 @@ class _ChildDetailsState extends State<ChildDetails> {
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(
@@ -195,7 +195,7 @@ class _ChildDetailsState extends State<ChildDetails> {
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(

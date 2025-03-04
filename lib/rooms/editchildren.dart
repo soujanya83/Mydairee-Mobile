@@ -20,7 +20,7 @@ class EditChildren extends StatefulWidget {
   final String id;
   final String childid;
   final String type;
-  EditChildren({this.id, this.childid, this.type});
+  EditChildren({required this.id, required this.childid, required this.type});
 
   @override
   _EditChildrenState createState() => _EditChildrenState();
@@ -271,9 +271,9 @@ class _EditChildrenState extends State<EditChildren> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                onChanged: (String? value) {
                                   setState(() {
-                                    _gender = value;
+                                    _gender = value??'';
                                   });
                                 },
                               ),
@@ -429,9 +429,9 @@ class _EditChildrenState extends State<EditChildren> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                 onChanged: (String? value)  {
                                   setState(() {
-                                    _chosenValue = value;
+                                    _chosenValue = value!;
                                   });
                                 },
                               ),
@@ -663,7 +663,7 @@ class _EditChildrenState extends State<EditChildren> {
                                 }
                                 print(mp);
 
-                                final response = await http.post(_toSend,
+                                final response = await http.post(Uri.parse(_toSend),
                                     body: jsonEncode(mp),
                                     headers: {
                                       'X-DEVICE-ID':

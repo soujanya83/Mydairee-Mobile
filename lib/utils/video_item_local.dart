@@ -8,7 +8,7 @@ class VideoItemLocal extends StatefulWidget {
   final double width;
   final double height;
 
-  VideoItemLocal({this.file, this.width, this.height});
+  VideoItemLocal({required this.file, required this.width, required this.height});
   @override
   _VideoItemLocalState createState() => _VideoItemLocalState();
 }

@@ -14,7 +14,7 @@ class MilestonesTabs extends StatefulWidget {
   final List data;
   final Map totaldata;
   final IndexCallback changeTab;
-  MilestonesTabs({this.count, this.data, this.changeTab, this.totaldata});
+  MilestonesTabs({required this.count, required this.data, required this.changeTab, required this.totaldata});
 
   @override
   _MilestonesTabsState createState() => _MilestonesTabsState();
@@ -22,7 +22,7 @@ class MilestonesTabs extends StatefulWidget {
 
 class _MilestonesTabsState extends State<MilestonesTabs>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _MilestonesTabsState extends State<MilestonesTabs>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -148,7 +148,7 @@ class _MilestonesTabsState extends State<MilestonesTabs>
                     };
                     print(jsonEncode(objToSend));
                     final response = await http
-                        .post(_toSend, body: jsonEncode(objToSend), headers: {
+                        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
                       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                     });
@@ -289,11 +289,11 @@ class _MilestonesTabsState extends State<MilestonesTabs>
                                                   child: new Text(value),
                                                 );
                                               }).toList(),
-                                              onChanged: (String value) {
+                                              onChanged: (String? value) {
                                                 setState(() {
                                                   AddObservationState
                                                           .dropAnsM[val][index]
-                                                      [i] = value;
+                                                      [i] = value??'';
                                                 });
                                               },
                                             ),
@@ -323,7 +323,7 @@ class _MilestonesTabsState extends State<MilestonesTabs>
                                             onChanged: (value) {
                                               AddObservationState
                                                       .selectedOptions[val]
-                                                  [index][i][j] = value;
+                                                  [index][i][j] = value??false;
                                               setState(() {});
                                             });
                                       }),

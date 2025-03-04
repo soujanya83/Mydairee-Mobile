@@ -46,12 +46,12 @@ class AddObservation extends StatefulWidget {
   final List media;
   final String centerid;
   AddObservation(
-      {this.type,
-      this.data,
-      this.selecChildrens,
-      this.media,
-      this.totaldata,
-      this.centerid});
+      {required this.type,
+      required this.data,
+      required this.selecChildrens,
+      required this.media,
+      required this.totaldata,
+      required this.centerid});
 
   @override
   AddObservationState createState() => AddObservationState();
@@ -59,13 +59,12 @@ class AddObservation extends StatefulWidget {
 
 class AddObservationState extends State<AddObservation>
     with TickerProviderStateMixin {
-  TabController _controller;
+  late TabController _controller;
   int _radioValue = 0;
   bool childrensFetched = false;
-  List<ChildModel> _allChildrens;
+  List<ChildModel> _allChildrens = [];
+  List<StaffModel> _allEductarors = [];
 
-
-  List<StaffModel> _allEductarors;
   List<List<StaffModel>> _editEducators = [];
 
   static List<ChildModel> selectedChildrens = [];
@@ -78,9 +77,9 @@ class AddObservationState extends State<AddObservation>
   List<List<StaffModel>> _editMediaFileEducators = [];
 
   bool groupsFetched = false;
-  bool staffFetched=false;
+  bool staffFetched = false;
 
-  Map groups;
+  Map groups={};
   bool all = false;
   List<File> files = [];
   List<ObsMediaModel> media = [];
@@ -90,13 +89,12 @@ class AddObservationState extends State<AddObservation>
   Map<String, bool> boolValues = {};
 
   Map viewData = {};
-
-  static Map assesData;
-  static String centerid;
-  static String previewnotes;
-  static String previewtitle;
-  static String previewRef;
-  static String type;
+  static late Map assesData;
+  static late String centerid;
+  static late String previewnotes;
+  static late String previewtitle;
+  static late String previewRef;
+  static late String type;
 
   Widget assetmentWidget = Container();
   // static TextEditingController title;
@@ -126,14 +124,15 @@ class AddObservationState extends State<AddObservation>
   static List<List<List<String>>> dropAnsM = [];
   static List<List<List<List<bool>>>> selectedOptions = [];
 
-  List<Map<String, dynamic>> mentionUser;
-  List<Map<String, dynamic>> mentionMont;
+    List<Map<String, dynamic>> mentionUser = [];
+  List<Map<String, dynamic>> mentionMont = [];
+
   bool mChildFetched = false;
   bool mMontFetched = false;
 
-  void _handleRadioValueChange(int value) {
+   void _handleRadioValueChange(int? value) {
     setState(() {
-      _radioValue = value;
+      _radioValue = value!;
 
       switch (_radioValue) {
         case 0:
@@ -161,13 +160,13 @@ class AddObservationState extends State<AddObservation>
     var data = await handler.getChildList();
     selectedChildrens = [];
     var child = data['records'];
-    _allChildrens = new List();
+    _allChildrens = [];
     print(child);
     try {
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
         _allChildrens.add(ChildModel.fromJson(child[i]));
-        childValues[_allChildrens[i].childid] = false;
+        childValues[_allChildrens[i]?.childid??''] = false;
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
@@ -175,8 +174,8 @@ class AddObservationState extends State<AddObservation>
       print(e);
     }
 
-    UtilsAPIHandler utilsApiHandler =
-        UtilsAPIHandler({"userid": MyApp.LOGIN_ID_VALUE, "centerid": widget.centerid});
+    UtilsAPIHandler utilsApiHandler = UtilsAPIHandler(
+        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": widget.centerid});
     var staffData = await utilsApiHandler.getStaff();
 
     var staff = staffData['educators'];
@@ -191,7 +190,6 @@ class AddObservationState extends State<AddObservation>
     } catch (e) {
       print(e);
     }
-    
 
     var users = await handler.getUsersList();
     print('hereee users');
@@ -239,29 +237,29 @@ class AddObservationState extends State<AddObservation>
 
     var d = await handler.getListGroup();
     groups = d;
-    for (var i = 0; i < groups.keys.length; i++) {
-      String key = groups.keys.elementAt(i);
+    for (var i = 0; i < (groups?.keys.length??0); i++) {
+      String key = groups?.keys.elementAt(i);
       boolValues[key] = false;
     }
     print('called');
-    print(groups.keys);
+    print(groups?.keys);
     print('herooooo' + d.toString());
     groupsFetched = true;
     if (this.mounted) setState(() {});
 
     if (widget.type == 'edit') {
-      type='edit';
-      mentionTitle.currentState.controller.text =
+      type = 'edit';
+      mentionTitle.currentState?.controller?.text =
           removeHtmlData(widget.data.title);
-      previewtitle= removeHtmlData(widget.data.title);   
-     
-      mentionNotes.currentState.controller.text =
+      previewtitle = removeHtmlData(widget.data.title);
+
+      mentionNotes.currentState?.controller?.text =
           removeHtmlData(widget.data.notes);
-      previewnotes= removeHtmlData(widget.data.notes);   
-     
-      mentionRef.currentState.controller.text =
+      previewnotes = removeHtmlData(widget.data.notes);
+
+      mentionRef.currentState?.controller?.text =
           removeHtmlData(widget.data.reflection);
-      previewRef =  removeHtmlData(widget.data.reflection);
+      previewRef = removeHtmlData(widget.data.reflection);
 
       for (int i = 0; i < widget.selecChildrens.length; i++) {
         if (widget.selecChildrens[i].childId != null) {
@@ -270,7 +268,7 @@ class AddObservationState extends State<AddObservation>
               name: widget.selecChildrens[i].childName,
               dob: widget.selecChildrens[i].dob,
               imageUrl: widget.selecChildrens[i].imageUrl));
-          childValues[selectedChildrens[i].id] = true;
+          childValues[selectedChildrens[i].id??''] = true;
         }
       }
       for (int i = 0; i < widget.media.length; i++) {
@@ -278,8 +276,8 @@ class AddObservationState extends State<AddObservation>
         h = h + 100;
       }
       setState(() {});
-    }else{
-      type='add';
+    } else {
+      type = 'add';
     }
 
     ObservationsAPIHandler handling = ObservationsAPIHandler({
@@ -486,17 +484,17 @@ class AddObservationState extends State<AddObservation>
     String key,
   ) {
     return Container(
-      height: groups[key].length * 60.0,
+      height: groups?[key].length * 60.0,
       child:
           // Text(key),
           ListView.builder(
               itemCount: groups[key].length,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
-                return groups[key][index]['child_id'] != null && groups[key][index]['child_name'] 
-                                .toLowerCase()
-                                .contains(searchString.toLowerCase())
-                          
+                return groups[key][index]['child_id'] != null &&
+                        groups[key][index]['child_name']
+                            .toLowerCase()
+                            .contains(searchString.toLowerCase())
                     ? Padding(
                         padding: const EdgeInsets.only(right: 20),
                         child: Container(
@@ -504,11 +502,11 @@ class AddObservationState extends State<AddObservation>
                               border: Border.all(color: Colors.grey)),
                           child: CheckboxListTile(
                             onChanged: (value) {
-                              
                               childValues[groups[key][index]['child_id']] =
-                                  value;
+                                  value!;
                               int s = _allChildrens.indexWhere((element) =>
-                                  element.childid == groups[key][index]['child_id']);
+                                  element.childid ==
+                                  groups[key][index]['child_id']);
                               if ((!selectedChildrens
                                       .contains(_allChildrens[s])) &&
                                   value == true) {
@@ -557,7 +555,7 @@ class AddObservationState extends State<AddObservation>
           },
         ),
         // onTap: (){
-        //     key.currentState.openEndDrawer();
+        //     key.currentState?.openEndDrawer();
         // },
       ),
       Padding(
@@ -621,7 +619,7 @@ class AddObservationState extends State<AddObservation>
           ),
         ],
       ),
-      _radioValue == 0 && searchString==''
+      _radioValue == 0 && searchString == ''
           ? ListTile(
               title: Text(
                 'Select All',
@@ -630,10 +628,10 @@ class AddObservationState extends State<AddObservation>
               trailing: Checkbox(
                   value: all,
                   onChanged: (value) {
-                    all = value;
+                    all = value!;
                     for (var i = 0; i < childValues.length; i++) {
                       String key = childValues.keys.elementAt(i);
-                      childValues[key] = value;
+                      childValues[key] = value!;
                       if (value == true) {
                         if (!selectedChildrens.contains(_allChildrens[i])) {
                           selectedChildrens.add(_allChildrens[i]);
@@ -651,52 +649,54 @@ class AddObservationState extends State<AddObservation>
       _radioValue == 0
           ? Container(
               width: MediaQuery.of(context).size.width,
-              child:ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount:
-                          _allChildrens != null ? _allChildrens.length : 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        return _allChildrens[index]
-                                .name
-                                .toLowerCase()
-                                .contains(searchString.toLowerCase())
-                            ? ListTile(
-                          title: Text(_allChildrens[index].name),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(_allChildrens[index]
-                                        .imageUrl !=
-                                    ""
-                                ? Constants.ImageBaseUrl +
-                                    _allChildrens[index].imageUrl
-                                : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
-                          ),
-                          trailing: Checkbox(
-                              value: childValues[_allChildrens[index].childid],
-                              onChanged: (value) {
-                                if(all){
-                                  all=!all;
-                                }
-                                print(_allChildrens[index].childid);
-                                if (value == true) {
-                                  if (!selectedChildrens
-                                      .contains(_allChildrens[index])) {
-                                    selectedChildrens.add(_allChildrens[index]);
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _allChildrens != null ? _allChildrens.length : 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _allChildrens[index]
+                            .name
+                            .toLowerCase()
+                            .contains(searchString.toLowerCase())
+                        ? ListTile(
+                            title: Text(_allChildrens[index].name),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(_allChildrens[index]
+                                          .imageUrl !=
+                                      ""
+                                  ? Constants.ImageBaseUrl +
+                                      _allChildrens[index].imageUrl
+                                  : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
+                            ),
+                            trailing: Checkbox(
+                                value:
+                                    childValues[_allChildrens[index].childid],
+                                onChanged: (value) {
+                                  if (all) {
+                                    all = !all;
                                   }
-                                } else {
-                                  if (selectedChildrens
-                                      .contains(_allChildrens[index])) {
-                                    selectedChildrens
-                                        .remove(_allChildrens[index]);
+                                  print(_allChildrens[index].childid);
+                                  if (value == true) {
+                                    if (!selectedChildrens
+                                        .contains(_allChildrens[index])) {
+                                      selectedChildrens
+                                          .add(_allChildrens[index]);
+                                    }
+                                  } else {
+                                    if (selectedChildrens
+                                        .contains(_allChildrens[index])) {
+                                      selectedChildrens
+                                          .remove(_allChildrens[index]);
+                                    }
                                   }
-                                }
 
-                                childValues[_allChildrens[index].childid] =
-                                    value;
-                                setState(() {});
-                              }),
-                        ):Container();
-                      }),
+                                  childValues[_allChildrens[index].childid] =
+                                      value!;
+                                  setState(() {});
+                                }),
+                          )
+                        : Container();
+                  }),
             )
           : Container(
               width: MediaQuery.of(context).size.width,
@@ -720,62 +720,67 @@ class AddObservationState extends State<AddObservation>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                     if(searchString=='') 
-                                      ListTile(
-                                        title: Text(
-                                          key,
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        trailing: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.35,
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  'Select All',
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                ),
-                                                Checkbox(
-                                                  value: boolValues[key],
-                                                  onChanged: (value) {
-                                                    boolValues[key] = value;
-                                                    for (int i = 0;
-                                                        i < groups[key].length;
-                                                        i++) {
-                                                      childValues[groups[key][i]
-                                                          ['child_id']] = value;
-                                                      int s = _allChildrens
-                                                          .indexWhere((element) =>
-                                                              element.childid ==
-                                                              groups[key][i]
-                                                                  ['child_id']);
-                                                      if ((!selectedChildrens
-                                                              .contains(
+                                      if (searchString == '')
+                                        ListTile(
+                                          title: Text(
+                                            key,
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                          trailing: Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'Select All',
+                                                    style:
+                                                        TextStyle(fontSize: 12),
+                                                  ),
+                                                  Checkbox(
+                                                    value: boolValues[key],
+                                                    onChanged: (value) {
+                                                      boolValues[key] = value!;
+                                                      for (int i = 0;
+                                                          i <
+                                                              groups[key]
+                                                                  .length;
+                                                          i++) {
+                                                        childValues[groups[key]
+                                                                    [i]
+                                                                ['child_id']] =
+                                                            value!;
+                                                        int s = _allChildrens
+                                                            .indexWhere((element) =>
+                                                                element
+                                                                    .childid ==
+                                                                groups[key][i][
+                                                                    'child_id']);
+                                                        if ((!selectedChildrens
+                                                                .contains(
+                                                                    _allChildrens[
+                                                                        s])) &&
+                                                            value == true) {
+                                                          selectedChildrens.add(
+                                                              _allChildrens[s]);
+                                                        } else if (selectedChildrens
+                                                                .contains(
+                                                                    _allChildrens[
+                                                                        s]) &&
+                                                            value == false) {
+                                                          selectedChildrens
+                                                              .remove(
                                                                   _allChildrens[
-                                                                      s])) &&
-                                                          value == true) {
-                                                        selectedChildrens.add(
-                                                            _allChildrens[s]);
-                                                      } else if (selectedChildrens
-                                                              .contains(
-                                                                  _allChildrens[
-                                                                      s]) &&
-                                                          value == false) {
-                                                        selectedChildrens
-                                                            .remove(
-                                                                _allChildrens[
-                                                                    s]);
+                                                                      s]);
+                                                        }
                                                       }
-                                                    }
-                                                    setState(() {});
-                                                  },
-                                                ),
-                                              ],
-                                            )),
-                                      ),
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                ],
+                                              )),
+                                        ),
                                       childrenWidget(key),
                                     ],
                                   ),
@@ -867,7 +872,7 @@ class AddObservationState extends State<AddObservation>
                                     MaterialStateProperty.all(Colors.blueGrey),
                               ),
                               onPressed: () {
-                                // mentionTitle.currentState.controller.text =
+                                // mentionTitle.currentState?.controller?.text =
                                 //     '@[__asfgasga41__](__markT__) #javascript hey';
                                 Navigator.push(
                                     context,
@@ -914,7 +919,7 @@ class AddObservationState extends State<AddObservation>
                             ),
                             GestureDetector(
                               onTap: () {
-                                key.currentState.openEndDrawer();
+                                key.currentState?.openEndDrawer();
                               },
                               child: Container(
                                   width: 160,
@@ -926,8 +931,8 @@ class AddObservationState extends State<AddObservation>
                                   child: Row(
                                     children: <Widget>[
                                       IconButton(
-                                        onPressed: (){
-                                           key.currentState.openEndDrawer();
+                                        onPressed: () {
+                                          key.currentState?.openEndDrawer();
                                         },
                                         icon: Icon(
                                           Icons.add_circle,
@@ -961,7 +966,7 @@ class AddObservationState extends State<AddObservation>
                                                               childId:
                                                                   selectedChildrens[
                                                                           index]
-                                                                      .id,
+                                                                      .id??'',
                                                               centerId: widget
                                                                   .centerid,
                                                             )));
@@ -969,13 +974,13 @@ class AddObservationState extends State<AddObservation>
                                               child: Chip(
                                                   label: Text(
                                                       selectedChildrens[index]
-                                                          .name),
+                                                          .name??''),
                                                   onDeleted: () {
                                                     setState(() {
                                                       childValues[
                                                           selectedChildrens[
                                                                   index]
-                                                              .id] = false;
+                                                              .id??''] = false;
                                                       selectedChildrens
                                                           .removeAt(index);
                                                     });
@@ -1200,17 +1205,17 @@ class AddObservationState extends State<AddObservation>
                                               children: [
                                                 SizedBox(
                                                   width: size.width * 0.7,
-                                                  child: RaisedButton(
+                                                  child: ElevatedButton(
                                                     onPressed: () async {
                                                       Navigator.pop(context);
-                                                      FilePickerResult result =
+                                                      FilePickerResult? result =
                                                           await FilePicker
                                                               .platform
                                                               .pickFiles();
 
                                                       if (result != null) {
-                                                        File file = File(result
-                                                            .files.single.path);
+                                                        File? file = File(result
+                                                            .files.single.path??'');
                                                         var fileSizeInBytes =
                                                             file.length();
                                                         var fileSizeInKB =
@@ -1223,7 +1228,7 @@ class AddObservationState extends State<AddObservation>
                                                                 result
                                                                     .files
                                                                     .single
-                                                                    .path);
+                                                                    .path??'')??'';
                                                         var fileType =
                                                             mimeStr.split('/');
 
@@ -1243,8 +1248,7 @@ class AddObservationState extends State<AddObservation>
                                                                       r'.jp'));
                                                           final splitted =
                                                               filePath.substring(
-                                                                  0,
-                                                                  (lastIndex));
+                                                                  0, lastIndex);
                                                           final outPath =
                                                               "${splitted}_out${filePath.substring(lastIndex)}";
 
@@ -1261,11 +1265,6 @@ class AddObservationState extends State<AddObservation>
                                                         _editChildren.add([]);
                                                         _editEducators.add([]);
                                                         h = h + 100.0;
-                                                        // if(files.length==1){
-                                                        //   h=h+size.width/3;
-                                                        // }else if(files.length%2==0){
-                                                        //    h=h+size.width/3;
-                                                        // }
                                                         setState(() {});
                                                       } else {
                                                         // User canceled the picker
@@ -1275,27 +1274,26 @@ class AddObservationState extends State<AddObservation>
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width: size.width * 0.7,
-                                                  child: RaisedButton(
-                                                    onPressed: () async {
-                                                      ObservationsAPIHandler
-                                                          handler =
-                                                          ObservationsAPIHandler(
-                                                              {});
+                                                    width: size.width * 0.7,
+                                                    child: ElevatedButton(
+                                                      onPressed: () async {
+                                                        ObservationsAPIHandler
+                                                            handler =
+                                                            ObservationsAPIHandler(
+                                                                {});
 
-                                                      var data = await handler
-                                                          .getMediaImages();
+                                                        var data = await handler
+                                                            .getMediaImages();
 
-                                                      _dialog(
-                                                          context,
-                                                          data[
-                                                              'uploadedMediaList']);
+                                                        _dialog(
+                                                            context,
+                                                            data[
+                                                                'uploadedMediaList']);
 
-                                                      print(data);
-                                                    },
-                                                    child: Text("Media"),
-                                                  ),
-                                                ),
+                                                        print(data);
+                                                      },
+                                                      child: Text("Media"),
+                                                    )),
                                               ],
                                             ),
                                           ),
@@ -1345,7 +1343,8 @@ class AddObservationState extends State<AddObservation>
                                     children: List<Widget>.generate(
                                         files.length, (int index) {
                                       String mimeStr =
-                                          lookupMimeType(files[index].path);
+                                          lookupMimeType(files[index].path) ??
+                                              '';
                                       var fileType = mimeStr.split('/');
                                       if (fileType[0].toString() == 'image') {
                                         return Stack(
@@ -1519,7 +1518,7 @@ class AddObservationState extends State<AddObservation>
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed: () {
                                                                   Navigator.pop(
                                                                       context);
@@ -1687,7 +1686,7 @@ class AddObservationState extends State<AddObservation>
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed: () {
                                                                   Navigator.pop(
                                                                       context);
@@ -1930,7 +1929,7 @@ class AddObservationState extends State<AddObservation>
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed: () {
                                                                   Navigator.pop(
                                                                       context);
@@ -2102,7 +2101,7 @@ class AddObservationState extends State<AddObservation>
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed: () {
                                                                   Navigator.pop(
                                                                       context);
@@ -2257,7 +2256,8 @@ class AddObservationState extends State<AddObservation>
                                                                   _allEductarors
                                                                       .length;
                                                               j++) {
-                                                            if (_allEductarors[j]
+                                                            if (_allEductarors[
+                                                                        j]
                                                                     .id ==
                                                                 userID) {
                                                               editEducator.add(
@@ -2338,7 +2338,7 @@ class AddObservationState extends State<AddObservation>
                                                                               (values) {
                                                                             editChild =
                                                                                 values;
-                                                                                 print(editChild[0].childid);
+                                                                            print(editChild[0].childid);
                                                                           },
                                                                         ),
                                                                         SizedBox(
@@ -2396,9 +2396,8 @@ class AddObservationState extends State<AddObservation>
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                actions: <
-                                                                    Widget>[
-                                                                  FlatButton(
+                                                                actions: <Widget>[
+                                                                  TextButton(
                                                                     onPressed:
                                                                         () async {
                                                                       var _toSend =
@@ -2448,7 +2447,7 @@ class AddObservationState extends State<AddObservation>
                                                                           _objToSend);
 
                                                                       var resp = await http.post(
-                                                                          _toSend,
+                                                                          Uri.parse(_toSend),
                                                                           body:
                                                                               jsonEncode(_objToSend),
                                                                           headers: {
@@ -2457,8 +2456,11 @@ class AddObservationState extends State<AddObservation>
                                                                             'X-TOKEN':
                                                                                 MyApp.AUTH_TOKEN_VALUE,
                                                                           });
-                                                                          print('this');
-                                                                          print(resp.body.toString());
+                                                                      print(
+                                                                          'this');
+                                                                      print(resp
+                                                                          .body
+                                                                          .toString());
                                                                       var data =
                                                                           jsonDecode(
                                                                               resp.body);
@@ -2603,7 +2605,8 @@ class AddObservationState extends State<AddObservation>
                                                                   _allEductarors
                                                                       .length;
                                                               j++) {
-                                                            if (_allEductarors[j]
+                                                            if (_allEductarors[
+                                                                        j]
                                                                     .id ==
                                                                 userID) {
                                                               editEducator.add(
@@ -2674,7 +2677,7 @@ class AddObservationState extends State<AddObservation>
                                                                               (values) {
                                                                             editChild =
                                                                                 values;
-                                                                                print(editChild[0].id);
+                                                                            print(editChild[0].id);
                                                                           },
                                                                         ),
                                                                         SizedBox(
@@ -2732,9 +2735,8 @@ class AddObservationState extends State<AddObservation>
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                actions: <
-                                                                    Widget>[
-                                                                  FlatButton(
+                                                                actions: <Widget>[
+                                                                  TextButton(
                                                                     onPressed:
                                                                         () async {
                                                                       var _toSend =
@@ -2781,7 +2783,7 @@ class AddObservationState extends State<AddObservation>
                                                                           _objToSend);
 
                                                                       var resp = await http.post(
-                                                                          _toSend,
+                                                                          Uri.parse(_toSend),
                                                                           body:
                                                                               jsonEncode(_objToSend),
                                                                           headers: {
@@ -2862,8 +2864,8 @@ class AddObservationState extends State<AddObservation>
                                     onTap: () async {
                                       if (selectedChildrens.length > 0) {
                                         String title = mentionTitle
-                                            .currentState.controller.markupText;
-                                        previewtitle=title;     
+                                            .currentState?.controller?.markupText??'';
+                                        previewtitle = title;
                                         for (int i = 0;
                                             i < mentionUser.length;
                                             i++) {
@@ -2887,8 +2889,8 @@ class AddObservationState extends State<AddObservation>
                                         print(title);
 
                                         String notes = mentionNotes
-                                            .currentState.controller.markupText;
-                                        previewnotes=notes;    
+                                            .currentState?.controller?.markupText??"";
+                                        previewnotes = notes;
                                         for (int i = 0;
                                             i < mentionUser.length;
                                             i++) {
@@ -2911,11 +2913,11 @@ class AddObservationState extends State<AddObservation>
                                         }
 
                                         print(notes);
-                                        String ref;
+                                        String ref = '';
                                         if (MyApp.USER_TYPE_VALUE != 'Parent') {
                                           ref = mentionRef.currentState
-                                              .controller.markupText;
-                                           previewRef=ref;   
+                                              ?.controller?.markupText??'';
+                                          previewRef = ref;
                                           for (int i = 0;
                                               i < mentionUser.length;
                                               i++) {
@@ -3144,14 +3146,14 @@ class AddObservationState extends State<AddObservation>
 
                                         print(mp);
                                         print(Constants.BASE_URL +
-                                                        "Observation/editObservation");
+                                            "Observation/editObservation");
                                         FormData formData =
                                             FormData.fromMap(mp);
 
                                         print(formData.fields.toString());
                                         Dio dio = new Dio();
 
-                                        Response response = await dio
+                                        Response? response = await dio
                                             .post(
                                                 widget.type == 'edit'
                                                     ? Constants.BASE_URL +
@@ -3170,16 +3172,18 @@ class AddObservationState extends State<AddObservation>
                                           var v = jsonDecode(value.toString());
                                           obsid = v['id'].toString();
                                           if (v['Status'] == 'SUCCESS') {
-
-                                            if(MyApp.USER_TYPE_VALUE != 'Parent'){
-                                                obs.obsid = v['id'].toString();
-                                                print(obs.obsid + 'val' + obsid);
-                                                print(obs.data.toString() + 'val');
-                                                _controller.index = 1;
-                                            }else{
-                                              MyApp.ShowToast("Saved Successfully", context);
+                                            if (MyApp.USER_TYPE_VALUE !=
+                                                'Parent') {
+                                              obs.obsid = v['id'].toString();
+                                              print(obs.obsid + 'val' + obsid);
+                                              print(
+                                                  obs.data.toString() + 'val');
+                                              _controller.index = 1;
+                                            } else {
+                                              MyApp.ShowToast(
+                                                  "Saved Successfully",
+                                                  context);
                                             }
-                                           
                                           } else {
                                             MyApp.ShowToast("error", context);
                                           }
@@ -3189,7 +3193,6 @@ class AddObservationState extends State<AddObservation>
                                             "select children", context);
                                       }
                                     },
-                                   
                                     child: Container(
                                         width: 65,
                                         height: 38,

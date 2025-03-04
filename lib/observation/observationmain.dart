@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -228,10 +229,10 @@ class _ObservationMainState extends State<ObservationMain> {
                     value: addedValues[key],
                     onChanged: (bool value) {
                       if (key == 'All') {
-                        addedValues['Today'] = value;
-                        addedValues['This Week'] = value;
-                        addedValues['This Month'] = value;
-                        addedValues[key] = value;
+                        addedValues['Today'] = value!;
+                        addedValues['This Week'] = value!;
+                        addedValues['This Month'] = value!;
+                        addedValues[key] = value!;
                         if (value == true) {
                           added.clear();
                           added.add('All');
@@ -244,7 +245,7 @@ class _ObservationMainState extends State<ObservationMain> {
                         } else {
                           added.remove(key);
                         }
-                        addedValues[key] = value;
+                        addedValues[key] = value!;
                       }
 
                       _fetchFilteredData();
@@ -285,17 +286,17 @@ class _ObservationMainState extends State<ObservationMain> {
                     title: Text('All Children'),
                     value: allChildren,
                     onChanged: (value) {
-                      allChildren = value;
+                      allChildren = value!;
                       if (value == true) {
                         for (int i = 0; i < _allChildrens.length; i++) {
-                          childValues[_allChildrens[i].id] = value;
+                          childValues[_allChildrens[i].id] = value!;
                           childs.add(_allChildrens[i].id);
                         }
                         _fetchFilteredData();
                         observationsFetched = false;
                       } else {
                         for (int i = 0; i < _allChildrens.length; i++) {
-                          childValues[_allChildrens[i].id] = value;
+                          childValues[_allChildrens[i].id] = value!;
                         }
                         childs.clear();
                         _fetchFilteredData();
@@ -334,7 +335,7 @@ class _ObservationMainState extends State<ObservationMain> {
                                       childs.add(_allChildrens[index].id);
                                     }
                                   }
-                                  childValues[_allChildrens[index].id] = value;
+                                  childValues[_allChildrens[index].id] = value!;
 
                                   _fetchFilteredData();
                                   observationsFetched = false;
@@ -376,9 +377,9 @@ class _ObservationMainState extends State<ObservationMain> {
                     value: authorValues[key],
                     onChanged: (bool value) {
                       if (key == 'Any') {
-                        authorValues['Me'] = value;
-                        authorValues['Staff'] = value;
-                        authorValues[key] = value;
+                        authorValues['Me'] = value!;
+                        authorValues['Staff'] = value!;
+                        authorValues[key] = value!;
                         if (value == true) {
                           authors.clear();
                           authors.add('Any');
@@ -391,7 +392,7 @@ class _ObservationMainState extends State<ObservationMain> {
                         } else {
                           authors.remove(key);
                         }
-                        authorValues[key] = value;
+                        authorValues[key] = value!;
                       }
 
                       _fetchFilteredData();
@@ -645,9 +646,9 @@ class _ObservationMainState extends State<ObservationMain> {
                     value: mediaValues[key],
                     onChanged: (bool value) {
                       if (key == 'Any') {
-                        mediaValues['Image'] = value;
-                        mediaValues['Video'] = value;
-                        mediaValues[key] = value;
+                        mediaValues['Image'] = value!;
+                        mediaValues['Video'] = value!;
+                        mediaValues[key] = value!;
 
                         if (value == true) {
                           media.clear();
@@ -661,7 +662,7 @@ class _ObservationMainState extends State<ObservationMain> {
                         } else {
                           media.remove(key);
                         }
-                        mediaValues[key] = value;
+                        mediaValues[key] = value!;
                       }
 
                       _fetchFilteredData();
@@ -701,14 +702,14 @@ class _ObservationMainState extends State<ObservationMain> {
                     value: commentsValues[key],
                     onChanged: (bool value) {
                       if (value == true && disabledComment == false) {
-                        commentsValues[key] = value;
+                        commentsValues[key] = value!;
                         disabledComment = true;
                         comments.clear();
                         comments.add(key);
                         observationsFetched = false;
                         _fetchFilteredData();
                       } else if (disabledComment == true && value == false) {
-                        commentsValues[key] = value;
+                        commentsValues[key] = value!;
                         disabledComment = false;
                         comments.clear();
                         observationsFetched = false;
@@ -750,14 +751,14 @@ class _ObservationMainState extends State<ObservationMain> {
                     value: linksValues[key],
                     onChanged: (bool value) {
                       if (value == true && disabledLink == false) {
-                        linksValues[key] = value;
+                        linksValues[key] = value!;
                         disabledLink = true;
                         links.clear();
                         links.add(key);
                         observationsFetched = false;
                         _fetchFilteredData();
                       } else if (disabledLink == true && value == false) {
-                        linksValues[key] = value;
+                        linksValues[key] = value!;
                         disabledLink = false;
                         observationsFetched = false;
                         links.clear();
@@ -844,7 +845,7 @@ class _ObservationMainState extends State<ObservationMain> {
     var res = data['observations'];
     print(res);
     if (res != null) {
-      _allObservations = new List();
+      _allObservations = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -879,7 +880,7 @@ class _ObservationMainState extends State<ObservationMain> {
           MyApp.USER_TYPE_VALUE == 'Superadmin' ||
           MyApp.USER_TYPE_VALUE == 'Parent') {
         var res = data['observations'];
-        _allObservations = new List();
+        _allObservations = [];
         try {
           assert(res is List);
           for (int i = 0; i < res.length; i++) {
@@ -894,7 +895,7 @@ class _ObservationMainState extends State<ObservationMain> {
 
         var child = data['childs'];
         print(child);
-        _allChildrens = new List();
+        _allChildrens = [];
         try {
           assert(child is List);
           for (int i = 0; i < child.length; i++) {
@@ -942,7 +943,7 @@ class _ObservationMainState extends State<ObservationMain> {
                             if (permission)
                               GestureDetector(
                                   onTap: () {
-                                    key.currentState.openEndDrawer();
+                                    key.currentState?.openEndDrawer();
                                   },
                                   child: Icon(
                                     AntDesign.filter,
@@ -997,7 +998,7 @@ class _ObservationMainState extends State<ObservationMain> {
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                       border:
-                                          Border.all(color: Colors.grey[300]),
+                                          Border.all(color: Constants.greyColor),
                                       color: Colors.white,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(8))),
@@ -1063,7 +1064,7 @@ class _ObservationMainState extends State<ObservationMain> {
                               ),
                               onChanged: (value) {
                                 setState(() {
-                                  searchString = value;
+                                  searchString = value!;
                                 });
                               },
                             ),

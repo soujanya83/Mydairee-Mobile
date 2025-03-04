@@ -11,16 +11,16 @@ class PlanStandModel {
   String updatedBy;
 
   PlanStandModel(
-      {this.id,
-      this.roomid,
-      this.startDate,
-      this.endDate,
-      this.createdAt,
-      this.createdBy,
-      this.checked,
-      this.boolCheck,
-      this.updatedAt,
-      this.updatedBy});
+      {required this.id,
+      required this.roomid,
+      required this.startDate,
+      required this.endDate,
+      required this.createdAt,
+      required this.createdBy,
+      required this.checked,
+      required this.boolCheck,
+      required this.updatedAt,
+      required this.updatedBy});
 
   static PlanStandModel fromJson(Map<String, dynamic> json) {
     return PlanStandModel(

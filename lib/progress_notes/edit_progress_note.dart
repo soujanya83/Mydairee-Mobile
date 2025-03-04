@@ -19,14 +19,14 @@ class EditProgressNotesActivity extends StatefulWidget {
   final String othergoal;
 
   EditProgressNotesActivity(
-      {this.childid,
-      this.centerid,
-      this.pnid,
-      this.phydevelopment,
-      this.emodeveloment,
-      this.scodeveloment,
-      this.childinter,
-      this.othergoal});
+      {required this.childid,
+      required this.centerid,
+      required this.pnid,
+      required this.phydevelopment,
+      required this.emodeveloment,
+      required this.scodeveloment,
+      required this.childinter,
+      required this.othergoal});
 
   @override
   _EditProgressNotesActivityState createState() =>
@@ -352,7 +352,7 @@ class _EditProgressNotesActivityState extends State<EditProgressNotesActivity> {
 
                               print(MyApp.LOGIN_ID_VALUE);
                               print(await MyApp.getDeviceIdentity());
-                              final response = await http.post(_toSend,
+                              final response = await http.post(Uri.parse(_toSend),
                                   body: jsonEncode(objToSend),
                                   headers: {
                                     'X-DEVICE-ID':

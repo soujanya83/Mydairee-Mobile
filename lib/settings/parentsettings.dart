@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/parentmodel.dart';
@@ -90,7 +91,7 @@ class _ParentSettingsState extends State<ParentSettings> {
                               )),
                           // GestureDetector(
                           //     onTap: () {
-                          //       //   key.currentState.openEndDrawer();
+                          //       //   key.currentState?.openEndDrawer();
                           //     },
                           //     child: Icon(
                           //       AntDesign.filter,
@@ -295,9 +296,9 @@ class _ParentSettingsState extends State<ParentSettings> {
             //                 child: new Text(value),
             //               );
             //             }).toList(),
-            //             onChanged: (String value) {
+            //              onChanged: (String? value)  {
             //               setState(() {
-            //                 _chosenValue = value;
+            //                 _chosenValue = value!;
             //               });
             //             },
             //           )),

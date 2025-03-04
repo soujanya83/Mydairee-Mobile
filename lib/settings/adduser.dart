@@ -204,7 +204,7 @@ class _AddUserState extends State<AddUser> {
                   },
                 ),
                 // onTap: (){
-                //     key.currentState.openEndDrawer();
+                //     key.currentState?.openEndDrawer();
                 // },
               ),
               Container(
@@ -228,7 +228,7 @@ class _AddUserState extends State<AddUser> {
                                 }
                               }
 
-                              centerValues[centers[index].id] = value;
+                              centerValues[centers[index].id] = value!;
                               setState(() {});
                             }),
                       );
@@ -297,7 +297,7 @@ class _AddUserState extends State<AddUser> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          key.currentState.openEndDrawer();
+                          key.currentState?.openEndDrawer();
                         },
                         child: Container(
                             width: 160,
@@ -425,9 +425,9 @@ class _AddUserState extends State<AddUser> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                 onChanged: (String? value)  {
                                   setState(() {
-                                    _gender = value;
+                                    _gender = value!;
                                   });
                                 },
                               ),
@@ -621,9 +621,9 @@ class _AddUserState extends State<AddUser> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                 onChanged: (String? value)  {
                                   setState(() {
-                                    status = value;
+                                    status = value!;
                                   });
                                 },
                               ),
@@ -890,7 +890,7 @@ class _AddUserState extends State<AddUser> {
                                   Dio dio = new Dio();
 
                                   await dio
-                                      .post(_toSend,
+                                      .post(Uri.parse(_toSend),
                                           data: formData,
                                           options: Options(headers: {
                                             'X-DEVICE-ID':

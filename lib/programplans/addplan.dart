@@ -110,7 +110,7 @@ class _AddPlanState extends State<AddPlan> {
     }
     var refLink = await apiHandler2.getRefLinks(roomData[roomIndex].id);
     var resRef = refLink['reflections'];
-    _allReflections = new List();
+    _allReflections = [];
     try {
       assert(resRef is List);
       for (int i = 0; i < resRef.length; i++) {
@@ -123,7 +123,7 @@ class _AddPlanState extends State<AddPlan> {
     }
     var qipLink = await apiHandler2.getQipLinks(roomData[roomIndex].id);
     var resQip = qipLink['qip'];
-    _allQips = new List();
+    _allQips = [];
     try {
       assert(resQip is List);
       for (int i = 0; i < resQip.length; i++) {
@@ -806,7 +806,7 @@ class _AddPlanState extends State<AddPlan> {
                                         style: ButtonStyle(
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.grey[300])),
+                                                    Constants.greyColor)),
                                         onPressed: () {
                                           List headText = [];
 
@@ -908,7 +908,7 @@ class _AddPlanState extends State<AddPlan> {
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  Colors.grey[300])),
+                                                  Constants.greyColor)),
                                       onPressed: () {
                                         headController
                                             .add(TextEditingController());
@@ -1190,7 +1190,7 @@ class _AddPlanState extends State<AddPlan> {
 
     print(jsonEncode(_objToSend));
     final response =
-        await http.post(_toSend, body: jsonEncode(_objToSend), headers: {
+        await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });

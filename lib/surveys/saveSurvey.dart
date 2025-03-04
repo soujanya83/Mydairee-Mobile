@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 class SaveSurvey extends StatefulWidget {
   final String id;
 
-  SaveSurvey({this.id});
+  SaveSurvey({required this.id});
 
   @override
   _SaveSurveyState createState() => _SaveSurveyState();
@@ -92,7 +92,7 @@ class _SaveSurveyState extends State<SaveSurvey> {
                   value: options[i]['id'],
                   groupValue: answers[val],
                   onChanged: (value) {
-                    answers[val] = value;
+                    answers[val] = value!;
                     setState(() {});
                   },
                 ),
@@ -108,7 +108,7 @@ class _SaveSurveyState extends State<SaveSurvey> {
           itemBuilder: (BuildContext context, int i) {
             return CheckboxListTile(
               onChanged: (value) {
-                answers[val][i] = value;
+                answers[val][i] = value!;
                 setState(() {});
               },
               value: answers[val][i],
@@ -118,7 +118,7 @@ class _SaveSurveyState extends State<SaveSurvey> {
     } else if (type == 'TEXT') {
       return TextField(
         onChanged: (value) {
-          answers[val] = value;
+          answers[val] = value!;
           setState(() {});
         },
       );
@@ -163,9 +163,9 @@ class _SaveSurveyState extends State<SaveSurvey> {
                       child: new Text(value),
                     );
                   }).toList(),
-                  onChanged: (String value) {
+                   onChanged: (String? value)  {
                     setState(() {
-                      answers[val] = value;
+                      answers[val] = value!;
                     });
                   },
                 ),
@@ -359,7 +359,7 @@ class _SaveSurveyState extends State<SaveSurvey> {
                                           'surveys/surveyResponse';
 
                                       print(_toSend);
-                                      final response = await http.post(_toSend,
+                                      final response = await http.post(Uri.parse(_toSend),
                                           body: jsonEncode(objToSend),
                                           headers: {
                                             'X-DEVICE-ID':

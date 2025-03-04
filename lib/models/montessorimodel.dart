@@ -7,15 +7,25 @@ class MontessoriModel {
   bool choosen;
   List<MontessoriActivityModel> activity;
 
-  MontessoriModel(
-      {this.outcomeId, this.idSubject, this.name, this.choosen, this.activity});
+  MontessoriModel({
+    required this.outcomeId,
+    required this.idSubject,
+    required this.name,
+    required this.choosen,
+    required this.activity,
+  });
 
   static MontessoriModel fromJson(Map<String, dynamic> json) {
     return MontessoriModel(
-        outcomeId: json['outcomeId'],
-        idSubject: json['idSubject'],
-        name: json['name'],
-        choosen: false);
+      outcomeId: json['outcomeId'] ?? '',
+      idSubject: json['idSubject'] ?? '',
+      name: json['name'] ?? '',
+      choosen: false,
+      activity: (json['activity'] as List<dynamic>?)
+              ?.map((e) => MontessoriActivityModel.fromJson(e))
+              .toList() ??
+          [],
+    );
   }
 }
 
@@ -33,32 +43,36 @@ class MontessoriActivityModel {
   String checked;
   bool boolCheck;
 
-  MontessoriActivityModel(
-      {this.idActivity,
-      this.idSubActivity,
-      this.idSubject,
-      this.title,
-      this.subject,
-      this.choosen,
-      this.addedBy,
-      this.addedAt,
-      this.subActivity,
-      this.checked,
-      this.boolCheck});
+  MontessoriActivityModel({
+    required this.idActivity,
+    required this.idSubActivity,
+    required this.idSubject,
+    required this.title,
+    required this.subject,
+    required this.choosen,
+    required this.addedBy,
+    required this.addedAt,
+    required this.subActivity,
+    required this.checked,
+    required this.boolCheck,
+  });
 
   static MontessoriActivityModel fromJson(Map<String, dynamic> json) {
     return MontessoriActivityModel(
-      idActivity: json['idActivity'],
-      idSubActivity: json['idSubActivity'],
-      idSubject: json['idSubject'],
-      title: json['title'],
-      subject: json['subject'],
+      idActivity: json['idActivity'] ?? '',
+      idSubActivity: json['idSubActivity'] ?? '',
+      idSubject: json['idSubject'] ?? '',
+      title: json['title'] ?? '',
+      subject: json['subject'] ?? '',
       choosen: false,
-      checked: json['checked'],
-      addedAt: json['added_at'],
-      addedBy: json['added_by'],
-      boolCheck:
-          json['checked'] != null && json['checked'] != 'null' ? true : false,
+      checked: json['checked'] ?? '',
+      addedAt: json['added_at'] ?? '',
+      addedBy: json['added_by'] ?? '',
+      boolCheck: json['checked'] != null && json['checked'] != 'null',
+      subActivity: (json['subActivity'] as List<dynamic>?)
+              ?.map((e) => MontessoriSubActivityModel.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }
@@ -72,23 +86,28 @@ class MontessoriSubActivityModel {
   String addedAt;
   List<ExtrasModel> extrasModel;
 
-  MontessoriSubActivityModel(
-      {this.idSubActivity,
-      this.title,
-      this.subject,
-      this.checked,
-      this.addedBy,
-      this.addedAt,
-      this.extrasModel});
+  MontessoriSubActivityModel({
+    required this.idSubActivity,
+    required this.title,
+    required this.subject,
+    required this.checked,
+    required this.addedBy,
+    required this.addedAt,
+    required this.extrasModel,
+  });
 
   static MontessoriSubActivityModel fromJson(Map<String, dynamic> json) {
     return MontessoriSubActivityModel(
-      idSubActivity: json['idSubActivity'],
-      title: json['title'],
-      subject: json['subject'],
-      addedAt: json['added_at'],
-      addedBy: json['added_by'],
-      checked: json['checked'],
+      idSubActivity: json['idSubActivity'] ?? '',
+      title: json['title'] ?? '',
+      subject: json['subject'] ?? '',
+      addedAt: json['added_at'] ?? '',
+      addedBy: json['added_by'] ?? '',
+      checked: json['checked'] ?? '',
+      extrasModel: (json['extrasModel'] as List<dynamic>?)
+              ?.map((e) => ExtrasModel.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }

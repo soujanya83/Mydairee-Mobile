@@ -19,11 +19,11 @@ class MontessoriAssignmentSettings extends StatefulWidget {
 
 class _MontessoriAssignmentSettingsState
     extends State<MontessoriAssignmentSettings> with TickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
-  List<MontessoriModel> montessoriData;
+  List<MontessoriModel> montessoriData = [];
 
-  List<CentersModel> centers;
+  List<CentersModel> centers= [];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -130,7 +130,7 @@ class _MontessoriAssignmentSettingsState
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(
@@ -353,6 +353,7 @@ class _MontessoriAssignmentSettingsState
                                                             .checked ==
                                                         'checked',
                                                     onChanged: (val) {
+                                                       if(val==null)return;
                                                       if (val) {
                                                         montessoriData[index]
                                                                 .activity[i]
@@ -618,6 +619,7 @@ class _MontessoriAssignmentSettingsState
                                                                     .checked ==
                                                                 'checked',
                                                             onChanged: (val) {
+                                                              if(val==null)return;
                                                               if (val) {
                                                                 montessoriData[
                                                                         index]
@@ -1005,6 +1007,7 @@ class _MontessoriAssignmentSettingsState
                                                                         'checked',
                                                                     onChanged:
                                                                         (val) {
+                                                                           if(val==null)return;
                                                                       if (val) {
                                                                         montessoriData[index]
                                                                             .activity[i]
@@ -1136,7 +1139,7 @@ class _MontessoriAssignmentSettingsState
                                                     'Settings/saveMontessoriList';
                                                 print(jsonEncode(objToSend));
                                                 final response = await http
-                                                    .post(_toSend,
+                                                    .post(Uri.parse(_toSend),
                                                         body: jsonEncode(
                                                             objToSend),
                                                         headers: {

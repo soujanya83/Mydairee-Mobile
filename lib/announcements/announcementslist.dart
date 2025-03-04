@@ -18,8 +18,8 @@ class AnnouncementsList extends StatefulWidget {
 
 class _AnnouncementsListState extends State<AnnouncementsList> {
   bool announcementsFetched = false;
-  List<AnnouncementModel> _announcements;
-  List<CentersModel> centers;
+List<AnnouncementModel> _announcements = [];
+  late List<CentersModel> centers;
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -73,7 +73,7 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
         if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Parent' ||
             data['permissions']['viewAllAnnouncement'] == '1' ) {
           var res = data['records'];
-          _announcements = new List();
+          _announcements = [];
           try {
             assert(res is List);
             for (int i = 0; i < res.length; i++) {
@@ -126,7 +126,7 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                                   MaterialPageRoute(
                                       builder: (context) => NewAnnouncements(
                                             type: 'new',
-                                            centerid: centers[currentIndex].id,
+                                            centerid: centers[currentIndex].id, id: '',
                                           )));
                             },
                             child: Container(
@@ -155,7 +155,7 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                           height: 30,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]),
+                              border: Border.all(color: Colors.grey.shade300),
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8))),

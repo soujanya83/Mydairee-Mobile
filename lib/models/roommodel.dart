@@ -10,15 +10,15 @@ class RoomAccidentsModel {
   String centerid;
 
   RoomAccidentsModel(
-      {this.id,
-      this.name,
-      this.capacity,
-      this.userId,
-      this.color,
-      this.ageFrom,
-      this.ageTo,
-      this.status,
-      this.centerid});
+      {required this.id,
+      required this.name,
+      required this.capacity,
+      required this.userId,
+      required this.color,
+      required this.ageFrom,
+      required this.ageTo,
+      required this.status,
+      required this.centerid});
 
    static RoomAccidentsModel fromJson(Map<String, dynamic> json) {
      return RoomAccidentsModel(

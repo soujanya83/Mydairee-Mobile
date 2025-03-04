@@ -17,11 +17,11 @@ class DevAssignmentSettings extends StatefulWidget {
 
 class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
     with TickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
-  List<DevMilestoneModel> devData;
+  List<DevMilestoneModel>? devData;
 
-  List<CentersModel> centers;
+  List<CentersModel>? centers;
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -42,7 +42,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
-          centers.add(CentersModel.fromJson(res[i]));
+          centers?.add(CentersModel.fromJson(res[i]));
         }
         centersFetched = true;
         if (this.mounted) setState(() {});
@@ -57,7 +57,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
 
   Future<void> _fetchData() async {
     DevAssignAPIHandler hlr = DevAssignAPIHandler(
-        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
+        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers?[currentIndex].id??''});
     var dt = await hlr.getData();
     if (!dt.containsKey('error')) {
       print(dt);
@@ -105,7 +105,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
             mainModelList.add(mainModel);
           }
           devModel.main = mainModelList;
-          devData.add(devModel);
+          devData?.add(devModel);
         }
       }
       setState(() {});
@@ -138,7 +138,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                       height: 30,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]),
+                          border: Border.all(color: Constants.greyColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Padding(
@@ -146,16 +146,16 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                         child: Center(
                           child: DropdownButton<String>(
                             isExpanded: true,
-                            value: centers[currentIndex].id,
-                            items: centers.map((CentersModel value) {
+                            value: centers?[currentIndex].id??'',
+                            items: centers?.map((CentersModel value) {
                               return new DropdownMenuItem<String>(
-                                value: value.id,
+                                value: value.id??'',
                                 child: new Text(value.centerName),
                               );
                             }).toList(),
                             onChanged: (value) {
-                              for (int i = 0; i < centers.length; i++) {
-                                if (centers[i].id == value) {
+                              for (int i = 0; i < (centers?.length??0); i++) {
+                                if ((centers?[i].id??'') == value) {
                                   setState(() {
                                     currentIndex = i;
 
@@ -196,7 +196,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                     ],
                   ),
                 ),
-                if (devData != null)
+                if (devData != null) 
                   new Container(
                       height: MediaQuery.of(context).size.height - 230,
                       child: new TabBarView(
@@ -218,7 +218,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                             child: Container(
                                               width: 200,
                                               child: Text(
-                                                devData[index].ageGroup,
+                                                devData?[index].ageGroup??"",
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 16),
@@ -298,13 +298,13 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                       assesmentEylfAPIHandler =
                                                                       DevAssignAPIHandler({
                                                                     "milestone":
-                                                                        devData[index]
-                                                                            .id,
+                                                                        devData?[index]
+                                                                            .id??'',
                                                                     "activity":
                                                                         "",
                                                                     "centerid":
-                                                                        centers[currentIndex]
-                                                                            .id,
+                                                                        centers?[currentIndex]
+                                                                            .id??''??'',
                                                                     "title":
                                                                         controller
                                                                             .text,
@@ -345,7 +345,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                     ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
-                                        itemCount: devData[index].main.length,
+                                        itemCount: devData?[index].main.length,
                                         itemBuilder: (context, i) {
                                           return Card(
                                             child: Container(
@@ -357,18 +357,19 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                     offset: Offset(-20, 0),
                                                     child: ListTile(
                                                       leading: Checkbox(
-                                                        value: devData[index]
+                                                        value: devData?[index]
                                                                 .main[i]
                                                                 .checked ==
                                                             'checked',
                                                         onChanged: (val) {
+                                                          if(val==null)return;
                                                           if (val) {
-                                                            devData[index]
+                                                            devData?[index]
                                                                     .main[i]
                                                                     .checked =
                                                                 'checked';
                                                           } else {
-                                                            devData[index]
+                                                            devData?[index]
                                                                 .main[i]
                                                                 .checked = '';
                                                           }
@@ -379,13 +380,13 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                           Transform.translate(
                                                         offset: Offset(-10, 0),
                                                         child: Text(
-                                                            devData[index]
+                                                            devData?[index]
                                                                 .main[i]
-                                                                .name),
+                                                                .name??''),
                                                       ),
                                                       trailing:
                                                           MyApp.LOGIN_ID_VALUE ==
-                                                                  devData[index]
+                                                                  devData?[index]
                                                                       .main[i]
                                                                       .addedBy
                                                               ? Container(
@@ -466,9 +467,9 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                                         onPressed: () async {
                                                                                           if (titleController.text != '' && subController.text != '') {
                                                                                             DevAssignAPIHandler assesmentAPIHandler = DevAssignAPIHandler({
-                                                                                              "activity": devData[index].main[i].id,
+                                                                                              "activity": devData?[index].main[i].id??'',
                                                                                               "subactivity": "",
-                                                                                              "centerid": centers[currentIndex].id,
+                                                                                              "centerid": centers?[currentIndex].id??'',
                                                                                               "title": titleController.text,
                                                                                               "subject": subController.text,
                                                                                               "userid": MyApp.LOGIN_ID_VALUE
@@ -499,7 +500,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                               () async {
                                                                             TextEditingController
                                                                                 controller =
-                                                                                TextEditingController(text: devData[index].main[i].name);
+                                                                                TextEditingController(text: devData?[index].main[i].name);
                                                                             showDialog(
                                                                                 context: context,
                                                                                 builder: (BuildContext context) {
@@ -542,9 +543,9 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                                             print(controller.text);
 
                                                                                             DevAssignAPIHandler assesmentEylfAPIHandler = DevAssignAPIHandler({
-                                                                                              "milestone": devData[index].id,
-                                                                                              "activity": devData[index].main[i].id,
-                                                                                              "centerid": centers[currentIndex].id,
+                                                                                              "milestone": devData?[index].id??'',
+                                                                                              "activity": devData?[index].main[i].id??'',
+                                                                                              "centerid": centers?[currentIndex].id??'',
                                                                                               "title": controller.text,
                                                                                               "userid": MyApp.LOGIN_ID_VALUE
                                                                                             });
@@ -575,8 +576,8 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                             DevAssignAPIHandler
                                                                                 assignmentEylfAPIHandler =
                                                                                 DevAssignAPIHandler({
-                                                                              "id": devData[index].main[i].id,
-                                                                              "centerid": centers[currentIndex].id,
+                                                                              "id": devData?[index].main[i].id??'',
+                                                                              "centerid": centers?[currentIndex].id??'',
                                                                               "userid": MyApp.LOGIN_ID_VALUE
                                                                             });
                                                                             var data =
@@ -596,7 +597,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                     ),
                                                   ),
                                                   ListView.builder(
-                                                      itemCount: devData[index]
+                                                      itemCount: devData?[index]
                                                           .main[i]
                                                           .subjects
                                                           .length,
@@ -609,13 +610,13 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                           children: [
                                                             ListTile(
                                                               title: Text(
-                                                                  devData[index]
+                                                                  devData?[index]
                                                                       .main[i]
                                                                       .subjects[
                                                                           j]
-                                                                      .name),
+                                                                      .name??""),
                                                               leading: Checkbox(
-                                                                value: devData[
+                                                                value: devData?[
                                                                             index]
                                                                         .main[i]
                                                                         .subjects[
@@ -624,14 +625,16 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                     'checked',
                                                                 onChanged:
                                                                     (val) {
+                                                                      if(val==null)return;
                                                                   if (val) {
-                                                                    devData[index]
+                                                                    
+                                                                    devData?[index]
                                                                         .main[i]
                                                                         .subjects[
                                                                             j]
                                                                         .checked = 'checked';
                                                                   } else {
-                                                                    devData[index]
+                                                                    devData?[index]
                                                                         .main[i]
                                                                         .subjects[
                                                                             j]
@@ -644,7 +647,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                               trailing:
                                                                   Container(
                                                                 width: 75,
-                                                                child: devData[index]
+                                                                child: devData?[index]
                                                                             .main[
                                                                                 i]
                                                                             .subjects[
@@ -701,8 +704,8 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
 
                                                                                               DevAssignAPIHandler assesmentAPIHandler = DevAssignAPIHandler({
                                                                                                 "extra": "",
-                                                                                                "subactivity": devData[index].main[i].subjects[j].id,
-                                                                                                "centerid": centers[currentIndex].id,
+                                                                                                "subactivity": devData?[index].main[i].subjects[j].id??'',
+                                                                                                "centerid": centers?[currentIndex].id??'',
                                                                                                 "title": controller.text,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE
                                                                                               });
@@ -730,9 +733,9 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                           ),
                                                                           GestureDetector(
                                                                               onTap: () async {
-                                                                                TextEditingController titleController = TextEditingController(text: devData[index].main[i].subjects[j].name);
+                                                                                TextEditingController titleController = TextEditingController(text: devData?[index].main[i].subjects[j].name);
 
-                                                                                TextEditingController subController = TextEditingController(text: devData[index].main[i].subjects[j].subject);
+                                                                                TextEditingController subController = TextEditingController(text: devData?[index].main[i].subjects[j].subject);
                                                                                 showDialog(
                                                                                     context: context,
                                                                                     builder: (BuildContext context) {
@@ -797,9 +800,9 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                                             onPressed: () async {
                                                                                               if (titleController.text != '' && subController.text != '') {
                                                                                                 DevAssignAPIHandler assesmentAPIHandler = DevAssignAPIHandler({
-                                                                                                  "activity": devData[index].main[i].id,
-                                                                                                  "subactivity": devData[index].main[i].subjects[j].id,
-                                                                                                  "centerid": centers[currentIndex].id,
+                                                                                                  "activity": devData?[index].main[i].id??'',
+                                                                                                  "subactivity": devData?[index].main[i].subjects[j].id??'',
+                                                                                                  "centerid": centers?[currentIndex].id??'',
                                                                                                   "title": titleController.text,
                                                                                                   "subject": subController.text,
                                                                                                   "userid": MyApp.LOGIN_ID_VALUE
@@ -827,8 +830,8 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                           GestureDetector(
                                                                               onTap: () async {
                                                                                 DevAssignAPIHandler assignmentEylfAPIHandler = DevAssignAPIHandler({
-                                                                                  "id": devData[index].main[i].subjects[j].id,
-                                                                                  "centerid": centers[currentIndex].id,
+                                                                                  "id": devData?[index].main[i].subjects[j].id??'',
+                                                                                  "centerid": centers?[currentIndex].id??'',
                                                                                   "userid": MyApp.LOGIN_ID_VALUE
                                                                                 });
                                                                                 var data = await assignmentEylfAPIHandler.delDevSubAct();
@@ -846,7 +849,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                             ListView.builder(
                                                                 shrinkWrap:
                                                                     true,
-                                                                itemCount: devData[
+                                                                itemCount: devData?[
                                                                         index]
                                                                     .main[i]
                                                                     .subjects[j]
@@ -874,7 +877,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                           children: [
                                                                             GestureDetector(
                                                                               onTap: () {
-                                                                                TextEditingController controller = TextEditingController(text: devData[index].main[i].subjects[j].extras[k].title);
+                                                                                TextEditingController controller = TextEditingController(text: devData?[index].main[i].subjects[j].extras[k].title);
                                                                                 showDialog(
                                                                                     context: context,
                                                                                     builder: (BuildContext context) {
@@ -917,9 +920,9 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                                                 print(controller.text);
 
                                                                                                 DevAssignAPIHandler assesmentAPIHandler = DevAssignAPIHandler({
-                                                                                                  "extra": devData[index].main[i].subjects[j].extras[k].id,
-                                                                                                  "subactivity": devData[index].main[i].subjects[j].id,
-                                                                                                  "centerid": centers[currentIndex].id,
+                                                                                                  "extra": devData?[index].main[i].subjects[j].extras[k].id??'',
+                                                                                                  "subactivity": devData?[index].main[i].subjects[j].id??'',
+                                                                                                  "centerid": centers?[currentIndex].id??'',
                                                                                                   "title": controller.text,
                                                                                                   "userid": MyApp.LOGIN_ID_VALUE
                                                                                                 });
@@ -947,8 +950,8 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                             GestureDetector(
                                                                               onTap: () async {
                                                                                 DevAssignAPIHandler assesmentAPIHandler = DevAssignAPIHandler({
-                                                                                  "id": devData[index].main[i].subjects[j].extras[k].id,
-                                                                                  "centerid": centers[currentIndex].id,
+                                                                                  "id": devData?[index].main[i].subjects[j].extras[k].id??'',
+                                                                                  "centerid": centers?[currentIndex].id??'',
                                                                                   "userid": MyApp.LOGIN_ID_VALUE
                                                                                 });
                                                                                 var data = await assesmentAPIHandler.delDevExtra();
@@ -965,15 +968,17 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                       ),
                                                                       leading:
                                                                           Checkbox(
-                                                                        value: devData[index].main[i].subjects[j].extras[k].checked ==
+                                                                        value: devData?[index].main[i].subjects[j].extras[k].checked ==
                                                                             'checked',
                                                                         onChanged:
                                                                             (val) {
+                                                                        if(val==null)
+                                                                        return;
                                                                           if (val) {
-                                                                            devData[index].main[i].subjects[j].extras[k].checked =
+                                                                            devData?[index].main[i].subjects[j].extras[k].checked =
                                                                                 'checked';
                                                                           } else {
-                                                                            devData[index].main[i].subjects[j].extras[k].checked =
+                                                                            devData?[index].main[i].subjects[j].extras[k].checked =
                                                                                 '';
                                                                           }
                                                                           setState(
@@ -985,11 +990,11 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                                         offset: Offset(
                                                                             -10,
                                                                             0),
-                                                                        child: Text(devData[index]
+                                                                        child: Text(devData?[index]
                                                                             .main[i]
                                                                             .subjects[j]
                                                                             .extras[k]
-                                                                            .title),
+                                                                            .title??''),
                                                                       ),
                                                                     ),
                                                                   );
@@ -1012,64 +1017,64 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                               List extraIds = [];
                                               for (int i = 0;
                                                   i <
-                                                      devData[index]
+                                                      (devData?[index]
                                                           .main
-                                                          .length;
+                                                          .length??0);
                                                   i++) {
-                                                if (devData[index]
+                                                if (devData?[index]
                                                         .main[i]
                                                         .checked ==
                                                     'checked') {
-                                                  ids.add(devData[index]
+                                                  ids.add(devData?[index]
                                                       .main[i]
-                                                      .id);
+                                                      .id??'');
                                                 }
 
                                                 for (int j = 0;
                                                     j <
-                                                        devData[index]
+                                                        (devData?[index]
                                                             .main[i]
                                                             .subjects
-                                                            .length;
+                                                            .length??0);
                                                     j++) {
-                                                  if (devData[index]
+                                                  if (devData?[index]
                                                           .main[i]
                                                           .subjects[j]
                                                           .checked ==
                                                       'checked') {
-                                                    subIds.add(devData[index]
+                                                    subIds.add(devData?[index]
                                                         .main[i]
                                                         .subjects[j]
-                                                        .id);
+                                                        .id??'');
                                                   }
 
                                                   for (int k = 0;
                                                       k <
-                                                          devData[index]
+                                                          (devData?[index]
                                                               .main[i]
                                                               .subjects[j]
                                                               .extras
-                                                              .length;
+                                                              .length??0);
                                                       k++) {
-                                                    if (devData[index]
+                                                    if (devData?[index]
                                                             .main[i]
                                                             .subjects[j]
                                                             .extras[k]
                                                             .checked ==
                                                         'checked') {
                                                       extraIds.add(
-                                                          devData[index]
+                                                          devData?[index]
                                                               .main[i]
                                                               .subjects[j]
                                                               .extras[k]
-                                                              .id);
+                                                              .id??'');
                                                     }
                                                   }
                                                 }
                                               }
                                               var objToSend = {
                                                 "centerid":
-                                                    centers[currentIndex].id,
+                                                    centers?[currentIndex].id??'',
                                                 "activity": ids,
                                                 "subactivity": subIds,
                                                 "extras": extraIds,
@@ -1080,7 +1085,7 @@ class _DevAssignmentSettingsState extends State<DevAssignmentSettings>
                                                   'Settings/saveDevMileList';
                                               print(jsonEncode(objToSend));
                                               final response = await http.post(
-                                                  _toSend,
+                                                  Uri.parse(_toSend),
                                                   body: jsonEncode(objToSend),
                                                   headers: {
                                                     'X-DEVICE-ID': await MyApp

@@ -8,12 +8,12 @@ class CentersModel{
   String addressZip;
 
   CentersModel({
-    this.id,
-    this.centerName,
-    this.adressStreet,
-    this.addressCity,
-    this.addressState,
-    this.addressZip
+   required  this.id,
+   required  this.centerName,
+   required  this.adressStreet,
+   required  this.addressCity,
+   required  this.addressState,
+   required  this.addressZip
     });
 
   static CentersModel fromJson(Map<String,dynamic> json){

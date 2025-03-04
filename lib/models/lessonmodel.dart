@@ -4,14 +4,22 @@ class LessonChildSubModel {
   String imageUrl;
   List<LessonChildProcessModel> lessonProcess;
 
-  LessonChildSubModel(
-      {this.childId, this.childName, this.imageUrl, this.lessonProcess});
+  LessonChildSubModel({
+    required this.childId,
+    required this.childName,
+    required this.imageUrl,
+    required this.lessonProcess,
+  });
 
   static LessonChildSubModel fromJson(Map<String, dynamic> json) {
     return LessonChildSubModel(
-      childId: json['child_id'],
-      childName: json['child_name'],
-      imageUrl: json['child_imageUrl'],
+      childId: json['child_id'] ?? '',
+      childName: json['child_name'] ?? '',
+      imageUrl: json['child_imageUrl'] ?? '',
+      lessonProcess: (json['lesson_process'] as List<dynamic>?)
+              ?.map((e) => LessonChildProcessModel.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }
@@ -22,16 +30,16 @@ class LessonChildProcessModel {
   String subTitle;
 
   LessonChildProcessModel({
-    this.activity,
-    this.subactivity,
-    this.subTitle,
+    required this.activity,
+    required this.subactivity,
+    required this.subTitle,
   });
 
   static LessonChildProcessModel fromJson(Map<String, dynamic> json) {
     return LessonChildProcessModel(
-      activity: json['activity'],
-      subactivity: json['subactivity'],
-      subTitle: json['sub_title'],
+      activity: json['activity'] ?? '',
+      subactivity: json['subactivity'] ?? '',
+      subTitle: json['sub_title'] ?? '',
     );
   }
 }

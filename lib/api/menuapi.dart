@@ -18,7 +18,7 @@ class MenuAPIHandler {
 
 Future<dynamic> getMenuList() async {
   
-    var getMenuListURL = _getMenuListURL+MyApp.LOGIN_ID_VALUE+'/'+data['url'];
+    var getMenuListURL = _getMenuListURL+MyApp.LOGIN_ID_VALUE+'/'+'${data['url']??""}';
     print(getMenuListURL);
     ServiceWithHeader helper = ServiceWithHeader(getMenuListURL);
     var d = await helper.data();
@@ -34,7 +34,7 @@ Future<dynamic> saveMenuItem() async {
   }
 
   Future<dynamic> deleteListItem() async {
-    var deleteItemUrl = _deleteItemUrl+MyApp.LOGIN_ID_VALUE+'/'+data['id'];
+    var deleteItemUrl = _deleteItemUrl+MyApp.LOGIN_ID_VALUE+'/'+'${data['id']??''}';
     ServiceWithHeader helper = ServiceWithHeader(deleteItemUrl);
     var d = await helper.data();
     return d;

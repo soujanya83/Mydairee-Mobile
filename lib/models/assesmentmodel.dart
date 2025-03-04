@@ -7,12 +7,12 @@ class AssesmentModel {
   List educators;
 
   AssesmentModel(
-      {this.id,
-      this.centerid,
-      this.name,
-      this.addedBy,
-      this.addedAt,
-      this.educators});
+      {required this.id,
+     required  this.centerid,
+     required  this.name,
+     required  this.addedBy,
+     required  this.addedAt,
+     required  this.educators});
 
   static AssesmentModel fromJson(Map<String, dynamic> json) {
     return AssesmentModel(

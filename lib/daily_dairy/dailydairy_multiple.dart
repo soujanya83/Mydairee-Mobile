@@ -27,10 +27,10 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
 
   List<TextEditingController> controller = [];
   bool loaded = false;
-  int len;
+  int len = 0;
 
-  List<String> hours;
-  List<String> minutes;
+  List<String>? hours;
+  List<String>? minutes;
 
   @override
   void initState() {
@@ -177,9 +177,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -189,7 +188,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -201,7 +200,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                     value: hour[
                                                                         index],
                                                                     items: hours
-                                                                        .map((String
+                                                                        ?.map((String
                                                                             value) {
                                                                       return new DropdownMenuItem<
                                                                           String>(
@@ -212,10 +211,13 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       hour[index] =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -235,9 +237,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -247,7 +248,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -259,7 +260,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                     value: min[
                                                                         index],
                                                                     items: minutes
-                                                                        .map((String
+                                                                        ?.map((String
                                                                             value) {
                                                                       return new DropdownMenuItem<
                                                                           String>(
@@ -270,10 +271,13 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       min[index] =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -301,9 +305,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -313,7 +316,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -325,7 +328,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                     value: hour2[
                                                                         index],
                                                                     items: hours
-                                                                        .map((String
+                                                                        ?.map((String
                                                                             value) {
                                                                       return new DropdownMenuItem<
                                                                           String>(
@@ -336,10 +339,13 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       hour2[index] =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -359,9 +365,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -371,7 +376,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -383,7 +388,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                     value: min2[
                                                                         index],
                                                                     items: minutes
-                                                                        .map((String
+                                                                        ?.map((String
                                                                             value) {
                                                                       return new DropdownMenuItem<
                                                                           String>(
@@ -394,10 +399,13 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       min2[index] =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -517,9 +525,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -529,7 +536,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -541,7 +548,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                     value: hour[
                                                                         index],
                                                                     items: hours
-                                                                        .map((String
+                                                                        ?.map((String
                                                                             value) {
                                                                       return new DropdownMenuItem<
                                                                           String>(
@@ -552,10 +559,13 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       hour[index] =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -575,9 +585,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -587,7 +596,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -599,7 +608,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                     value: min[
                                                                         index],
                                                                     items: minutes
-                                                                        .map((String
+                                                                        ?.map((String
                                                                             value) {
                                                                       return new DropdownMenuItem<
                                                                           String>(
@@ -610,10 +619,13 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       min[index] =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -698,7 +710,8 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                   };
 
                                   print(jsonEncode(objToSend));
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(
+                                      Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':

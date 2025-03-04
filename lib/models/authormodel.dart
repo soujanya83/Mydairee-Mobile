@@ -3,8 +3,8 @@ class AuthorModel {
   String name;
 
   AuthorModel({
-    this.id,
-    this.name,
+   required  this.id,
+   required  this.name,
   });
 
   static AuthorModel fromJson(Map<String, dynamic> json) {

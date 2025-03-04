@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+// import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
@@ -21,27 +22,31 @@ class AddAccidents extends StatefulWidget {
   final String accid;
   final String type;
 
-  AddAccidents({this.centerid, this.roomid,this.accid,this.type});
+  AddAccidents(
+      {required this.centerid,
+      required this.roomid,
+      required this.accid,
+     required this.type});
   @override
   _AddAccidentsState createState() => _AddAccidentsState();
 }
 
 class _AddAccidentsState extends State<AddAccidents> {
-  TextEditingController name, positionRole;
+  TextEditingController? name, positionRole;
   String nameError = '';
   String positionroleError = '';
-  String pHour, pMin;
-  DateTime recordDate;
+  String? pHour, pMin;
+  DateTime? recordDate;
 
-  List<String> hours;
-  List<String> minutes;
+  List<String>? hours;
+  List<String>? minutes;
 
-  Uint8List person_signature;
+  Uint8List? person_signature;
 
-  Uint8List child_signature;
-  String personsignatureError = '', childsignatureError = '';
+  Uint8List? child_signature;
+  String? personsignatureError = '', childsignatureError = '';
 
-  String addmark;
+  String? addmark;
 
   bool abrasion = false,
       allergy = false,
@@ -74,7 +79,7 @@ class _AddAccidentsState extends State<AddAccidents> {
 
   // child
 
-  TextEditingController cAge,
+  TextEditingController? cAge,
       witnessname,
       cactivity,
       ccause,
@@ -92,16 +97,16 @@ class _AddAccidentsState extends State<AddAccidents> {
       cclockedError = '',
       clocError = '';
 
-  DateTime cDob;
-  DateTime cIncidentDate;
-  DateTime cIDate;
+  DateTime? cDob;
+  DateTime? cIncidentDate;
+  DateTime? cIDate;
 
-  String cHour, cMin;
+  String? cHour, cMin;
 
   String _gender = 'Male';
 
   // action
-  TextEditingController adetail, ayesdetails, afuture1, afuture2, afuture3;
+  TextEditingController? adetail, ayesdetails, afuture1, afuture2, afuture3;
   String adetailError = '',
       ayesdetailsError = '',
       afuture1Error = '',
@@ -111,59 +116,31 @@ class _AddAccidentsState extends State<AddAccidents> {
   String _aAttention = 'Yes';
 
   //gaurdian
-  TextEditingController gName1, gContact1, gName2, gContact2;
+  TextEditingController? gName1, gContact1, gName2, gContact2;
   String gNmae1Error = '',
       gContact1Error = '',
       gName2Error = '',
       gContact2Error = '';
-  String gHour1, gMin1;
-  DateTime gDate1;
+  String? gHour1, gMin1;
+  DateTime? gDate1;
 
-  String gHour2, gMin2;
-  DateTime gDate2;
+  String? gHour2, gMin2;
+  DateTime? gDate2;
 
   bool gContacted1 = false, gMsg1 = false;
 
   bool gContacted2 = false, gMsg2 = false;
 
   // internal notifications
-  TextEditingController nName, nSupervisorName;
-  String nNameError = '', nSupervisorNameError = '';
-  String nHour1, nMin1;
-  DateTime nDate1;
+  TextEditingController? nName, nSupervisorName, eAgency, eAuthority, paName, aNotes;
+String nNameError = '', nSupervisorNameError = '', inchargesignatureError = '', supervisorsignatureError = '';
+String eAgencyError = '', eAuthorityError = '', paNameError = '', aNotesError = '';
+String? nHour1, nMin1, nHour2, nMin2, eHour1, eMin1, eHour2, eMin2, paHour, paMin;
+DateTime? nDate1, nDate2, eDate1, eDate2, paDate;
+Uint8List? incharge_signature, supervisor_signature;
+bool childrensFetched = false;
+List<ChildModel> _allChildrens = [];
 
-  String nHour2, nMin2;
-  DateTime nDate2;
-
-  Uint8List incharge_signature;
-
-  Uint8List supervisor_signature;
-  String inchargesignatureError = '', supervisorsignatureError = '';
-  // external
-
-  TextEditingController eAgency, eAuthority;
-  String eAgencyError = '', eAuthorityError = '';
-  String eHour1, eMin1;
-  DateTime eDate1;
-
-  String eHour2, eMin2;
-  DateTime eDate2;
-
-  //parental
-
-  TextEditingController paName;
-  String paNameError = '';
-
-  String paHour, paMin;
-  DateTime paDate;
-
-  //notes
-
-  TextEditingController aNotes;
-  String aNotesError = '';
-
-  bool childrensFetched = false;
-  List<ChildModel> _allChildrens;
   int currentIndex = 0;
   var accInfo;
 
@@ -177,7 +154,7 @@ class _AddAccidentsState extends State<AddAccidents> {
     DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
     var dt = await hlr.getData();
     if (!dt.containsKey('error')) {
-      print('herrrr'+dt['childs'].toString());
+      print('herrrr' + dt['childs'].toString());
       var child = dt['childs'];
       _allChildrens = [];
       try {
@@ -185,138 +162,138 @@ class _AddAccidentsState extends State<AddAccidents> {
         for (int i = 0; i < child.length; i++) {
           _allChildrens.add(ChildModel.fromJson(child[i]));
         }
-       if(_allChildrens.length!=0) 
-        childrensFetched = true;
+        if (_allChildrens.length != 0) childrensFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
         print(e);
       }
       print(widget.type);
-      if(widget.type=='edit'){
+      if (widget.type == 'edit') {
         Map<String, String> dataX = {
-         "id":widget.accid,
-         "accidentid":widget.accid,
-         "userid":MyApp.LOGIN_ID_VALUE
+          "id": widget.accid,
+          "accidentid": widget.accid,
+          "userid": MyApp.LOGIN_ID_VALUE
         };
         print(dataX);
-       DailyDairyAPIHandler hlr = DailyDairyAPIHandler(dataX);
-       var dt = await hlr.getAccidentsInfo();
-       if (!dt.containsKey('error')) {
-         print('accid'+dt['AccidentInfo'][0].toString());
-         accInfo =dt['AccidentInfo'][0];
-         name.text=accInfo['person_name'];
-         positionRole.text=accInfo['person_role'];
-         recordDate =  DateTime.parse(accInfo['date']);
-         print('thissss'+accInfo['time'].toString());
-  // for hour and min check whether data exists or not if exists then do split
-          
-          if(accInfo['time']!=null && accInfo['time']!=''){
-             pHour = accInfo['time'].toString().split(':')[0];
-             pMin = accInfo['time'].toString().split(':')[1];
-          }
-      
-         for (int i = 0; i < _allChildrens.length; i++) {
-                                  if (_allChildrens[i].id == accInfo['childid']) {
-                                    setState(() {
-                                      currentIndex = i;
-                                    });
-                                    break;
-                                  }
-                                }
-         cDob=  DateTime.parse(accInfo['child_dob']);
-         cAge.text = accInfo['child_age'];
-         _gender = accInfo['child_gender'];
-         //incident
-         cIncidentDate =DateTime.parse(accInfo['incident_date']);
-          if(accInfo['incident_time']!=null && accInfo['incident_time']!=''){
-            
-              cHour = accInfo['incident_time'].toString().split(':')[0];
-              cMin = accInfo['incident_time'].toString().split(':')[1];
-          
-          }
-         cloc.text = accInfo['incident_location'];
-         cIDate = DateTime.parse(accInfo['witness_date']);       
-         witnessname.text = accInfo['witness_name'];
-         cactivity.text = accInfo['gen_actyvt'];
-         ccause.text= accInfo['cause'];
-         ccsurrondings.text=accInfo['illness_symptoms'];
-         ccunaccount.text=accInfo['missing_unaccounted'];
-         cclocked.text=accInfo['taken_removed'];
+        DailyDairyAPIHandler hlr = DailyDairyAPIHandler(dataX);
+        var dt = await hlr.getAccidentsInfo();
+        if (!dt.containsKey('error')) {
+          print('accid' + dt!['AccidentInfo']![0].toString());
+          accInfo = dt['AccidentInfo']?[0];
+          name?.text = accInfo['person_name'];
+          positionRole?.text = accInfo['person_role'];
+          recordDate = DateTime.parse(accInfo['date']);
+          print('thissss' + accInfo['time'].toString());
+          // for hour and min check whether data exists or not if exists then do split
 
-         adetail.text=accInfo['action_taken'];
-        _aEmergency=accInfo['emrg_serv_attend'];
-         ayesdetails.text =accInfo['med_attention'];
-         if(accInfo['med_attention_details']!=null &&accInfo['med_attention_details']!=''){
-             _aAttention=accInfo['med_attention_details'];
+          if (accInfo['time'] != null && accInfo['time'] != '') {
+            pHour = accInfo['time'].toString().split(':')?[0];
+            pMin = accInfo['time'].toString().split(':')[1];
           }
-      
-         afuture1.text=accInfo['prevention_step_1'];
-         afuture2.text=accInfo['prevention_step_2'];
-         afuture3.text=accInfo['prevention_step_3'];
-         gName1.text=accInfo['parent1_name'];
-         gContact1.text=accInfo['contact1_method'];
-          if(accInfo['contact1_time']!=null && accInfo['contact1_time']!=''){
-              gHour1=accInfo['contact1_time'].toString().split(':')[0];
-             gMin1=accInfo['contact1_time'].toString().split(':')[0];
-          }
-         gDate1=DateTime.parse(accInfo['contact1_date']); 
-         gContacted1 =accInfo['contact1_date']=='Yes';
-         gMsg1   =accInfo['contact1_msg']=='Yes';
-         
-         gName2.text=accInfo['parent2_name'];
-         gContact2.text=accInfo['contact2_method'];
-         if(accInfo['contact2_time']!=null && accInfo['contact2_time']!=''){
-            gHour2=accInfo['contact2_time'].toString().split(':')[0];
-            gMin2=accInfo['contact2_time'].toString().split(':')[0];
-          }
-         gDate2=DateTime.parse(accInfo['contact2_date']); 
-         gContacted2 =accInfo['contact2_date']=='Yes';
-         gMsg2   =accInfo['contact2_msg']=='Yes';
 
-         nName.text =accInfo['responsible_person_name'];
-        if(accInfo['rp_internal_notif_time']!=null && accInfo['rp_internal_notif_time']!=''){ 
-           nHour1=accInfo['rp_internal_notif_time'].toString().split(':')[0];
-           nMin1=accInfo['rp_internal_notif_time'].toString().split(':')[0];
+          for (int i = 0; i < _allChildrens.length; i++) {
+            if (_allChildrens[i].id == accInfo['childid']) {
+              setState(() {
+                currentIndex = i;
+              });
+              break;
+            }
+          }
+          cDob = DateTime.parse(accInfo['child_dob']);
+          cAge?.text = accInfo['child_age'];
+          _gender = accInfo['child_gender'];
+          //incident
+          cIncidentDate = DateTime.parse(accInfo['incident_date']);
+          if (accInfo['incident_time'] != null &&
+              accInfo['incident_time'] != '') {
+            cHour = accInfo['incident_time'].toString().split(':')?[0];
+            cMin = accInfo['incident_time'].toString().split(':')[1];
+          }
+          cloc?.text = accInfo['incident_location'];
+          cIDate = DateTime.parse(accInfo['witness_date']);
+          witnessname?.text = accInfo['witness_name'];
+          cactivity?.text = accInfo['gen_actyvt'];
+          ccause?.text = accInfo['cause'];
+          ccsurrondings?.text = accInfo['illness_symptoms'];
+          ccunaccount?.text = accInfo['missing_unaccounted'];
+          cclocked?.text = accInfo['taken_removed'];
+
+          adetail?.text = accInfo['action_taken'];
+          _aEmergency = accInfo['emrg_serv_attend'];
+          ayesdetails?.text = accInfo['med_attention'];
+          if (accInfo['med_attention_details'] != null &&
+              accInfo['med_attention_details'] != '') {
+            _aAttention = accInfo['med_attention_details'];
+          }
+
+          afuture1?.text = accInfo['prevention_step_1'];
+          afuture2?.text = accInfo['prevention_step_2'];
+          afuture3?.text = accInfo['prevention_step_3'];
+          gName1?.text = accInfo['parent1_name'];
+          gContact1?.text = accInfo['contact1_method'];
+          if (accInfo['contact1_time'] != null &&
+              accInfo['contact1_time'] != '') {
+            gHour1 = accInfo['contact1_time'].toString().split(':')?[0];
+            gMin1 = accInfo['contact1_time'].toString().split(':')?[0];
+          }
+          gDate1 = DateTime.parse(accInfo['contact1_date']);
+          gContacted1 = accInfo['contact1_date'] == 'Yes';
+          gMsg1 = accInfo['contact1_msg'] == 'Yes';
+
+          gName2?.text = accInfo['parent2_name'];
+          gContact2?.text = accInfo['contact2_method'];
+          if (accInfo['contact2_time'] != null &&
+              accInfo['contact2_time'] != '') {
+            gHour2 = accInfo['contact2_time'].toString().split(':')?[0];
+            gMin2 = accInfo['contact2_time'].toString().split(':')?[0];
+          }
+          gDate2 = DateTime.parse(accInfo['contact2_date']);
+          gContacted2 = accInfo['contact2_date'] == 'Yes';
+          gMsg2 = accInfo['contact2_msg'] == 'Yes';
+
+          nName?.text = accInfo['responsible_person_name'];
+          if (accInfo['rp_internal_notif_time'] != null &&
+              accInfo['rp_internal_notif_time'] != '') {
+            nHour1 = accInfo['rp_internal_notif_time'].toString().split(':')?[0];
+            nMin1 = accInfo['rp_internal_notif_time'].toString().split(':')?[0];
+          }
+          nDate1 = DateTime.parse(accInfo['rp_internal_notif_date']);
+          nSupervisorName?.text = accInfo['nominated_supervisor_name'];
+          if (accInfo['nominated_supervisor_time'] != null &&
+              accInfo['nominated_supervisor_time'] != '') {
+            nHour2 =
+                accInfo['nominated_supervisor_time'].toString().split(':')?[0];
+            nMin2 =
+                accInfo['nominated_supervisor_time'].toString().split(':')?[0];
+          }
+          nDate2 = DateTime.parse(accInfo['nominated_supervisor_date']);
+
+          eAgency?.text = accInfo['ext_notif_other_agency'];
+          if (accInfo['enor_time'] != null && accInfo['enor_time'] != '') {
+            eHour1 = accInfo['enor_time'].toString().split(':')?[0];
+            eMin1 = accInfo['enor_time'].toString().split(':')?[0];
+          }
+          eDate1 = DateTime.parse(accInfo['enor_date']);
+
+          eAuthority?.text = accInfo['ext_notif_regulatory_auth'];
+          if (accInfo['enra_time'] != null && accInfo['enra_time'] != '') {
+            eHour2 = accInfo['enra_time'].toString().split(':')?[0];
+            eMin2 = accInfo['enra_time'].toString().split(':')?[0];
+          }
+          eDate2 = DateTime.parse(accInfo['enra_date']);
+
+          paName?.text = accInfo['ack_parent_name'];
+
+          if (accInfo['ack_time'] != null && accInfo['ack_time'] != '') {
+            paHour = accInfo['ack_time'].toString().split(':')?[0];
+            paMin = accInfo['ack_time'].toString().split(':')?[0];
+          }
+
+          paDate = DateTime.parse(accInfo['ack_date']);
+          aNotes?.text = accInfo['add_notes'];
         }
-         nDate1=DateTime.parse(accInfo['rp_internal_notif_date']); 
-         nSupervisorName.text=accInfo['nominated_supervisor_name'];
-        if(accInfo['nominated_supervisor_time']!=null && accInfo['nominated_supervisor_time']!=''){ 
-           nHour2=accInfo['nominated_supervisor_time'].toString().split(':')[0];
-           nMin2=accInfo['nominated_supervisor_time'].toString().split(':')[0];
-        }
-         nDate2=DateTime.parse(accInfo['nominated_supervisor_date']);
-
-         eAgency.text=accInfo['ext_notif_other_agency'];
-        if(accInfo['enor_time']!=null && accInfo['enor_time']!=''){ 
-            eHour1=accInfo['enor_time'].toString().split(':')[0];
-            eMin1=accInfo['enor_time'].toString().split(':')[0];
-         }
-         eDate1=DateTime.parse(accInfo['enor_date']);
-
-         eAuthority.text=accInfo['ext_notif_regulatory_auth'];
-        if(accInfo['enra_time']!=null && accInfo['enra_time']!=''){ 
-          eHour2=accInfo['enra_time'].toString().split(':')[0];
-          eMin2=accInfo['enra_time'].toString().split(':')[0];
-        }
-         eDate2=DateTime.parse(accInfo['enra_date']);
-
-         paName.text=accInfo['ack_parent_name'];
-
-         if(accInfo['ack_time']!=null && accInfo['ack_time']!=''){ 
-             paHour=accInfo['ack_time'].toString().split(':')[0];
-             paMin=accInfo['ack_time'].toString().split(':')[0];
-          }
-
-        paDate=DateTime.parse(accInfo['ack_date']);
-        aNotes.text=accInfo['add_notes'];
-
-       }
-       setState(() {
-         
-       });
-
+        setState(() {});
       }
-
     } else {
       MyApp.Show401Dialog(context);
     }
@@ -327,8 +304,8 @@ class _AddAccidentsState extends State<AddAccidents> {
     hours = List<String>.generate(24, (counter) => "${counter + 1}");
     minutes = List<String>.generate(60, (counter) => "$counter");
 
-    pMin = minutes[0];
-    pHour = hours[0];
+    pMin = minutes?[0];
+    pHour = hours?[0];
     recordDate = DateTime.now();
     name = TextEditingController();
     positionRole = TextEditingController();
@@ -345,8 +322,8 @@ class _AddAccidentsState extends State<AddAccidents> {
     cclocked = TextEditingController();
     cloc = TextEditingController();
 
-    cMin = minutes[0];
-    cHour = hours[0];
+    cMin = minutes?[0];
+    cHour = hours?[0];
 
     cDob = DateTime.now();
     cIncidentDate = DateTime.now();
@@ -365,13 +342,13 @@ class _AddAccidentsState extends State<AddAccidents> {
     gContact1 = TextEditingController();
     gContact2 = TextEditingController();
 
-    gMin1 = minutes[0];
-    gHour1 = hours[0];
+    gMin1 = minutes?[0];
+    gHour1 = hours?[0];
 
     gDate1 = DateTime.now();
 
-    gMin2 = minutes[0];
-    gHour2 = hours[0];
+    gMin2 = minutes?[0];
+    gHour2 = hours?[0];
 
     gDate2 = DateTime.now();
     // INCHARGE
@@ -379,11 +356,11 @@ class _AddAccidentsState extends State<AddAccidents> {
     nName = TextEditingController();
     nSupervisorName = TextEditingController();
 
-    nMin1 = minutes[0];
-    nHour1 = hours[0];
+    nMin1 = minutes?[0];
+    nHour1 = hours?[0];
 
-    nMin2 = minutes[0];
-    nHour2 = hours[0];
+    nMin2 = minutes?[0];
+    nHour2 = hours?[0];
 
     nDate1 = DateTime.now();
     nDate2 = DateTime.now();
@@ -391,19 +368,19 @@ class _AddAccidentsState extends State<AddAccidents> {
     //external
     eAgency = TextEditingController();
     eAuthority = TextEditingController();
-    eMin1 = minutes[0];
-    eHour1 = hours[0];
+    eMin1 = minutes?[0];
+    eHour1 = hours?[0];
     eDate1 = DateTime.now();
 
-    eMin2 = minutes[0];
-    eHour2 = hours[0];
+    eMin2 = minutes?[0];
+    eHour2 = hours?[0];
     eDate2 = DateTime.now();
 
     //parental
     paName = TextEditingController();
 
-    paMin = minutes[0];
-    paHour = hours[0];
+    paMin = minutes?[0];
+    paHour = hours?[0];
     paDate = DateTime.now();
 
     //note
@@ -529,7 +506,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                                     builder: (context) => SignaturePage()))
                             .then((value) {
                           if (value != null) {
-                            person_signature = value;
+                            person_signature = value!;
                             // print(person_signature.toString());
                             // print("object1");
                             // final imageEncoded = base64.encode(person_signature);
@@ -548,47 +525,51 @@ class _AddAccidentsState extends State<AddAccidents> {
               SizedBox(
                 height: 5,
               ),
-            person_signature != null
+              person_signature != null
                   ? Image.memory(
-                      person_signature,
+                      person_signature!,
                       width: double.infinity,
                       height: 150,
                     )
-                  :accInfo!=null && accInfo['person_sign']!=null && accInfo['person_sign']!='' ? Image.network(Constants.ImageBaseUrl+accInfo['person_sign'])
-                  :TextField(
-                      readOnly: true,
-                      maxLines: 1,
-                      onTap: () {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignaturePage()))
-                            .then((value) {
-                          if (value != null) {
-                            person_signature = value;
-                            setState(() {});
-                          }
-                        });
-                      },
-                      //  controller: positionRole,
-                      decoration: InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Colors.black26, width: 0.0),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(4),
+                  : accInfo != null &&
+                          accInfo['person_sign'] != null &&
+                          accInfo['person_sign'] != ''
+                      ? Image.network(
+                          Constants.ImageBaseUrl + accInfo['person_sign'])
+                      : TextField(
+                          readOnly: true,
+                          maxLines: 1,
+                          onTap: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignaturePage()))
+                                .then((value) {
+                              if (value != null) {
+                                person_signature = value!;
+                                setState(() {});
+                              }
+                            });
+                          },
+                          //  controller: positionRole,
+                          decoration: InputDecoration(
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: Colors.black26, width: 0.0),
+                            ),
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(4),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
               SizedBox(
                 height: 10,
               ),
               person_signature == null
                   ? Text(
-                      personsignatureError,
+                      personsignatureError??'',
                       style: TextStyle(color: Colors.red),
                     )
                   : Container(),
@@ -605,7 +586,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -614,14 +595,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         recordDate != null
-                            ? DateFormat("dd-MM-yyyy").format(recordDate)
+                            ? DateFormat("dd-MM-yyyy").format(recordDate!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            recordDate = await _selectDate(context, recordDate);
+                            recordDate = await _selectDate(context, recordDate!);
                             setState(() {});
                           },
                           child: Icon(
@@ -650,7 +631,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               //               height: 40,
               //               width: 80,
               //               decoration: BoxDecoration(
-              //                   border: Border.all(color: Colors.grey[300]),
+              //                   border: Border.all(color: Constants.greyColor),
               //                   color: Colors.white,
               //                   borderRadius:
               //                       BorderRadius.all(Radius.circular(8))),
@@ -660,14 +641,14 @@ class _AddAccidentsState extends State<AddAccidents> {
               //                   child: DropdownButton<String>(
               //                     //  isExpanded: true,
               //                     value: pHour,
-              //                     items: hours.map((String value) {
+              //                     items: hours?.map((String value) {
               //                       return new DropdownMenuItem<String>(
               //                         value: value,
               //                         child: new Text(value + "h"),
               //                       );
               //                     }).toList(),
-              //                     onChanged: (String value) {
-              //                       pHour = value;
+              //                     onChanged: (String? value) {
+              //                       pHour = value!;
               //                       setState(() {});
               //                     },
               //                   ),
@@ -685,7 +666,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               //               height: 40,
               //               width: 80,
               //               decoration: BoxDecoration(
-              //                   border: Border.all(color: Colors.grey[300]),
+              //                   border: Border.all(color: Constants.greyColor),
               //                   color: Colors.white,
               //                   borderRadius:
               //                       BorderRadius.all(Radius.circular(8))),
@@ -695,14 +676,14 @@ class _AddAccidentsState extends State<AddAccidents> {
               //                   child: DropdownButton<String>(
               //                     //  isExpanded: true,
               //                     value: pMin,
-              //                     items: minutes.map((String value) {
+              //                     items: minutes?.map((String value) {
               //                       return new DropdownMenuItem<String>(
               //                         value: value,
               //                         child: new Text(value + "m"),
               //                       );
               //                     }).toList(),
-              //                     onChanged: (String value) {
-              //                       pMin = value;
+              //                     onChanged: (String? value) {
+              //                       pMin = value!;
               //                       setState(() {});
               //                     },
               //                   ),
@@ -713,7 +694,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               //         : Container(),
               //   ],
               // ),
-        
+
               SizedBox(
                 height: 15,
               ),
@@ -738,7 +719,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                         height: 40,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]),
+                            border: Border.all(color: Constants.greyColor),
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: Padding(
@@ -796,7 +777,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -805,14 +786,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         cDob != null
-                            ? DateFormat("dd-MM-yyyy").format(cDob)
+                            ? DateFormat("dd-MM-yyyy").format(cDob!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            cDob = await _selectDate(context, cDob);
+                            cDob = await _selectDate(context, cDob!);
                             setState(() {});
                           },
                           child: Icon(
@@ -879,25 +860,26 @@ class _AddAccidentsState extends State<AddAccidents> {
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: Center(
                       child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: _gender,
-                        items: <String>['Male', 'Female', 'Others']
-                            .map((String value) {
-                          return new DropdownMenuItem<String>(
-                            value: value,
-                            child: new Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String value) {
-                          setState(() {
-                            _gender = value;
-                          });
-                        },
-                      ),
+  isExpanded: true,
+  value: _gender,
+  items: <String>['Male', 'Female', 'Others'] // ✅ Removed unnecessary `?`
+      .map((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList(),
+  onChanged: (String? value) {
+    if (value == null) return;
+    setState(() {
+      _gender = value!;
+    });
+  },
+),
                     ),
                   ),
                 ),
-              ),          
+              ),
               SizedBox(
                 height: 15,
               ),
@@ -919,7 +901,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -928,7 +910,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         cIncidentDate != null
-                            ? DateFormat("dd-MM-yyyy").format(cIncidentDate)
+                            ? DateFormat("dd-MM-yyyy").format(cIncidentDate!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
@@ -936,7 +918,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                       GestureDetector(
                           onTap: () async {
                             cIncidentDate =
-                                await _selectDate(context, cIncidentDate);
+                                await _selectDate(context, cIncidentDate!);
                             setState(() {});
                           },
                           child: Icon(
@@ -965,7 +947,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -975,14 +957,15 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: cHour,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    cHour = value;
+                                  onChanged: (String? value) {
+                                    if(value==null)return;
+                                    cHour = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -1000,7 +983,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -1010,14 +993,15 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: cMin,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    cMin = value;
+                                  onChanged: (String? value) {
+                                    if(value==null)return;
+                                    cMin = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -1027,7 +1011,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                         )
                       : Container(),
                 ],
-              ),          
+              ),
               SizedBox(
                 height: 15,
               ),
@@ -1080,7 +1064,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                                     builder: (context) => SignaturePage()))
                             .then((value) {
                           if (value != null) {
-                            child_signature = value;
+                            child_signature = value!;
                             setState(() {});
                           }
                         });
@@ -1091,47 +1075,51 @@ class _AddAccidentsState extends State<AddAccidents> {
               SizedBox(
                 height: 5,
               ),
-             child_signature!= null
+              child_signature != null
                   ? Image.memory(
-                      child_signature,
+                      child_signature!,
                       width: double.infinity,
                       height: 150,
                     )
-                  : accInfo!=null && accInfo['witness_sign']!=null && accInfo['witness_sign']!='' ? Image.network(Constants.ImageBaseUrl+accInfo['witness_sign'])
-                  : TextField(
-                      readOnly: true,
-                      maxLines: 1,
-                      onTap: () {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignaturePage()))
-                            .then((value) {
-                          if (value != null) {
-                            child_signature = value;
-                            setState(() {});
-                          }
-                        });
-                      },
-                      //  controller: positionRole,
-                      decoration: InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Colors.black26, width: 0.0),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(4),
+                  : accInfo != null &&
+                          accInfo['witness_sign'] != null &&
+                          accInfo['witness_sign'] != ''
+                      ? Image.network(
+                          Constants.ImageBaseUrl + accInfo['witness_sign'])
+                      : TextField(
+                          readOnly: true,
+                          maxLines: 1,
+                          onTap: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignaturePage()))
+                                .then((value) {
+                              if (value != null) {
+                                child_signature = value!;
+                                setState(() {});
+                              }
+                            });
+                          },
+                          //  controller: positionRole,
+                          decoration: InputDecoration(
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: Colors.black26, width: 0.0),
+                            ),
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(4),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
               SizedBox(
                 height: 10,
               ),
               child_signature == null
                   ? Text(
-                      childsignatureError,
+                      childsignatureError??'',
                       style: TextStyle(color: Colors.red),
                     )
                   : Container(),
@@ -1148,7 +1136,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -1157,14 +1145,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         cIDate != null
-                            ? DateFormat("dd-MM-yyyy").format(cIDate)
+                            ? DateFormat("dd-MM-yyyy").format(cIDate!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            cIDate = await _selectDate(context, cIDate);
+                            cIDate = await _selectDate(context, cIDate!);
                             setState(() {});
                           },
                           child: Icon(
@@ -1390,76 +1378,91 @@ class _AddAccidentsState extends State<AddAccidents> {
               SizedBox(
                 height: 15,
               ),
-              
-              accInfo!=null && accInfo['injury_image']!=null && accInfo['injury_image']!='' && addmark==null ?Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children:[
-                    TextButton(
-                child: Text('Edit Marks'),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AccidentImage())).then((value) {
-                    if (value != null) {
-                      print("object");
-                      print(value);
-                      addmark = value;
-                      setState(() {});
-                    }
-                  });
-                },
-              ),
-                  ]
-                ),
-                 Image.network(Constants.ImageBaseUrl+accInfo['injury_image'])
-              ],):
-              addmark!=null ?Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children:[
-                    TextButton(
-                child: Text('Edit Marks'),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AccidentImage())).then((value) {
-                    if (value != null) {
-                      print("object");
-                      print(value);
-                      addmark = value;
-                      setState(() {});
-                    }
-                  });
-                },
-              ),
-                  ]
-                ),
-                Image.memory(base64Decode(addmark),)
-                
-              ],):TextButton(
-                child: Text('Add Marks'),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AccidentImage())).then((value) {
-                    if (value != null) {
-                      print("object");
-                      print(value);
-                      addmark = value;
-                      setState(() {});
-                    }
-                  });
-                },
-              ),
+
+              accInfo != null &&
+                      accInfo['injury_image'] != null &&
+                      accInfo['injury_image'] != '' &&
+                      addmark == null
+                  ? Column(
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                child: Text('Edit Marks'),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AccidentImage())).then((value) {
+                                    if (value != null) {
+                                      print("object");
+                                      print(value);
+                                      addmark = value!;
+                                      setState(() {});
+                                    }
+                                  });
+                                },
+                              ),
+                            ]),
+                        Image.network(
+                            Constants.ImageBaseUrl + accInfo['injury_image'])
+                      ],
+                    )
+                  : addmark != null
+                      ? Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    child: Text('Edit Marks'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AccidentImage()))
+                                          .then((value) {
+                                        if (value != null) {
+                                          print("object");
+                                          print(value);
+                                          addmark = value!;
+                                          setState(() {});
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ]),
+                            Image.memory(
+                              base64Decode(addmark ?? ''),
+                            )
+                          ],
+                        )
+                      : TextButton(
+                          child: Text('Add Marks'),
+                          onPressed: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AccidentImage()))
+                                .then((value) {
+                              if (value != null) {
+                                print("object");
+                                print(value);
+                                addmark = value!;
+                                setState(() {});
+                              }
+                            });
+                          },
+                        ),
 
               CheckboxListTile(
                   value: abrasion,
                   title: Text('Abrasion/ Scrape'),
                   onChanged: (val) {
+                    if (val == null) return;
                     abrasion = val;
                     setState(() {});
                   }),
@@ -1467,6 +1470,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: allergy,
                   title: Text('Allergic reaction'),
                   onChanged: (val) {
+                    if (val == null) return;
                     allergy = val;
                     setState(() {});
                   }),
@@ -1474,6 +1478,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: amputation,
                   title: Text('Amputation'),
                   onChanged: (val) {
+                    if (val == null) return;
                     amputation = val;
                     setState(() {});
                   }),
@@ -1481,6 +1486,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: anaphylaxis,
                   title: Text('Anaphylaxis'),
                   onChanged: (val) {
+                    if (val == null) return;
                     anaphylaxis = val;
                     setState(() {});
                   }),
@@ -1488,6 +1494,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: asthama,
                   title: Text('Asthma/ Respiratory'),
                   onChanged: (val) {
+                    if (val == null) return;
                     asthama = val;
                     setState(() {});
                   }),
@@ -1495,6 +1502,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: bite,
                   title: Text('Bite Wound'),
                   onChanged: (val) {
+                    if (val == null) return;
                     bite = val;
                     setState(() {});
                   }),
@@ -1502,6 +1510,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: broken,
                   title: Text('Broken Bone/ Fracture/ Dislocation'),
                   onChanged: (val) {
+                    if (val == null) return;
                     broken = val;
                     setState(() {});
                   }),
@@ -1509,6 +1518,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: burn,
                   title: Text('Burn/ Sunburn'),
                   onChanged: (val) {
+                    if (val == null) return;
                     burn = val;
                     setState(() {});
                   }),
@@ -1517,6 +1527,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: choking,
                   title: Text('Choking'),
                   onChanged: (val) {
+                    if (val == null) return;
                     choking = val;
                     setState(() {});
                   }),
@@ -1524,6 +1535,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: concussion,
                   title: Text('Concussion'),
                   onChanged: (val) {
+                    if (val == null) return;
                     concussion = val;
                     setState(() {});
                   }),
@@ -1531,6 +1543,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: crush,
                   title: Text('Crush/ Jam'),
                   onChanged: (val) {
+                    if (val == null) return;
                     crush = val;
                     setState(() {});
                   }),
@@ -1538,6 +1551,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: cut,
                   title: Text('Cut/ Open Wound'),
                   onChanged: (val) {
+                    if (val == null) return;
                     cut = val;
                     setState(() {});
                   }),
@@ -1545,6 +1559,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: drowning,
                   title: Text('Drowning (nonfatal)'),
                   onChanged: (val) {
+                    if (val == null) return;
                     drowning = val;
                     setState(() {});
                   }),
@@ -1552,6 +1567,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: eye,
                   title: Text('Eye Injury'),
                   onChanged: (val) {
+                    if (val == null) return;
                     eye = val;
                     setState(() {});
                   }),
@@ -1560,6 +1576,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: electic,
                   title: Text('Electric Shock'),
                   onChanged: (val) {
+                    if (val == null) return;
                     electic = val;
                     setState(() {});
                   }),
@@ -1567,6 +1584,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: high,
                   title: Text('High Temperature'),
                   onChanged: (val) {
+                    if (val == null) return;
                     high = val;
                     setState(() {});
                   }),
@@ -1574,6 +1592,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: infectious,
                   title: Text('Infectious Disease (inc gastrointestinal)'),
                   onChanged: (val) {
+                    if (val == null) return;
                     infectious = val;
                     setState(() {});
                   }),
@@ -1581,6 +1600,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: ingestion,
                   title: Text('Ingestion/ Inhalation/ Insertion'),
                   onChanged: (val) {
+                    if (val == null) return;
                     ingestion = val;
                     setState(() {});
                   }),
@@ -1588,6 +1608,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: internal,
                   title: Text('Internal injury/ Infection'),
                   onChanged: (val) {
+                    if (val == null) return;
                     internal = val;
                     setState(() {});
                   }),
@@ -1595,6 +1616,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: poisoning,
                   title: Text('Poisoning'),
                   onChanged: (val) {
+                    if (val == null) return;
                     poisoning = val;
                     setState(() {});
                   }),
@@ -1602,6 +1624,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: rash,
                   title: Text('Rash'),
                   onChanged: (val) {
+                    if (val == null) return;
                     broken = val;
                     setState(() {});
                   }),
@@ -1609,6 +1632,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: respiratory,
                   title: Text('Respiratory'),
                   onChanged: (val) {
+                    if (val == null) return;
                     respiratory = val;
                     setState(() {});
                   }),
@@ -1616,6 +1640,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: seizure,
                   title: Text('Seizure/ unconscious/ convulsion'),
                   onChanged: (val) {
+                    if (val == null) return;
                     seizure = val;
                     setState(() {});
                   }),
@@ -1623,6 +1648,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: sprain,
                   title: Text('Sprain/ swelling'),
                   onChanged: (val) {
+                    if (val == null) return;
                     sprain = val;
                     setState(() {});
                   }),
@@ -1630,6 +1656,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: stabbing,
                   title: Text('Stabbing/ piercing'),
                   onChanged: (val) {
+                    if (val == null) return;
                     stabbing = val;
                     setState(() {});
                   }),
@@ -1637,6 +1664,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: tooth,
                   title: Text('Tooth'),
                   onChanged: (val) {
+                    if (val == null) return;
                     tooth = val;
                     setState(() {});
                   }),
@@ -1644,6 +1672,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: venomous,
                   title: Text('Venomous bite/ sting'),
                   onChanged: (val) {
+                    if (val == null) return;
                     venomous = val;
                     setState(() {});
                   }),
@@ -1651,6 +1680,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   value: other,
                   title: Text('Other( please specify)'),
                   onChanged: (val) {
+                    if (val == null) return;
                     other = val;
                     setState(() {});
                   }),
@@ -1726,9 +1756,10 @@ class _AddAccidentsState extends State<AddAccidents> {
                             child: new Text(value),
                           );
                         }).toList(),
-                        onChanged: (String value) {
+                        onChanged: (String? value) {
+                          if (value == null) return;
                           setState(() {
-                            _aEmergency = value;
+                            _aEmergency = value!;
                           });
                         },
                       ),
@@ -1771,8 +1802,9 @@ class _AddAccidentsState extends State<AddAccidents> {
                           ayesdetailsError,
                           style: TextStyle(color: Colors.red),
                         )
-                      : Container()
-                  : Constants(),
+                      : Container() // ✅ This ensures a valid widget is returned
+                  : Container(), // ✅ Replace Constants() with a proper widget
+
               SizedBox(
                 height: 5,
               ),
@@ -1803,9 +1835,10 @@ class _AddAccidentsState extends State<AddAccidents> {
                             child: new Text(value),
                           );
                         }).toList(),
-                        onChanged: (String value) {
+                        onChanged: (String? value) {
+                          if(value==null)return;
                           setState(() {
-                            _aAttention = value;
+                            _aAttention = value!;
                           });
                         },
                       ),
@@ -1829,7 +1862,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                 controller: afuture1,
                 decoration: InputDecoration(
                   hintText: '1.',
-                  hintStyle: TextStyle(color: Colors.grey[300]),
+                  hintStyle: TextStyle(color: Constants.greyColor),
                   enabledBorder: const OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black26, width: 0.0),
@@ -1849,7 +1882,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                 controller: afuture2,
                 decoration: InputDecoration(
                   hintText: '2.',
-                  hintStyle: TextStyle(color: Colors.grey[300]),
+                  hintStyle: TextStyle(color: Constants.greyColor),
                   enabledBorder: const OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black26, width: 0.0),
@@ -1869,7 +1902,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                 controller: afuture3,
                 decoration: InputDecoration(
                   hintText: '3.',
-                  hintStyle: TextStyle(color: Colors.grey[300]),
+                  hintStyle: TextStyle(color: Constants.greyColor),
                   enabledBorder: const OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black26, width: 0.0),
@@ -1979,7 +2012,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -1989,14 +2022,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: gHour1,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    gHour1 = value;
+                                  onChanged: (String? value) {
+                                    gHour1 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2014,7 +2047,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2024,14 +2057,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: gMin1,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    gMin1 = value;
+                                  onChanged: (String? value) {
+                                    gMin1 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2055,7 +2088,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -2064,14 +2097,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         gDate1 != null
-                            ? DateFormat("dd-MM-yyyy").format(gDate1)
+                            ? DateFormat("dd-MM-yyyy").format(gDate1!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            gDate1 = await _selectDate(context, gDate1);
+                            gDate1 = await _selectDate(context, gDate1!);
                             setState(() {});
                           },
                           child: Icon(
@@ -2095,7 +2128,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   trailing: Checkbox(
                     value: gContacted1,
                     onChanged: (val) {
-                      gContacted1 = val;
+                      gContacted1 = val!;
                       setState(() {});
                     },
                   ),
@@ -2114,6 +2147,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   trailing: Checkbox(
                     value: gMsg1,
                     onChanged: (val) {
+                      if(val==null)return;
                       gMsg1 = val;
                       setState(() {});
                     },
@@ -2209,7 +2243,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2219,14 +2253,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: gHour2,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    gHour2 = value;
+                                  onChanged: (String? value) {
+                                    gHour2 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2244,7 +2278,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2254,14 +2288,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: gMin2,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    gMin2 = value;
+                                  onChanged: (String? value) {
+                                    gMin2 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2285,7 +2319,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -2294,14 +2328,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         gDate2 != null
-                            ? DateFormat("dd-MM-yyyy").format(gDate2)
+                            ? DateFormat("dd-MM-yyyy").format(gDate2!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            gDate2 = await _selectDate(context, gDate2);
+                            gDate2 = await _selectDate(context, gDate2!);
                             setState(() {});
                           },
                           child: Icon(
@@ -2325,7 +2359,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   trailing: Checkbox(
                     value: gContacted2,
                     onChanged: (val) {
-                      gContacted2 = val;
+                      gContacted2 = val!;
                       setState(() {});
                     },
                   ),
@@ -2344,7 +2378,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                   trailing: Checkbox(
                     value: gMsg2,
                     onChanged: (val) {
-                      gMsg2 = val;
+                      gMsg2 = val!;
                       setState(() {});
                     },
                   ),
@@ -2411,7 +2445,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                                     builder: (context) => SignaturePage()))
                             .then((value) {
                           if (value != null) {
-                            incharge_signature = value;
+                            incharge_signature = value!;
                             setState(() {});
                           }
                         });
@@ -2424,39 +2458,43 @@ class _AddAccidentsState extends State<AddAccidents> {
               ),
               incharge_signature != null
                   ? Image.memory(
-                      incharge_signature,
+                      incharge_signature!,
                       width: double.infinity,
                       height: 150,
                     )
-                  : accInfo!=null && accInfo['responsible_person_sign']!=null && accInfo['responsible_person_sign']!='' ? Image.network(Constants.ImageBaseUrl+accInfo['responsible_person_sign'])  
-                  : TextField(
-                      readOnly: true,
-                      maxLines: 1,
-                      onTap: () {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignaturePage()))
-                            .then((value) {
-                          if (value != null) {
-                            incharge_signature = value;
-                            setState(() {});
-                          }
-                        });
-                      },
-                      //  controller: positionRole,
-                      decoration: InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Colors.black26, width: 0.0),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(4),
+                  : accInfo != null &&
+                          accInfo['responsible_person_sign'] != null &&
+                          accInfo['responsible_person_sign'] != ''
+                      ? Image.network(Constants.ImageBaseUrl +
+                          accInfo['responsible_person_sign'])
+                      : TextField(
+                          readOnly: true,
+                          maxLines: 1,
+                          onTap: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignaturePage()))
+                                .then((value) {
+                              if (value != null) {
+                                incharge_signature = value!;
+                                setState(() {});
+                              }
+                            });
+                          },
+                          //  controller: positionRole,
+                          decoration: InputDecoration(
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: Colors.black26, width: 0.0),
+                            ),
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(4),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
               SizedBox(
                 height: 10,
               ),
@@ -2484,7 +2522,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2494,14 +2532,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: nHour1,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    nHour1 = value;
+                                  onChanged: (String? value) {
+                                    nHour1 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2519,7 +2557,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2529,14 +2567,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: nMin1,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    nMin1 = value;
+                                  onChanged: (String? value) {
+                                    nMin1 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2560,7 +2598,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -2569,14 +2607,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         nDate1 != null
-                            ? DateFormat("dd-MM-yyyy").format(nDate1)
+                            ? DateFormat("dd-MM-yyyy").format(nDate1!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            nDate1 = await _selectDate(context, nDate1);
+                            nDate1 = await _selectDate(context, nDate1!);
                             setState(() {});
                           },
                           child: Icon(
@@ -2640,7 +2678,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                                     builder: (context) => SignaturePage()))
                             .then((value) {
                           if (value != null) {
-                            supervisor_signature = value;
+                            supervisor_signature = value!;
                             setState(() {});
                           }
                         });
@@ -2653,39 +2691,43 @@ class _AddAccidentsState extends State<AddAccidents> {
               ),
               supervisor_signature != null
                   ? Image.memory(
-                      supervisor_signature,
+                      supervisor_signature!,
                       width: double.infinity,
                       height: 150,
                     )
-                  : accInfo!=null && accInfo['nominated_supervisor_sign']!=null && accInfo['nominated_supervisor_sign']!='' ? Image.network(Constants.ImageBaseUrl+accInfo['nominated_supervisor_sign'])   
-                  : TextField(
-                      readOnly: true,
-                      maxLines: 1,
-                      onTap: () {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignaturePage()))
-                            .then((value) {
-                          if (value != null) {
-                            supervisor_signature = value;
-                            setState(() {});
-                          }
-                        });
-                      },
-                      //  controller: positionRole,
-                      decoration: InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Colors.black26, width: 0.0),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(4),
+                  : accInfo != null &&
+                          accInfo['nominated_supervisor_sign'] != null &&
+                          accInfo['nominated_supervisor_sign'] != ''
+                      ? Image.network(Constants.ImageBaseUrl +
+                          accInfo['nominated_supervisor_sign'])
+                      : TextField(
+                          readOnly: true,
+                          maxLines: 1,
+                          onTap: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignaturePage()))
+                                .then((value) {
+                              if (value != null) {
+                                supervisor_signature = value!;
+                                setState(() {});
+                              }
+                            });
+                          },
+                          //  controller: positionRole,
+                          decoration: InputDecoration(
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: Colors.black26, width: 0.0),
+                            ),
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(4),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
               SizedBox(
                 height: 10,
               ),
@@ -2713,7 +2755,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2723,14 +2765,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: nHour2,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    nHour2 = value;
+                                  onChanged: (String? value) {
+                                    nHour2 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2748,7 +2790,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2758,14 +2800,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: nMin2,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    nMin2 = value;
+                                  onChanged: (String? value) {
+                                    nMin2 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2789,7 +2831,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -2798,14 +2840,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         nDate2 != null
-                            ? DateFormat("dd-MM-yyyy").format(nDate2)
+                            ? DateFormat("dd-MM-yyyy").format(nDate2!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            nDate2 = await _selectDate(context, nDate2);
+                            nDate2 = await _selectDate(context, nDate2!);
                             setState(() {});
                           },
                           child: Icon(
@@ -2877,7 +2919,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2887,14 +2929,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: eHour1,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    eHour1 = value;
+                                  onChanged: (String? value) {
+                                    eHour1 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2912,7 +2954,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -2922,14 +2964,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: eMin1,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    eMin1 = value;
+                                  onChanged: (String? value) {
+                                    eMin1 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -2953,7 +2995,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -2962,14 +3004,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         eDate1 != null
-                            ? DateFormat("dd-MM-yyyy").format(eDate1)
+                            ? DateFormat("dd-MM-yyyy").format(eDate1!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            eDate1 = await _selectDate(context, eDate1);
+                            eDate1 = await _selectDate(context, eDate1!);
                             setState(() {});
                           },
                           child: Icon(
@@ -3033,7 +3075,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -3043,14 +3085,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: eHour2,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    eHour2 = value;
+                                  onChanged: (String? value) {
+                                    eHour2 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -3068,7 +3110,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -3078,14 +3120,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: eMin2,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    eMin2 = value;
+                                  onChanged: (String? value) {
+                                    eMin2 = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -3109,7 +3151,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -3118,14 +3160,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         eDate2 != null
-                            ? DateFormat("dd-MM-yyyy").format(eDate2)
+                            ? DateFormat("dd-MM-yyyy").format(eDate2!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            eDate2 = await _selectDate(context, eDate2);
+                            eDate2 = await _selectDate(context, eDate2!);
                             setState(() {});
                           },
                           child: Icon(
@@ -3194,7 +3236,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -3204,14 +3246,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: paHour,
-                                  items: hours.map((String value) {
+                                  items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "h"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    paHour = value;
+                                  onChanged: (String? value) {
+                                    paHour = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -3229,7 +3271,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                             height: 40,
                             width: 80,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -3239,14 +3281,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
                                   value: paMin,
-                                  items: minutes.map((String value) {
+                                  items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value + "m"),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
-                                    paMin = value;
+                                  onChanged: (String? value) {
+                                    paMin = value!;
                                     setState(() {});
                                   },
                                 ),
@@ -3270,7 +3312,7 @@ class _AddAccidentsState extends State<AddAccidents> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 60,
                 // width: 120,
                 child: Padding(
@@ -3279,14 +3321,14 @@ class _AddAccidentsState extends State<AddAccidents> {
                     children: [
                       Text(
                         paDate != null
-                            ? DateFormat("dd-MM-yyyy").format(paDate)
+                            ? DateFormat("dd-MM-yyyy").format(paDate!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            paDate = await _selectDate(context, paDate);
+                            paDate = await _selectDate(context, paDate!);
                             setState(() {});
                           },
                           child: Icon(
@@ -3374,15 +3416,15 @@ class _AddAccidentsState extends State<AddAccidents> {
                       onTap: () async {
                         print(widget.centerid);
                         print("object1");
-                        print(positionRole.text.toString());
+                        print(positionRole?.text.toString());
 
                         print(_allChildrens[currentIndex].id);
                         print(_allChildrens[currentIndex].name);
 
-                        if (name.text.toString() == '') {
+                        if (name?.text.toString() == '') {
                           nameError = 'Enter  Name';
                           setState(() {});
-                        } else if (positionRole.text.toString() == '') {
+                        } else if (positionRole?.text.toString() == '') {
                           nameError = '';
                           positionroleError = 'Enter Position Role';
                           setState(() {});
@@ -3391,20 +3433,20 @@ class _AddAccidentsState extends State<AddAccidents> {
                           positionroleError = '';
                           cnameError = 'Enter Child Name';
                           setState(() {});
-                        } else if (cAge.text.toString() == '') {
+                        } else if (cAge?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
                           cAgeError = 'Enter Child Age';
                           setState(() {});
-                        } else if (cloc.text.toString() == '') {
+                        } else if (cloc?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
                           cAgeError = '';
                           clocError = 'Enter Location ';
                           setState(() {});
-                        } else if (witnessname.text.toString() == '') {
+                        } else if (witnessname?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3412,7 +3454,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           clocError = ' ';
                           witnessnameError = 'Enter Witness Name';
                           setState(() {});
-                        } else if (cactivity.text.toString() == '') {
+                        } else if (cactivity?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3422,7 +3464,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           cactivityError =
                               'Enter General activity at the time of incident/ injury/ trauma/ illness';
                           setState(() {});
-                        } else if (ccause.text.toString() == '') {
+                        } else if (ccause?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3432,7 +3474,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           cactivityError = '';
                           cclockedError = 'Enter Cause of injury/ trauma';
                           setState(() {});
-                        } else if (ccsurrondings.text.toString() == '') {
+                        } else if (ccsurrondings?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3444,7 +3486,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           ccsurrondingsError =
                               'Enter Circumstances surrounding any illness, including apparent symptoms';
                           setState(() {});
-                        } else if (ccunaccount.text.toString() == '') {
+                        } else if (ccunaccount?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3457,7 +3499,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           ccunaccountError =
                               'Enter Circumstances if child appeared to be missing or otherwise unaccounted for (incl duration, who found child etc.)';
                           setState(() {});
-                        } else if (cclocked.text.toString() == '') {
+                        } else if (cclocked?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3471,7 +3513,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           cclockedError =
                               'Enter Circumstances if child appeared to have been taken or removed from service or was locked in/out of service (incl who took the child, duration)';
                           setState(() {});
-                        } else if (adetail.text.toString() == '') {
+                        } else if (adetail?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3485,7 +3527,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           cclockedError = '';
                           adetailError = 'Enter Details of action taken';
                           setState(() {});
-                        } else if (gName1.text.toString() == '') {
+                        } else if (gName1?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3500,7 +3542,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           adetailError = '';
                           gNmae1Error = 'Enter Parent Name';
                           setState(() {});
-                        } else if (gContact1.text.toString() == '') {
+                        } else if (gContact1?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3516,7 +3558,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           gNmae1Error = '';
                           gContact1Error = 'Enter Contact Method';
                           setState(() {});
-                        } else if (gName2.text.toString() == '') {
+                        } else if (gName2?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3533,7 +3575,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           gContact1Error = '';
                           gName2Error = 'Enter Parent Name';
                           setState(() {});
-                        } else if (gContact2.text.toString() == '') {
+                        } else if (gContact2?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3551,7 +3593,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           gName2Error = '';
                           gContact2Error = 'Enter Contact Method';
                           setState(() {});
-                        } else if (nName.text.toString() == '') {
+                        } else if (nName?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3570,7 +3612,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           gContact2Error = '';
                           nNameError = 'Enter Responsible Person Name';
                           setState(() {});
-                        } else if (nSupervisorName.text.toString() == '') {
+                        } else if (nSupervisorName?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3591,7 +3633,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           nSupervisorNameError =
                               'Enter Nominated Supervisor Name';
                           setState(() {});
-                        } else if (eAgency.text.toString() == '') {
+                        } else if (eAgency?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3612,7 +3654,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           nSupervisorNameError = '';
                           eAgencyError = 'Enter Other Agency';
                           setState(() {});
-                        } else if (eAuthority.text.toString() == '') {
+                        } else if (eAuthority?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3634,7 +3676,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           eAgencyError = '';
                           eAuthorityError = 'Enter Regulatory authority';
                           setState(() {});
-                        } else if (paName.text.toString() == '') {
+                        } else if (paName?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3657,7 +3699,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                           eAuthorityError = '';
                           paNameError = 'Enter Name of parent / guardian';
                           setState(() {});
-                        } else if (aNotes.text.toString() == '') {
+                        } else if (aNotes?.text.toString() == '') {
                           nameError = '';
                           positionroleError = '';
                           cnameError = '';
@@ -3819,84 +3861,84 @@ class _AddAccidentsState extends State<AddAccidents> {
 
                           String header = "data:image/png;base64,";
                           String person_sig_base =
-                              header + base64Encode(person_signature);
+                              header + base64Encode(person_signature!);
                           String recorddatefinal =
-                              DateFormat('yyyy-MM-dd').format(recordDate);
-                          String recordtimefinal = pHour + ":" + pMin;
+                              DateFormat('yyyy-MM-dd').format(recordDate!);
+                          String recordtimefinal = pHour! + ":" + pMin!;
 
                           String childDobfinal =
-                              DateFormat('yyyy-MM-dd').format(cDob);
+                              DateFormat('yyyy-MM-dd').format(cDob!);
 
                           String incidentdatefinal =
-                              DateFormat('yyyy-MM-dd').format(cIncidentDate);
-                          String incidenttimefinal = cHour + ":" + cMin;
+                              DateFormat('yyyy-MM-dd').format(cIncidentDate!);
+                          String incidenttimefinal = cHour! + ":" + cMin!;
                           String incident_sig_base =
-                              header + base64Encode(child_signature);
+                              header + base64Encode(child_signature!);
 
                           String IDatefinal =
-                              DateFormat('yyyy-MM-dd').format(cIDate);
+                              DateFormat('yyyy-MM-dd').format(cIDate!);
 
                           String gDate1final =
-                              DateFormat('yyyy-MM-dd').format(gDate1);
-                          String gTinme1final = gHour1 + ":" + gMin1;
+                              DateFormat('yyyy-MM-dd').format(gDate1!);
+                          String gTinme1final = gHour1??'' + ":" + "${gMin1??''}";
 
                           String gDate2final =
-                              DateFormat('yyyy-MM-dd').format(gDate2);
-                          String gTinme2final = gHour2 + ":" + gMin2;
+                              DateFormat('yyyy-MM-dd').format(gDate2!);
+                          String gTinme2final = gHour2! + ":" + gMin2!;
 
                           String incharge_sig_base =
-                              header + base64Encode(incharge_signature);
+                              header + base64Encode(incharge_signature!);
 
                           String nDate1final =
-                              DateFormat('yyyy-MM-dd').format(nDate1);
-                          String nTime1 = nHour1 + ":" + nMin1;
+                              DateFormat('yyyy-MM-dd').format(nDate1!);
+                          String nTime1 = nHour1! + ":" + nMin1!;
 
                           String supervisor_sig_bases =
-                              header + base64Encode(supervisor_signature);
+                              header + base64Encode(supervisor_signature!);
                           String nDate2final =
-                              DateFormat('yyyy-MM-dd').format(nDate2);
-                          String nTime2 = nHour2 + ":" + nMin2;
+                              DateFormat('yyyy-MM-dd').format(nDate2!);
+                          String nTime2 = nHour2! + ":" + nMin2!;
 
                           String eDate2final =
-                              DateFormat('yyyy-MM-dd').format(eDate2);
-                          String eTime2 = eHour2 + ":" + eMin2;
+                              DateFormat('yyyy-MM-dd').format(eDate2!);
+                          String eTime2 = eHour2! + ":" + eMin2!;
 
                           String eDate1final =
-                              DateFormat('yyyy-MM-dd').format(eDate1);
-                          String eTime1 = eHour1 + ":" + eMin1;
+                              DateFormat('yyyy-MM-dd').format(eDate1!);
+                          String eTime1 = eHour1! + ":" + eMin1!;
 
                           String paDatefinal =
-                              DateFormat('yyyy-MM-dd').format(paDate);
-                          String paTime = paHour + ":" + paMin;
+                              DateFormat('yyyy-MM-dd').format(paDate!);
+                          String paTime = paHour! + ":" + paMin!;
 
-                          String addmarkfinal = header + addmark;
+                          String addmarkfinal = header + addmark!;
 
                           String _toSend =
                               Constants.BASE_URL + 'accident/saveAccident';
                           var objToSend = {
                             "centerid": widget.centerid,
                             "roomid": widget.roomid,
-                            "person_name": name.text.toString(),
-                            "person_role": positionRole.text.toString(),
+                            "person_name": name?.text.toString(),
+                            "person_role": positionRole?.text.toString(),
                             "date": recorddatefinal,
                             "time": recordtimefinal,
                             "person_sign": person_sig_base,
                             "childid": _allChildrens[currentIndex].id,
                             "child_name": _allChildrens[currentIndex].name,
                             "child_dob": childDobfinal,
-                            "child_age": cAge.text.toString(),
+                            "child_age": cAge?.text.toString(),
                             "gender": _gender,
                             "incident_date": incidentdatefinal,
                             "incident_time": incidenttimefinal,
-                            "incident_location": cloc.text.toString(),
-                            "witness_name": witnessname.text.toString(),
+                            "incident_location": cloc?.text.toString(),
+                            "witness_name": witnessname?.text.toString(),
                             "witness_date": IDatefinal,
                             "witness_sign": incident_sig_base,
-                            "gen_actyvt": cactivity.text.toString(),
-                            "cause": ccause.text.toString(),
-                            "illness_symptoms": ccsurrondings.text.toString(),
-                            "missing_unaccounted": ccunaccount.text.toString(),
-                            "taken_removed": cclocked.text.toString(),
+                            "gen_actyvt": cactivity?.text.toString(),
+                            "cause": ccause?.text.toString(),
+                            "illness_symptoms": ccsurrondings?.text.toString(),
+                            "missing_unaccounted": ccunaccount?.text.toString(),
+                            "taken_removed": cclocked?.text.toString(),
                             "injury_image": addmarkfinal,
                             "abrasion": abrasion == false ? 0 : 1,
                             "electric_shock": electic == false ? 0 : 1,
@@ -3927,37 +3969,37 @@ class _AddAccidentsState extends State<AddAccidents> {
                             "eye_injury": eye == false ? 0 : 1,
                             "other": other == false ? 0 : 1,
                             "remarks": "other remarks",
-                            "action_taken": adetail.text.toString(),
+                            "action_taken": adetail?.text.toString(),
                             "emrg_serv_attend": _aEmergency == "Yes" ? 1 : 0,
                             "med_attention": _aAttention == "Yes" ? 1 : 0,
                             "med_attention_details":
-                                ayesdetails.text.toString(),
-                            "prevention_step_1": afuture1.text.toString(),
-                            "prevention_step_2": afuture2.text.toString(),
-                            "prevention_step_3": afuture3.text.toString(),
-                            "parent1_name": gName1.text.toString(),
-                            "contact1_method": gContact1.text.toString(),
+                                ayesdetails?.text.toString(),
+                            "prevention_step_1": afuture1?.text.toString(),
+                            "prevention_step_2": afuture2?.text.toString(),
+                            "prevention_step_3": afuture3?.text.toString(),
+                            "parent1_name": gName1?.text.toString(),
+                            "contact1_method": gContact1?.text.toString(),
                             "contact1_date": gDate1final,
                             "contact1_time": gTinme1final,
                             "contact1_made": gContacted1 == false ? 0 : 1,
                             "contact1_msg": gMsg1 == false ? 0 : 1,
-                            "parent2_name": gName2.text.toString(),
-                            "contact2_method": gContact2.text.toString(),
+                            "parent2_name": gName2?.text.toString(),
+                            "contact2_method": gContact2?.text.toString(),
                             "contact2_date": gDate2final,
                             "contact2_time": gTinme2final,
                             "contact2_made": gContacted2 == false ? 0 : 1,
                             "contact2_msg": gMsg2 == false ? 0 : 1,
-                            "responsible_person_name": nName.text.toString(),
+                            "responsible_person_name": nName?.text.toString(),
                             "responsible_person_sign": incharge_sig_base,
                             "rp_internal_notif_date": nDate1final,
                             "rp_internal_notif_time": nTime1,
-                            "otheragency": eAgency.text.toString(),
+                            "otheragency": eAgency?.text.toString(),
                             "enor_date": nDate2final,
                             "enor_time": nTime2,
-                            "Regulatoryauthority": eAuthority.text.toString(),
+                            "Regulatoryauthority": eAuthority?.text.toString(),
                             "enra_date": eDate1final,
                             "enra_time": eTime1,
-                            "add_notes": aNotes.text.toString(),
+                            "add_notes": aNotes?.text.toString(),
                             "userid": MyApp.LOGIN_ID_VALUE,
                           };
 
@@ -3965,7 +4007,7 @@ class _AddAccidentsState extends State<AddAccidents> {
 
                           print(MyApp.LOGIN_ID_VALUE);
                           print(await MyApp.getDeviceIdentity());
-                          final response = await http.post(_toSend,
+                          final response = await http.post(Uri.parse(_toSend),
                               body: jsonEncode(objToSend),
                               headers: {
                                 'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
@@ -4016,7 +4058,7 @@ class _AddAccidentsState extends State<AddAccidents> {
   }
 
   Future<DateTime> _selectDate(BuildContext context, DateTime dateTime) async {
-    final DateTime picked = await showDatePicker(
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: dateTime,
       firstDate: new DateTime(1800),

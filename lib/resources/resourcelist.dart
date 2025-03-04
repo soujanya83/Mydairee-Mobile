@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/resourcesapi.dart';
@@ -244,7 +245,7 @@ class _ResourceListState extends State<ResourceList> {
                       height: 40,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]),
+                          border: Border.all(color: Constants.greyColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Padding(
@@ -301,7 +302,7 @@ class _ResourceListState extends State<ResourceList> {
                       height: 40,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]),
+                          border: Border.all(color: Constants.greyColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Padding(
@@ -421,7 +422,7 @@ class _ResourceListState extends State<ResourceList> {
                                   ),
                                   GestureDetector(
                                       onTap: () {
-                                        key.currentState.openEndDrawer();
+                                        key.currentState?.openEndDrawer();
                                       },
                                       child: Icon(
                                         AntDesign.filter,

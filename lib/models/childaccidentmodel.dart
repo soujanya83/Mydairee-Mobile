@@ -13,18 +13,18 @@ class ChildsAccidentsModel {
   String createdAt;
 
   ChildsAccidentsModel(
-      {this.id,
-      this.name,
-      this.lastname,
-      this.dob,
-      this.startDate,
-      this.room,
-      this.imageUrl,
-      this.gender,
-      this.status,
-      this.daysAttending,
-      this.createdBy,
-      this.createdAt});
+      {required this.id,
+      required this.name,
+      required this.lastname,
+      required this.dob,
+      required this.startDate,
+      required this.room,
+      required this.imageUrl,
+      required this.gender,
+      required this.status,
+      required this.daysAttending,
+      required this.createdBy,
+      required this.createdAt});
 
    static ChildsAccidentsModel fromJson(Map<String, dynamic> json) {
      return ChildsAccidentsModel(

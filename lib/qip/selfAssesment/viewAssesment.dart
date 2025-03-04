@@ -152,7 +152,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(
@@ -191,7 +191,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                       height: 40,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]),
+                          border: Border.all(color: Constants.greyColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Padding(
@@ -251,7 +251,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                       ),
                       if (widget.assesmentModel.educators.length - 1 > 0)
                         CircleAvatar(
-                          backgroundColor: Colors.grey[300],
+                          backgroundColor: Constants.greyColor,
                           child: Text("+" +
                               (widget.assesmentModel.educators.length - 1)
                                   .toString()),
@@ -701,7 +701,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                         };
 
                         print(jsonEncode(_objToSend));
-                        final response = await http.post(_toSend,
+                        final response = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(_objToSend),
                             headers: {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),

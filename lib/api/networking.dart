@@ -13,7 +13,7 @@ class Service {
   Future data() async {
     print(loginURL);
     print(jsonEncode(body));
-    Response response = await post(loginURL, body: jsonEncode(body));
+    Response response = await post(Uri.parse(loginURL), body: jsonEncode(body));
     print(response.body);
     var status = jsonDecode(response.body);
     print('dasss' + status.toString());
@@ -34,7 +34,7 @@ class ServiceWithHeader {
   ServiceWithHeader(this.url);
 
   Future data() async {
-    final response = await http.get(url, headers: {
+    final response = await http.get(Uri.parse(url), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -62,7 +62,7 @@ class ServiceWithHeaderPost {
   ServiceWithHeaderPost(this.url);
 
   Future data() async {
-    final response = await http.post(url, headers: {
+    final response = await http.post(Uri.parse(url), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -90,7 +90,7 @@ class ServiceWithHeaderDataPost {
   Future data() async {
     print(jsonEncode(b));
     final response = await http.post(
-      url,
+      Uri.parse(url),
       headers: {
         'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
         'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,

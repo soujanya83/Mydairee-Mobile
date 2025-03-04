@@ -21,8 +21,8 @@ class LessonPlan extends StatefulWidget {
 
 class _LessonPlanState extends State<LessonPlan> {
   bool dataFetched = false;
-  List<LessonChildSubModel> child;
-  List<CentersModel> centers;
+  List<LessonChildSubModel> child =[];
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
   String dirloc = '';
@@ -52,7 +52,7 @@ class _LessonPlanState extends State<LessonPlan> {
         if (tasks != null) FlutterDownloader.open(taskId: id);
       }
     });
-    FlutterDownloader.registerCallback(downloadCallback);
+    FlutterDownloader.registerCallback(downloadCallback as DownloadCallback);
   }
 
   @override
@@ -63,9 +63,9 @@ class _LessonPlanState extends State<LessonPlan> {
 
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
-    final SendPort send =
+    final SendPort? send =
         IsolateNameServer.lookupPortByName('downloader_send_port');
-    send.send([id, status, progress]);
+    send?.send([id, status, progress]);
   }
 
   Future<void> _fetchCenters() async {
@@ -170,7 +170,7 @@ class _LessonPlanState extends State<LessonPlan> {
                           height: 40,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]),
+                              border: Border.all(color: Constants.greyColor),
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8))),

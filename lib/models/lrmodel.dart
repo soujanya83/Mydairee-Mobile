@@ -8,13 +8,13 @@ class LRModel {
   String actions;
 
   LRModel(
-      {this.id,
-      this.areaid,
-      this.nationalLaw,
-      this.nationalRegulation,
-      this.associatedElements,
-      this.status,
-      this.actions});
+      {required this.id,
+      required this.areaid,
+      required this.nationalLaw,
+      required this.nationalRegulation,
+      required this.associatedElements,
+      required this.status,
+      required this.actions});
 
   static LRModel fromJson(Map<String, dynamic> json) {
     return LRModel(

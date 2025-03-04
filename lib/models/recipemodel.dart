@@ -9,14 +9,14 @@ class RecipeModel{
   List media;
 
   RecipeModel({
-    this.id,
-    this.itemName,
-    this.type,
-    this.recipe,
-    this.createdAt,
-    this.createdBy,
-    this.ingredients,
-    this.media
+    required this.id,
+    required this.itemName,
+    required this.type,
+    required this.recipe,
+    required this.createdAt,
+    required this.createdBy,
+    required this.ingredients,
+    required this.media
     });
 
   static RecipeModel fromJson(Map<String,dynamic> json){

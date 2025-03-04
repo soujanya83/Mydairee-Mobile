@@ -13,18 +13,18 @@ class Records {
   String image;
 
   Records(
-      {this.id,
-      this.childid,
-      this.centerid,
-      this.pDevelopment,
-      this.emotionDevelopment,
-      this.socialDevelopment,
-      this.childInterests,
-      this.otherGoal,
-      this.createdAt,
-      this.createdBy,
-      this.name,
-      this.image});
+      {required this.id,
+      required this.childid,
+      required this.centerid,
+      required this.pDevelopment,
+      required this.emotionDevelopment,
+      required this.socialDevelopment,
+      required this.childInterests,
+      required this.otherGoal,
+      required this.createdAt,
+      required this.createdBy,
+      required this.name,
+      required this.image});
 
   static Records fromJson(Map<String, dynamic> json) {
     return Records(

@@ -20,25 +20,25 @@ class ObservationModel {
   String observationsMediaType;
 
   ObservationModel(
-      {this.id,
-      this.userId,
-      this.title,
-      this.notes,
-      this.reflection,
-      this.status,
-      this.approver,
-      this.dateAdded,
-      this.dateModified,
-      this.userName,
-      this.approverName,
-      this.observationChildrens,
-      this.montessoricount,
-      this.eylfcount,
-      this.milestonecount,
-      this.checked,
-      this.boolCheck,
-      this.observationsMedia,
-      this.observationsMediaType});
+      {required this.id,
+      required this.userId,
+      required this.title,
+      required this.notes,
+      required this.reflection,
+      required this.status,
+      required this.approver,
+      required this.dateAdded,
+      required this.dateModified,
+      required this.userName,
+      required this.approverName,
+      required this.observationChildrens,
+      required this.montessoricount,
+      required this.eylfcount,
+      required this.milestonecount,
+      required this.checked,
+      required this.boolCheck,
+      required this.observationsMedia,
+      required this.observationsMediaType});
 
   static ObservationModel fromJson(Map<String, dynamic> json) {
     return ObservationModel(

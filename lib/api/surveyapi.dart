@@ -48,14 +48,14 @@ class SurveyAPIHandler {
   }
 
   Future<dynamic> deleteListItem() async {
-    var deleteItemUrl = _deleteItemUrl +MyApp.LOGIN_ID_VALUE+'/'+ data['id'];
+    var deleteItemUrl = _deleteItemUrl +MyApp.LOGIN_ID_VALUE+'/'+ '${data['id']??''}';
     ServiceWithHeader helper = ServiceWithHeader(deleteItemUrl);
     var d = await helper.data();
     return d;
   }
 
   Future<dynamic> deleteQueItem() async {
-    var deleteQueItemUrl = _deleteQueItemUrl+MyApp.LOGIN_ID_VALUE+'/' + data['url'];
+    var deleteQueItemUrl = _deleteQueItemUrl+MyApp.LOGIN_ID_VALUE+'/' + '${data['url']??''}';
     ServiceWithHeader helper = ServiceWithHeader(deleteQueItemUrl);
     var d = await helper.data();
     return d;

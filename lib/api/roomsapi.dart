@@ -20,7 +20,7 @@ class RoomAPIHandler {
   RoomAPIHandler(this.data);
 
   Future<dynamic> getList() async {
-    var listRoomsURL = _listRoomsURL+MyApp.LOGIN_ID_VALUE +'/' + data['centerid'] + '/';
+    var listRoomsURL = _listRoomsURL+MyApp.LOGIN_ID_VALUE +'/' + '${data['centerid']??''}' + '/';
     ServiceWithHeader helper = ServiceWithHeader(listRoomsURL);
     var d = await helper.data();
     return d;
@@ -30,7 +30,7 @@ class RoomAPIHandler {
     var getChildUrl =
         _getChildUrl  +
     MyApp.LOGIN_ID_VALUE +
-    '/'+ data['roomid'] + '/' + data['childid'] + '/';
+    '/'+ '${data['roomid']??''}' + '/' + '${data['childid']??""}' + '/';
     ServiceWithHeader helper = ServiceWithHeader(getChildUrl);
     var d = await helper.data();
     return d;
@@ -47,7 +47,7 @@ class RoomAPIHandler {
   Future<dynamic> getOtherList() async {
     var getDataURL = _getDataURL +
         MyApp.LOGIN_ID_VALUE +
-        '/' + data['roomid'] + '/';
+        '/' + '${data['roomid']??''}' + '/';
     ServiceWithHeader helper = ServiceWithHeader(getDataURL);
     var d = await helper.data();
     return d;
@@ -58,7 +58,7 @@ class RoomAPIHandler {
         MyApp.LOGIN_ID_VALUE +
         '/';
     if (data['id'] != '') {
-      getRoomDetailsURL = getRoomDetailsURL + data['id'] + '/';
+      getRoomDetailsURL = getRoomDetailsURL + '${data['id']??""}' + '/';
     }
     ServiceWithHeader helper = ServiceWithHeader(getRoomDetailsURL);
     var d = await helper.data();

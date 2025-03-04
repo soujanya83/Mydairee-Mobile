@@ -9,7 +9,7 @@ import 'package:mykronicle_mobile/utils/header.dart';
 
 class EditQip extends StatefulWidget {
   final String centerid;
-  final String qipid;
+  final String qipid; 
   EditQip(this.centerid, this.qipid);
   @override
   _EditQipState createState() => _EditQipState();

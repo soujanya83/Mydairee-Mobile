@@ -8,13 +8,13 @@ class ProcessChildSubModel {
   String createdBy;
 
   ProcessChildSubModel(
-      {this.childId,
-      this.childName,
-      this.processStatus,
-      this.imageUrl,
-      this.processactivityid,
-      this.subid,
-      this.createdBy});
+      {required this.childId,
+      required this.childName,
+      required this.processStatus,
+      required this.imageUrl,
+      required this.processactivityid,
+      required this.subid,
+      required this.createdBy});
 
   static ProcessChildSubModel fromJson(Map<String, dynamic> json) {
     return ProcessChildSubModel(

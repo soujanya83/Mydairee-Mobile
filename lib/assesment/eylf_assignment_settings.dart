@@ -17,11 +17,11 @@ class EylfAssignmentSettings extends StatefulWidget {
 
 class _EylfAssignmentSettingsState extends State<EylfAssignmentSettings>
     with TickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
-  List<EylfOutcomeModel> eylfData;
+  List<EylfOutcomeModel> eylfData = [];
 
-  List<CentersModel> centers;
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -116,7 +116,7 @@ class _EylfAssignmentSettingsState extends State<EylfAssignmentSettings>
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(
@@ -260,7 +260,8 @@ class _EylfAssignmentSettingsState extends State<EylfAssignmentSettings>
                                                                           const BorderRadius
                                                                               .all(
                                                                         const Radius
-                                                                            .circular(4),
+                                                                            .circular(
+                                                                            4),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -347,6 +348,7 @@ class _EylfAssignmentSettingsState extends State<EylfAssignmentSettings>
                                                               .checked ==
                                                           'checked',
                                                       onChanged: (val) {
+                                                        if (val == null) return;
                                                         if (val) {
                                                           eylfData[index]
                                                                   .activity[i]
@@ -581,6 +583,8 @@ class _EylfAssignmentSettingsState extends State<EylfAssignmentSettings>
                                                                   .checked ==
                                                               'checked',
                                                           onChanged: (val) {
+                                                            if (val == null)
+                                                              return;
                                                             if (val) {
                                                               eylfData[index]
                                                                       .activity[i]
@@ -772,7 +776,7 @@ class _EylfAssignmentSettingsState extends State<EylfAssignmentSettings>
                                                 'Settings/saveEylfList';
                                             print(jsonEncode(objToSend));
                                             final response = await http.post(
-                                                _toSend,
+                                                Uri.parse(_toSend),
                                                 body: jsonEncode(objToSend),
                                                 headers: {
                                                   'X-DEVICE-ID': await MyApp

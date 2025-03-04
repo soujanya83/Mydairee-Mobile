@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/recipemodel.dart';
@@ -26,7 +26,7 @@ class DailyDairyAdd extends StatefulWidget {
 
 class _DailyDairyAddState extends State<DailyDairyAdd> {
   bool showPop = false;
-  String type;
+  late String type;
 
   String hour = '1h';
   String min = '0m';
@@ -34,15 +34,22 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
   String hour2 = '1h';
   String min2 = '0m';
 
-  List<String> hours;
-  List<String> minutes;
+  late List<String> hours;
+  late List<String> minutes;
   var details;
+
   int currentItemIndex = 0;
 
-  List<RecipeModel> recipes;
+  late List<RecipeModel> recipes;
   bool recipesFetched = false;
 
-  TextEditingController quant, cal, comments, nappy, potty, toilet, signature;
+  late TextEditingController quant,
+      cal,
+      comments,
+      nappy,
+      potty,
+      toilet,
+      signature;
 
   @override
   void initState() {
@@ -227,7 +234,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           children: [
                                             IconButton(
                                               icon: Icon(
-                                                MaterialIcons.free_breakfast,
+                                                Icons.free_breakfast,
                                                 color: Colors.black,
                                               ),
                                               onPressed: null,
@@ -309,7 +316,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           children: [
                                             IconButton(
                                               icon: Icon(
-                                                MaterialCommunityIcons.food,
+                                                Icons.fastfood,
                                                 color: Colors.black,
                                               ),
                                               onPressed: null,
@@ -390,10 +397,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                         child: Row(
                                           children: [
                                             IconButton(
-                                              icon: Icon(
-                                                MaterialCommunityIcons.sleep,
-                                                color: Colors.black,
-                                              ),
+                                              icon: Icon(Icons.bedtime,
+                                                  color: Colors.black),
                                               onPressed: null,
                                             ),
                                             Expanded(
@@ -473,10 +478,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           children: [
                                             IconButton(
                                               icon: Icon(
-                                                MaterialCommunityIcons
-                                                    .tea_outline,
-                                                color: Colors.black,
-                                              ),
+                                                  Icons.emoji_food_beverage,
+                                                  color: Colors.black),
                                               onPressed: null,
                                             ),
                                             Expanded(
@@ -555,11 +558,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                         child: Row(
                                           children: [
                                             IconButton(
-                                              icon: Icon(
-                                                MaterialCommunityIcons
-                                                    .tea_outline,
-                                                color: Colors.black,
-                                              ),
+                                              icon: Icon(Icons.local_cafe,
+                                                  color: Colors.black),
                                               onPressed: null,
                                             ),
                                             Expanded(
@@ -639,7 +639,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           children: [
                                             IconButton(
                                               icon: Icon(
-                                                Feather.sun,
+                                                Icons.wb_sunny,
                                                 color: Colors.black,
                                               ),
                                               onPressed: null,
@@ -848,8 +848,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 width: 80,
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey[300]),
+                                                        color: Colors
+                                                            .grey.shade300),
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -874,8 +874,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         );
                                                       }).toList(),
                                                       onChanged:
-                                                          (String value) {
-                                                        hour = value;
+                                                          (String? value) {
+                                                        hour = value ?? '';
                                                         setState(() {});
                                                       },
                                                     ),
@@ -894,8 +894,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 width: 80,
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey[300]),
+                                                        color: Constants
+                                                            .greyColor),
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -920,8 +920,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         );
                                                       }).toList(),
                                                       onChanged:
-                                                          (String value) {
-                                                        min = value;
+                                                          (String? value) {
+                                                        min = value ?? '';
                                                         setState(() {});
                                                       },
                                                     ),
@@ -984,7 +984,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
 
                                             print(jsonEncode(objToSend));
                                             final response = await http.post(
-                                                _toSend,
+                                                Uri.parse(_toSend),
                                                 body: jsonEncode(objToSend),
                                                 headers: {
                                                   'X-DEVICE-ID': await MyApp
@@ -1089,8 +1089,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 width: 80,
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey[300]),
+                                                        color: Constants
+                                                            .greyColor),
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -1115,8 +1115,10 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         );
                                                       }).toList(),
                                                       onChanged:
-                                                          (String value) {
-                                                        hour = value;
+                                                          (String? value) {
+                                                        if (value == null)
+                                                          return;
+                                                        hour = value!;
                                                         setState(() {});
                                                       },
                                                     ),
@@ -1135,8 +1137,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 width: 80,
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey[300]),
+                                                        color: Constants
+                                                            .greyColor),
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -1161,8 +1163,10 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         );
                                                       }).toList(),
                                                       onChanged:
-                                                          (String value) {
-                                                        min = value;
+                                                          (String? value) {
+                                                        if (value == null)
+                                                          return;
+                                                        min = value!;
                                                         setState(() {});
                                                       },
                                                     ),
@@ -1189,8 +1193,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 width: 80,
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey[300]),
+                                                        color: Constants
+                                                            .greyColor),
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -1215,8 +1219,10 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         );
                                                       }).toList(),
                                                       onChanged:
-                                                          (String value) {
-                                                        hour2 = value;
+                                                          (String? value) {
+                                                        if (value == null)
+                                                          return;
+                                                        hour2 = value!;
                                                         setState(() {});
                                                       },
                                                     ),
@@ -1235,8 +1241,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 width: 80,
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey[300]),
+                                                        color: Constants
+                                                            .greyColor),
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -1261,8 +1267,10 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         );
                                                       }).toList(),
                                                       onChanged:
-                                                          (String value) {
-                                                        min2 = value;
+                                                          (String? value) {
+                                                        if (value == null)
+                                                          return;
+                                                        min2 = value!;
                                                         setState(() {});
                                                       },
                                                     ),
@@ -1326,7 +1334,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
 
                                             print(jsonEncode(objToSend));
                                             final response = await http.post(
-                                                _toSend,
+                                                Uri.parse(_toSend),
                                                 body: jsonEncode(objToSend),
                                                 headers: {
                                                   'X-DEVICE-ID': await MyApp
@@ -1434,7 +1442,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                               width: 80,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                      color: Colors.grey[300]),
+                                                      color:
+                                                          Constants.greyColor),
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -1454,8 +1463,9 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         child: new Text(value),
                                                       );
                                                     }).toList(),
-                                                    onChanged: (String value) {
-                                                      hour = value;
+                                                    onChanged: (String? value) {
+                                                      if (value == null) return;
+                                                      hour = value!;
                                                       setState(() {});
                                                     },
                                                   ),
@@ -1474,7 +1484,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                               width: 80,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                      color: Colors.grey[300]),
+                                                      color:
+                                                          Constants.greyColor),
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -1494,8 +1505,9 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         child: new Text(value),
                                                       );
                                                     }).toList(),
-                                                    onChanged: (String value) {
-                                                      min = value;
+                                                    onChanged: (String? value) {
+                                                      if (value == null) return;
+                                                      min = value!;
                                                       setState(() {});
                                                     },
                                                   ),
@@ -1661,7 +1673,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
 
                                           print(jsonEncode(objToSend));
                                           final response = await http.post(
-                                              _toSend,
+                                              Uri.parse(_toSend),
                                               body: jsonEncode(objToSend),
                                               headers: {
                                                 'X-DEVICE-ID': await MyApp
@@ -1777,7 +1789,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                               width: 80,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                      color: Colors.grey[300]),
+                                                      color:
+                                                          Constants.greyColor),
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -1797,8 +1810,9 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         child: new Text(value),
                                                       );
                                                     }).toList(),
-                                                    onChanged: (String value) {
-                                                      hour = value;
+                                                    onChanged: (String? value) {
+                                                      if (value == null) return;
+                                                      hour = value!;
                                                       setState(() {});
                                                     },
                                                   ),
@@ -1817,7 +1831,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                               width: 80,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                      color: Colors.grey[300]),
+                                                      color:
+                                                          Constants.greyColor),
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -1837,8 +1852,9 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                         child: new Text(value),
                                                       );
                                                     }).toList(),
-                                                    onChanged: (String value) {
-                                                      min = value;
+                                                    onChanged: (String? value) {
+                                                      if (value == null) return;
+                                                      min = value!;
                                                       setState(() {});
                                                     },
                                                   ),
@@ -1862,7 +1878,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           height: 40,
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: Colors.grey[300]),
+                                                  color: Constants.greyColor),
                                               color: Colors.white,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(8))),
@@ -2006,7 +2022,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
 
                                           print(jsonEncode(objToSend));
                                           final response = await http.post(
-                                              _toSend,
+                                              Uri.parse(_toSend),
                                               body: jsonEncode(objToSend),
                                               headers: {
                                                 'X-DEVICE-ID': await MyApp

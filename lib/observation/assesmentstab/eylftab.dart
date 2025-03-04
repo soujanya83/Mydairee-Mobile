@@ -14,7 +14,7 @@ class EylfTabs extends StatefulWidget {
   final List data;
   final Map totaldata;
   final IndexCallback changeTab;
-  EylfTabs({this.count, this.data, this.changeTab, this.totaldata});
+  EylfTabs({required this.count, required this.data, required this.changeTab, required this.totaldata});
 
   @override
   _EylfTabsState createState() => _EylfTabsState();
@@ -22,7 +22,7 @@ class EylfTabs extends StatefulWidget {
 
 class _EylfTabsState extends State<EylfTabs>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
   @override
   void initState() {
     _controller = new TabController(length: widget.count, vsync: this);
@@ -31,7 +31,7 @@ class _EylfTabsState extends State<EylfTabs>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -132,7 +132,7 @@ class _EylfTabsState extends State<EylfTabs>
                     };
                     print(jsonEncode(objToSend));
                     final response = await http
-                        .post(_toSend, body: jsonEncode(objToSend), headers: {
+                        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
                       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                     });
@@ -238,7 +238,7 @@ class _EylfTabsState extends State<EylfTabs>
                               leading: Checkbox(
                                 onChanged: (value) {
                                   AddObservationState.checkValue[val][index]
-                                      [i] = value;
+                                      [i] = value!;
                                   setState(() {});
                                 },
                                 value: AddObservationState.checkValue[val]

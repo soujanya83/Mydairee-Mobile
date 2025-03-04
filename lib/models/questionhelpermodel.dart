@@ -15,17 +15,17 @@ class QuestionHelperModel {
   List<String> options5;
 
   QuestionHelperModel({
-    this.choosenValue,
-    this.mandatory,
-    this.imgUrl,
-    this.vidUrl,
-    this.image,
-    this.video,
-    this.question,
-    this.options1,
-    this.options2,
-    this.options3,
-    this.options4,
-    this.options5,
+    required this.choosenValue,
+    required this.mandatory,
+    required this.imgUrl,
+    required this.vidUrl,
+    required this.image,
+    required this.video,
+    required this.question,
+    required this.options1,
+    required this.options2,
+    required this.options3,
+    required this.options4,
+    required this.options5,
   });
 }

@@ -8,7 +8,7 @@ class CalendarroDayItem extends StatelessWidget {
   CalendarroState calendarroState;
   final DateTimeCallback onTap;
 
-  CalendarroDayItem({this.date, this.calendarroState, this.onTap});
+  CalendarroDayItem({required this.date, required this.calendarroState, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class CalendarroDayItem extends StatelessWidget {
           BoxDecoration(color: Colors.green[200], shape: BoxShape.circle);
     } else if (isToday) {
       boxDecoration =
-          BoxDecoration(color: Colors.grey[300], shape: BoxShape.circle);
+          BoxDecoration(color: Constants.greyColor, shape: BoxShape.circle);
     }
 
     return Expanded(

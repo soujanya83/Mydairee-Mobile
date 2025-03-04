@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -170,7 +171,7 @@ class _QipListState extends State<QipList> {
                 height: 30,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]),
+                    border: Border.all(color: Constants.greyColor),
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(8))),
                 child: Padding(

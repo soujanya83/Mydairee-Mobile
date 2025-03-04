@@ -11,16 +11,16 @@ class ResourceModel {
   bool boolCheck;
 
   ResourceModel(
-      {this.id,
-      this.title,
-      this.description,
-      this.createdBy,
-      this.createdAt,
-      this.media,
-      this.likes,
-      this.comments,
-      this.checked,
-      this.boolCheck});
+      {required this.id,
+      required this.title,
+      required this.description,
+      required this.createdBy,
+      required this.createdAt,
+      required this.media,
+      required this.likes,
+      required this.comments,
+      required this.checked,
+      required this.boolCheck});
 
   static ResourceModel fromJson(Map<String, dynamic> json) {
     return ResourceModel(

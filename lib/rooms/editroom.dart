@@ -15,7 +15,7 @@ class EditRoom extends StatefulWidget {
   final String centerid;
   final String roomid;
 
-  EditRoom({this.centerid, this.roomid});
+  EditRoom({required this.centerid, required this.roomid});
 
   @override
   _EditRoomState createState() => _EditRoomState();
@@ -98,7 +98,7 @@ class _EditRoomState extends State<EditRoom> {
                       }
                     }
 
-                    eduValues[users[index].userid] = value;
+                    eduValues[users[index].userid] = value!;
                     setState(() {});
                   }),
             );
@@ -112,7 +112,7 @@ class _EditRoomState extends State<EditRoom> {
     var data = await handler.getRoomDetails();
     if (!data.containsKey('error')) {
       var r = data['users'];
-      users = new List();
+      users = [];
       try {
         assert(r is List);
         for (int i = 0; i < r.length; i++) {
@@ -424,9 +424,9 @@ class _EditRoomState extends State<EditRoom> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                 onChanged: (String? value)  {
                                   setState(() {
-                                    _chosenValue = value;
+                                    _chosenValue = value!;
                                   });
                                 },
                               ),
@@ -470,7 +470,7 @@ class _EditRoomState extends State<EditRoom> {
                                   ),
                                 ),
                                 actions: <Widget>[
-                                  FlatButton(
+                                  TextButton(
                                     child: const Text('Choose'),
                                     onPressed: () {
                                       setState(
@@ -514,7 +514,7 @@ class _EditRoomState extends State<EditRoom> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          key.currentState.openEndDrawer();
+                          key.currentState?.openEndDrawer();
                         },
                         child: Container(
                             width: 160,
@@ -690,7 +690,7 @@ class _EditRoomState extends State<EditRoom> {
                                     "educators": edu,
                                   };
                                   print(jsonEncode(objToSend));
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':

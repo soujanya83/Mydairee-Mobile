@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/daily_dairy/dailydairy_add.dart';
@@ -26,17 +26,16 @@ class DailyDairyMain extends StatefulWidget {
 }
 
 class _DailyDairyMainState extends State<DailyDairyMain> {
-  DateTime date;
-  List<CentersModel> centers;
+  DateTime? date;
+  List<CentersModel> centers = [];
   bool centersFetched = false;
-  // bool viewAdd = false;
 
   String roomName = 'Discoverers';
 
-  List<RecipeModel> recipes;
+  List<RecipeModel> recipes = [];
   bool recipesFetched = false;
 
-  List<RoomsDescModel> rooms;
+  List<RoomsDescModel> rooms = [];
   bool roomsFetched = false;
 
   int currentIndex = 0;
@@ -51,15 +50,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
 
   bool showPop = false;
   String type = '';
-  List<String> hours;
-  List<String> minutes;
+  List<String> hours = [];
+  List<String> minutes = [];
   var details;
-  TextEditingController quant, cal, comments, nappy, potty, toilet, signature;
 
-  int selectedIndex;
+  TextEditingController? quant, cal, comments, nappy, potty, toilet, signature;
+
+  int selectedIndex = 0;
 
   bool childrensFetched = false;
-  List<ChildModel> _allChildrens;
+  List<ChildModel> _allChildrens = [];
   List<ChildModel> _selectedChildrens = [];
   int currentItemIndex = 0;
 
@@ -116,7 +116,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
 
     if (roomsFetched) {
       data['roomid'] = rooms[currentRoomIndex].id;
-      data['date'] = DateFormat("yyyy-MM-dd").format(date);
+      data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     }
 
     print(data);
@@ -181,9 +181,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
 
   @override
   void dispose() {
-    quant.dispose();
-    cal.dispose();
-    comments.dispose();
+    quant?.dispose();
+    cal?.dispose();
+    comments?.dispose();
     super.dispose();
   }
 
@@ -215,7 +215,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             border: Border.all(
-                                                color: Colors.grey[300])),
+                                                color: Constants.greyColor)),
                                         height: 35,
                                         width: 120,
                                         child: Padding(
@@ -225,7 +225,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               Text(
                                                 date != null
                                                     ? DateFormat("dd-MM-yyyy")
-                                                        .format(date)
+                                                        .format(date!)
                                                     : '',
                                                 style: TextStyle(
                                                     fontSize: 14.0,
@@ -235,7 +235,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               GestureDetector(
                                                   onTap: () async {
                                                     date = await _selectDate(
-                                                        context, date);
+                                                        context, date!);
                                                     details = null;
                                                     childrensFetched = false;
                                                     setState(() {});
@@ -267,7 +267,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   0.45,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                      color: Colors.grey[300]),
+                                                      color:
+                                                          Constants.greyColor),
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -327,7 +328,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   0.45,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                      color: Colors.grey[300]),
+                                                      color:
+                                                          Constants.greyColor),
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -435,7 +437,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                         )
                                                       : Container(),
                                                   Text(
-                                                    _allChildrens[selectedIndex]
+                                                    _allChildrens[
+                                                            selectedIndex ?? 0]
                                                         .name,
                                                     style: TextStyle(
                                                         fontWeight:
@@ -454,13 +457,14 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                     '1')
                                                   ListTile(
                                                     subtitle: _allChildrens[
-                                                                    selectedIndex]
+                                                                    selectedIndex ??
+                                                                        0]
                                                                 .breakfast !=
                                                             null
                                                         ? Text(_allChildrens[
-                                                                    selectedIndex]
-                                                                .breakfast[
-                                                            'startTime'])
+                                                                selectedIndex ??
+                                                                    0]
+                                                            .breakfast['startTime'])
                                                         : Container(),
                                                     title: Text('Breakfast'),
                                                     trailing: _allChildrens[
@@ -470,7 +474,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                         ? GestureDetector(
                                                             onTap: () {
                                                               var time = _allChildrens[
-                                                                      selectedIndex]
+                                                                      selectedIndex ??
+                                                                          0]
                                                                   .breakfast[
                                                                       'startTime']
                                                                   .toString()
@@ -491,8 +496,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   if (recipes[i]
                                                                           .itemName
                                                                           .toLowerCase() ==
-                                                                      _allChildrens[
-                                                                              selectedIndex]
+                                                                      _allChildrens[selectedIndex ??
+                                                                              0]
                                                                           .breakfast[
                                                                               'item']
                                                                           .toString()
@@ -505,16 +510,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               });
                                                               hour = time[0];
                                                               min = time[1];
-                                                              quant.text =
+                                                              quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
                                                                       .breakfast['qty'];
-                                                              cal.text = _allChildrens[
+                                                              cal?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .breakfast[
                                                                   'calories'];
                                                               comments
-                                                                  .text = _allChildrens[
+                                                                  ?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .breakfast[
                                                                   'comments'];
@@ -533,7 +538,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -578,7 +583,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -659,16 +664,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               });
                                                               hour = time[0];
                                                               min = time[1];
-                                                              quant.text =
+                                                              quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
                                                                       .morningtea['qty'];
-                                                              cal.text = _allChildrens[
+                                                              cal?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .morningtea[
                                                                   'calories'];
                                                               comments
-                                                                  .text = _allChildrens[
+                                                                  ?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .morningtea[
                                                                   'comments'];
@@ -687,7 +692,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -732,7 +737,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -809,15 +814,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               });
                                                               hour = time[0];
                                                               min = time[1];
-                                                              quant.text =
+                                                              quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
                                                                       .lunch['qty'];
-                                                              cal.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .lunch[
-                                                                  'calories'];
-                                                              comments.text =
+                                                              cal?.text =
+                                                                  _allChildrens[
+                                                                              selectedIndex]
+                                                                          .lunch[
+                                                                      'calories'];
+                                                              comments?.text =
                                                                   _allChildrens[
                                                                               selectedIndex]
                                                                           .lunch[
@@ -837,7 +843,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -881,7 +887,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -968,7 +974,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1010,7 +1016,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1091,16 +1097,15 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               });
                                                               hour = time[0];
                                                               min = time[1];
-                                                              quant.text =
+                                                              quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
                                                                       .afternoontea['qty'];
-                                                              cal.text = _allChildrens[
+                                                              cal?.text = _allChildrens[
                                                                           selectedIndex]
-                                                                      .afternoontea[
-                                                                  'calories'];
+                                                                      .afternoontea['calories'];
                                                               comments
-                                                                  .text = _allChildrens[
+                                                                  ?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .afternoontea[
                                                                   'comments'];
@@ -1119,7 +1124,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1164,7 +1169,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1243,15 +1248,15 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               });
                                                               hour = time[0];
                                                               min = time[1];
-                                                              quant.text =
+                                                              quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
                                                                       .snacks['qty'];
-                                                              cal.text = _allChildrens[
+                                                              cal?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .snacks[
                                                                   'calories'];
-                                                              comments.text =
+                                                              comments?.text =
                                                                   _allChildrens[
                                                                               selectedIndex]
                                                                           .snacks[
@@ -1271,7 +1276,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1315,7 +1320,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1403,7 +1408,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1446,7 +1451,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1506,29 +1511,29 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   'Toileting';
                                                               hour = time[0];
                                                               min = time[1];
-                                                              nappy.text =
+                                                              nappy?.text =
                                                                   _allChildrens[
                                                                               selectedIndex]
                                                                           .toileting[
                                                                       'nappy'];
-                                                              potty.text =
+                                                              potty?.text =
                                                                   _allChildrens[
                                                                               selectedIndex]
                                                                           .toileting[
                                                                       'potty'];
-                                                              toilet.text =
+                                                              toilet?.text =
                                                                   _allChildrens[
                                                                               selectedIndex]
                                                                           .toileting[
                                                                       'toilet'];
                                                               signature
-                                                                  .text = _allChildrens[
+                                                                  ?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .toileting[
                                                                   'signature'];
 
                                                               comments
-                                                                  .text = _allChildrens[
+                                                                  ?.text = _allChildrens[
                                                                           selectedIndex]
                                                                       .toileting[
                                                                   'comments'];
@@ -1547,7 +1552,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1590,7 +1595,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .fromLTRB(
+                                                                          .fromLTRB(
                                                                           12,
                                                                           8,
                                                                           12,
@@ -1683,14 +1688,14 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   }
                                                                   childValues[_allChildrens[
                                                                           index]
-                                                                      .id] = value;
+                                                                      .id] = value!;
                                                                   // if (_selectedChildrens
                                                                   //         .length >
                                                                   //     1)
-                                                                    //     viewAdd =
-                                                                    //true;
-                                                                    setState(
-                                                                        () {});
+                                                                  //     viewAdd =
+                                                                  //true;
+                                                                  setState(
+                                                                      () {});
                                                                 }),
                                                             title:
                                                                 GestureDetector(
@@ -1811,484 +1816,520 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                   height: 420,
                                   width:
                                       MediaQuery.of(context).size.width * 0.85,
-                                  child: recipesFetched &&
-                                                      recipes.length > 0
-                                                  ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        //  width: MediaQuery.of(context).size.width,
-                                        color: HexColor(details['roomcolor']),
-                                        child: Row(
+                                  child: recipesFetched && recipes.length > 0
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(
-                                              width: 12,
-                                            ),
-                                            Text(
-                                              'Add ' + type,
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            Expanded(
-                                              child: Container(),
-                                            ),
-                                            IconButton(
-                                                icon: Icon(
-                                                  Icons.clear,
-                                                  color: Colors.white,
-                                                ),
-                                                onPressed: () {
-                                                  showDeleteDialog(context, () {
-                                                    showPop = false;
-                                                    quant.clear();
-                                                    cal.clear();
-                                                    comments.clear();
-                                                    hour = '1h';
-                                                    min = '0m';
-                                                    currentItemIndex = 0;
-                                                    setState(() {});
-                                                    Navigator.pop(context);
-                                                  });
-                                                })
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          height: 355,
-                                          child: ListView(
-                                            children: [
-                                              Text('Time'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Row(
+                                            Container(
+                                              //  width: MediaQuery.of(context).size.width,
+                                              color: HexColor(
+                                                  details['roomcolor']),
+                                              child: Row(
                                                 children: [
-                                                  hours != null
-                                                      ? DropdownButtonHideUnderline(
-                                                          child: Container(
-                                                            height: 40,
-                                                            width: 80,
-                                                            decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        300]),
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 8,
-                                                                      right: 8),
-                                                              child: Center(
-                                                                child:
-                                                                    DropdownButton<
-                                                                        String>(
-                                                                  //  isExpanded: true,
-                                                                  value: hour,
-                                                                  items: hours
-                                                                      .map((String
-                                                                          value) {
-                                                                    return new DropdownMenuItem<
-                                                                        String>(
-                                                                      value:
-                                                                          value,
-                                                                      child: new Text(
-                                                                          value),
-                                                                    );
-                                                                  }).toList(),
-                                                                  onChanged:
-                                                                      (String
-                                                                          value) {
-                                                                    hour =
-                                                                        value;
-                                                                    setState(
-                                                                        () {});
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : Container(),
-                                                  Container(
-                                                    width: 20,
+                                                  SizedBox(
+                                                    width: 12,
                                                   ),
-                                                  minutes != null
-                                                      ? DropdownButtonHideUnderline(
-                                                          child: Container(
-                                                            height: 40,
-                                                            width: 80,
-                                                            decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        300]),
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 8,
-                                                                      right: 8),
-                                                              child: Center(
-                                                                child:
-                                                                    DropdownButton<
-                                                                        String>(
-                                                                  //  isExpanded: true,
-                                                                  value: min,
-                                                                  items: minutes
-                                                                      .map((String
-                                                                          value) {
-                                                                    return new DropdownMenuItem<
-                                                                        String>(
-                                                                      value:
-                                                                          value,
-                                                                      child: new Text(
-                                                                          value),
-                                                                    );
-                                                                  }).toList(),
-                                                                  onChanged:
-                                                                      (String
-                                                                          value) {
-                                                                    min = value;
-                                                                    setState(
-                                                                        () {});
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : Container(),
-                                               
+                                                  Text(
+                                                    'Add ' + type,
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(),
+                                                  ),
+                                                  IconButton(
+                                                      icon: Icon(
+                                                        Icons.clear,
+                                                        color: Colors.white,
+                                                      ),
+                                                      onPressed: () {
+                                                        showDeleteDialog(
+                                                            context, () {
+                                                          showPop = false;
+                                                          quant?.clear();
+                                                          cal?.clear();
+                                                          comments?.clear();
+                                                          hour = '1h';
+                                                          min = '0m';
+                                                          currentItemIndex = 0;
+                                                          setState(() {});
+                                                          Navigator.pop(
+                                                              context);
+                                                        });
+                                                      })
                                                 ],
                                               ),
-                                              
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Item'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              recipesFetched &&
-                                                      recipes.length > 0
-                                                  ? DropdownButtonHideUnderline(
-                                                      child: Container(
-                                                        height: 40,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .grey[300]),
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 8,
-                                                                  right: 8),
-                                                          child: Center(
-                                                            child:
-                                                                DropdownButton<
-                                                                    String>(
-                                                              isExpanded: true,
-                                                              value: recipes[
-                                                                      currentItemIndex]
-                                                                  .id,
-                                                              items: recipes.map(
-                                                                  (RecipeModel
-                                                                      value) {
-                                                                return new DropdownMenuItem<
-                                                                    String>(
-                                                                  value:
-                                                                      value.id,
-                                                                  child: new Text(
-                                                                      value
-                                                                          .itemName),
-                                                                );
-                                                              }).toList(),
-                                                              onChanged:
-                                                                  (value) {
-                                                                for (int i = 0;
-                                                                    i <
-                                                                        recipes
-                                                                            .length;
-                                                                    i++) {
-                                                                  if (recipes[i]
-                                                                          .id ==
-                                                                      value) {
-                                                                    setState(
-                                                                        () {
-                                                                      currentItemIndex =
-                                                                          i;
-                                                                    });
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                           
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Quantity'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                height: 30,
-                                                child: TextField(
-                                                    maxLines: 1,
-                                                    controller: quant,
-                                                    decoration:
-                                                        new InputDecoration(
-                                                      enabledBorder:
-                                                          const OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black26,
-                                                                width: 0.0),
-                                                      ),
-                                                      border:
-                                                          new OutlineInputBorder(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                          const Radius.circular(
-                                                              4),
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Calories'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                height: 30,
-                                                child: TextField(
-                                                    maxLines: 1,
-                                                    controller: cal,
-                                                    decoration:
-                                                        new InputDecoration(
-                                                      enabledBorder:
-                                                          const OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black26,
-                                                                width: 0.0),
-                                                      ),
-                                                      border:
-                                                          new OutlineInputBorder(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                          const Radius.circular(
-                                                              4),
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Comments'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                height: 60,
-                                                child: TextField(
-                                                    maxLines: 2,
-                                                    controller: comments,
-                                                    decoration:
-                                                        new InputDecoration(
-                                                      enabledBorder:
-                                                          const OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black26,
-                                                                width: 0.0),
-                                                      ),
-                                                      border:
-                                                          new OutlineInputBorder(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                          const Radius.circular(
-                                                              4),
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Container(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: 355,
+                                                child: ListView(
                                                   children: [
-                                                    GestureDetector(
-                                                      onTap: () async {
-                                                        if (recipes.length >
-                                                            0) {
-                                                          var _toSend = Constants
-                                                                  .BASE_URL +
-                                                              'dailyDiary/addFoodRecord';
-
-                                                          var objToSend = {
-                                                            "userid": MyApp
-                                                                .LOGIN_ID_VALUE,
-                                                            "startTime": hour +
-                                                                ":" +
-                                                                min,
-                                                            "item": recipes[
-                                                                    currentItemIndex]
-                                                                .itemName,
-                                                            "qty": quant.text
-                                                                .toString(),
-                                                            "comments": comments
-                                                                .text
-                                                                .toString(),
-                                                            "createdAt":
-                                                                DateTime.now()
-                                                                    .toString(),
-                                                            "type": type
-                                                                .toUpperCase(),
-                                                            "calories": cal.text
-                                                                .toString(),
-                                                            "childids": [
-                                                              _allChildrens[
-                                                                      selectedIndex]
-                                                                  .id
-                                                            ]
-                                                          };
-
-                                                          print(jsonEncode(
-                                                              objToSend));
-                                                          final response =
-                                                              await http.post(
-                                                                  _toSend,
-                                                                  body: jsonEncode(
-                                                                      objToSend),
-                                                                  headers: {
-                                                                'X-DEVICE-ID':
-                                                                    await MyApp
-                                                                        .getDeviceIdentity(),
-                                                                'X-TOKEN': MyApp
-                                                                    .AUTH_TOKEN_VALUE,
-                                                              });
-                                                          print(response.body);
-                                                          if (response
-                                                                  .statusCode ==
-                                                              200) {
-                                                            showPop = false;
-                                                            quant.clear();
-                                                            cal.clear();
-                                                            comments.clear();
-                                                            hour = '1h';
-                                                            min = '0m';
-                                                            currentItemIndex =
-                                                                0;
-                                                            MyApp.ShowToast(
-                                                                "updated",
-                                                                context);
-                                                            setState(() {});
-                                                            _fetchData();
-                                                          } else if (response
-                                                                  .statusCode ==
-                                                              401) {
-                                                            MyApp.Show401Dialog(
-                                                                context);
-                                                          }
-                                                        } else {
-                                                          MyApp.ShowToast(
-                                                              'no items',
-                                                              context);
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                          decoration: BoxDecoration(
-                                                              color: Constants
-                                                                  .kButton,
-                                                              borderRadius: BorderRadius
-                                                                  .all(Radius
-                                                                      .circular(
-                                                                          8))),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .fromLTRB(
-                                                                    12,
-                                                                    8,
-                                                                    12,
-                                                                    8),
-                                                            child: Text(
-                                                              'SAVE',
-                                                              style: TextStyle(
+                                                    Text('Time'),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        hours != null
+                                                            ? DropdownButtonHideUnderline(
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  width: 80,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                          border: Border
+                                                                              .all(
+                                                                            color:
+                                                                                Constants.greyColor,
+                                                                          ),
+                                                                          color: Colors
+                                                                              .white,
+                                                                          borderRadius:
+                                                                              BorderRadius.all(Radius.circular(8))),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left: 8,
+                                                                        right:
+                                                                            8),
+                                                                    child:
+                                                                        Center(
+                                                                      child: DropdownButton<
+                                                                          String>(
+                                                                        //  isExpanded: true,
+                                                                        value:
+                                                                            hour,
+                                                                        items: hours.map((String
+                                                                            value) {
+                                                                          return new DropdownMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                value,
+                                                                            child:
+                                                                                new Text(value),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged:
+                                                                            (String?
+                                                                                value) {
+                                                                          if (value ==
+                                                                              null)
+                                                                            return;
+                                                                          hour =
+                                                                              value!;
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Container(),
+                                                        Container(
+                                                          width: 20,
+                                                        ),
+                                                        minutes != null
+                                                            ? DropdownButtonHideUnderline(
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  width: 80,
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color: Constants
+                                                                              .greyColor),
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.all(
+                                                                              Radius.circular(8))),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left: 8,
+                                                                        right:
+                                                                            8),
+                                                                    child:
+                                                                        Center(
+                                                                      child: DropdownButton<
+                                                                          String>(
+                                                                        //  isExpanded: true,
+                                                                        value:
+                                                                            min,
+                                                                        items: minutes.map((String
+                                                                            value) {
+                                                                          return new DropdownMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                value,
+                                                                            child:
+                                                                                new Text(value),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged:
+                                                                            (String?
+                                                                                value) {
+                                                                          if (value ==
+                                                                              null)
+                                                                            return;
+                                                                          min =
+                                                                              value!;
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Container(),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text('Item'),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    recipesFetched &&
+                                                            recipes.length > 0
+                                                        ? DropdownButtonHideUnderline(
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration: BoxDecoration(
+                                                                  border: Border.all(
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
-                                                                  fontSize: 16),
+                                                                  borderRadius:
+                                                                      BorderRadius.all(
+                                                                          Radius.circular(
+                                                                              8))),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left: 8,
+                                                                        right:
+                                                                            8),
+                                                                child: Center(
+                                                                  child:
+                                                                      DropdownButton<
+                                                                          String>(
+                                                                    isExpanded:
+                                                                        true,
+                                                                    value: recipes[
+                                                                            currentItemIndex]
+                                                                        .id,
+                                                                    items: recipes.map(
+                                                                        (RecipeModel
+                                                                            value) {
+                                                                      return new DropdownMenuItem<
+                                                                          String>(
+                                                                        value: value
+                                                                            .id,
+                                                                        child: new Text(
+                                                                            value.itemName),
+                                                                      );
+                                                                    }).toList(),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      for (int i =
+                                                                              0;
+                                                                          i < recipes.length;
+                                                                          i++) {
+                                                                        if (recipes[i].id ==
+                                                                            value) {
+                                                                          setState(
+                                                                              () {
+                                                                            currentItemIndex =
+                                                                                i;
+                                                                          });
+                                                                          break;
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : Container(),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text('Quantity'),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Container(
+                                                      height: 30,
+                                                      child: TextField(
+                                                          maxLines: 1,
+                                                          controller: quant,
+                                                          decoration:
+                                                              new InputDecoration(
+                                                            enabledBorder:
+                                                                const OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .black26,
+                                                                      width:
+                                                                          0.0),
+                                                            ),
+                                                            border:
+                                                                new OutlineInputBorder(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                const Radius
+                                                                    .circular(
+                                                                    4),
+                                                              ),
                                                             ),
                                                           )),
                                                     ),
                                                     SizedBox(
-                                                      width: 10,
-                                                    )
+                                                      height: 15,
+                                                    ),
+                                                    Text('Calories'),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Container(
+                                                      height: 30,
+                                                      child: TextField(
+                                                          maxLines: 1,
+                                                          controller: cal,
+                                                          decoration:
+                                                              new InputDecoration(
+                                                            enabledBorder:
+                                                                const OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .black26,
+                                                                      width:
+                                                                          0.0),
+                                                            ),
+                                                            border:
+                                                                new OutlineInputBorder(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                const Radius
+                                                                    .circular(
+                                                                    4),
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text('Comments'),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Container(
+                                                      height: 60,
+                                                      child: TextField(
+                                                          maxLines: 2,
+                                                          controller: comments,
+                                                          decoration:
+                                                              new InputDecoration(
+                                                            enabledBorder:
+                                                                const OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .black26,
+                                                                      width:
+                                                                          0.0),
+                                                            ),
+                                                            border:
+                                                                new OutlineInputBorder(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                const Radius
+                                                                    .circular(
+                                                                    4),
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Container(
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              if (recipes
+                                                                      .length >
+                                                                  0) {
+                                                                var _toSend = Constants
+                                                                        .BASE_URL +
+                                                                    'dailyDiary/addFoodRecord';
+
+                                                                var objToSend =
+                                                                    {
+                                                                  "userid": MyApp
+                                                                      .LOGIN_ID_VALUE,
+                                                                  "startTime":
+                                                                      hour +
+                                                                          ":" +
+                                                                          min,
+                                                                  "item": recipes[
+                                                                          currentItemIndex]
+                                                                      .itemName,
+                                                                  "qty": quant
+                                                                      ?.text
+                                                                      .toString(),
+                                                                  "comments":
+                                                                      comments
+                                                                          ?.text
+                                                                          .toString(),
+                                                                  "createdAt": DateTime
+                                                                          .now()
+                                                                      .toString(),
+                                                                  "type": type
+                                                                      .toUpperCase(),
+                                                                  "calories": cal
+                                                                      ?.text
+                                                                      .toString(),
+                                                                  "childids": [
+                                                                    _allChildrens[
+                                                                            selectedIndex]
+                                                                        .id
+                                                                  ]
+                                                                };
+
+                                                                print(jsonEncode(
+                                                                    objToSend));
+                                                                final response = await http.post(
+                                                                    Uri.parse(
+                                                                        _toSend),
+                                                                    body: jsonEncode(
+                                                                        objToSend),
+                                                                    headers: {
+                                                                      'X-DEVICE-ID':
+                                                                          await MyApp
+                                                                              .getDeviceIdentity(),
+                                                                      'X-TOKEN':
+                                                                          MyApp
+                                                                              .AUTH_TOKEN_VALUE,
+                                                                    });
+                                                                print(response
+                                                                    .body);
+                                                                if (response
+                                                                        .statusCode ==
+                                                                    200) {
+                                                                  showPop =
+                                                                      false;
+                                                                  quant
+                                                                      ?.clear();
+                                                                  cal?.clear();
+                                                                  comments
+                                                                      ?.clear();
+                                                                  hour = '1h';
+                                                                  min = '0m';
+                                                                  currentItemIndex =
+                                                                      0;
+                                                                  MyApp.ShowToast(
+                                                                      "updated",
+                                                                      context);
+                                                                  setState(
+                                                                      () {});
+                                                                  _fetchData();
+                                                                } else if (response
+                                                                        .statusCode ==
+                                                                    401) {
+                                                                  MyApp.Show401Dialog(
+                                                                      context);
+                                                                }
+                                                              } else {
+                                                                MyApp.ShowToast(
+                                                                    'no items',
+                                                                    context);
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    color: Constants
+                                                                        .kButton,
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(8))),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .fromLTRB(
+                                                                          12,
+                                                                          8,
+                                                                          12,
+                                                                          8),
+                                                                  child: Text(
+                                                                    'SAVE',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            16),
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
+                                            )
+                                          ],
+                                        )
+                                      : Center(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                height: 30,
+                                              ),
+                                              Text('No Recipe Found'),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    showPop = false;
+                                                    setState(() {});
+                                                  },
+                                                  child: Text('ok'))
                                             ],
                                           ),
-                                        ),
-                                      )
-                                    ],
-                                  ):Center(child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment:MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(height: 30,),
-                                    Text('No Recipe Found'),
-                                    SizedBox(height: 10,),
-                                    ElevatedButton(onPressed: (){
-                                      showPop=false;
-                                      setState(() {
-                                        
-                                      });
-                                    }, child: Text('ok'))
-                                  ],),)
-                                  ),
+                                        )),
                             ),
                           ),
                         )
@@ -2331,7 +2372,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 onPressed: () {
                                                   showDeleteDialog(context, () {
                                                     showPop = false;
-                                                    comments.clear();
+                                                    comments?.clear();
                                                     hour = '1h';
                                                     min = '0m';
                                                     setState(() {});
@@ -2359,9 +2400,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -2371,7 +2411,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -2393,10 +2433,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       hour =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -2416,9 +2459,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -2428,7 +2470,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -2450,10 +2492,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       min =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -2519,7 +2564,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 ":" +
                                                                 min,
                                                             "comments": comments
-                                                                .text
+                                                                ?.text
                                                                 .toString(),
                                                             "createdAt":
                                                                 DateTime.now()
@@ -2537,7 +2582,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               objToSend));
                                                           final response =
                                                               await http.post(
-                                                                  _toSend,
+                                                                  Uri.parse(
+                                                                      _toSend),
                                                                   body: jsonEncode(
                                                                       objToSend),
                                                                   headers: {
@@ -2575,7 +2621,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .fromLTRB(
+                                                                      .fromLTRB(
                                                                       12,
                                                                       8,
                                                                       12,
@@ -2639,7 +2685,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 onPressed: () {
                                                   showDeleteDialog(context, () {
                                                     showPop = false;
-                                                    comments.clear();
+                                                    comments?.clear();
                                                     hour = '1h';
                                                     min = '0m';
                                                     hour2 = '1h';
@@ -2669,9 +2715,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -2681,7 +2726,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -2703,10 +2748,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       hour =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -2726,9 +2774,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -2738,7 +2785,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -2760,10 +2807,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       min =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -2791,9 +2841,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -2803,7 +2852,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -2826,10 +2875,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       hour2 =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -2849,9 +2901,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               width: 80,
                                                               decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          300]),
+                                                                      color: Constants
+                                                                          .greyColor),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
@@ -2861,7 +2912,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left: 8,
                                                                         right:
                                                                             8),
@@ -2883,10 +2934,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       );
                                                                     }).toList(),
                                                                     onChanged:
-                                                                        (String
+                                                                        (String?
                                                                             value) {
+                                                                      if (value ==
+                                                                          null)
+                                                                        return;
                                                                       min2 =
-                                                                          value;
+                                                                          value!;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -2955,7 +3009,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 ":" +
                                                                 min2,
                                                             "comments": comments
-                                                                .text
+                                                                ?.text
                                                                 .toString(),
                                                             "createdAt":
                                                                 DateTime.now()
@@ -2973,7 +3027,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               objToSend));
                                                           final response =
                                                               await http.post(
-                                                                  _toSend,
+                                                                  Uri.parse(_toSend),
                                                                   body: jsonEncode(
                                                                       objToSend),
                                                                   headers: {
@@ -2991,7 +3045,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 "updated",
                                                                 context);
                                                             showPop = false;
-                                                            comments.clear();
+                                                            comments?.clear();
                                                             hour = '1h';
                                                             min = '0m';
                                                             hour2 = '1h';
@@ -3016,7 +3070,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .fromLTRB(
+                                                                      .fromLTRB(
                                                                       12,
                                                                       8,
                                                                       12,
@@ -3081,11 +3135,11 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 onPressed: () {
                                                   showDeleteDialog(context, () {
                                                     showPop = false;
-                                                    nappy.clear();
-                                                    potty.clear();
-                                                    toilet.clear();
-                                                    signature.clear();
-                                                    comments.clear();
+                                                    nappy?.clear();
+                                                    potty?.clear();
+                                                    toilet?.clear();
+                                                    signature?.clear();
+                                                    comments?.clear();
                                                     hour = '1h';
                                                     min = '0m';
                                                     setState(() {});
@@ -3114,9 +3168,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             width: 80,
                                                             decoration: BoxDecoration(
                                                                 border: Border.all(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        300]),
+                                                                    color: Constants.greyColor),
                                                                 color: Colors
                                                                     .white,
                                                                 borderRadius: BorderRadius
@@ -3126,7 +3178,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .only(
+                                                                      .only(
                                                                       left: 8,
                                                                       right: 8),
                                                               child: Center(
@@ -3147,10 +3199,11 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                     );
                                                                   }).toList(),
                                                                   onChanged:
-                                                                      (String
+                                                                      (String?
                                                                           value) {
+                                                                            if(value==null)return;
                                                                     hour =
-                                                                        value;
+                                                                        value!;
                                                                     setState(
                                                                         () {});
                                                                   },
@@ -3170,9 +3223,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             width: 80,
                                                             decoration: BoxDecoration(
                                                                 border: Border.all(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        300]),
+                                                                    color: Constants.greyColor),
                                                                 color: Colors
                                                                     .white,
                                                                 borderRadius: BorderRadius
@@ -3182,7 +3233,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .only(
+                                                                      .only(
                                                                       left: 8,
                                                                       right: 8),
                                                               child: Center(
@@ -3203,9 +3254,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                     );
                                                                   }).toList(),
                                                                   onChanged:
-                                                                      (String
-                                                                          value) {
-                                                                    min = value;
+                                                                      (String?
+                                                                          value) {    if(value==null)return;
+                                                                    min = value!;
                                                                     setState(
                                                                         () {});
                                                                   },
@@ -3401,17 +3452,17 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               .LOGIN_ID_VALUE,
                                                           "startTime":
                                                               hour + ":" + min,
-                                                          "nappy": nappy.text
+                                                          "nappy": nappy?.text
                                                               .toString(),
-                                                          "potty": potty.text
+                                                          "potty": potty?.text
                                                               .toString(),
-                                                          "toilet": toilet.text
+                                                          "toilet": toilet?.text
                                                               .toString(),
                                                           "signature": signature
-                                                              .text
+                                                              ?.text
                                                               .toString(),
                                                           "comments": comments
-                                                              .text
+                                                              ?.text
                                                               .toString(),
                                                           "createdAt":
                                                               DateTime.now()
@@ -3429,7 +3480,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             objToSend));
                                                         final response =
                                                             await http.post(
-                                                                _toSend,
+                                                                Uri.parse(_toSend),
                                                                 body: jsonEncode(
                                                                     objToSend),
                                                                 headers: {
@@ -3448,12 +3499,12 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               context);
                                                           showPop = false;
 
-                                                          potty.clear();
-                                                          nappy.clear();
-                                                          signature.clear();
-                                                          toilet.clear();
+                                                          potty?.clear();
+                                                          nappy?.clear();
+                                                          signature?.clear();
+                                                          toilet?.clear();
 
-                                                          comments.clear();
+                                                          comments?.clear();
                                                           hour = '1h';
                                                           min = '0m';
                                                           setState(() {});
@@ -3476,7 +3527,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .fromLTRB(
+                                                                    .fromLTRB(
                                                                     12,
                                                                     8,
                                                                     12,
@@ -3511,8 +3562,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
             : Container());
   }
 
-  Future<DateTime> _selectDate(BuildContext context, DateTime dateTime) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context, DateTime dateTime) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: dateTime,
       firstDate: new DateTime(1800),

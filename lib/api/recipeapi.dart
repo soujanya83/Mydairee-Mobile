@@ -26,14 +26,14 @@ class RecipeAPIHandler {
 
   Future<dynamic> getList() async {
     var getListURL =
-        _getListURL + MyApp.LOGIN_ID_VALUE + '/' + data['centerid'];
+        _getListURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['centerid']??''}';
     ServiceWithHeader helper = ServiceWithHeader(getListURL);
     var d = await helper.data();
     return d;
   }
 
   Future<dynamic> getRecipeDetails() async {
-    var getListURL = _getRecipeURL + MyApp.LOGIN_ID_VALUE + '/' + data['rid'];
+    var getListURL = _getRecipeURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['rid']??''}';
     ServiceWithHeader helper = ServiceWithHeader(getListURL);
     var d = await helper.data();
     return d;
@@ -41,7 +41,7 @@ class RecipeAPIHandler {
 
   Future<dynamic> deleteListItem() async {
     var deleteItemUrl =
-        _deleteItemUrl + MyApp.LOGIN_ID_VALUE + '/' + data['id'];
+        _deleteItemUrl + MyApp.LOGIN_ID_VALUE + '/' + '${data['id']??""}';
     ServiceWithHeader helper = ServiceWithHeader(deleteItemUrl);
     var d = await helper.data();
     return d;
@@ -49,7 +49,7 @@ class RecipeAPIHandler {
 
   Future<dynamic> deleteMedia() async {
     var deleteMediaURL =
-        _deleteMediaURL + MyApp.LOGIN_ID_VALUE + '/' + data['mediaid'];
+        _deleteMediaURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['mediaid']??""}';
     ServiceWithHeader helper = ServiceWithHeader(deleteMediaURL);
     var d = await helper.data();
     print(d);

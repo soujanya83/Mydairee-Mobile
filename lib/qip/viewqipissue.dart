@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -13,7 +14,7 @@ class ViewIssue extends StatefulWidget {
   final String areaId;
   final String elementId;
   ViewIssue(
-      {this.issuesModel, this.type, this.qipId, this.areaId, this.elementId});
+      {required this.issuesModel, required this.type, required this.qipId, required this.areaId, required this.elementId});
 
   @override
   _ViewIssueState createState() => _ViewIssueState();
@@ -116,7 +117,7 @@ class _ViewIssueState extends State<ViewIssue> {
                   height: 40,
                   width: size.width,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]),
+                      border: Border.all(color: Constants.greyColor),
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Padding(
@@ -130,8 +131,8 @@ class _ViewIssueState extends State<ViewIssue> {
                           child: new Text(value),
                         );
                       }).toList(),
-                      onChanged: (String value) {
-                        selectedPriority = value;
+                       onChanged: (String? value)  {
+                        selectedPriority = value!;
                         setState(() {});
                       },
                     ),
@@ -151,7 +152,7 @@ class _ViewIssueState extends State<ViewIssue> {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.grey[300])),
+                    border: Border.all(color: Constants.greyColor)),
                 height: 35,
                 width: size.width,
                 child: Padding(
@@ -240,7 +241,7 @@ class _ViewIssueState extends State<ViewIssue> {
                   height: 40,
                   width: size.width,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]),
+                      border: Border.all(color: Constants.greyColor),
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Padding(
@@ -254,8 +255,8 @@ class _ViewIssueState extends State<ViewIssue> {
                           child: new Text(value),
                         );
                       }).toList(),
-                      onChanged: (String value) {
-                        selectedStatus = value;
+                       onChanged: (String? value)  {
+                        selectedStatus = value!;
                         setState(() {});
                       },
                     ),

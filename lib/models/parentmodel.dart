@@ -19,22 +19,22 @@ class ParentModel{
   String companyLogo;
 
   ParentModel({
-    this.userid,
-    this.username,
-    this.emailid,
-    this.dob,
-    this.password,
-    this.contactNo,
-    this.name,
-    this.imageUrl,
-    this.userType,
-    this.title,
-    this.authToken,
-    this.deviceid,
-    this.devicetype,
-    this.companyLogo,
-    this.gender,
-    this.status
+    required this.userid,
+    required this.username,
+    required this.emailid,
+    required this.dob,
+    required this.password,
+    required this.contactNo,
+    required this.name,
+    required this.imageUrl,
+    required this.userType,
+    required this.title,
+    required this.authToken,
+    required this.deviceid,
+    required this.devicetype,
+    required this.companyLogo,
+    required this.gender,
+    required this.status
     });
 
   static ParentModel fromJson(Map<String,dynamic> json){

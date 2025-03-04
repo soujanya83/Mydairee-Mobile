@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -330,7 +331,7 @@ class _RoomDetailsState extends State<RoomDetails> {
       checkValues = [];
       var child = data['roomChilds'];
       groupsData = data['groups'];
-      _allChildrens = new List();
+      _allChildrens = [];
       try {
         assert(child is List);
         for (int i = 0; i < child.length; i++) {
@@ -370,7 +371,7 @@ class _RoomDetailsState extends State<RoomDetails> {
     };
     print(jsonEncode(objToSend));
     final response =
-        await http.post(_toSend, body: jsonEncode(objToSend), headers: {
+        await http.post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -383,7 +384,7 @@ class _RoomDetailsState extends State<RoomDetails> {
       ids = [];
       checkValues = [];
       var child = data['roomChilds'];
-      _allChildrens = new List();
+      _allChildrens = [];
       try {
         assert(child is List);
         for (int i = 0; i < child.length; i++) {
@@ -427,7 +428,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 ),
                                 GestureDetector(
                                     onTap: () async {
-                                      key.currentState.openEndDrawer();
+                                      key.currentState?.openEndDrawer();
                                     },
                                     child: Icon(
                                       Entypo.select_arrows,
@@ -560,7 +561,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                                   objToSend));
                                                               final response =
                                                                   await http.post(
-                                                                      _toSend,
+                                                                      Uri.parse(_toSend),
                                                                       body: jsonEncode(
                                                                           objToSend),
                                                                       headers: {
@@ -620,7 +621,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                         "rooms": [widget.id],
                                       };
                                       print(jsonEncode(objToSend));
-                                      final response = await http.post(_toSend,
+                                      final response = await http.post(Uri.parse(_toSend),
                                           body: jsonEncode(objToSend),
                                           headers: {
                                             'X-DEVICE-ID':
@@ -919,7 +920,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                 height: 10,
               ),
               Container(
-                color: Colors.grey[300],
+                color: Constants.greyColor,
                 height: 1,
               ),
               SizedBox(
@@ -940,7 +941,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                   Container(
                     height: 35,
                     width: 1,
-                    color: Colors.grey[300],
+                    color: Constants.greyColor,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

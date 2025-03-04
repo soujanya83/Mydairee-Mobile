@@ -5,10 +5,10 @@ class TagsModel {
   String lastModified;
 
   TagsModel({
-    this.id,
-    this.tags,
-    this.count,
-    this.lastModified,
+    required this.id,
+    required this.tags,
+    required this.count,
+    required this.lastModified,
   });
 
   static TagsModel fromJson(Map<String, dynamic> json) {

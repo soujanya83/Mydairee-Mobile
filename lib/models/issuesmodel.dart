@@ -14,19 +14,19 @@ class IssuesModel {
   String userImg;
 
   IssuesModel({
-    this.id,
-    this.qipId,
-    this.elementId,
-    this.issueIdentified,
-    this.outcome,
-    this.priority,
-    this.expectedDate,
-    this.successMeasure,
-    this.howToGetOutcome,
-    this.addedBy,
-    this.status,
-    this.addedAt,
-    this.userImg,
+    required this.id,
+    required this.qipId,
+    required this.elementId,
+    required this.issueIdentified,
+    required this.outcome,
+    required this.priority,
+    required this.expectedDate,
+    required this.successMeasure,
+    required this.howToGetOutcome,
+    required this.addedBy,
+    required this.status,
+    required this.addedAt,
+    required this.userImg,
   });
 
   static IssuesModel fromJson(Map<String, dynamic> json) {

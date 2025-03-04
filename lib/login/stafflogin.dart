@@ -23,10 +23,10 @@ class _StaffLoginState extends State<StaffLogin> {
   TextEditingController nameController = new TextEditingController();
   bool obscureText = true;
   bool isSignInDisabled = false;
-  String loginEmail, loginPassword;
+  String loginEmail = '', loginPassword = '';
   bool loggingIn = false;
-  String pin;
-  String pinErr, empCodeErr = '';
+  String pin = '';
+  String pinErr = '', empCodeErr = '';
 
   Future<void> loginNow() async {
     setState(() {
@@ -116,48 +116,48 @@ class _StaffLoginState extends State<StaffLogin> {
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: ButtonTheme(
         height: 42.0,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
-          onPressed:
-              //       (){
-              // Navigator.of(context).pushReplacementNamed(Platform.Tag);
-              //       },
-              isSignInDisabled
-                  ? null
-                  : () {
-                      if (pin == null || pin.length == 0) {
-                        pinErr = 'Enter Pin';
-                        setState(() {});
-                      } else {
-                        pinErr = '';
-                        setState(() {});
-                      }
+        child: ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Constants.kButton,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+    ),
+  ),
+  onPressed: isSignInDisabled
+      ? null
+      : () {
+          if (pin == null || pin.isEmpty) {
+            pinErr = 'Enter Pin';
+            setState(() {});
+          } else {
+            pinErr = '';
+            setState(() {});
+          }
 
-                      if (nameController.text == '') {
-                        empCodeErr = 'Enter Employee Code';
-                        setState(() {});
-                      } else {
-                        empCodeErr = '';
-                        setState(() {});
-                      }
-                      if (nameController.text != '' &&
-                          pin != null &&
-                          pin.length != 0) {
-                        setState(() {
-                          isSignInDisabled = true;
-                        });
-                        loginNow();
-                      }
-                    },
-          color: Constants.kButton,
-          child: Text("Login",
-              style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-        ),
+          if (nameController.text.isEmpty) {
+            empCodeErr = 'Enter Employee Code';
+            setState(() {});
+          } else {
+            empCodeErr = '';
+            setState(() {});
+          }
+
+          if (nameController.text.isNotEmpty && pin != null && pin.isNotEmpty) {
+            setState(() {
+              isSignInDisabled = true;
+            });
+            loginNow();
+          }
+        },
+  child: Text(
+    "Login",
+    style: TextStyle(
+      fontSize: 20.0,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+),
       ),
     );
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/surveyapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/surveymodel.dart';
@@ -33,7 +34,7 @@ class _SurveyListState extends State<SurveyList> {
     if (!data.containsKey('error')) {
       print(data);
       var res = data['records'];
-      _survey = new List();
+      _survey = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {

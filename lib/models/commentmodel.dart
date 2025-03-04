@@ -8,13 +8,13 @@ class CommentModel {
   String userImg;
 
   CommentModel({
-    this.id,
-    this.qipId,
-    this.elementId,
-    this.commentText,
-    this.addedBy,
-    this.addedAt,
-    this.userImg,
+    required this.id,
+    required this.qipId,
+    required this.elementId,
+    required this.commentText,
+    required this.addedBy,
+    required this.addedAt,
+    required this.userImg,
   });
 
   static CommentModel fromJson(Map<String, dynamic> json) {

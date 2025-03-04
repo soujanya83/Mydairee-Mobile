@@ -9,14 +9,14 @@ class QipListModel {
   String qipName;
 
   QipListModel(
-      {this.id,
-      this.centerId,
-      this.name,
-      this.createdAt,
-      this.createdBy,
-      this.checked,
-      this.boolCheck,
-      this.qipName});
+      {required this.id,
+      required this.centerId,
+      required this.name,
+      required this.createdAt,
+      required this.createdBy,
+      required this.checked,
+      required this.boolCheck,
+      required this.qipName});
 
   static QipListModel fromJson(Map<String, dynamic> json) {
     return QipListModel(

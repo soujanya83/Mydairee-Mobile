@@ -100,7 +100,7 @@ class _SaveServiceState extends State<SaveService> {
     if (!dt.containsKey('error')) {
       print(dt);
       var res = dt['Centers'];
-      centers = new List();
+      centers = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -190,7 +190,7 @@ class _SaveServiceState extends State<SaveService> {
                             height: 30,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),

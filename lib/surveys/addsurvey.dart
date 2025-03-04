@@ -20,7 +20,7 @@ class AddSurvey extends StatefulWidget {
   final String type;
   final String id;
 
-  AddSurvey({this.type, this.id});
+  AddSurvey({required this.type, required this.id});
 
   @override
   _AddSurveyState createState() => _AddSurveyState();
@@ -111,15 +111,15 @@ class _AddSurveyState extends State<AddSurvey> {
         setState(() {});
       },
       mandatoryCallback: (value) {
-        _questions[v].helper.mandatory = value;
+        _questions[v].helper.mandatory = value!;
         setState(() {});
       },
       questionCallback: (value) {
-        _questions[v].helper.question = value;
+        _questions[v].helper.question = value!;
         setState(() {});
       },
       choiceCallback: (value) {
-        _questions[v].helper.choosenValue = value;
+        _questions[v].helper.choosenValue = value!;
         setState(() {});
       },
       funcCallback: (value) {
@@ -192,15 +192,15 @@ class _AddSurveyState extends State<AddSurvey> {
         setState(() {});
       },
       mandatoryCallback: (value) {
-        _questions[v].helper.mandatory = value;
+        _questions[v].helper.mandatory = value!;
         setState(() {});
       },
       questionCallback: (value) {
-        _questions[v].helper.question = value;
+        _questions[v].helper.question = value!;
         setState(() {});
       },
       choiceCallback: (value) {
-        _questions[v].helper.choosenValue = value;
+        _questions[v].helper.choosenValue = value!;
         setState(() {});
       },
       funcCallback: (value) {
@@ -232,7 +232,7 @@ class _AddSurveyState extends State<AddSurvey> {
 
     var child = data['records'];
     // ignore: deprecated_member_use
-    _allChildrens = new List();
+    _allChildrens = [];
     try {
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
@@ -390,15 +390,15 @@ class _AddSurveyState extends State<AddSurvey> {
               setState(() {});
             },
             mandatoryCallback: (value) {
-              _questions[v].helper.mandatory = value;
+              _questions[v].helper.mandatory = value!;
               setState(() {});
             },
             questionCallback: (value) {
-              _questions[v].helper.question = value;
+              _questions[v].helper.question = value!;
               setState(() {});
             },
             choiceCallback: (value) {
-              _questions[v].helper.choosenValue = value;
+              _questions[v].helper.choosenValue = value!;
               setState(() {});
             },
             funcCallback: (value) async {
@@ -455,10 +455,10 @@ class _AddSurveyState extends State<AddSurvey> {
                   title: Text('Select All'),
                   value: selectAll,
                   onChanged: (value) {
-                    selectAll = value;
+                    selectAll = value!;
                     for (var i = 0; i < childValues.length; i++) {
                       String key = childValues.keys.elementAt(i);
-                      childValues[key] = value;
+                      childValues[key] = value!;
                       if (value == true) {
                         if (!_selectedChildrens.contains(_allChildrens[i])) {
                           _selectedChildrens.add(_allChildrens[i]);
@@ -506,7 +506,7 @@ class _AddSurveyState extends State<AddSurvey> {
                                           .remove(_allChildrens[index]);
                                     }
                                   }
-                                  childValues[_allChildrens[index].id] = value;
+                                  childValues[_allChildrens[index].id] = value!;
 
                                   setState(() {});
                                 }),
@@ -570,7 +570,7 @@ class _AddSurveyState extends State<AddSurvey> {
                     SizedBox(height: 5),
                     GestureDetector(
                       onTap: () {
-                        key.currentState.openEndDrawer();
+                        key.currentState?.openEndDrawer();
                       },
                       child: Container(
                           height: 40,
@@ -739,7 +739,7 @@ class _AddSurveyState extends State<AddSurvey> {
                                           filename: basename(img.path))
                                       .then((value) {
                                     print(value);
-                                    mp['fileImg' + (i + 1).toString()] = value;
+                                    mp['fileImg' + (i + 1).toString()] = value!;
                                   });
                                 }
                                 if (vid != null) {

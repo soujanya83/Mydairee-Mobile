@@ -20,24 +20,24 @@ class ProgPlanModel {
   bool boolCheck;
 
   ProgPlanModel(
-      {this.id,
-      this.roomid,
-      this.name,
-      this.startDate,
-      this.inqTopicDetails,
-      this.endDate,
-      this.inqTopicTitle,
-      this.susTopicTitle,
-      this.artExperiments,
-      this.activityDetails,
-      this.outdoorActivityDetails,
-      this.specialActivity,
-      this.createdAt,
-      this.createdBy,
-      this.susTopicDetails,
-      this.otherExperience,
-      this.checked,
-      this.boolCheck});
+      {required this.id,
+      required this.roomid,
+      required this.name,
+      required this.startDate,
+      required this.inqTopicDetails,
+      required this.endDate,
+      required this.inqTopicTitle,
+      required this.susTopicTitle,
+      required this.artExperiments,
+      required this.activityDetails,
+      required this.outdoorActivityDetails,
+      required this.specialActivity,
+      required this.createdAt,
+      required this.createdBy,
+      required this.susTopicDetails,
+      required this.otherExperience,
+      required this.checked,
+      required this.boolCheck});
 
   static ProgPlanModel fromJson(Map<String, dynamic> json) {
     return ProgPlanModel(

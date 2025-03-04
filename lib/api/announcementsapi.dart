@@ -38,7 +38,7 @@ class AnnouncementsAPIHandler {
 
   Future<dynamic> getAnnouncementsDetails() async {
     var detailAnnouncementURL =
-        _detailAnnouncementURL + MyApp.LOGIN_ID_VALUE + '/' + data['id'] + '/';
+        _detailAnnouncementURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['id']??''}' + '/';
     print(detailAnnouncementURL);
     ServiceWithHeader helper = ServiceWithHeader(detailAnnouncementURL);
     var d = await helper.data();

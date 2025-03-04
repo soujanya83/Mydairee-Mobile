@@ -147,6 +147,6 @@ class Constants {
   //985C5C
   static final Color kCount = const Color(0xff985C5C);
 
-  static final Color greyColor = Colors.grey[300];
+  static final Color greyColor = Colors.grey[300]!;
   static final Color kprogresscard = const Color(0xffC8DBE5);
 }

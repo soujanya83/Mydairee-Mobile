@@ -7,9 +7,9 @@ class ChildGroupsModel{
   List children;
 
   ChildGroupsModel({
-    this.id,
-    this.name,
-    this.children
+    required this.id,
+    required this.name,
+    required this.children
     });
 
   static ChildGroupsModel fromJson(Map<String,dynamic> json){

@@ -23,7 +23,7 @@ class Addrecipe extends StatefulWidget {
   final String type;
   final String id;
   final String centerid;
-  Addrecipe({this.type, this.id, this.centerid});
+  Addrecipe({required this.type, required this.id, required this.centerid});
   @override
   _AddrecipeState createState() => _AddrecipeState();
 }
@@ -57,7 +57,7 @@ class _AddrecipeState extends State<Addrecipe> {
     var data = await handler.getIngredients();
     print(data);
     var child = data['Ingredients'];
-    _allIngredients = new List();
+    _allIngredients = [];
     try {
       assert(child is List);
       _allIngredients.add(IngredientModel(id: '0', name: 'Select Ingreidient'));

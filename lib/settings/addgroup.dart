@@ -148,7 +148,7 @@ class _AddGroupState extends State<AddGroup> {
                              }
                              
                            }
-                             childValues[_allChildrens[index].id]=value;
+                             childValues[_allChildrens[index].id]=value!;
                          
                            setState((){});
                        }
@@ -212,7 +212,7 @@ class _AddGroupState extends State<AddGroup> {
                       ),
                         GestureDetector(
                       onTap: (){
-                               key.currentState.openEndDrawer();
+                               key.currentState?.openEndDrawer();
                       },
                       child: Container(
                         width: 160,
@@ -340,7 +340,7 @@ class _AddGroupState extends State<AddGroup> {
                                  }
 
                                   print(jsonEncode(objToSend));
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':

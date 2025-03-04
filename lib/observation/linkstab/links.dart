@@ -28,17 +28,18 @@ class _LinksState extends State<Links> {
   bool reflectionsFetched = false;
   bool plansFetched = false;
 
-  List<ObservationModel> _allObservations;
-  List<ReflectionModel> _allReflections;
-  List<QipListModel> _allQips;
-  List<ProgPlanModel> _allPlans;
+  List<ObservationModel> _allObservations = [];
+  List<ReflectionModel> _allReflections = [];
+  List<QipListModel> _allQips = [];
+  List<ProgPlanModel> _allPlans = [];
 
   int choose = 0;
-  List<bool> _added;
-  List<bool> _addedRef;
-  List<bool> _addedQips;
-  List<bool> _addedPlans;
+  List<bool> _added = [];
+  List<bool> _addedRef = [];
+  List<bool> _addedQips = [];
+  List<bool> _addedPlans = [];
   bool load = false;
+
 
   // Future<void> _fetchReflectionsData() async {
 
@@ -51,8 +52,8 @@ class _LinksState extends State<Links> {
   //   if(!data.containsKey('error')){
 
   //       print(data);
-  //     _allReflections = new List();
-  //     _added = new List();
+  //     _allReflections = [];
+  //     _added = [];
   //     try {
   //       assert(res is List);
   //       for (int i = 0; i < res.length; i++) {
@@ -81,8 +82,8 @@ class _LinksState extends State<Links> {
   //   if(!data.containsKey('error')){
 
   //       print(data);
-  //     _allObservations = new List();
-  //     _added=new List();
+  //     _allObservations = [];
+  //     _added=[];
   //     try {
   //       assert(res is List);
   //       for (int i = 0; i < res.length; i++) {
@@ -112,8 +113,8 @@ class _LinksState extends State<Links> {
     if (!data.containsKey('error')) {
       var res = data['observations'];
 
-      _allObservations = new List();
-      _added = new List();
+      _allObservations = [];
+      _added = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -128,8 +129,8 @@ class _LinksState extends State<Links> {
       }
 
       var result = data['reflections'];
-      _allReflections = new List();
-      _addedRef = new List();
+      _allReflections = [];
+      _addedRef = [];
       try {
         assert(result is List);
         for (int i = 0; i < result.length; i++) {
@@ -152,8 +153,8 @@ class _LinksState extends State<Links> {
     if (!data2.containsKey('error')) {
       var res2 = data2['qip'];
 
-      _allQips = new List();
-      _addedQips = new List();
+      _allQips = [];
+      _addedQips = [];
       try {
         assert(res2 is List);
         for (int i = 0; i < res2.length; i++) {
@@ -177,8 +178,8 @@ class _LinksState extends State<Links> {
       var res3 = data3['ProgramPlan'];
       print(res3);
 
-      _allPlans = new List();
-      _addedPlans = new List();
+      _allPlans = [];
+      _addedPlans = [];
       try {
         assert(res3 is List);
         for (int i = 0; i < res3.length; i++) {
@@ -467,7 +468,7 @@ class _LinksState extends State<Links> {
                                       Checkbox(
                                         value: _added[index],
                                         onChanged: (value) {
-                                          _added[index] = value;
+                                          _added[index] = value!;
                                           setState(() {});
                                         },
                                       ),
@@ -533,6 +534,10 @@ class _LinksState extends State<Links> {
                                               fit: BoxFit.fill,
                                             )
                                           : VideoItem(
+                                            height: 150,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
                                               url: Constants.ImageBaseUrl +
                                                   _allObservations[index]
                                                       .observationsMedia),
@@ -647,7 +652,7 @@ class _LinksState extends State<Links> {
                                         Checkbox(
                                           value: _addedRef[index],
                                           onChanged: (value) {
-                                            _addedRef[index] = value;
+                                            _addedRef[index] = value!;
                                             setState(() {});
                                           },
                                         ),
@@ -739,7 +744,7 @@ class _LinksState extends State<Links> {
                                         Checkbox(
                                           value: _addedQips[index],
                                           onChanged: (value) {
-                                            _addedQips[index] = value;
+                                            _addedQips[index] = value!;
                                             setState(() {});
                                           },
                                         ),
@@ -815,7 +820,7 @@ class _LinksState extends State<Links> {
                                           Checkbox(
                                             value: _addedPlans[index],
                                             onChanged: (value) {
-                                              _addedPlans[index] = value;
+                                              _addedPlans[index] = value!;
                                               setState(() {});
                                             },
                                           ),
@@ -925,27 +930,27 @@ class _LinksState extends State<Links> {
                       print(jsonEncode(objToSend4));
 
                       final response = await http
-                          .post(_toSend, body: jsonEncode(objToSend), headers: {
+                          .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
                         'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                         'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                       });
 
                       print(response.body);
-                      final resp = await http.post(_toSend,
+                      final resp = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend2),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                             'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                           });
                       print(resp.body);
-                      final resp2 = await http.post(_toSend,
+                      final resp2 = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend3),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                             'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                           });
                       print(resp2.body);
-                      final resp3 = await http.post(_toSend,
+                      final resp3 = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend4),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
@@ -1073,27 +1078,27 @@ class _LinksState extends State<Links> {
                       print(jsonEncode(objToSend4));
 
                       final response = await http
-                          .post(_toSend, body: jsonEncode(objToSend), headers: {
+                          .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
                         'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                         'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                       });
 
                       print(response.body);
-                      final resp = await http.post(_toSend,
+                      final resp = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend2),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                             'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                           });
                       print(resp.body);
-                      final resp2 = await http.post(_toSend,
+                      final resp2 = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend3),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                             'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                           });
                       print(resp2.body);
-                      final resp3 = await http.post(_toSend,
+                      final resp3 = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend4),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
@@ -1102,7 +1107,7 @@ class _LinksState extends State<Links> {
                       print('3');    
                       print(resp3.body);
 
-                      final resp4 = await http.post(_toSend2,
+                      final resp4 = await http.post(Uri.parse(_toSend),
                           body: jsonEncode(objToSend5),
                           headers: {
                             'X-DEVICE-ID': await MyApp.getDeviceIdentity(),

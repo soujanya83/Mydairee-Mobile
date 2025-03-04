@@ -6,10 +6,10 @@ class RecipeMediaModel{
   String mediaType;
 
   RecipeMediaModel({
-    this.id,
-    this.recipeid,
-    this.mediaUrl,
-    this.mediaType
+    required this.id,
+    required this.recipeid,
+    required this.mediaUrl,
+    required this.mediaType
     });
 
   static RecipeMediaModel fromJson(Map<String,dynamic> json){

@@ -7,8 +7,8 @@ class StandardModel{
   List<ElementModel> elements;
 
   StandardModel({
-    this.model,
-    this.elements
+    required this.model,
+    required this.elements
     });
 
 }
@@ -21,10 +21,10 @@ class StandardSubModel{
   String about;
 
   StandardSubModel({
-    this.id,
-    this.areaid,
-    this.name,
-    this.about,
+    required this.id,
+    required this.areaid,
+    required this.name,
+    required this.about,
     });
 
   static StandardSubModel fromJson(Map<String,dynamic> json){

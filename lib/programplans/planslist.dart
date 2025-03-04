@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/programplanapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -35,7 +36,7 @@ class _PlansListState extends State<PlansList> {
     if (!dt.containsKey('error')) {
       print(dt);
       var res = dt['Centers'];
-      centers = new List();
+      centers = [];
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -126,7 +127,7 @@ class _PlansListState extends State<PlansList> {
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                       border:
-                                          Border.all(color: Colors.grey[300]),
+                                          Border.all(color: Constants.greyColor),
                                       color: Colors.white,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(8))),

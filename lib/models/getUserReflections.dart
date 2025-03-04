@@ -3,7 +3,7 @@ class GetUserReflectionsModel {
   List<Reflections> reflections;
   String permission;
 
-  GetUserReflectionsModel({this.status, this.reflections, this.permission});
+  GetUserReflectionsModel({required this.status, required this.reflections, required this.permission});
 
   static GetUserReflectionsModel fromJson(Map<String, dynamic> json) {
     return GetUserReflectionsModel(
@@ -27,16 +27,16 @@ class Reflections {
   List staffs;
 
   Reflections(
-      {this.id,
-      this.title,
-      this.about,
-      this.centerid,
-      this.status,
-      this.createdBy,
-      this.createdAt,
-      this.media,
-      this.childs,
-      this.staffs});
+      {required this.id,
+      required this.title,
+      required this.about,
+      required this.centerid,
+      required this.status,
+      required this.createdBy,
+      required this.createdAt,
+      required this.media,
+      required this.childs,
+      required this.staffs});
 
   static Reflections fromJson(Map<String, dynamic> json) {
     return Reflections(
@@ -60,7 +60,7 @@ class Media {
   String mediaUrl;
   String mediaType;
 
-  Media({this.id, this.reflectionid, this.mediaUrl, this.mediaType});
+  Media({required this.id, required this.reflectionid, required this.mediaUrl, required this.mediaType});
 
   static Media fromJson(Map<String, dynamic> json) {
     return Media(
@@ -77,7 +77,7 @@ class Childs {
   String name;
   String imageUrl;
 
-  Childs({this.childid, this.name, this.imageUrl});
+  Childs({required this.childid, required this.name, required this.imageUrl});
 
   static Childs fromJson(Map<String, dynamic> json) {
     return Childs(
@@ -93,7 +93,7 @@ class Staffs {
   String name;
   String imageUrl;
 
-  Staffs({this.userid, this.name, this.imageUrl});
+  Staffs({required this.userid, required this.name, required this.imageUrl});
 
   static Staffs fromJson(Map<String, dynamic> json) {
     return Staffs(

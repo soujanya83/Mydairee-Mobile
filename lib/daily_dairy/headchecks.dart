@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -20,14 +20,14 @@ class HeadChecks extends StatefulWidget {
 }
 
 class _HeadChecksState extends State<HeadChecks> {
-  List<String> hours;
-  List<String> minutes;
+  List<String>? hours;
+  List<String>? minutes;
 
   List<String> hour = [];
   List<String> min = [];
 
-  DateTime date;
-  List<CentersModel> centers;
+  DateTime? date;
+  List<CentersModel>? centers;
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -37,7 +37,7 @@ class _HeadChecksState extends State<HeadChecks> {
 
   List<TextEditingController> headCount = [];
 
-  List<RoomsDescModel> rooms;
+  List<RoomsDescModel>? rooms;
   bool roomsFetched = false;
 
   int currentRoomIndex = 0;
@@ -64,7 +64,7 @@ class _HeadChecksState extends State<HeadChecks> {
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
-          centers.add(CentersModel.fromJson(res[i]));
+          centers?.add(CentersModel.fromJson(res[i]));
         }
         centersFetched = true;
         if (this.mounted) setState(() {});
@@ -81,12 +81,12 @@ class _HeadChecksState extends State<HeadChecks> {
   Future<void> _fetchData() async {
     Map<String, String> data = {
       'userid': MyApp.LOGIN_ID_VALUE,
-      'centerid': centers[currentIndex].id
+      'centerid': centers![currentIndex].id
     };
 
     if (roomsFetched) {
-      data['roomid'] = rooms[currentRoomIndex].id;
-      data['date'] = DateFormat("yyyy-MM-dd").format(date);
+      data['roomid'] = rooms![currentRoomIndex].id;
+      data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     }
 
     print(data);
@@ -100,7 +100,7 @@ class _HeadChecksState extends State<HeadChecks> {
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
-          rooms.add(RoomsDescModel.fromJson(res[i]));
+          rooms!.add(RoomsDescModel.fromJson(res[i]));
         }
         roomsFetched = true;
         if (this.mounted) setState(() {});
@@ -159,7 +159,7 @@ class _HeadChecksState extends State<HeadChecks> {
                     Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: Colors.grey[300])),
+                          border: Border.all(color: Constants.greyColor)),
                       height: 35,
                       width: 120,
                       child: Padding(
@@ -168,7 +168,7 @@ class _HeadChecksState extends State<HeadChecks> {
                           children: [
                             Text(
                               date != null
-                                  ? DateFormat("dd-MM-yyyy").format(date)
+                                  ? DateFormat("dd-MM-yyyy").format(date!)
                                   : '',
                               style: TextStyle(
                                   fontSize: 14.0, color: Colors.black),
@@ -176,7 +176,7 @@ class _HeadChecksState extends State<HeadChecks> {
                             Spacer(),
                             GestureDetector(
                                 onTap: () async {
-                                  date = await _selectDate(context, date);
+                                  date = await _selectDate(context, date!);
                                   details = null;
                                   setState(() {});
                                   _fetchData();
@@ -203,7 +203,7 @@ class _HeadChecksState extends State<HeadChecks> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.45,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -212,16 +212,16 @@ class _HeadChecksState extends State<HeadChecks> {
                               child: Center(
                                 child: DropdownButton<String>(
                                   isExpanded: true,
-                                  value: centers[currentIndex].id,
-                                  items: centers.map((CentersModel value) {
+                                  value: centers![currentIndex].id,
+                                  items: centers?.map((CentersModel value) {
                                     return new DropdownMenuItem<String>(
                                       value: value.id,
                                       child: new Text(value.centerName),
                                     );
                                   }).toList(),
                                   onChanged: (value) {
-                                    for (int i = 0; i < centers.length; i++) {
-                                      if (centers[i].id == value) {
+                                    for (int i = 0; i < centers!.length; i++) {
+                                      if (centers![i].id == value) {
                                         setState(() {
                                           currentIndex = i;
                                           details = null;
@@ -246,7 +246,7 @@ class _HeadChecksState extends State<HeadChecks> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.45,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -255,16 +255,16 @@ class _HeadChecksState extends State<HeadChecks> {
                               child: Center(
                                 child: DropdownButton<String>(
                                   isExpanded: true,
-                                  value: rooms[currentRoomIndex].id,
-                                  items: rooms.map((RoomsDescModel value) {
+                                  value: rooms![currentRoomIndex].id,
+                                  items: rooms!.map((RoomsDescModel value) {
                                     return new DropdownMenuItem<String>(
                                       value: value.id,
                                       child: new Text(value.name),
                                     );
                                   }).toList(),
                                   onChanged: (value) {
-                                    for (int i = 0; i < rooms.length; i++) {
-                                      if (rooms[i].id == value) {
+                                    for (int i = 0; i < rooms!.length; i++) {
+                                      if (rooms?[i].id == value) {
                                         setState(() {
                                           currentRoomIndex = i;
                                           details = null;
@@ -347,8 +347,7 @@ class _HeadChecksState extends State<HeadChecks> {
                                                     width: 80,
                                                     decoration: BoxDecoration(
                                                         border: Border.all(
-                                                            color: Colors
-                                                                .grey[300]),
+                                                            color: Constants.greyColor),
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.all(
@@ -364,7 +363,7 @@ class _HeadChecksState extends State<HeadChecks> {
                                                             String>(
                                                           //  isExpanded: true,
                                                           value: hour[index],
-                                                          items: hours.map(
+                                                          items: hours!.map(
                                                               (String value) {
                                                             return new DropdownMenuItem<
                                                                 String>(
@@ -374,8 +373,8 @@ class _HeadChecksState extends State<HeadChecks> {
                                                             );
                                                           }).toList(),
                                                           onChanged:
-                                                              (String value) {
-                                                            hour[index] = value;
+                                                              (String? value) {if(value==null)return;
+                                                            hour[index] = value!;
                                                             setState(() {});
                                                           },
                                                         ),
@@ -394,8 +393,7 @@ class _HeadChecksState extends State<HeadChecks> {
                                                     width: 80,
                                                     decoration: BoxDecoration(
                                                         border: Border.all(
-                                                            color: Colors
-                                                                .grey[300]),
+                                                            color: Constants.greyColor),
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.all(
@@ -411,7 +409,7 @@ class _HeadChecksState extends State<HeadChecks> {
                                                             String>(
                                                           //  isExpanded: true,
                                                           value: min[index],
-                                                          items: minutes.map(
+                                                          items: minutes?.map(
                                                               (String value) {
                                                             return new DropdownMenuItem<
                                                                 String>(
@@ -421,8 +419,8 @@ class _HeadChecksState extends State<HeadChecks> {
                                                             );
                                                           }).toList(),
                                                           onChanged:
-                                                              (String value) {
-                                                            min[index] = value;
+                                                              (String? value) {if(value==null)return;
+                                                            min[index] = value!;
                                                             setState(() {});
                                                           },
                                                         ),
@@ -569,9 +567,9 @@ class _HeadChecksState extends State<HeadChecks> {
                             "headCount": headCount[i].text.toString(),
                             "signature": signature[i].text.toString(),
                             "comments": comments[i].text.toString(),
-                            "roomid": rooms[currentRoomIndex].id.toString(),
+                            "roomid": rooms![currentRoomIndex].id.toString(),
                             "createdAt": DateTime.now().toString(),
-                            "diarydate": DateFormat("yyyy-MM-dd").format(date),
+                            "diarydate": DateFormat("yyyy-MM-dd").format(date!),
                             "createdBy": MyApp.LOGIN_ID_VALUE,
                           });
                         }
@@ -581,7 +579,7 @@ class _HeadChecksState extends State<HeadChecks> {
                         };
 
                         print(jsonEncode(objToSend));
-                        final response = await http.post(_toSend,
+                        final response = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend),
                             headers: {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
@@ -622,8 +620,8 @@ class _HeadChecksState extends State<HeadChecks> {
     );
   }
 
-  Future<DateTime> _selectDate(BuildContext context, DateTime dateTime) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context, DateTime dateTime) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: dateTime,
       firstDate: new DateTime(1800),

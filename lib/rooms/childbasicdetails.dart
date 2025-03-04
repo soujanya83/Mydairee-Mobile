@@ -12,7 +12,7 @@ class ChildBasicDetails extends StatefulWidget {
   final String roomid;
   final String childid;
 
-  ChildBasicDetails({this.centerid, this.roomid, this.childid});
+  ChildBasicDetails({required this.centerid,required  this.roomid,required  this.childid});
   @override
   _ChildBasicDetailsState createState() => _ChildBasicDetailsState();
 }

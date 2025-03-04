@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mime/mime.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -37,12 +37,12 @@ class MediaMenu extends StatefulWidget {
 
 class _MediaMenuState extends State<MediaMenu> {
   List<File> files = [];
-  List<CentersModel> centers;
-  List<MenuMediaModel> menuMedia;
-  List<MenuMediaModel> menuMediaEarlier;
-  List<MenuMediaModel> menuMediaWeek;
-  List<ChildModel> _allChildrens;
-  List<StaffModel> _allEductarors;
+  List<CentersModel> centers = [];
+  List<MenuMediaModel> menuMedia = [];
+  List<MenuMediaModel> menuMediaEarlier = [];
+  List<MenuMediaModel> menuMediaWeek = [];
+  List<ChildModel> _allChildrens = [];
+  List<StaffModel> _allEductarors = [];
   List<List<StaffModel>> _editEducators = [];
   List<List<ChildModel>> _editChildren = [];
   List<TextEditingController> captions = [];
@@ -50,7 +50,7 @@ class _MediaMenuState extends State<MediaMenu> {
   bool centersFetched = false;
   int currentIndex = 0;
   bool childrensFetched = false;
-  bool staffFetched=false;
+  bool staffFetched = false;
 
   @override
   void initState() {
@@ -100,8 +100,8 @@ class _MediaMenuState extends State<MediaMenu> {
       print(e);
     }
 
-    UtilsAPIHandler utilsApiHandler =
-        UtilsAPIHandler({"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
+    UtilsAPIHandler utilsApiHandler = UtilsAPIHandler(
+        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var staffData = await utilsApiHandler.getStaff();
 
     var staff = staffData['educators'];
@@ -183,7 +183,7 @@ class _MediaMenuState extends State<MediaMenu> {
                       height: 30,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]),
+                          border: Border.all(color: Constants.greyColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Padding(
@@ -224,16 +224,17 @@ class _MediaMenuState extends State<MediaMenu> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    FilePickerResult result =
+                    FilePickerResult? result =
                         await FilePicker.platform.pickFiles();
 
                     if (result != null) {
-                      File file = File(result.files.single.path);
+                      File file = File(result.files.single.path ?? '');
                       var fileSizeInBytes = file.length();
                       var fileSizeInKB = await fileSizeInBytes / 1024;
                       var fileSizeInMB = fileSizeInKB / 1024;
 
-                      String mimeStr = lookupMimeType(result.files.single.path);
+                      String mimeStr =
+                          lookupMimeType(result.files.single.path ?? '') ?? '';
                       var fileType = mimeStr.split('/');
 
                       if (fileSizeInMB > 2 &&
@@ -318,7 +319,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                 children: List<Widget>.generate(files.length,
                                     (int index) {
                                   String mimeStr =
-                                      lookupMimeType(files[index].path);
+                                      lookupMimeType(files[index].path) ?? '';
                                   var fileType = mimeStr.split('/');
                                   if (fileType[0].toString() == 'image') {
                                     return Stack(
@@ -491,7 +492,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                           ),
                                                         ),
                                                         actions: <Widget>[
-                                                          FlatButton(
+                                                          TextButton(
                                                             onPressed: () {
                                                               Navigator.pop(
                                                                   context);
@@ -665,13 +666,13 @@ class _MediaMenuState extends State<MediaMenu> {
                                                           ),
                                                         ),
                                                         actions: <Widget>[
-                                                          FlatButton(
+                                                          TextButton(
                                                             onPressed: () {
                                                               Navigator.pop(
                                                                   context);
                                                             },
                                                             child: Text('ok'),
-                                                          ),
+                                                          )
                                                         ],
                                                       );
                                                     });
@@ -724,7 +725,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                   await MyApp.getDeviceIdentity()
                                       .then((value) => print(value));
                                   print(MyApp.AUTH_TOKEN_VALUE);
-                                  Response response = await dio
+                                  Response? response = await dio
                                       .post(_toSend,
                                           data: formData,
                                           options: Options(headers: {
@@ -897,7 +898,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 .id ==
                                                             userID) {
                                                           editEducator.add(
-                                                              _allEductarors[j]);
+                                                              _allEductarors[
+                                                                  j]);
                                                         }
                                                       }
                                                     }
@@ -1000,7 +1002,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                           (values) {
                                                                         editEducator =
                                                                             values;
-                                                                            print(editEducator);
+                                                                        print(
+                                                                            editEducator);
                                                                       },
                                                                     ),
                                                                     SizedBox(
@@ -1035,7 +1038,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed:
                                                                     () async {
                                                                   var _toSend =
@@ -1095,7 +1098,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                       _objToSend);
 
                                                                   var resp = await http.post(
-                                                                      _toSend,
+                                                                      Uri.parse(
+                                                                          _toSend),
                                                                       body: jsonEncode(
                                                                           _objToSend),
                                                                       headers: {
@@ -1238,7 +1242,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 .id ==
                                                             userID) {
                                                           editEducator.add(
-                                                              _allEductarors[j]);
+                                                              _allEductarors[
+                                                                  j]);
                                                         }
                                                       }
                                                     }
@@ -1375,7 +1380,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed:
                                                                     () async {
                                                                   var _toSend =
@@ -1389,16 +1394,16 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                           editChild
                                                                               .length;
                                                                       i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "child",
-                                                                        "mediaid":
-                                                                            menuMedia[index].id,
-                                                                        "userid":
-                                                                            editChild[i].id
-                                                                      },
-                                                                    );
+                                                                    tags.add({
+                                                                      "usertype":
+                                                                          "child",
+                                                                      "mediaid":
+                                                                          menuMedia[index]
+                                                                              .id,
+                                                                      "userid":
+                                                                          editChild[i]
+                                                                              .id
+                                                                    });
                                                                   }
                                                                   for (int i =
                                                                           0;
@@ -1406,16 +1411,16 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                           editEducator
                                                                               .length;
                                                                       i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "staff",
-                                                                        "mediaid":
-                                                                            menuMedia[index].id,
-                                                                        "userid":
-                                                                            editEducator[i].id,
-                                                                      },
-                                                                    );
+                                                                    tags.add({
+                                                                      "usertype":
+                                                                          "staff",
+                                                                      "mediaid":
+                                                                          menuMedia[index]
+                                                                              .id,
+                                                                      "userid":
+                                                                          editEducator[i]
+                                                                              .id,
+                                                                    });
                                                                   }
                                                                   var _objToSend =
                                                                       {
@@ -1434,16 +1439,22 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                   print(
                                                                       _objToSend);
 
-                                                                  var resp = await http.post(
-                                                                      _toSend,
-                                                                      body: jsonEncode(
-                                                                          _objToSend),
-                                                                      headers: {
-                                                                        'X-DEVICE-ID':
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        'X-TOKEN':
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
+                                                                  var resp =
+                                                                      await http
+                                                                          .post(
+                                                                    Uri.parse(
+                                                                        _toSend),
+                                                                    body: jsonEncode(
+                                                                        _objToSend),
+                                                                    headers: {
+                                                                      'X-DEVICE-ID':
+                                                                          await MyApp
+                                                                              .getDeviceIdentity(),
+                                                                      'X-TOKEN':
+                                                                          MyApp
+                                                                              .AUTH_TOKEN_VALUE,
+                                                                    },
+                                                                  );
                                                                   var data =
                                                                       jsonDecode(
                                                                           resp.body);
@@ -1456,7 +1467,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 },
                                                                 child:
                                                                     Text('ok'),
-                                                              ),
+                                                              )
                                                             ],
                                                           );
                                                         });
@@ -1617,7 +1628,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 .id ==
                                                             userID) {
                                                           editEducator.add(
-                                                              _allEductarors[j]);
+                                                              _allEductarors[
+                                                                  j]);
                                                         }
                                                       }
                                                     }
@@ -1754,7 +1766,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed:
                                                                     () async {
                                                                   var _toSend =
@@ -1814,7 +1826,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                       _objToSend);
 
                                                                   var resp = await http.post(
-                                                                      _toSend,
+                                                                      Uri.parse(
+                                                                          _toSend),
                                                                       body: jsonEncode(
                                                                           _objToSend),
                                                                       headers: {
@@ -1957,7 +1970,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 .id ==
                                                             userID) {
                                                           editEducator.add(
-                                                              _allEductarors[j]);
+                                                              _allEductarors[
+                                                                  j]);
                                                         }
                                                       }
                                                     }
@@ -2094,7 +2108,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed:
                                                                     () async {
                                                                   var _toSend =
@@ -2154,7 +2168,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                       _objToSend);
 
                                                                   var resp = await http.post(
-                                                                      _toSend,
+                                                                      Uri.parse(
+                                                                          _toSend),
                                                                       body: jsonEncode(
                                                                           _objToSend),
                                                                       headers: {
@@ -2339,7 +2354,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 .id ==
                                                             userID) {
                                                           editEducator.add(
-                                                              _allEductarors[j]);
+                                                              _allEductarors[
+                                                                  j]);
                                                         }
                                                       }
                                                     }
@@ -2476,7 +2492,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed:
                                                                     () async {
                                                                   var _toSend =
@@ -2536,7 +2552,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                       _objToSend);
 
                                                                   var resp = await http.post(
-                                                                      _toSend,
+                                                                      Uri.parse(
+                                                                          _toSend),
                                                                       body: jsonEncode(
                                                                           _objToSend),
                                                                       headers: {
@@ -2683,7 +2700,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                 .id ==
                                                             userID) {
                                                           editEducator.add(
-                                                              _allEductarors[j]);
+                                                              _allEductarors[
+                                                                  j]);
                                                         }
                                                       }
                                                     }
@@ -2820,7 +2838,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                               ),
                                                             ),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              TextButton(
                                                                 onPressed:
                                                                     () async {
                                                                   var _toSend =
@@ -2880,7 +2898,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                       _objToSend);
 
                                                                   var resp = await http.post(
-                                                                      _toSend,
+                                                                      Uri.parse(
+                                                                          _toSend),
                                                                       body: jsonEncode(
                                                                           _objToSend),
                                                                       headers: {
@@ -2931,13 +2950,21 @@ class _MediaMenuState extends State<MediaMenu> {
   }
 
   Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 900,
+      minHeight: 900,
+      quality: 40,
+    );
 
     print(file.lengthSync());
-    print(result.lengthSync());
+    print(result?.length());
 
-    return result;
+    if (result != null) {
+      return File(result.path);
+    } else {
+      throw Exception("Image compression failed");
+    }
   }
 }

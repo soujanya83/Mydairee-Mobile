@@ -12,8 +12,8 @@ class AddProgressNotesActivity extends StatefulWidget {
   final String centerid;
 
   AddProgressNotesActivity({
-    this.childid,
-    this.centerid,
+    required this.childid,
+    required this.centerid,
   });
 
   @override
@@ -22,7 +22,7 @@ class AddProgressNotesActivity extends StatefulWidget {
 }
 
 class _AddProgressNotesActivityState extends State<AddProgressNotesActivity> {
-  TextEditingController phydeveloment,
+  TextEditingController? phydeveloment,
       emodeveloment,
       scodeveloment,
       childinter,
@@ -269,7 +269,7 @@ class _AddProgressNotesActivityState extends State<AddProgressNotesActivity> {
 
                               print(MyApp.LOGIN_ID_VALUE);
                               print(await MyApp.getDeviceIdentity());
-                              final response = await http.post(_toSend,
+                              final response = await http.post(Uri.parse(_toSend),
                                   body: jsonEncode(objToSend),
                                   headers: {
                                     'X-DEVICE-ID':

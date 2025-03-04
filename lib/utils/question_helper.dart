@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/questionhelpermodel.dart';
@@ -32,20 +33,20 @@ class QuestionHelper extends StatefulWidget {
 
   const QuestionHelper(
       {Key key,
-      this.funcCallback,
-      this.choiceCallback,
-      this.deleteMediaCallback,
-      this.questionCallback,
-      this.mandatoryCallback,
-      this.imageCallBack,
-      this.videoCallBack,
-      this.options1ListCallBack,
-      this.options2ListCallBack,
-      this.options3ListCallBack,
-      this.options4ListCallBack,
-      this.choose,
-      this.helper,
-      this.id})
+      required this.funcCallback,
+      required this.choiceCallback,
+      required this.deleteMediaCallback,
+      required this.questionCallback,
+      required this.mandatoryCallback,
+      required this.imageCallBack,
+      required this.videoCallBack,
+      required this.options1ListCallBack,
+      required this.options2ListCallBack,
+      required this.options3ListCallBack,
+      required this.options4ListCallBack,
+      required this.choose,
+      required this.helper,
+      required this.id})
       : super(key: key);
 
   @override
@@ -237,9 +238,9 @@ class _QuestionHelperState extends State<QuestionHelper> {
                               child: new Text(value),
                             );
                           }).toList(),
-                          onChanged: (String value) {
+                           onChanged: (String? value)  {
                             setState(() {
-                              _choosenValue = value;
+                              _choosenValue = value!;
                               widget.choiceCallback(value);
                               _mcqOptions = [TextEditingController()];
                               _checkBoxOptions2 = [TextEditingController()];

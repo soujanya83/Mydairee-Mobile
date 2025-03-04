@@ -25,12 +25,12 @@ class ViewElement extends StatefulWidget {
   final int elementIndex;
 
   ViewElement(
-      {this.qipId,
-      this.areas,
-      this.standards,
-      this.areaIndex,
-      this.standardIndex,
-      this.elementIndex});
+      {required this.qipId,
+      required this.areas,
+      required this.standards,
+      required this.areaIndex,
+      required this.standardIndex,
+      required this.elementIndex});
 
   @override
   _ViewElementState createState() => _ViewElementState();
@@ -170,7 +170,7 @@ class _ViewElementState extends State<ViewElement>
                       height: 40,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]),
+                          border: Border.all(color: Constants.greyColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: Padding(
@@ -212,7 +212,7 @@ class _ViewElementState extends State<ViewElement>
                         height: 40,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]),
+                            border: Border.all(color: Constants.greyColor),
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: Padding(
@@ -252,7 +252,7 @@ class _ViewElementState extends State<ViewElement>
                         height: 40,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]),
+                            border: Border.all(color: Constants.greyColor),
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: Padding(

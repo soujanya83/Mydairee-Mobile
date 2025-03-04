@@ -16,14 +16,14 @@ class AccidentsReports extends StatefulWidget {
 }
 
 class _AccidentsReportsState extends State<AccidentsReports> {
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<RoomsDescModel> rooms;
+  List<RoomsDescModel> rooms=[];
   bool roomsFetched = false;
   int currentRoomIndex = 0;
-  List<AccidentsModel> _accident;
+  List<AccidentsModel> _accident=[];
   bool accidentFetched = false;
   int accidentIndedx = 0;
   var details;
@@ -178,7 +178,7 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                               builder: (context) => AddAccidents(
                                     centerid: centers[currentIndex].id,
                                     roomid: rooms[currentRoomIndex].id,
-                                    type: 'add',
+                                    type: 'add', accid: '',
                                   ))).then((value) {
                         _fetchData();
                       });
@@ -207,7 +207,7 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.45,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -246,7 +246,7 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.45,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),

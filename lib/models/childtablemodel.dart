@@ -10,15 +10,15 @@ class ChildTableModel {
   String centerid;
 
   ChildTableModel(
-      {this.id,
-      this.childName,
-      this.childId,
-      this.name,
-      this.image,
-      this.obsId,
-      this.obsDate,
-      this.obsCount,
-      this.centerid});
+      {required this.id,
+      required this.childName,
+      required this.childId,
+      required this.name,
+      required this.image,
+      required this.obsId,
+      required this.obsDate,
+      required this.obsCount,
+      required this.centerid});
 
   static ChildTableModel fromJson(Map<String, dynamic> json) {
     return ChildTableModel(

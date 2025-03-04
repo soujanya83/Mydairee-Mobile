@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/progressplan.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -21,9 +21,9 @@ class ProgressPlan extends StatefulWidget {
 class _ProgressPlanState extends State<ProgressPlan> {
   bool typeFlag = false;
 
-  List<ProcessChildSubModel> childList;
-  List<MontessoriActivityModel> montessoriList;
-  List<CentersModel> centers;
+  List<ProcessChildSubModel> childList = [];
+  List<MontessoriActivityModel> montessoriList= [];
+  List<CentersModel> centers= [];
   bool centersFetched = false;
   int currentIndex = 0;
   bool dataFetched = false;
@@ -121,7 +121,7 @@ class _ProgressPlanState extends State<ProgressPlan> {
                           height: 40,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]),
+                              border: Border.all(color: Constants.greyColor),
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8))),

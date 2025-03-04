@@ -8,13 +8,13 @@ class QAModel {
   String identifiedPractice;
 
   QAModel(
-      {this.id,
-      this.areaid,
-      this.concept,
-      this.elements,
-      this.about,
-      this.status,
-      this.identifiedPractice});
+      {required this.id,
+      required this.areaid,
+      required this.concept,
+      required this.elements,
+      required this.about,
+      required this.status,
+      required this.identifiedPractice});
 
   static QAModel fromJson(Map<String, dynamic> json) {
     return QAModel(

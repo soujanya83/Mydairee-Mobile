@@ -7,11 +7,11 @@ class LawModel{
   String element;
 
   LawModel({
-    this.id,
-    this.areaid,
-    this.section,
-    this.about,
-    this.element
+    required this.id,
+    required this.areaid,
+    required this.section,
+    required this.about,
+    required this.element
     });
 
   static LawModel fromJson(Map<String,dynamic> json){

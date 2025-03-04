@@ -23,7 +23,7 @@ class ViewObservation extends StatefulWidget {
   final String montCount;
   final String eylfCount;
   final String devCount;
-  ViewObservation({this.id,this.montCount,this.eylfCount,this.devCount});
+  ViewObservation({ required this.id,required this.montCount,required this.eylfCount,required this.devCount});
   @override
   _ViewObservationState createState() => _ViewObservationState();
 }
@@ -212,7 +212,7 @@ class _ViewObservationState extends State<ViewObservation> {
 
       var child = data1['childrens'];
       print('heyuuu'+data1['childrens'].toString());
-      _allChildrens = new List();
+      _allChildrens = [];
       try {
         assert(child is List);
         for (int i = 0; i < child.length; i++) {

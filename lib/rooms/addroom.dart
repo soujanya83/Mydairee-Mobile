@@ -12,21 +12,21 @@ import 'package:mykronicle_mobile/utils/header.dart';
 class AddRoom extends StatefulWidget {
   final String centerid;
 
-  AddRoom({this.centerid});
+  AddRoom({required this.centerid});
 
   @override
   _AddRoomState createState() => _AddRoomState();
 }
 
 class _AddRoomState extends State<AddRoom> {
-  TextEditingController name, capacity, ageFrom, ageTo;
+  late TextEditingController name, capacity, ageFrom, ageTo;
   String _chosenValue = 'Active';
   String roomError = '';
   String capacityError = '';
   String ageFromError = '';
   String ageToError = '';
 
-  List<UserModel> users;
+  List<UserModel> users= [];
   List<UserModel> selectedEdu = [];
   Map<String, bool> eduValues = {};
   bool usersFetched = false;
@@ -58,7 +58,7 @@ class _AddRoomState extends State<AddRoom> {
     var data = await handler.getRoomDetails();
     if (!data.containsKey('error')) {
       var r = data['users'];
-      users = new List();
+      users =  [];
       try {
         assert(r is List);
         //  UserModel u = UserModel(userid: '0', name: 'select');
@@ -115,7 +115,7 @@ class _AddRoomState extends State<AddRoom> {
                       }
                     }
 
-                    eduValues[users[index].userid] = value;
+                    eduValues[users[index].userid] = value??false;
                     setState(() {});
                   }),
             );
@@ -396,9 +396,9 @@ class _AddRoomState extends State<AddRoom> {
                                           child: new Text(value),
                                         );
                                       }).toList(),
-                                      onChanged: (String value) {
+                                       onChanged: (String? value)  {
                                         setState(() {
-                                          _chosenValue = value;
+                                          _chosenValue = value!;
                                         });
                                       },
                                     ),
@@ -443,7 +443,7 @@ class _AddRoomState extends State<AddRoom> {
                                         ),
                                       ),
                                       actions: <Widget>[
-                                        FlatButton(
+                                        TextButton(
                                           child: const Text('Choose'),
                                           onPressed: () {
                                             setState(() =>
@@ -491,7 +491,7 @@ class _AddRoomState extends State<AddRoom> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                key.currentState.openEndDrawer();
+                                key.currentState?.openEndDrawer();
                               },
                               child: Container(
                                   width: 160,
@@ -681,7 +681,7 @@ class _AddRoomState extends State<AddRoom> {
                                         };
                                         print(jsonEncode(objToSend));
                                         final response = await http.post(
-                                            _toSend,
+                                            Uri.parse(_toSend),
                                             body: jsonEncode(objToSend),
                                             headers: {
                                               'X-DEVICE-ID': await MyApp

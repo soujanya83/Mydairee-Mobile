@@ -30,14 +30,14 @@ import 'package:path/path.dart';
 class EditReflection extends StatefulWidget {
   final String reflectionid;
   final String centerid;
-  EditReflection({this.reflectionid, this.centerid});
+  EditReflection({required this.reflectionid, required this.centerid});
   @override
   _EditReflectionState createState() => _EditReflectionState();
 }
 
 class _EditReflectionState extends State<EditReflection> {
   List<File> files = [];
-  TextEditingController title;
+  TextEditingController? title;
   String titleErr = '';
   GlobalKey<HtmlEditorState> keyEditor;
 
@@ -93,7 +93,7 @@ class _EditReflectionState extends State<EditReflection> {
     var data = await handler.getRoomDetails();
     if (!data.containsKey('error')) {
       var r = data['users'];
-      users = new List();
+      users = [];
       try {
         assert(r is List);
         //  UserModel u = UserModel(userid: '0', name: 'select');
@@ -164,7 +164,7 @@ class _EditReflectionState extends State<EditReflection> {
     var data = await handler.getChildList();
     selectedChildrens = [];
     var child = data['records'];
-    _allChildrens = new List();
+    _allChildrens = [];
 
     try {
       assert(child is List);
@@ -224,7 +224,7 @@ class _EditReflectionState extends State<EditReflection> {
     print(check);
     print(title.text);
     print("object 123456");
-    ref.currentState.controller.text = check;
+    ref.currentState?.controller?.text = check;
   }
 
   Widget getEndDrawer(BuildContext context) {
@@ -266,7 +266,7 @@ class _EditReflectionState extends State<EditReflection> {
                       }
                     }
 
-                    eduValues[users[index].userid] = value;
+                    eduValues[users[index].userid] = value!;
                     setState(() {});
                   }),
             );
@@ -295,7 +295,7 @@ class _EditReflectionState extends State<EditReflection> {
           },
         ),
         // onTap: (){
-        //     key.currentState.openEndDrawer();
+        //     key.currentState?.openEndDrawer();
         // },
       ),
       Padding(
@@ -342,12 +342,12 @@ class _EditReflectionState extends State<EditReflection> {
         trailing: Checkbox(
             value: all,
             onChanged: (value) {
-              all = value;
+              all = value!;
               for (var i = 0; i < childValues.length; i++) {
                 print(selectedChildrens);
                 print(value);
                 String key = childValues.keys.elementAt(i);
-                childValues[key] = value;
+                childValues[key] = value!;
                 if (value == true) {
                   if (!selectedChildrens.contains(_allChildrens[i])) {
                     selectedChildrens.add(_allChildrens[i]);
@@ -394,7 +394,7 @@ class _EditReflectionState extends State<EditReflection> {
                             }
                           }
 
-                          childValues[_allChildrens[index].childid] = value;
+                          childValues[_allChildrens[index].childid] = value!;
                           setState(() {});
                         }),
                   );
@@ -426,7 +426,7 @@ class _EditReflectionState extends State<EditReflection> {
                                   }
                                 }
 
-                                childValues[_allChildrens[index].id] = value;
+                                childValues[_allChildrens[index].id] = value!;
 
                                 setState(() {});
                               }),
@@ -475,7 +475,7 @@ class _EditReflectionState extends State<EditReflection> {
                           setState(() {
                             endmenu = 'Children';
                           });
-                          key.currentState.openEndDrawer();
+                          key.currentState?.openEndDrawer();
                         },
                         child: Container(
                             width: 160,
@@ -491,7 +491,7 @@ class _EditReflectionState extends State<EditReflection> {
                                     setState(() {
                                       endmenu = 'Children';
                                     });
-                                    key.currentState.openEndDrawer();
+                                    key.currentState?.openEndDrawer();
                                   },
                                   icon: Icon(
                                     Icons.add_circle,
@@ -544,7 +544,7 @@ class _EditReflectionState extends State<EditReflection> {
                           setState(() {
                             endmenu = 'Educator';
                           });
-                          key.currentState.openEndDrawer();
+                          key.currentState?.openEndDrawer();
                         },
                         child: Container(
                             width: 160,
@@ -560,7 +560,7 @@ class _EditReflectionState extends State<EditReflection> {
                                     setState(() {
                                       endmenu = 'Educator';
                                     });
-                                    key.currentState.openEndDrawer();
+                                    key.currentState?.openEndDrawer();
                                   },
                                   icon: Icon(
                                     Icons.add_circle,

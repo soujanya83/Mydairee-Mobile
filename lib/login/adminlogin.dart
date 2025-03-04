@@ -24,28 +24,28 @@ class _AdminLoginState extends State<AdminLogin> {
   bool obscureText = true;
   bool loggingIn = false;
   bool isSignInDisabled = false;
-  String loginEmail, loginPassword;
+  String loginEmail = '', loginPassword = '';
 
-  String _validateName(String val) {
+  String? _validateName(String val) {
     if (val.trim().length == 0)
       return "Enter Name";
     else
       return null;
   }
 
-  String _validatePassword(String val) {
-    if (val.length == 0) {
+  String? _validatePassword(String? val) {
+    if (val?.length == 0) {
       return "Enter password";
     } else {
       //    forgotNewPassword = val;
-      return null;
+      return '';
     }
   }
 
   Future<void> loginNow() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       // No error in validation
-      _formKey.currentState.save();
+      _formKey.currentState?.save();
       setState(() {
         loggingIn = true;
       });
@@ -133,8 +133,10 @@ class _AdminLoginState extends State<AdminLogin> {
                   color: Colors.transparent,
                 ),
                 onPressed: null)),
-        validator: _validateName,
-        onSaved: (String val) {
+        validator: (val) {
+          return _validateName(val!);
+        },
+        onSaved: (String? val) {
           //  loginEmail = val.trim();
         },
       ),
@@ -167,7 +169,7 @@ class _AdminLoginState extends State<AdminLogin> {
           ),
         ),
         validator: _validatePassword,
-        onSaved: (String val) {
+        onSaved: (String? val) {
           //    loginPassword = val;
         },
       ),
@@ -177,30 +179,29 @@ class _AdminLoginState extends State<AdminLogin> {
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: ButtonTheme(
         height: 42.0,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Constants.kButton,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
           ),
-          onPressed:
-              //(){
-
-              //     Navigator.of(context).pushReplacementNamed(Platform.Tag);
-
-              // },
-              isSignInDisabled
-                  ? null
-                  : () {
-                      setState(() {
-                        isSignInDisabled = true;
-                      });
-                      loginNow();
-                    },
-          color: Constants.kButton,
-          child: Text("Login",
-              style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
+          onPressed: isSignInDisabled
+              ? null
+              : () {
+                  setState(() {
+                    isSignInDisabled = true;
+                  });
+                  loginNow();
+                },
+          child: Text(
+            "Login",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

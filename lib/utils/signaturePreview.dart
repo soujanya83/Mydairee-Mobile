@@ -8,8 +8,8 @@ class SignaturePreviewPage extends StatelessWidget {
   final Uint8List signature;
 
   const SignaturePreviewPage({
-    Key key,
-    @required this.signature,
+    Key? key,
+     required this.signature,
   }) : super(key: key);
 
   @override

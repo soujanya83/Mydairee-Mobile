@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/usermodel.dart';
@@ -352,7 +353,7 @@ class _UserSettingsState extends State<UserSettings> {
     };
     print(jsonEncode(objToSend));
     final response =
-        await http.post(_toSend, body: jsonEncode(objToSend), headers: {
+        await http.post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -425,7 +426,7 @@ class _UserSettingsState extends State<UserSettings> {
                                     )),
                                 GestureDetector(
                                     onTap: () {
-                                      key.currentState.openEndDrawer();
+                                      key.currentState?.openEndDrawer();
                                     },
                                     child: Icon(
                                       AntDesign.filter,

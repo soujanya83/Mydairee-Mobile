@@ -39,7 +39,7 @@ class AddReflection extends StatefulWidget {
       // this.selecChildrens,
       // this.media,
       // this.totaldata,
-      this.centerid});
+      required this.centerid});
   @override
   _AddReflectionState createState() => _AddReflectionState();
 }
@@ -100,7 +100,7 @@ class _AddReflectionState extends State<AddReflection> {
     var data = await handler.getRoomDetails();
     if (!data.containsKey('error')) {
       var r = data['users'];
-      users = new List();
+      users = [];
       try {
         assert(r is List);
         //  UserModel u = UserModel(userid: '0', name: 'select');
@@ -171,7 +171,7 @@ class _AddReflectionState extends State<AddReflection> {
     var data = await handler.getChildList();
     selectedChildrens = [];
     var child = data['records'];
-    _allChildrens = new List();
+    _allChildrens = [];
     print(child);
     try {
       assert(child is List);
@@ -226,7 +226,7 @@ class _AddReflectionState extends State<AddReflection> {
                       }
                     }
 
-                    eduValues[users[index].userid] = value;
+                    eduValues[users[index].userid] = value!;
                     setState(() {});
                   }),
             );
@@ -255,7 +255,7 @@ class _AddReflectionState extends State<AddReflection> {
           },
         ),
         // onTap: (){
-        //     key.currentState.openEndDrawer();
+        //     key.currentState?.openEndDrawer();
         // },
       ),
       Padding(
@@ -302,10 +302,10 @@ class _AddReflectionState extends State<AddReflection> {
         trailing: Checkbox(
             value: all,
             onChanged: (value) {
-              all = value;
+              all = value!;
               for (var i = 0; i < childValues.length; i++) {
                 String key = childValues.keys.elementAt(i);
-                childValues[key] = value;
+                childValues[key] = value!;
                 if (value == true) {
                   if (!selectedChildrens.contains(_allChildrens[i])) {
                     selectedChildrens.add(_allChildrens[i]);
@@ -354,7 +354,7 @@ class _AddReflectionState extends State<AddReflection> {
                             }
                           }
 
-                          childValues[_allChildrens[index].childid] = value;
+                          childValues[_allChildrens[index].childid] = value!;
                           setState(() {});
                         }),
                   );
@@ -386,7 +386,7 @@ class _AddReflectionState extends State<AddReflection> {
                                   }
                                 }
 
-                                childValues[_allChildrens[index].id] = value;
+                                childValues[_allChildrens[index].id] = value!;
 
                                 setState(() {});
                               }),
@@ -454,7 +454,7 @@ class _AddReflectionState extends State<AddReflection> {
                             height: 30,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]),
+                                border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
@@ -500,7 +500,7 @@ class _AddReflectionState extends State<AddReflection> {
                             endmenu = 'Children';
                           });
 
-                          key.currentState.openEndDrawer();
+                          key.currentState?.openEndDrawer();
                         },
                         child: Container(
                             width: 160,
@@ -517,7 +517,7 @@ class _AddReflectionState extends State<AddReflection> {
                                       endmenu = 'Children';
                                     });
 
-                                    key.currentState.openEndDrawer();
+                                    key.currentState?.openEndDrawer();
                                   },
                                   icon: Icon(
                                     Icons.add_circle,
@@ -571,7 +571,7 @@ class _AddReflectionState extends State<AddReflection> {
                             endmenu = 'Educator';
                           });
 
-                          key.currentState.openEndDrawer();
+                          key.currentState?.openEndDrawer();
                         },
                         child: Container(
                             width: 160,
@@ -588,7 +588,7 @@ class _AddReflectionState extends State<AddReflection> {
                                       endmenu = 'Educator';
                                     });
 
-                                    key.currentState.openEndDrawer();
+                                    key.currentState?.openEndDrawer();
                                   },
                                   icon: Icon(
                                     Icons.add_circle,

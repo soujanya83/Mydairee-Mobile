@@ -5,10 +5,10 @@ class ChildSubModel {
   String imageUrl;
 
   ChildSubModel({
-    this.childId,
-    this.childName,
-    this.dob,
-    this.imageUrl,
+    required this.childId,
+    required this.childName,
+    required this.dob,
+    required this.imageUrl,
   });
 
   static ChildSubModel fromJson(Map<String, dynamic> json) {
@@ -29,11 +29,11 @@ class EducatorMediaModel {
   String imageUrl;
 
   EducatorMediaModel({
-    this.id,
-    this.mediaId,
-    this.userId,
-    this.name,
-    this.imageUrl,
+    required this.id,
+    required this.mediaId,
+    required this.userId,
+    required this.name,
+    required this.imageUrl,
   });
 
   static EducatorMediaModel fromJson(Map<String, dynamic> json) {
@@ -55,11 +55,11 @@ class ChildMediaModel {
   String imageUrl;
 
   ChildMediaModel({
-    this.id,
-    this.mediaId,
-    this.childId,
-    this.name,
-    this.imageUrl,
+    required this.id,
+    required this.mediaId,
+    required this.childId,
+    required this.name,
+    required this.imageUrl,
   });
 
   static ChildMediaModel fromJson(Map<String, dynamic> json) {

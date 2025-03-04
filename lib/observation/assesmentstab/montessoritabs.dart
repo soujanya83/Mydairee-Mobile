@@ -16,7 +16,7 @@ class MontessoriTabs extends StatefulWidget {
   final List data;
   final Map totaldata;
   final IndexCallback changeTab;
-  MontessoriTabs({this.count, this.data, this.changeTab, this.totaldata});
+  MontessoriTabs({required this.count, required this.data, required this.changeTab, required this.totaldata});
 
   @override
   _MontessoriTabsState createState() => _MontessoriTabsState();
@@ -24,7 +24,7 @@ class MontessoriTabs extends StatefulWidget {
 
 class _MontessoriTabsState extends State<MontessoriTabs>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _MontessoriTabsState extends State<MontessoriTabs>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -152,7 +152,7 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                     };
                     print(jsonEncode(objToSend));
                     final response = await http
-                        .post(_toSend, body: jsonEncode(objToSend), headers: {
+                        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
                       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                     });
@@ -274,10 +274,10 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                                           value: 'Not Assesed',
                                           groupValue: AddObservationState
                                               .dropAns[val][index][i],
-                                          onChanged: (String value) {
+                                           onChanged: (String? value)  {
                                             setState(() {
                                               AddObservationState.dropAns[val]
-                                                  [index][i] = value;
+                                                  [index][i] = value!;
                                             });
                                           },
                                         ),
@@ -298,10 +298,10 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                                           value: 'Introduced',
                                           groupValue: AddObservationState
                                               .dropAns[val][index][i],
-                                          onChanged: (String value) {
+                                           onChanged: (String? value)  {
                                             setState(() {
                                               AddObservationState.dropAns[val]
-                                                  [index][i] = value;
+                                                  [index][i] = value!;
                                             });
                                           },
                                         ),
@@ -322,10 +322,10 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                                           value: 'Working',
                                           groupValue: AddObservationState
                                               .dropAns[val][index][i],
-                                          onChanged: (String value) {
+                                           onChanged: (String? value)  {
                                             setState(() {
                                               AddObservationState.dropAns[val]
-                                                  [index][i] = value;
+                                                  [index][i] = value!;
                                             });
                                           },
                                         ),
@@ -346,10 +346,10 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                                           value: 'Completed',
                                           groupValue: AddObservationState
                                               .dropAns[val][index][i],
-                                          onChanged: (String value) {
+                                           onChanged: (String? value)  {
                                             setState(() {
                                               AddObservationState.dropAns[val]
-                                                  [index][i] = value;
+                                                  [index][i] = value!;
                                             });
                                           },
                                         ),
@@ -393,10 +393,10 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                                       //               child: new Text(value),
                                       //             );
                                       //           }).toList(),
-                                      //           onChanged: (String value) {
+                                      //            onChanged: (String? value)  {
                                       //             setState(() {
                                       //               dropAns[val][index][i] =
-                                      //                   value;
+                                      //                   value!;
                                       //             });
                                       //           },
                                       //         ),
@@ -426,7 +426,7 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                                               onChanged: (value) {
                                                 AddObservationState
                                                         .selectedExtras[val]
-                                                    [index][i][j] = value;
+                                                    [index][i][j] = value!;
                                                 setState(() {});
                                               });
                                         }),

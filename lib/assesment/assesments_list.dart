@@ -19,7 +19,7 @@ class AssesmentsList extends StatefulWidget {
 class _AssesmentsListState extends State<AssesmentsList> {
   var settingsData;
 
-  List<CentersModel> centers;
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -90,7 +90,7 @@ class _AssesmentsListState extends State<AssesmentsList> {
                     height: 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]),
+                        border: Border.all(color: Constants.greyColor),
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: Padding(
@@ -141,6 +141,7 @@ class _AssesmentsListState extends State<AssesmentsList> {
                         trailing: Checkbox(
                           value: settingsData['montessori'] == '1',
                           onChanged: (val) {
+                            if (val == null) return;
                             if (val) {
                               settingsData['montessori'] = '1';
                             } else {
@@ -167,6 +168,7 @@ class _AssesmentsListState extends State<AssesmentsList> {
                         trailing: Checkbox(
                           value: settingsData['eylf'] == '1',
                           onChanged: (val) {
+                            if (val == null) return;
                             if (val) {
                               settingsData['eylf'] = '1';
                             } else {
@@ -193,6 +195,7 @@ class _AssesmentsListState extends State<AssesmentsList> {
                         trailing: Checkbox(
                           value: settingsData['devmile'] == '1',
                           onChanged: (val) {
+                            if (val == null) return;
                             if (val) {
                               settingsData['devmile'] = '1';
                             } else {

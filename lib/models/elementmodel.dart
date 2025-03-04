@@ -7,11 +7,11 @@ class ElementModel{
   String about;
 
   ElementModel({
-    this.id,
-    this.standardId,
-    this.name,
-    this.about,
-    this.elementName
+    required this.id,
+    required this.standardId,
+    required this.name,
+    required this.about,
+    required this.elementName
     });
 
   static ElementModel fromJson(Map<String,dynamic> json){

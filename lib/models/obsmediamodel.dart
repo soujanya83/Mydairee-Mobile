@@ -6,10 +6,10 @@ class ObsMediaModel{
   String mediaType;
 
   ObsMediaModel({
-    this.id,
-    this.observationId,
-    this.mediaUrl,
-    this.mediaType
+    required this.id,
+    required this.observationId,
+    required this.mediaUrl,
+    required this.mediaType
     });
 
   static ObsMediaModel fromJson(Map<String,dynamic> json){

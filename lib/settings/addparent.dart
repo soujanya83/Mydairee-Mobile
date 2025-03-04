@@ -229,9 +229,9 @@ class _AddParentState extends State<AddParent> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                onChanged: (String value) {
+                                 onChanged: (String? value)  {
                                   setState(() {
-                                    _gender = value;
+                                    _gender = value!;
                                   });
                                 },
                               ),
@@ -583,9 +583,9 @@ class _AddParentState extends State<AddParent> {
                                       child: new Text(value),
                                     );
                                   }).toList(),
-                                  onChanged: (String value) {
+                                   onChanged: (String? value)  {
                                     setState(() {
-                                      relation[i] = value;
+                                      relation[i] = value!;
                                     });
                                   },
                                 ),
@@ -644,7 +644,7 @@ class _AddParentState extends State<AddParent> {
 
                                 print(jsonEncode(objToSend));
                                 final response = await http.post(
-                                    _toSend,
+                                    Uri.parse(_toSend),
                                     body: jsonEncode(objToSend),
                                     headers: {
                                       'X-DEVICE-ID': await MyApp

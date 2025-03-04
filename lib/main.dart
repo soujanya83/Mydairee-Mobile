@@ -27,7 +27,7 @@ void main() async {
 }
 
 class RestartWidget extends StatefulWidget {
-  RestartWidget({this.child});
+  RestartWidget({required this.child});
 
   final Widget child;
 

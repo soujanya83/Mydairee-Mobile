@@ -17,22 +17,22 @@ class StaffModel {
   String selected;
 
   StaffModel(
-      {this.userid,
-      this.emailid,
-      this.id,
-      this.dob,
-      this.password,
-      this.contactNo,
-      this.name,
-      this.imageUrl,
-      this.userType,
-      this.title,
-      this.authToken,
-      this.deviceid,
-      this.devicetype,
-      this.companyLogo,
-      this.gender,
-      this.selected});
+      {required this.userid,
+      required this.emailid,
+      required this.id,
+      required this.dob,
+      required this.password,
+      required this.contactNo,
+      required this.name,
+      required this.imageUrl,
+      required this.userType,
+      required this.title,
+      required this.authToken,
+      required this.deviceid,
+      required this.devicetype,
+      required this.companyLogo,
+      required this.gender,
+      required this.selected});
 
   static StaffModel fromJson(Map<String, dynamic> json) {
     return StaffModel(

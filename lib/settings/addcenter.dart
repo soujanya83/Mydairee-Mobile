@@ -461,7 +461,7 @@ void changeColor(Color color) {
                                                           }).toList(),
                                                           onChanged:
                                                               (String value) {
-                                                            statusValues[index] = value;
+                                                            statusValues[index] = value!;
                                                             setState(() {});
                                                           },
                                                         ),
@@ -575,7 +575,7 @@ void changeColor(Color color) {
                                  }
 
                                   print(jsonEncode(objToSend));
-                                  final response = await http.post(_toSend,
+                                  final response = await http.post(Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':

@@ -10,14 +10,14 @@ class AnnouncementModel{
   String aid;
   
   AnnouncementModel({
-    this.id,
-    this.title,
-    this.text,
-    this.eventDate,
-    this.status,
-    this.createdBy,
-    this.createdAt,
-    this.aid
+   required  this.id,
+   required  this.title,
+   required  this.text,
+   required  this.eventDate,
+   required  this.status,
+   required  this.createdBy,
+   required  this.createdAt,
+   required  this.aid
     });
 
   static AnnouncementModel fromJson(Map<String,dynamic> json){

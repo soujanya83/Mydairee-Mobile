@@ -10,15 +10,15 @@ class ProgressNotesModel {
   String approvedImg;
 
   ProgressNotesModel(
-      {this.id,
-      this.qipId,
-      this.elementId,
-      this.notetext,
-      this.addedBy,
-      this.approvedBy,
-      this.addedAt,
-      this.userImg,
-      this.approvedImg});
+      {required this.id,
+      required this.qipId,
+      required this.elementId,
+      required this.notetext,
+      required this.addedBy,
+      required this.approvedBy,
+      required this.addedAt,
+      required this.userImg,
+      required this.approvedImg});
 
   static ProgressNotesModel fromJson(Map<String, dynamic> json) {
     return ProgressNotesModel(

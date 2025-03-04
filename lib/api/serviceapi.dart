@@ -22,7 +22,7 @@ class ServiceAPIHandler {
   }
 
  Future<dynamic> getServiceDetails() async {
-    var getDetailsURL = _serviceDetailsURL+MyApp.LOGIN_ID_VALUE+'/'+data['centerid']+'/';
+    var getDetailsURL = _serviceDetailsURL+MyApp.LOGIN_ID_VALUE+'/'+'${data['centerid']}'+'/';
     ServiceWithHeader helper = ServiceWithHeader(getDetailsURL);
     var d = await helper.data();
     return d;
