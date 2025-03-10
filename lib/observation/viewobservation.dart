@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
-import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -29,34 +28,34 @@ class ViewObservation extends StatefulWidget {
 }
 
 class _ViewObservationState extends State<ViewObservation> {
-  List<ChildSubModel> _allChildrens;
-  TextEditingController comment;
-  ObservationModel _observation;
+  List<ChildSubModel> _allChildrens=[];
+  TextEditingController? comment;
+  ObservationModel? _observation;
   bool obsFetched = false;
   bool expandeylf = false;
   bool expandmontessori = false;
   bool expandmilestones = false;
   var displaydata;
   var displaydata1;
-  List media;
+  List? media;
   final DateFormat formatter = DateFormat('dd-MM-yyyy – kk:mm');
 
-  List<EylfOutcomeModel> eylfData;
-  List<MontessoriModel> montessoriData;
-  List<DevMilestoneModel> devData;
+  List<EylfOutcomeModel> eylfData=[];
+  List<MontessoriModel> montessoriData=[];
+  List<DevMilestoneModel> devData=[];
 
   bool childrensFetched = false;
   bool permission = true;
 
-  List<Map<String, dynamic>> mentionUser;
-  List<Map<String, dynamic>> mentionMont;
+  List<Map<String, dynamic>> mentionUser=[];
+  List<Map<String, dynamic>> mentionMont=[];
   bool mChildFetched = false;
   bool mMontFetched = false;
 
   static GlobalKey<FlutterMentionsState> cmntX =
       GlobalKey<FlutterMentionsState>();
 
-  var unescape = new HtmlUnescape();
+  // var unescape = new HtmlUnescape();
 
   @override
   void initState() {
@@ -301,9 +300,9 @@ class _ViewObservationState extends State<ViewObservation> {
                         if (_observation != null)
                           Container(
                             width: size.width * 0.8,
-                            child: _observation.title != null
+                            child: _observation?.title != null
                                 ? tagRemove(
-                                    _observation.title,
+                                    _observation?.title??"",
                                     'heading',
                                     displaydata1['observation']['centerid'],
                                     context)
@@ -330,7 +329,7 @@ class _ViewObservationState extends State<ViewObservation> {
                                                 type: "edit",
                                                 data: _observation,
                                                 selecChildrens: _allChildrens,
-                                                media: media,
+                                                media: media??[],
                                                 totaldata: displaydata,
                                                 centerid:
                                                     displaydata['observation']
@@ -373,8 +372,8 @@ class _ViewObservationState extends State<ViewObservation> {
                               children: [
                                 Text('Author:'),
                                 Text(
-                                  _observation.userName != null
-                                      ? _observation.userName
+                                  _observation?.userName != null
+                                      ? _observation?.userName??""
                                       : '',
                                   style: TextStyle(color: Constants.kMain),
                                 )
@@ -391,11 +390,11 @@ class _ViewObservationState extends State<ViewObservation> {
                                                                
                                                               ),
                                                               Text(
-                                                              _observation.dateAdded
+                                                              _observation?.dateAdded
                                                                            !=
                                                                         null
                                                                     ? formatter.format(DateTime.parse(_observation
-                                                                            .dateAdded))
+                                                                            ?.dateAdded??''))
                                                                     : '',
                                                                 style: TextStyle(
                                                                     color: Constants
@@ -412,8 +411,8 @@ class _ViewObservationState extends State<ViewObservation> {
                               children: [
                                 Text('Approved by:'),
                                 Text(
-                                  _observation.approverName != null
-                                      ? _observation.approverName
+                                  _observation?.approverName != null
+                                      ? _observation!.approverName
                                       : '',
                                   style: TextStyle(color: Constants.kMain),
                                 )
@@ -518,13 +517,13 @@ class _ViewObservationState extends State<ViewObservation> {
                             SizedBox(
                               height: 10,
                             ),
-                            _observation.notes != null
+                            (_observation?.notes != null)
                                 ? tagRemove(
-                                    _observation.notes,
+                                    _observation?.notes??'',
                                     'title',
                                     displaydata1['observation']['centerid'],
                                     context)
-                                : null,
+                                : SizedBox(),
                             SizedBox(
                               height: 10,
                             ),
@@ -535,13 +534,13 @@ class _ViewObservationState extends State<ViewObservation> {
                             SizedBox(
                               height: 10,
                             ),
-                            _observation.reflection != null
+                           ( _observation?.reflection != null)
                                 ? tagRemove(
-                                    _observation.reflection,
+                                    _observation?.reflection??'',
                                     'title',
                                     displaydata1['observation']['centerid'],
                                     context)
-                                : null,
+                                : SizedBox(),
                           ],
                         ),
 
@@ -1145,7 +1144,7 @@ class _ViewObservationState extends State<ViewObservation> {
                             GestureDetector(
                               onTap: () async {
                                 String comment =
-                                    cmntX.currentState.controller.markupText;
+                                    cmntX.currentState?.controller?.markupText??'';
 
                                 if (comment != '') {
                                   for (int i = 0; i < mentionUser.length; i++) {
@@ -1175,7 +1174,7 @@ class _ViewObservationState extends State<ViewObservation> {
 
                                   var data = await handler.createComment();
                                   if (!data.containsKey('error')) {
-                                    cmntX.currentState.controller.clear();
+                                    cmntX.currentState?.controller?.clear();
 
                                     _fetchData();
                                   } else {

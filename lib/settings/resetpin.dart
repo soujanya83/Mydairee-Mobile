@@ -11,7 +11,7 @@ class ResetPin extends StatefulWidget {
 }
 
 class _ResetPinState extends State<ResetPin> {
-  TextEditingController current, newpin, confirmpin;
+  TextEditingController? current, newpin, confirmpin;
   String currentErr = '';
   String newErr = '';
   String confirmErr = '';
@@ -204,28 +204,29 @@ class _ResetPinState extends State<ResetPin> {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            if (current.text.isEmpty ||
-                                                newpin.text.isEmpty ||
-                                                confirmpin.text.isEmpty) {
-                                              if (current.text.isEmpty) {
+                                            if(current==null||newpin==null||confirmpin==null)return;
+                                            if (current!.text.isEmpty ||
+                                                newpin!.text.isEmpty ||
+                                                confirmpin!.text.isEmpty) {
+                                              if (current!.text.isEmpty) {
                                                 currentErr =
                                                     'enter current pin';
                                               } else {
                                                 currentErr = '';
                                               }
-                                              if (newpin.text.isEmpty) {
+                                              if (newpin!.text.isEmpty) {
                                                 newErr = 'enter pin';
                                               } else {
                                                 newErr = '';
                                               }
-                                              if (confirmpin.text.isEmpty) {
+                                              if (confirmpin!.text.isEmpty) {
                                                 confirmErr = 'enter pin';
                                               } else {
                                                 confirmErr = '';
                                               }
                                               setState(() {});
-                                            } else if (newpin.text.toString() !=
-                                                confirmpin.text.toString()) {
+                                            } else if (newpin?.text.toString() !=
+                                                confirmpin?.text.toString()) {
                                               currentErr = '';
                                               newErr = '';
                                               confirmErr = '';
@@ -242,9 +243,9 @@ class _ResetPinState extends State<ResetPin> {
                                               var body = {
                                                 "userid": MyApp.LOGIN_ID_VALUE,
                                                 "currentPin":
-                                                    current.text.toString(),
+                                                    current?.text.toString()??"",
                                                 "pin":
-                                                    confirmpin.text.toString()
+                                                    confirmpin?.text.toString()??""
                                               };
 
                                               SettingsApiHandler res =

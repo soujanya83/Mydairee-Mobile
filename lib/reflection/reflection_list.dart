@@ -20,11 +20,11 @@ class ReflectionList extends StatefulWidget {
 }
 
 class _ReflectionListState extends State<ReflectionList> {
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<Reflections> _reflection;
+  List<Reflections> _reflection=[];
   bool reflectionFetched = false;
 
   var details;
@@ -235,7 +235,7 @@ class _ReflectionListState extends State<ReflectionList> {
                                                             0.0),
                                                     iconSize: 20,
                                                     onPressed: () {
-                                                      return showDialog(
+                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
                                                             context) {

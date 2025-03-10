@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:mykronicle_mobile/api/recipeapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -20,12 +19,13 @@ class RecipeList extends StatefulWidget {
 
 class _RecipeListState extends State<RecipeList> {
   bool dataFetched = false;
-  List<RecipeModel> _lunch;
-  List<RecipeModel> _breakfast;
-  List<RecipeModel> _snacks;
-  List<RecipeModel> _tea;
+List<RecipeModel> _lunch = [];
+List<RecipeModel> _breakfast = [];
+List<RecipeModel> _snacks = [];
+List<RecipeModel> _tea = [];
 
-  List<CentersModel> centers;
+List<CentersModel> centers = [];
+
   bool centersFetched = false;
   int currentIndex = 0;
 

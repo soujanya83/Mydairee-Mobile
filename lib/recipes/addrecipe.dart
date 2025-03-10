@@ -30,16 +30,16 @@ class Addrecipe extends StatefulWidget {
 
 class _AddrecipeState extends State<Addrecipe> {
   List<File> files = [];
-  List<IngredientModel> _allIngredients;
+  List<IngredientModel> _allIngredients = [];
   int typeIndex = 0;
   List<IngredientModel> _selectedIngredients = [];
   List<TextEditingController> _quant = [];
   List<TextEditingController> _calories = [];
 // Map<String ,bool> ingredientsValues={};
   List<RecipeMediaModel> media = [];
-  TextEditingController name, recipe;
+  TextEditingController name = TextEditingController(), recipe= TextEditingController();
   bool ingFetched = false;
-  RecipeModel _recipe;
+  RecipeModel? _recipe;
   bool dataFetched = false;
 
   double h = 0;
@@ -81,26 +81,26 @@ class _AddrecipeState extends State<Addrecipe> {
 
         _recipe = RecipeModel.fromJson(res);
 
-        name.text = _recipe.itemName;
-        recipe.text = _recipe.recipe;
-        for (int i = 0; i < _recipe.ingredients.length; i++) {
+        name.text = _recipe?.itemName??'';
+        recipe.text = _recipe?.recipe??'';
+        for (int i = 0; i < (_recipe?.ingredients.length??0); i++) {
           _selectedIngredients
-              .add(IngredientModel.fromJson(_recipe.ingredients[i]));
+              .add(IngredientModel.fromJson(_recipe?.ingredients[i]));
           for (int k = 0; k < _allIngredients.length; k++) {
             if (_allIngredients[k].id ==
-                _recipe.ingredients[i]['ingredientId']) {
+                _recipe?.ingredients[i]['ingredientId']) {
               _allIngredients.remove(_allIngredients[k]);
               break;
             }
           }
           //  _allIngredients.remove(_allIngredients[i]);
           _quant
-              .add(TextEditingController(text: _recipe.ingredients[i]['qty']));
+              .add(TextEditingController(text: _recipe?.ingredients[i]['qty']));
           _calories.add(
-              TextEditingController(text: _recipe.ingredients[i]['calories']));
+              TextEditingController(text: _recipe?.ingredients[i]['calories']));
         }
-        for (int i = 0; i < _recipe.media.length; i++) {
-          media.add(RecipeMediaModel.fromJson(_recipe.media[i]));
+        for (int i = 0; i < (_recipe?.media.length??0); i++) {
+          media.add(RecipeMediaModel.fromJson(_recipe?.media[i]));
         }
         dataFetched = true;
         if (this.mounted) setState(() {});
@@ -373,11 +373,11 @@ class _AddrecipeState extends State<Addrecipe> {
 
                       GestureDetector(
                           onTap: () async {
-                            FilePickerResult result =
+                            FilePickerResult? result =
                                 await FilePicker.platform.pickFiles();
 
                             if (result != null) {
-                              File file = File(result.files.single.path);
+                              File file = File(result.files.single.path??'');
                               var fileSizeInBytes = file.length();
                               var fileSizeInKB = await fileSizeInBytes / 1024;
                               var fileSizeInMB = fileSizeInKB / 1024;
@@ -433,10 +433,10 @@ class _AddrecipeState extends State<Addrecipe> {
                               // verticalDirection: VerticalDirection.up,
                               children: List<Widget>.generate(files.length,
                                   (int index) {
-                                String mimeStr =
+                                String? mimeStr =
                                     lookupMimeType(files[index].path);
-                                var fileType = mimeStr.split('/');
-                                if (fileType[0].toString() == 'image') {
+                                var fileType = mimeStr?.split('/');
+                                if (fileType?[0].toString() == 'image') {
                                   return Stack(
                                     children: [
                                       Container(
@@ -664,14 +664,14 @@ class _AddrecipeState extends State<Addrecipe> {
                                 for (int i = 0; i < files.length; i++) {
                                   File file = files[i];
 
-                                  String mimeStr =
+                                  String? mimeStr =
                                       lookupMimeType(files[i].path);
-                                  var fileType = mimeStr.split('/');
-                                  if (fileType[0].toString() == 'image') {
+                                  var fileType = mimeStr?.split('/');
+                                  if (fileType?[0].toString() == 'image') {
                                     img.add(await MultipartFile.fromFile(
                                         file.path,
                                         filename: basename(file.path)));
-                                  } else if (fileType[0].toString() ==
+                                  } else if (fileType?[0].toString() ==
                                       'video') {
                                     videos.add(await MultipartFile.fromFile(
                                         file.path,
@@ -694,7 +694,7 @@ class _AddrecipeState extends State<Addrecipe> {
                                 print(formData.fields.toString());
                                 Dio dio = new Dio();
 
-                                Response response = await dio
+                                Response? response = await dio
                                     .post(
                                         Constants.BASE_URL +
                                             "Recipes/addRecipe",
@@ -739,16 +739,25 @@ class _AddrecipeState extends State<Addrecipe> {
                     ])))));
   }
 
-  Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
 
-    print(file.lengthSync());
-    print(result.lengthSync());
+Future<File> compressAndGetFile(File file, String targetPath) async {
+  XFile? result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path, targetPath,
+    minWidth: 900, minHeight: 900, quality: 40,
+  );
 
-    return result;
+  if (result == null) {
+    throw Exception("Compression failed: Unable to get compressed file.");
   }
+
+  File compressedFile = File(result.path); // Convert XFile to File
+
+  print("Original size: ${file.lengthSync()} bytes");
+  print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+  return compressedFile;
+}
+
 
   Widget rectBorderWidget(Size size, var context) {
     return DottedBorder(
@@ -764,11 +773,11 @@ class _AddrecipeState extends State<Addrecipe> {
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () async {
-                  FilePickerResult result =
+                  FilePickerResult? result =
                       await FilePicker.platform.pickFiles();
 
                   if (result != null) {
-                    File file = File(result.files.single.path);
+                    File file = File(result.files.single.path??"");
                     var fileSizeInBytes = file.length();
                     var fileSizeInKB = await fileSizeInBytes / 1024;
                     var fileSizeInMB = fileSizeInKB / 1024;
@@ -785,14 +794,14 @@ class _AddrecipeState extends State<Addrecipe> {
                       final outPath =
                           "${splitted}_out${filePath.substring(lastIndex)}";
 
-                      File cFile = await compressAndGetFile(file, outPath);
-                      File fImage = await cropImage(context, cFile);
+                      File? cFile = await compressAndGetFile(file, outPath);
+                      File? fImage = await cropImage(context, cFile);
                       if (fImage != null) {
                         files.add(fImage);
                       }
                       setState(() {});
                     } else {
-                      File fImage = await cropImage(context, file);
+                      File? fImage = await cropImage(context, file);
                       if (fImage != null) {
                         files.add(fImage);
                       }

@@ -17,7 +17,7 @@ class ModuleSettings extends StatefulWidget {
 class _ModuleSettingsState extends State<ModuleSettings> {
   bool roomsFetched = false;
   bool usersFetched = false;
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 

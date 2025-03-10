@@ -40,14 +40,14 @@ import 'package:http/http.dart' as http;
 
 class AddObservation extends StatefulWidget {
   final String type;
-  final ObservationModel data;
+  final ObservationModel? data;
   final List<ChildSubModel> selecChildrens;
   final Map totaldata;
   final List media;
   final String centerid;
   AddObservation(
       {required this.type,
-      required this.data,
+       this.data,
       required this.selecChildrens,
       required this.media,
       required this.totaldata,
@@ -250,16 +250,16 @@ class AddObservationState extends State<AddObservation>
     if (widget.type == 'edit') {
       type = 'edit';
       mentionTitle.currentState?.controller?.text =
-          removeHtmlData(widget.data.title);
-      previewtitle = removeHtmlData(widget.data.title);
+          removeHtmlData(widget.data?.title??'');
+      previewtitle = removeHtmlData(widget.data?.title??'');
 
       mentionNotes.currentState?.controller?.text =
-          removeHtmlData(widget.data.notes);
-      previewnotes = removeHtmlData(widget.data.notes);
+          removeHtmlData(widget.data?.notes??'');
+      previewnotes = removeHtmlData(widget.data?.notes??'');
 
       mentionRef.currentState?.controller?.text =
-          removeHtmlData(widget.data.reflection);
-      previewRef = removeHtmlData(widget.data.reflection);
+          removeHtmlData(widget.data?.reflection??'');
+      previewRef = removeHtmlData(widget.data?.reflection??'');
 
       for (int i = 0; i < widget.selecChildrens.length; i++) {
         if (widget.selecChildrens[i].childId != null) {
@@ -267,7 +267,7 @@ class AddObservationState extends State<AddObservation>
               id: widget.selecChildrens[i].childId,
               name: widget.selecChildrens[i].childName,
               dob: widget.selecChildrens[i].dob,
-              imageUrl: widget.selecChildrens[i].imageUrl));
+              imageUrl: widget.selecChildrens[i].imageUrl, morningtea: {}, lunch: {}, sleep: [], afternoontea: {}, snacks: {}, sunscreen: [], toileting: {}));
           childValues[selectedChildrens[i].id??''] = true;
         }
       }
@@ -690,7 +690,7 @@ class AddObservationState extends State<AddObservation>
                                     }
                                   }
 
-                                  childValues[_allChildrens[index].childid] =
+                                  childValues[_allChildrens[index].childid??''] =
                                       value!;
                                   setState(() {});
                                 }),
@@ -2428,7 +2428,7 @@ class AddObservationState extends State<AddObservation>
                                                                           {
                                                                         "obsId": widget
                                                                             .data
-                                                                            .id,
+                                                                            ?.id,
                                                                         "childIds":
                                                                             childIds,
                                                                         "emediaId":
@@ -2766,7 +2766,7 @@ class AddObservationState extends State<AddObservation>
                                                                           {
                                                                         "obsId": widget
                                                                             .data
-                                                                            .id,
+                                                                            ?.id,
                                                                         "childIds":
                                                                             childIds,
                                                                         "emediaId":
@@ -2955,7 +2955,7 @@ class AddObservationState extends State<AddObservation>
                                             "title": title,
                                             "notes": notes,
                                             "userid": MyApp.LOGIN_ID_VALUE,
-                                            "observationId": widget.data.id,
+                                            "observationId": widget.data?.id,
                                             "status": "Draft",
                                             "centerid": widget.centerid
                                           };
@@ -3220,7 +3220,7 @@ class AddObservationState extends State<AddObservation>
                                   onTap: () async {
                                     if (selectedChildrens.length > 0) {
                                       String title = mentionTitle
-                                          .currentState.controller.markupText;
+                                          .currentState!.controller!.markupText;
                                       for (int i = 0;
                                           i < mentionUser.length;
                                           i++) {
@@ -3244,7 +3244,7 @@ class AddObservationState extends State<AddObservation>
                                       print(title);
 
                                       String notes = mentionNotes
-                                          .currentState.controller.markupText;
+                                          .currentState!.controller!.markupText;
                                       for (int i = 0;
                                           i < mentionUser.length;
                                           i++) {
@@ -3266,10 +3266,10 @@ class AddObservationState extends State<AddObservation>
                                         }
                                       }
                                       print(notes);
-                                      String ref;
+                                      String ref = '';
                                       if (MyApp.USER_TYPE_VALUE != 'Parent') {
                                         ref = mentionRef
-                                            .currentState.controller.markupText;
+                                            .currentState!.controller!.markupText;
                                         for (int i = 0;
                                             i < mentionUser.length;
                                             i++) {
@@ -3282,7 +3282,7 @@ class AddObservationState extends State<AddObservation>
                                         }
                                         for (int i = 0;
                                             i < mentionMont.length;
-                                            i++) {
+                                            i++){
                                           if (ref.contains(
                                               mentionMont[i]['display'])) {
                                             ref = ref.replaceAll(
@@ -3307,7 +3307,7 @@ class AddObservationState extends State<AddObservation>
                                           "title": title,
                                           "notes": notes,
                                           "userid": MyApp.LOGIN_ID_VALUE,
-                                          "observationId": widget.data.id,
+                                          "observationId": widget.data?.id,
                                           "status": "Published",
                                           "centerid": widget.centerid
                                         };
@@ -3497,7 +3497,7 @@ class AddObservationState extends State<AddObservation>
                                       print(formData.fields.toString());
                                       Dio dio = new Dio();
 
-                                      Response response = await dio
+                                      Response? response = await dio
                                           .post(
                                               widget.type == 'edit'
                                                   ? Constants.BASE_URL +
@@ -3672,16 +3672,24 @@ class AddObservationState extends State<AddObservation>
         });
   }
 
-  Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+Future<File> compressAndGetFile(File file, String targetPath) async {
+  XFile? result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path, targetPath,
+    minWidth: 900, minHeight: 900, quality: 40,
+  );
 
-    print(file.lengthSync());
-    print(result.lengthSync());
-
-    return result;
+  if (result == null) {
+    throw Exception("Compression failed: Unable to get compressed file.");
   }
+
+  File compressedFile = File(result.path); // Convert XFile to File
+
+  print("Original size: ${file.lengthSync()} bytes");
+  print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+  return compressedFile;
+}
+
 
   Widget rectBorderWidget(Size size, var context) {
     return DottedBorder(

@@ -1,4 +1,5 @@
-import 'package:device_info/device_info.dart';
+// import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -14,7 +15,6 @@ import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:mykronicle_mobile/utils/platform.dart' as platform;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +32,7 @@ class RestartWidget extends StatefulWidget {
   final Widget child;
 
   static void restartApp(BuildContext context) {
-    context.findAncestorStateOfType<_RestartWidgetState>().restartApp();
+    context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
   }
 
   @override
@@ -58,17 +58,16 @@ class _RestartWidgetState extends State<RestartWidget> {
 }
 
 class MyApp extends StatelessWidget {
-  static String EMAIL_VALUE;
-  static String PASSWORD_HASH_VALUE;
-  static String LOGIN_ID_VALUE;
-  static String AUTH_TOKEN_VALUE;
-  static String IMG_URL_VALUE;
-  static String NAME_VALUE;
-  static String USER_TYPE_VALUE;
+  static String EMAIL_VALUE = '';
+  static String PASSWORD_HASH_VALUE = '';
+  static String LOGIN_ID_VALUE = '';
+  static String AUTH_TOKEN_VALUE = '';
+  static String IMG_URL_VALUE = '';
+  static String NAME_VALUE = '';
+  static String USER_TYPE_VALUE = '';
 
   static ShowToast(String msg, BuildContext context) {
-    Toast.show(msg, context,
-        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    Toast.show(msg, duration: Toast.lengthLong, gravity: Toast.bottom);
   }
 
   static Future<String> getDeviceIdentity() async {
@@ -77,7 +76,8 @@ class MyApp extends StatelessWidget {
     try {
       //    if (Platform.isAndroid) {
       AndroidDeviceInfo info = await _deviceInfoPlugin.androidInfo;
-      _deviceIdentity = info.androidId;
+      // _deviceIdentity = info.androidId;
+      _deviceIdentity = info.id;
       //  }
       //  else if (Platform.isIOS) {
       //   IosDeviceInfo info = await _deviceInfoPlugin.iosInfo;
@@ -106,13 +106,14 @@ class MyApp extends StatelessWidget {
             content: new Text(
                 "You have been logged out. Please login again to continue."),
             actions: <Widget>[
-              new FlatButton(
-                  child: new Text("Okay"),
-                  onPressed: () {
-                    MyApp.logout();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        UserType.Tag, (Route<dynamic> route) => false);
-                  }),
+              new TextButton(
+                child: Text("Okay"),
+                onPressed: () {
+                  MyApp.logout();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      UserType.Tag, (Route<dynamic> route) => false);
+                },
+              ),
             ],
           );
         });
@@ -126,13 +127,14 @@ class MyApp extends StatelessWidget {
 
   Future<String> isLoggedIn() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    LOGIN_ID_VALUE = preferences.getString(Constants.LOGIN_ID);
-    AUTH_TOKEN_VALUE = preferences.getString(Constants.AUTH_TOKEN);
-    IMG_URL_VALUE = preferences.getString(Constants.IMG_URL);
-    NAME_VALUE = preferences.getString(Constants.NAME);
-    USER_TYPE_VALUE = preferences.getString(Constants.USER_TYPE);
-    EMAIL_VALUE = preferences.getString(Constants.EMAIL);
-    PASSWORD_HASH_VALUE = preferences.getString(Constants.PASSWORD_HASH);
+    LOGIN_ID_VALUE = preferences.getString(Constants.LOGIN_ID) ?? "";
+    AUTH_TOKEN_VALUE = preferences.getString(Constants.AUTH_TOKEN) ?? "";
+    IMG_URL_VALUE = preferences.getString(Constants.IMG_URL) ?? "";
+    NAME_VALUE = preferences.getString(Constants.NAME) ?? "";
+    USER_TYPE_VALUE = preferences.getString(Constants.USER_TYPE) ?? "";
+    EMAIL_VALUE = preferences.getString(Constants.EMAIL) ?? "";
+    PASSWORD_HASH_VALUE = preferences.getString(Constants.PASSWORD_HASH) ?? "";
+    return LOGIN_ID_VALUE;
   }
 
   final routes = <String, WidgetBuilder>{
@@ -152,25 +154,23 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: Constants.kMain, hintColor: Color(0xfff2f4f5)),
-        home: new FutureBuilder(
-            future: isLoggedIn(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  {
-                    return Center(child: const CircularProgressIndicator());
-                  }
-                default:
-                  {
-                    if (snapshot.hasError)
-                      return new Text('Error : ${snapshot.error}');
-                    else if (LOGIN_ID_VALUE == null)
-                      return UserType();
-                    else
-                      return platform.Platform();
-                  }
-              }
-            }),
+        home: FutureBuilder<String>(
+          future: isLoggedIn(), // ✅ Now it returns Future<String>
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(child: CircularProgressIndicator());
+              default:
+                if (snapshot.hasError) {
+                  return Text('Error : ${snapshot.error}');
+                } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+                  return UserType();
+                } else {
+                  return platform.Platform();
+                }
+            }
+          },
+        ),
         routes: routes,
       ),
     );

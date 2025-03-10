@@ -19,7 +19,7 @@ class ChildBasicDetails extends StatefulWidget {
 
 class _ChildBasicDetailsState extends State<ChildBasicDetails>
     with TickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
   final List<Tab> topTabs = <Tab>[
     new Tab(text: 'Basic Details'),
     new Tab(text: 'Progress Note'),
@@ -34,7 +34,7 @@ class _ChildBasicDetailsState extends State<ChildBasicDetails>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 

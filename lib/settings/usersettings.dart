@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -37,10 +36,10 @@ class _UserSettingsState extends State<UserSettings> {
   List gender = [];
   List status = [];
 
-  List groupsData;
+  List groupsData=[];
   String order = 'ASC';
-  List<UserModel> _allUsers;
-  Map<String, dynamic> userStats;
+  List<UserModel> _allUsers=[];
+  Map<String, dynamic> userStats={};
   GlobalKey<ScaffoldState> key = GlobalKey();
 
   Map<String, bool> groupValues = {};

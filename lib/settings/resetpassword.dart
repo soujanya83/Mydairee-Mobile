@@ -11,7 +11,7 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
-  TextEditingController current, newpassword, confirmpassword;
+  TextEditingController? current, newpassword, confirmpassword;
   String currentErr = '';
   String newErr = '';
   String confirmErr = '';
@@ -201,30 +201,33 @@ class _ResetPasswordState extends State<ResetPassword> {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            if (current.text.isEmpty ||
-                                                newpassword.text.isEmpty ||
-                                                confirmpassword.text.isEmpty) {
-                                              if (current.text.isEmpty) {
+                                            if(current==null ||newpassword==null ||confirmpassword==null  )return;
+                                            if (current!.text.isEmpty ||
+                                                newpassword!.text.isEmpty ||
+                                                confirmpassword!.text.isEmpty) {
+                                              if (current!.text.isEmpty) {
                                                 currentErr =
                                                     'enter current password';
                                               } else {
                                                 currentErr = '';
                                               }
-                                              if (newpassword.text.isEmpty) {
+                                              if (newpassword!.text.isEmpty) {
                                                 newErr = 'enter password';
                                               } else {
                                                 newErr = '';
                                               }
                                               if (confirmpassword
-                                                  .text.isEmpty) {
+                                                  
+                                                  !.text.isEmpty) {
                                                 confirmErr = 'enter password';
                                               } else {
                                                 confirmErr = '';
                                               }
                                               setState(() {});
-                                            } else if (newpassword.text
+                                            } else if (newpassword!.text
                                                     .toString() !=
-                                                confirmpassword.text
+                                                confirmpassword
+                                                !.text
                                                     .toString()) {
                                               currentErr = '';
                                               newErr = '';
@@ -242,8 +245,9 @@ class _ResetPasswordState extends State<ResetPassword> {
                                               var body = {
                                                 "userid": MyApp.LOGIN_ID_VALUE,
                                                 "currentPassword":
-                                                    current.text.toString(),
-                                                "password": confirmpassword.text
+                                                    current
+                                                    !.text.toString(),
+                                                "password": confirmpassword!.text
                                                     .toString()
                                               };
 

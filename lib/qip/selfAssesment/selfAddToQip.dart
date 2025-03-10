@@ -4,6 +4,7 @@ import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/areamodel.dart';
 import 'package:mykronicle_mobile/models/qiplistmodel.dart';
 import 'package:mykronicle_mobile/models/standardsmodel.dart';
+import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 
 class SelfAddToQip extends StatefulWidget {
@@ -17,7 +18,7 @@ class SelfAddToQip extends StatefulWidget {
 }
 
 class _SelfAddToQipState extends State<SelfAddToQip> {
-  int selectedQipIndex;
+  int selectedQipIndex = 0;
   List<QipListModel> _allQips = [];
   bool viewList = true;
   List<AreaModel> areas = [];

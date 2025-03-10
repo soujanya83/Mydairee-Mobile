@@ -12,7 +12,7 @@ class SaveService extends StatefulWidget {
 }
 
 class _SaveServiceState extends State<SaveService> {
-  TextEditingController sname,
+  TextEditingController? sname,
       snumber,
       phstreet,
       phsuburb,
@@ -45,7 +45,7 @@ class _SaveServiceState extends State<SaveService> {
       etelephone,
       eemail;
 
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -125,44 +125,44 @@ class _SaveServiceState extends State<SaveService> {
       // checkValues.clear();
       print(data);
       //  var  = data['rooms'];
-      sname.text = data['ServiceDetails']['serviceName'];
-      snumber.text = data['ServiceDetails']['serviceApprovalNumber'];
-      phstreet.text = data['ServiceDetails']['serviceStreet'];
-      phsuburb.text = data['ServiceDetails']['serviceSuburb'];
-      phstate.text = data['ServiceDetails']['serviceState'];
-      phpostcode.text = data['ServiceDetails']['servicePostcode'];
+      sname?.text = data['ServiceDetails']['serviceName'];
+      snumber?.text = data['ServiceDetails']['serviceApprovalNumber'];
+      phstreet?.text = data['ServiceDetails']['serviceStreet'];
+      phsuburb?.text = data['ServiceDetails']['serviceSuburb'];
+      phstate?.text = data['ServiceDetails']['serviceState'];
+      phpostcode?.text = data['ServiceDetails']['servicePostcode'];
 
-      ptelephone.text = data['ServiceDetails']['contactTelephone'];
-      pfax.text = data['ServiceDetails']['contactFax'];
-      pemail.text = data['ServiceDetails']['contactEmail'];
-      pmobile.text = data['ServiceDetails']['contactMobile'];
+      ptelephone?.text = data['ServiceDetails']['contactTelephone'];
+      pfax?.text = data['ServiceDetails']['contactFax'];
+      pemail?.text = data['ServiceDetails']['contactEmail'];
+      pmobile?.text = data['ServiceDetails']['contactMobile'];
 
-      atelephone.text = data['ServiceDetails']['providerTelephone'];
-      afax.text = data['ServiceDetails']['providerFax'];
-      acontact.text = data['ServiceDetails']['providerContact'];
-      amobile.text = data['ServiceDetails']['providerMobile'];
-      aemail.text = data['ServiceDetails']['providerEmail'];
+      atelephone?.text = data['ServiceDetails']['providerTelephone'];
+      afax?.text = data['ServiceDetails']['providerFax'];
+      acontact?.text = data['ServiceDetails']['providerContact'];
+      amobile?.text = data['ServiceDetails']['providerMobile'];
+      aemail?.text = data['ServiceDetails']['providerEmail'];
 
-      nname.text = data['ServiceDetails']['supervisorName'];
-      ntelephone.text = data['ServiceDetails']['supervisorTelephone'];
-      nfax.text = data['ServiceDetails']['supervisorFax'];
-      nemail.text = data['ServiceDetails']['serviceApprovalNumber'];
-      nmobile.text = data['ServiceDetails']['supervisorMobile'];
+      nname?.text = data['ServiceDetails']['supervisorName'];
+      ntelephone?.text = data['ServiceDetails']['supervisorTelephone'];
+      nfax?.text = data['ServiceDetails']['supervisorFax'];
+      nemail?.text = data['ServiceDetails']['serviceApprovalNumber'];
+      nmobile?.text = data['ServiceDetails']['supervisorMobile'];
 
-      postreet.text = data['ServiceDetails']['postalStreet'];
-      posuburb.text = data['ServiceDetails']['postalSuburb'];
-      postate.text = data['ServiceDetails']['postalState'];
-      popostcode.text = data['ServiceDetails']['postalPostcode'];
+      postreet?.text = data['ServiceDetails']['postalStreet'];
+      posuburb?.text = data['ServiceDetails']['postalSuburb'];
+      postate?.text = data['ServiceDetails']['postalState'];
+      popostcode?.text = data['ServiceDetails']['postalPostcode'];
 
-      ename.text = data['ServiceDetails']['eduLeaderName'];
-      etelephone.text = data['ServiceDetails']['eduLeaderTelephone'];
-      eemail.text = data['ServiceDetails']['eduLeaderEmail'];
+      ename?.text = data['ServiceDetails']['eduLeaderName'];
+      etelephone?.text = data['ServiceDetails']['eduLeaderTelephone'];
+      eemail?.text = data['ServiceDetails']['eduLeaderEmail'];
 
-      summary.text = data['ServiceDetails']['strengthSummary'];
-      how.text = data['ServiceDetails']['childGroupService'];
-      write.text = data['ServiceDetails']['personSubmittingQip'];
-      family.text = data['ServiceDetails']['educatorsData'];
-      insert.text = data['ServiceDetails']['philosophyStatement'];
+      summary?.text = data['ServiceDetails']['strengthSummary'];
+      how?.text = data['ServiceDetails']['childGroupService'];
+      write?.text = data['ServiceDetails']['personSubmittingQip'];
+      family?.text = data['ServiceDetails']['educatorsData'];
+      insert?.text = data['ServiceDetails']['philosophyStatement'];
 
       setState(() {});
     }
@@ -959,40 +959,39 @@ class _SaveServiceState extends State<SaveService> {
                               ServiceAPIHandler h = ServiceAPIHandler({
                                 "userid": MyApp.LOGIN_ID_VALUE,
                                 "centerid": centers[currentIndex].id,
-                                "serviceName": sname.text,
-                                "serviceApprovalNumber": snumber.text,
-                                "serviceStreet": phstreet.text,
-                                "serviceSuburb": phsuburb.text,
-                                "serviceState": phstate.text,
-                                "servicePostcode": phpostcode.text,
-                                "contactTelephone": ptelephone.text,
-                                "contactMobile": pmobile.text,
-                                "contactFax": pfax.text,
-                                "contactEmail": pemail.text,
-                                "providerContact": acontact.text,
-                                "providerTelephone": atelephone.text,
-                                "providerMobile": amobile.text,
-                                "providerFax": afax.text,
-                                "providerEmail": aemail.text,
-                                "supervisorName": sname.text,
-                                "supervisorTelephone": ntelephone.text,
-                                "supervisorMobile": nmobile.text,
-                                "supervisorFax": nfax.text,
-                                "supervisorEmail": nemail.text,
-                                "postalStreet": postreet.text,
-                                "postalSuburb": posuburb.text,
-                                "postalState": postate.text,
-                                "postalPostcode": popostcode.text,
-                                "eduLeaderName": ename.text,
-                                "eduLeaderTelephone": etelephone.text,
-                                "eduLeaderEmail": eemail.text,
-                                "strengthSummary": summary.text,
-                                "childGroupService": how.text,
-                                "personSubmittingQip": write.text,
-                                "educatorsData": family.text,
-                                "philosophyStatement": insert.text
+                                "serviceName": sname?.text??'',
+                                "serviceApprovalNumber": snumber?.text??'',
+                                "serviceStreet": phstreet?.text??'',
+                                "serviceSuburb": phsuburb?.text??'',
+                                "serviceState": phstate?.text??'',
+                                "servicePostcode": phpostcode?.text??'',
+                                "contactTelephone": ptelephone?.text??'',
+                                "contactMobile": pmobile?.text??'',
+                                "contactFax": pfax?.text??'',
+                                "contactEmail": pemail?.text??'',
+                                "providerContact": acontact?.text??'',
+                                "providerTelephone": atelephone?.text??'',
+                                "providerMobile": amobile?.text??'',
+                                "providerFax": afax?.text??'',
+                                "providerEmail": aemail?.text??'',
+                                "supervisorName": sname?.text??'',
+                                "supervisorTelephone": ntelephone?.text??'',
+                                "supervisorMobile": nmobile?.text??'',
+                                "supervisorFax": nfax?.text??'',
+                                "supervisorEmail": nemail?.text??'',
+                                "postalStreet": postreet?.text??'',
+                                "postalSuburb": posuburb?.text??'',
+                                "postalState": postate?.text??'',
+                                "postalPostcode": popostcode?.text??'',
+                                "eduLeaderName": ename?.text??'',
+                                "eduLeaderTelephone": etelephone?.text??'',
+                                "eduLeaderEmail": eemail?.text??'',
+                                "strengthSummary": summary?.text??'',
+                                "childGroupService": how?.text??'',
+                                "personSubmittingQip": write?.text??'',
+                                "educatorsData": family?.text??'',
+                                "philosophyStatement": insert?.text??''
                               });
-
                               var data = await h.saveService();
                               if (data['Status'] == 'SUCCESS') {
                                 MyApp.ShowToast('Saved Successfully', context);

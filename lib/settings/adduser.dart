@@ -32,7 +32,7 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUserState extends State<AddUser> {
-  TextEditingController first, mobile, mail, title, pwd, empcode;
+  TextEditingController? first, mobile, mail, title, pwd, empcode;
 
   String status = 'STAFF';
   String _gender = 'MALE';
@@ -40,34 +40,41 @@ class _AddUserState extends State<AddUser> {
   String dob = '';
   String editpin = '';
   bool active = false;
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   Map<String, bool> centerValues = {};
   List<CentersModel> _selectedCenter = [];
   bool centersFetched = false;
   String pin = '';
 
-  File _image;
+  File? _image;
 
-  Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+ Future<File> compressAndGetFile(File file, String targetPath) async {
+  XFile? result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path, targetPath,
+    minWidth: 900, minHeight: 900, quality: 40,
+  );
 
-    print(file.lengthSync());
-    print(result.lengthSync());
-
-    return result;
+  if (result == null) {
+    throw Exception("Compression failed: Unable to get compressed file.");
   }
+
+  File compressedFile = File(result.path); // Convert XFile to File
+
+  print("Original size: ${file.lengthSync()} bytes");
+  print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+  return compressedFile;
+}
 
   Future _loadFromGallery(var context) async {
     print('heee');
     final picker = ImagePicker();
-    final _galleryImage = await picker.getImage(source: ImageSource.gallery);
+    final _galleryImage = await picker.pickImage(source: ImageSource.gallery);
 
     // setState(() {
     //   _image = File(_galleryImage.path);
     // });
-    File file = File(_galleryImage.path);
+    File file = File(_galleryImage?.path??"");
     var fileSizeInBytes = file.length();
     var fileSizeInKB = await fileSizeInBytes / 1024;
     var fileSizeInMB = fileSizeInKB / 1024;
@@ -82,13 +89,13 @@ class _AddUserState extends State<AddUser> {
       final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
 
       File cFile = await compressAndGetFile(file, outPath);
-      File fImage = await cropImage(context, file);
+      File? fImage = await cropImage(context, file);
       if (fImage != null) {
         _image = file;
       }
       setState(() {});
     } else {
-      File fImage = await cropImage(context, file);
+      File? fImage = await cropImage(context, file);
       if (fImage != null) {
         _image = file;
       }
@@ -119,24 +126,24 @@ class _AddUserState extends State<AddUser> {
       if (!data.containsKey('error')) {
         var res = data['userdata'];
         print(res);
-        first.text = res['name'].toString();
-        mail.text = res['emailid'].toString();
+        first?.text = res['name'].toString();
+        mail?.text = res['emailid'].toString();
         _gender = res['gender'];
         if (res['userType'].toString().toLowerCase() == 'superadmin') {
-          pwd.text = res['password'];
+          pwd?.text = res['password'];
         } else if (res['userType'].toString().toLowerCase() == 'staff') {
           editpin = res['password'];
           pin = res['password'];
-          empcode.text = res['username'].toString();
+          empcode?.text = res['username'].toString();
         }
         status = res['userType'].toString().toUpperCase();
-        mobile.text = res['contactNo'];
+        mobile?.text = res['contactNo'];
         var inputFormat = DateFormat("yyyy-MM-dd");
         final DateFormat formati = DateFormat('dd-MM-yyyy');
         var date1 = inputFormat.parse(res['dob']);
         dob = formati.format(date1);
         _dob = formati.format(date1);
-        title.text = res['title'];
+        title?.text = res['title'];
         //  imageUrl = res['imageUrl'];
         for (var j = 0; j < data['centers'].length; j++) {
           for (var i = 0; i < centers.length; i++) {
@@ -766,6 +773,7 @@ class _AddUserState extends State<AddUser> {
                               ))
                           : Stack(
                               children: [
+                                _image!=null?
                                 Container(
                                     width: 120,
                                     height: 120,
@@ -773,10 +781,10 @@ class _AddUserState extends State<AddUser> {
                                       //  borderRadius: BorderRadius.circular(15.0),
                                       shape: BoxShape.rectangle,
                                       image: new DecorationImage(
-                                        image: new FileImage(_image),
+                                        image: new FileImage(_image!),
                                         fit: BoxFit.cover,
                                       ),
-                                    )),
+                                    )):SizedBox(),
                                 Positioned(
                                     right: 0,
                                     top: 0,
@@ -799,26 +807,26 @@ class _AddUserState extends State<AddUser> {
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                if (first.text.toString().length == 0) {
+                                if (first?.text.toString().length == 0) {
                                   MyApp.ShowToast('Enter Name', context);
                                 } else if (dob == '') {
                                   MyApp.ShowToast('Add Date', context);
-                                } else if (mobile.text.toString() == '') {
+                                } else if (mobile?.text.toString() == '') {
                                   MyApp.ShowToast(
                                       'Enter Mobile Number', context);
-                                } else if (mail.text.toString() == '') {
+                                } else if (mail?.text.toString() == '') {
                                   MyApp.ShowToast('Enter Mail Id', context);
                                 } else if (status == 'STAFF' &&
                                     pin.length == 0) {
                                   MyApp.ShowToast(
                                       'Enter Complete Pin', context);
                                 } else if (status == 'STAFF' &&
-                                    empcode.text.length == 0) {
+                                    empcode?.text.length == 0) {
                                   MyApp.ShowToast(
                                       'Enter Employee Code', context);
                                 }
                                 // else if (status == 'SUPERADMIN' &&
-                                //     pwd.text.length == 0) {
+                                //     pwd?.text.length == 0) {
                                 //   MyApp.ShowToast('Enter Password', context);
                                 // }
                                 else {
@@ -841,21 +849,21 @@ class _AddUserState extends State<AddUser> {
 //  {"username":"EMP0001","password":"1111",}
                                   objToSend = {
                                     "centerIds": centers,
-                                    "name": first.text,
+                                    "name": first?.text,
                                     "gender": _gender.toUpperCase(),
                                     "dob": dob,
-                                    "contactNo": mobile.text.toString(),
-                                    "emailid": mail.text.toString(),
-                                    "title": title.text.toString(),
+                                    "contactNo": mobile?.text.toString(),
+                                    "emailid": mail?.text.toString(),
+                                    "title": title?.text.toString(),
                                     'userType': status,
                                     "userid": MyApp.LOGIN_ID_VALUE,
                                   };
                                   // if (status == 'STAFF') {
                                   //   objToSend['username'] =
-                                  //       empcode.text.toString();
+                                  //       empcode?.text.toString();
                                   //   objToSend['password'] = pin;
                                   // } else {
-                                  //   objToSend['password'] = pwd.text.toString();
+                                  //   objToSend['password'] = pwd?.text.toString();
                                   // }
                                   //check whether int or not
                                   if (widget.type == 'edit') {
@@ -863,8 +871,8 @@ class _AddUserState extends State<AddUser> {
                                   }
                                   if (_image != null) {
                                     var d = await MultipartFile.fromFile(
-                                        _image.path,
-                                        filename: basename(_image.path),
+                                        _image!.path,
+                                        filename: basename(_image!.path),
                                         contentType:
                                             MediaType.parse('image/jpg'));
 
@@ -890,7 +898,7 @@ class _AddUserState extends State<AddUser> {
                                   Dio dio = new Dio();
 
                                   await dio
-                                      .post(Uri.parse(_toSend),
+                                      .post(_toSend,
                                           data: formData,
                                           options: Options(headers: {
                                             'X-DEVICE-ID':
@@ -936,8 +944,8 @@ class _AddUserState extends State<AddUser> {
                     ])))));
   }
 
-  Future<DateTime> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: new DateTime(1850),

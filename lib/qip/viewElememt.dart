@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:html_editor/html_editor.dart';
-import 'package:html_unescape/html_unescape.dart';
+import 'package:html/parser.dart';
+import 'package:html_editor_enhanced/html_editor.dart'; 
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/areamodel.dart';
@@ -38,21 +38,22 @@ class ViewElement extends StatefulWidget {
 
 class _ViewElementState extends State<ViewElement>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
-  List<AreaModel> areas;
-  List<StandardsModel> standards;
-  int areaIndex;
-  int standardIndex;
-  int elementIndex;
+  List<AreaModel> areas=[];
+  List<StandardsModel> standards=[];
+  int areaIndex=0;
+  int standardIndex=0;
+  int elementIndex=0;
 
-  var unescape = new HtmlUnescape();
+  // var unescape = new HtmlUnescape();
 
-  GlobalKey<HtmlEditorState> keyEditor;
-  List<ProgressNotesModel> progressNotesList;
-  List<CommentModel> commentsList;
-  List<IssuesModel> issuesList;
-  TextEditingController commentController;
+    GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  HtmlEditorController editorController = HtmlEditorController();
+  List<ProgressNotesModel> progressNotesList=[];
+  List<CommentModel> commentsList=[];
+  List<IssuesModel> issuesList=[];
+  TextEditingController commentController=TextEditingController();
   List tabNames = ["Progress Notes", "Issues", "Comments"];
 
   @override
@@ -71,7 +72,7 @@ class _ViewElementState extends State<ViewElement>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -333,10 +334,11 @@ class _ViewElementState extends State<ViewElement>
                             Container(
                               height: MediaQuery.of(context).size.height * 0.3,
                               child: HtmlEditor(
-                                showBottomToolbar: false,
+                                // showBottomToolbar: false,
                                 key: keyEditor,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.3,
+                                // height:
+                                    // MediaQuery.of(context).size.height * 0.3,
+                                     controller: editorController,
                               ),
                             ),
                             Row(
@@ -344,7 +346,7 @@ class _ViewElementState extends State<ViewElement>
                               children: [
                                 ElevatedButton(
                                     onPressed: () async {
-                                      final txt = await keyEditor.currentState
+                                      final txt = await editorController
                                           .getText();
                                       String notes = txt;
                                       if (notes != '') {
@@ -364,7 +366,7 @@ class _ViewElementState extends State<ViewElement>
                                         await qipAPIHandler
                                             .saveNotes()
                                             .then((value) {
-                                          keyEditor.currentState.setText('');
+                                          editorController.setText('');
                                           _fetchData();
                                         });
                                       } else {
@@ -400,9 +402,7 @@ class _ViewElementState extends State<ViewElement>
                                             title: Text(progressNotesList[index]
                                                 .addedBy),
                                             subtitle: Html(
-                                                data: unescape.convert(
-                                              progressNotesList[index].notetext,
-                                            ))),
+                                                data: parseFragment(progressNotesList[index].notetext).text)),
                                       );
                                     }),
                               )
@@ -429,7 +429,7 @@ class _ViewElementState extends State<ViewElement>
                                                         .id,
                                                     areaId: widget
                                                         .areas[areaIndex].id,
-                                                    type: 'add',
+                                                    type: 'add', issuesModel: null,
                                                   ))).then(
                                           (value) => _fetchData());
                                     },

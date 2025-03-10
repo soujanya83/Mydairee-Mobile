@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/programplanapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -17,7 +16,7 @@ class PlansList extends StatefulWidget {
 }
 
 class _PlansListState extends State<PlansList> {
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
   var planList;

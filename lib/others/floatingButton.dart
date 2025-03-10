@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -19,8 +19,8 @@ class FloatingButton extends StatefulWidget {
 }
 
 class _FloatingButtonState extends State<FloatingButton> {
-  List<CentersModel> centers;
-  List<ChildTableModel> childData;
+  List<CentersModel> centers=[];
+  List<ChildTableModel> childData=[];
   bool centersFetched = false;
   bool childrensFetched = false;
   int currentIndex = 0;
@@ -289,7 +289,7 @@ class _FloatingButtonState extends State<FloatingButton> {
                                                                   builder:
                                                                       (context) =>
                                                                           ViewObservation(
-                                                                            id: childData[index].obsId,
+                                                                            id: childData[index].obsId, montCount: '', eylfCount: '', devCount: '',
                                                                           )));
                                                         },
                                                         child: Text(

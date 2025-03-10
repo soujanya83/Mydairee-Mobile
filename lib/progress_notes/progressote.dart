@@ -23,11 +23,11 @@ class ProgressNotesActivity extends StatefulWidget {
 }
 
 class _ProgressNotesActivityState extends State<ProgressNotesActivity> {
-  List<CentersModel> centers;
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<Records> _records;
+  List<Records> _records = [];
   bool recordFetched = false;
   var details;
 
@@ -281,8 +281,8 @@ class _ProgressNotesActivityState extends State<ProgressNotesActivity> {
                                               ),
                                             ),
                                             IconButton(
-                                              onPressed: () {
-                                                return showDialog(
+                                              onPressed: () async{
+                                                return await showDialog(
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) {

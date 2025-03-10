@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
@@ -46,8 +45,8 @@ class _ObservationMainState extends State<ObservationMain> {
   bool showLinks = false;
 
   bool observationsFetched = false;
-  List<ObservationModel> _allObservations;
-  List<ChildModel> _allChildrens;
+  List<ObservationModel> _allObservations=[];
+  List<ChildModel> _allChildrens=[];
   Map<String, bool> childValues = {};
   bool childrensFetched = false;
   bool obsStatusDraft = false;
@@ -227,7 +226,7 @@ class _ObservationMainState extends State<ObservationMain> {
                   return new CheckboxListTile(
                     title: new Text(key),
                     value: addedValues[key],
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
                       if (key == 'All') {
                         addedValues['Today'] = value!;
                         addedValues['This Week'] = value!;
@@ -375,7 +374,7 @@ class _ObservationMainState extends State<ObservationMain> {
                   return new CheckboxListTile(
                     title: new Text(key),
                     value: authorValues[key],
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
                       if (key == 'Any') {
                         authorValues['Me'] = value!;
                         authorValues['Staff'] = value!;
@@ -430,7 +429,7 @@ class _ObservationMainState extends State<ObservationMain> {
                   return new CheckboxListTile(
                     title: new Text(key),
                     value: assesmentsValues[key],
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
                       if (key == 'Does Not Have Any Assessment') {
                         if (value == true) {
                           assesmentsValues['Does Not Have Any Assessment'] =
@@ -644,7 +643,7 @@ class _ObservationMainState extends State<ObservationMain> {
                   return new CheckboxListTile(
                     title: new Text(key),
                     value: mediaValues[key],
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
                       if (key == 'Any') {
                         mediaValues['Image'] = value!;
                         mediaValues['Video'] = value!;
@@ -700,7 +699,7 @@ class _ObservationMainState extends State<ObservationMain> {
                   return new CheckboxListTile(
                     title: new Text(key),
                     value: commentsValues[key],
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
                       if (value == true && disabledComment == false) {
                         commentsValues[key] = value!;
                         disabledComment = true;
@@ -749,7 +748,7 @@ class _ObservationMainState extends State<ObservationMain> {
                   return new CheckboxListTile(
                     title: new Text(key),
                     value: linksValues[key],
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
                       if (value == true && disabledLink == false) {
                         linksValues[key] = value!;
                         disabledLink = true;
@@ -776,7 +775,7 @@ class _ObservationMainState extends State<ObservationMain> {
     ));
   }
 
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
   bool permission = true;
@@ -828,9 +827,9 @@ class _ObservationMainState extends State<ObservationMain> {
     };
     print(jsonEncode(b));
     final response = await http.post(
-      Constants.BASE_URL +
+     Uri.parse( Constants.BASE_URL +
           "observation/getListFilterObservations/" +
-          MyApp.LOGIN_ID_VALUE,
+          MyApp.LOGIN_ID_VALUE),
       headers: {
         'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
         'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
@@ -968,7 +967,7 @@ class _ObservationMainState extends State<ObservationMain> {
                                                     centerid:
                                                         centers[currentIndex]
                                                             .id,
-                                                    selecChildrens: null,
+                                                    selecChildrens: [], media: [], totaldata: {},
                                                   ))));
                                 },
                                 child: Container(

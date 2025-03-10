@@ -13,8 +13,8 @@ class NoticePeriodSettings extends StatefulWidget {
 }
 
 class _NoticePeriodSettingsState extends State<NoticePeriodSettings> {
-  TextEditingController controller;
-  List<CentersModel> centers;
+  TextEditingController? controller;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -56,7 +56,7 @@ class _NoticePeriodSettingsState extends State<NoticePeriodSettings> {
     var data = await settingsApiHandler.getNoticePeriod();
     print(data);
     if (data['Notice']['days'] != null) {
-      controller.text = data['Notice']['days'];
+      controller?.text = data['Notice']['days'];
       setState(() {});
     }
   }
@@ -152,7 +152,7 @@ class _NoticePeriodSettingsState extends State<NoticePeriodSettings> {
                           var objToSend = {
                             "centerid": centers[currentIndex].id,
                             "userid": MyApp.LOGIN_ID_VALUE,
-                            "number": controller.text
+                            "number": controller?.text??""
                           };
                           SettingsApiHandler settingsApiHandler =
                               SettingsApiHandler(objToSend);

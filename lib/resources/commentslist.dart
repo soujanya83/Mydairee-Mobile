@@ -21,7 +21,7 @@ class _CommentsListState extends State<CommentsList> {
   static GlobalKey<FlutterMentionsState> add =
       GlobalKey<FlutterMentionsState>();
 
-  List<Map<String, dynamic>> mentionUser;
+  List<Map<String, dynamic>> mentionUser = [];
   bool mChildFetched = false;
 
   @override
@@ -175,7 +175,7 @@ class _CommentsListState extends State<CommentsList> {
                         child: GestureDetector(
                             onTap: () async {
                               String added =
-                                  add.currentState.controller.markupText;
+                                  add.currentState?.controller?.markupText??'';
 
                               for (int i = 0; i < mentionUser.length; i++) {
                                 if (added.contains(mentionUser[i]['name'])) {

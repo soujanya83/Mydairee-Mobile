@@ -25,17 +25,17 @@ class ViewAssesment extends StatefulWidget {
 
 class _ViewAssesmentState extends State<ViewAssesment>
     with SingleTickerProviderStateMixin {
-  List<CentersModel> centers;
+  List<CentersModel> centers= [];
   bool centersFetched = false;
   int currentIndex = 0;
   int areaIndex = 0;
-  List<AreaModel> areas;
+  List<AreaModel> areas = [];
   List<LRModel> lrList = [];
   List<QAModel> qaList = [];
   List<TextEditingController> lrController = [];
   List<TextEditingController> qaController = [];
 
-  TabController _controller;
+  TabController? _controller;
   List tabNames = ["Legislative Requirements", "Quality Area"];
 
   @override
@@ -375,6 +375,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                                     .status ==
                                                                 'Compliant',
                                                             onChanged: (val) {
+                                                              if(val==null)return;
                                                               if (val) {
                                                                 lrList[index]
                                                                         .status =
@@ -397,7 +398,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                             value: lrList[index]
                                                                     .status ==
                                                                 'Noncompliant',
-                                                            onChanged: (val) {
+                                                            onChanged: (val) {if(val==null)return;
                                                               if (val) {
                                                                 lrList[index]
                                                                         .status =
@@ -602,7 +603,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                                         .status ==
                                                                     'Met',
                                                                 onChanged:
-                                                                    (val) {
+                                                                    (val) {if(val==null)return;
                                                                   if (val) {
                                                                     qaList[index]
                                                                             .status =
@@ -625,7 +626,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                                         .status ==
                                                                     'Not-met',
                                                                 onChanged:
-                                                                    (val) {
+                                                                    (val) {if(val==null)return;
                                                                   if (val) {
                                                                     qaList[index]
                                                                             .status =

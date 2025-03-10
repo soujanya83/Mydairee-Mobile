@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
@@ -19,7 +19,7 @@ class _CenterSettingsState extends State<CenterSettings> {
   
   String order='ASC';
   bool settingsDataFetched = false;
-  List<CentersModel> _allCenters;
+  List<CentersModel> _allCenters=[];
 
 @override
   void initState() {
@@ -96,7 +96,7 @@ class _CenterSettingsState extends State<CenterSettings> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => AddCenter('add',null))).then((value) {
+                                      builder: (context) => AddCenter('add',''))).then((value) {
                                       if (value != null) {
                                       settingsDataFetched=false;
                                         setState(() {});

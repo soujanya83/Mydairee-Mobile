@@ -24,7 +24,7 @@ void _requestDownload(
 Future<void> downloadFile(String link, String filename, var context) async {
   var status = await Permission.storage.status;
   if (status.isGranted) {
-    String dirloc = (await getExternalStorageDirectory()).absolute.path;
+    String dirloc = (await getExternalStorageDirectory())!.absolute.path;
     _requestDownload(link, filename, dirloc, context);
   } else {
     await Permission.storage

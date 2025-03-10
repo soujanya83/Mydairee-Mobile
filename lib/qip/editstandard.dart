@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:html_editor/html_editor.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/areamodel.dart';
@@ -14,20 +14,23 @@ class EditStandard extends StatefulWidget {
   final List<StandardsModel> standards;
   final String qipId;
   EditStandard(this.areas, this.choosenStandardIndex, this.choosenAreaIndex,
-      this.standards,this.qipId);
+      this.standards, this.qipId);
 
   @override
   _EditStandardState createState() => _EditStandardState();
 }
 
 class _EditStandardState extends State<EditStandard> {
-  int areIndex;
-  int standardIndex;
+  int areIndex = 0;
+  int standardIndex = 0;
   var standardData;
-  GlobalKey<HtmlEditorState> keyEditor1;
-  GlobalKey<HtmlEditorState> keyEditor2;
-  GlobalKey<HtmlEditorState> keyEditor3;
-  List<StandardsModel> standards;
+  GlobalKey<State<StatefulWidget>> keyEditor1 = GlobalKey();
+  HtmlEditorController editorController1 = HtmlEditorController();
+  GlobalKey<State<StatefulWidget>> keyEditor2 = GlobalKey();
+  HtmlEditorController editorController2 = HtmlEditorController();
+  GlobalKey<State<StatefulWidget>> keyEditor3 = GlobalKey();
+  HtmlEditorController editorController3 = HtmlEditorController();
+  List<StandardsModel> standards = [];
 
   String textData1 = '';
   String textData2 = '';
@@ -49,7 +52,7 @@ class _EditStandardState extends State<EditStandard> {
     var _objToSend = {
       "areaid": widget.areas[areIndex].id,
       "userid": MyApp.LOGIN_ID_VALUE,
-      "qipid":widget.qipId
+      "qipid": widget.qipId
     };
 
     QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
@@ -74,7 +77,7 @@ class _EditStandardState extends State<EditStandard> {
     var _objToSend = {
       "stdid": standards[standardIndex].id,
       "userid": MyApp.LOGIN_ID_VALUE,
-      "qipid":widget.qipId
+      "qipid": widget.qipId
     };
 
     QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
@@ -207,16 +210,19 @@ class _EditStandardState extends State<EditStandard> {
                         child: textData1 != ''
                             ? HtmlEditor(
                                 key: keyEditor1,
-                                value: textData1,
-                                showBottomToolbar: false,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                                controller: editorController1,
+                                // value: textData1,
+                                // showBottomToolbar: false,
+                                // height:
+                                //     MediaQuery.of(context).size.height * 0.4,
                               )
                             : HtmlEditor(
-                                showBottomToolbar: false,
                                 key: keyEditor1,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                                controller: editorController1,
+                                // showBottomToolbar: false,
+                                // key: keyEditor1,
+                                // height:
+                                //     MediaQuery.of(context).size.height * 0.4,
                               ),
                       ),
                       SizedBox(
@@ -227,17 +233,19 @@ class _EditStandardState extends State<EditStandard> {
                         height: MediaQuery.of(context).size.height * 0.4,
                         child: textData2 != ''
                             ? HtmlEditor(
-                                showBottomToolbar: false,
+                                // showBottomToolbar: false,
                                 key: keyEditor2,
-                                value: textData2,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                                controller: editorController2,
+                                // value: textData2,
+                                // height:
+                                //     MediaQuery.of(context).size.height * 0.4,
                               )
                             : HtmlEditor(
-                                showBottomToolbar: false,
+                                // showBottomToolbar: false,
                                 key: keyEditor2,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                                controller: editorController3,
+                                // height:
+                                //     MediaQuery.of(context).size.height * 0.4,
                               ),
                       ),
                       SizedBox(
@@ -249,17 +257,19 @@ class _EditStandardState extends State<EditStandard> {
                         height: MediaQuery.of(context).size.height * 0.4,
                         child: textData3 != ''
                             ? HtmlEditor(
-                                showBottomToolbar: false,
+                                // showBottomToolbar: false,
                                 key: keyEditor3,
-                                value: textData3,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                                controller: editorController3,
+                                // value: textData3,
+                                // height:
+                                //     MediaQuery.of(context).size.height * 0.4,
                               )
                             : HtmlEditor(
-                                showBottomToolbar: false,
+                                // showBottomToolbar: false,
                                 key: keyEditor3,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                                controller: editorController3,
+                                // height:
+                                //     MediaQuery.of(context).size.height * 0.4,
                               ),
                       ),
                     ],
@@ -273,11 +283,11 @@ class _EditStandardState extends State<EditStandard> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          final txt1 = await keyEditor1.currentState.getText();
+                          final txt1 = await editorController1.getText();
                           String s1 = txt1;
-                          final txt2 = await keyEditor2.currentState.getText();
+                          final txt2 = await editorController2.getText();
                           String s2 = txt2;
-                          final txt3 = await keyEditor3.currentState.getText();
+                          final txt3 = await editorController3.getText();
                           String s3 = txt3;
 
                           var _objToSend = {
@@ -286,7 +296,7 @@ class _EditStandardState extends State<EditStandard> {
                             "val2": s2,
                             "val3": s3,
                             "userid": MyApp.LOGIN_ID_VALUE,
-                             "qipid":widget.qipId,
+                            "qipid": widget.qipId,
                           };
                           QipAPIHandler qipAPIHandler =
                               QipAPIHandler(_objToSend);
@@ -295,7 +305,7 @@ class _EditStandardState extends State<EditStandard> {
                           print(data);
                           if (data['Status'] == 'SUCCESS') {
                             MyApp.ShowToast('Updated Sucessfully', context);
-                             RestartWidget.restartApp(context);
+                            RestartWidget.restartApp(context);
                           }
                         },
                         child: Text('Update Now'),

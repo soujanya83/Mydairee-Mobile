@@ -11,7 +11,7 @@ class ChangeMail extends StatefulWidget {
 }
 
 class _ChangeMailState extends State<ChangeMail> {
-  TextEditingController current, newmail, confirmmail;
+  TextEditingController? current, newmail, confirmmail;
   String currentErr = '';
   String newErr = '';
   String confirmErr = '';
@@ -192,34 +192,37 @@ class _ChangeMailState extends State<ChangeMail> {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                               Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    
- 
-                                            if (current.text.isEmpty ||
-                                                newmail.text.isEmpty ||
-                                                confirmmail.text.isEmpty) {
-                                              if (current.text.isEmpty) {
+                                            Pattern pattern =
+                                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                                            RegExp regex =
+                                                new RegExp(pattern.toString());
+                                            if (current == null) return;
+                                            if (newmail == null) return;
+                                            if (confirmmail == null) return;
+
+                                            if (current!.text.isEmpty ||
+                                                newmail!.text.isEmpty ||
+                                                confirmmail!.text.isEmpty) {
+                                              if (current!.text.isEmpty) {
                                                 currentErr =
                                                     'enter current mail id';
                                               } else {
                                                 currentErr = '';
                                               }
-                                              if (newmail.text.isEmpty) {
+                                              if (newmail!.text.isEmpty) {
                                                 newErr = 'enter mail id';
                                               } else {
                                                 newErr = '';
                                               }
-                                              if (confirmmail.text.isEmpty) {
+                                              if (confirmmail!.text.isEmpty) {
                                                 confirmErr = 'enter mail id';
                                               } else {
                                                 confirmErr = '';
                                               }
                                               setState(() {});
-                                            } else if (newmail.text
+                                            } else if (newmail?.text
                                                     .toString() !=
-                                                confirmmail.text.toString()) {
+                                                confirmmail?.text.toString()) {
                                               currentErr = '';
                                               newErr = '';
                                               confirmErr = '';
@@ -227,21 +230,16 @@ class _ChangeMailState extends State<ChangeMail> {
                                               MyApp.ShowToast(
                                                   'new mail id and confirm mail id should be same',
                                                   context);
-                                            } 
-                                             else if (!regex.hasMatch(current.text.trim())){
-                                                  currentErr =
-                                                    'enter proper mail id';
-                                                    setState(() {
-                                                      
-                                                    });
-                                             }else if (!regex.hasMatch(newmail.text.trim())){
-                                                  newErr =
-                                                    'enter proper mail id';
-                                                    setState(() {
-                                                      
-                                                    });
-                                             }
-                                            else {
+                                            } else if (!regex.hasMatch(
+                                                current!.text.trim())) {
+                                              currentErr =
+                                                  'enter proper mail id';
+                                              setState(() {});
+                                            } else if (!regex.hasMatch(
+                                                newmail!.text.trim())) {
+                                              newErr = 'enter proper mail id';
+                                              setState(() {});
+                                            } else {
                                               currentErr = '';
                                               newErr = '';
                                               confirmErr = '';
@@ -250,9 +248,9 @@ class _ChangeMailState extends State<ChangeMail> {
                                               var body = {
                                                 "userid": MyApp.LOGIN_ID_VALUE,
                                                 "currentEmail":
-                                                    current.text.toString(),
+                                                    current?.text.toString()??'',
                                                 "email":
-                                                    confirmmail.text.toString()
+                                                    confirmmail?.text.toString()??""
                                               };
 
                                               SettingsApiHandler res =

@@ -1,19 +1,19 @@
 class ChildModel {
   String id;
   String name;
-  String dob;
-  String startDate;
-  String room;
+  String? dob;
+  String? startDate;
+  String? room;
   String imageUrl;
-  String gender;
-  String status;
-  String daysAttending;
-  String createdBy;
-  String createdAt;
-  Map recentobs;
-  int draft;
-  int pub;
-  Map breakfast;
+  String? gender;
+  String? status;
+  String? daysAttending;
+  String? createdBy;
+  String? createdAt;
+  Map? recentobs;
+  int? draft;
+  int? pub;
+  Map? breakfast;
   Map morningtea;
   Map lunch;
   List sleep;
@@ -21,32 +21,32 @@ class ChildModel {
   Map snacks;
   List sunscreen;
   Map toileting;
-  String childid;
+  String? childid;
 
   ChildModel(
       {required this.id,
       required this.name,
-      required this.dob,
-      required this.startDate,
-      required this.room,
+       this.dob,
+       this.startDate,
+       this.room,
       required this.imageUrl,
-      required this.gender,
-      required this.status,
-      required this.daysAttending,
-      required this.createdBy,
-      required this.createdAt,
-      required this.recentobs,
-      required this.draft,
-      required this.pub,
-      required this.breakfast,
+       this.gender,
+       this.status,
+       this.daysAttending,
+       this.createdBy,
+       this.createdAt,
+       this.recentobs,
+       this.draft,
+       this.pub,
+       this.breakfast,
       required this.morningtea,
-      required this.lunch,
+     required  this.lunch,
       required this.sleep,
       required this.afternoontea,
       required this.snacks,
       required this.sunscreen,
       required this.toileting,
-      required this.childid});
+       this.childid});
 
   static ChildModel fromJson(Map<String, dynamic> json) {
     return ChildModel(

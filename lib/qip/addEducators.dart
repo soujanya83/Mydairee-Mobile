@@ -70,6 +70,7 @@ class _AddEducatorsState extends State<AddEducators> {
                           trailing: Checkbox(
                             value: staff[index].selected == 'checked',
                             onChanged: (val) {
+                              if(val==null)return;
                               if (val) {
                                 staff[index].selected = 'checked';
                               } else {

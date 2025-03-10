@@ -3,9 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_html/flutter_html.dart';
-
-import 'package:html_unescape/html_unescape.dart';
-import 'package:html_editor/html_editor.dart';
+import 'package:html/parser.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/programplanapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -30,11 +29,11 @@ class AddPlan extends StatefulWidget {
 }
 
 class _AddPlanState extends State<AddPlan> {
-  String _date1;
-  String date1;
+  String _date1='';
+  String date1='';
 
-  String _date2;
-  String date2;
+  String _date2='';
+  String date2='';
 
   int roomIndex = 0;
 
@@ -47,19 +46,20 @@ class _AddPlanState extends State<AddPlan> {
 
   List<Color> pickerColor = [];
   List<Color> currentColor = [];
-  List<GlobalKey<HtmlEditorState>> keyEditor = [];
+  GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  HtmlEditorController editorController = HtmlEditorController();
   List headComment = [];
 
-  var unescape = HtmlUnescape();
+  // var unescape = HtmlUnescape();
 
   bool observationsFetched = false;
-  List<ObservationModel> _allObservations;
+  List<ObservationModel> _allObservations=[];
 
   bool qipsFetched = false;
-  List<QipListModel> _allQips;
+  List<QipListModel> _allQips=[];
 
   bool refsFetched = false;
-  List<ReflectionModel> _allReflections;
+  List<ReflectionModel> _allReflections=[];
 
   @override
   void initState() {
@@ -169,14 +169,14 @@ class _AddPlanState extends State<AddPlan> {
       headController.clear();
       currentColor.clear();
       pickerColor.clear();
-      keyEditor.clear();
+      editorController.clear();
       headComment.clear();
       for (int i = 0; i < headersList.length; i++) {
         headController
             .add(TextEditingController(text: headersList[i]['headingname']));
         currentColor.add(HexColor(headersList[i]['headingcolor']));
         pickerColor.add(HexColor(headersList[i]['headingcolor']));
-        keyEditor.add(GlobalKey());
+        editorController.editorController.add(GlobalKey());
         headComment.add(headersList[i]['perhaps']);
       }
 
@@ -217,7 +217,7 @@ class _AddPlanState extends State<AddPlan> {
                       SizedBox(height: 5),
                       GestureDetector(
                         onTap: () {
-                          _selectStartDate();
+                          _selectStartDate(context);
                         },
                         child: Container(
                           height: 50,
@@ -240,7 +240,7 @@ class _AddPlanState extends State<AddPlan> {
                       SizedBox(height: 5),
                       GestureDetector(
                         onTap: () {
-                          _selectEndDate();
+                          _selectEndDate(context);
                         },
                         child: Container(
                           height: 50,
@@ -287,7 +287,7 @@ class _AddPlanState extends State<AddPlan> {
                                       items: roomData.map((RoomData value) {
                                         return new DropdownMenuItem<String>(
                                           value: value.id,
-                                          child: new Text(value.title),
+                                          child: new Text(value.title??''),
                                         );
                                       }).toList(),
                                       onChanged: (value) {
@@ -329,7 +329,7 @@ class _AddPlanState extends State<AddPlan> {
                                       return selectedUsers[index] != null
                                           ? Chip(
                                               label: Text(
-                                                  selectedUsers[index].name),
+                                                  selectedUsers[index].name??''),
                                               onDeleted: () {
                                                 setState(() {
                                                   selectedUsers.removeAt(index);
@@ -406,7 +406,7 @@ class _AddPlanState extends State<AddPlan> {
                                                                               Checkbox(
                                                                                   value: _allObservations[index].boolCheck,
                                                                                   onChanged: (val) {
-                                                                                    _allObservations[index].boolCheck = val;
+                                                                                    _allObservations[index].boolCheck = val!;
                                                                                     setState(() {});
                                                                                   })
                                                                             ],
@@ -555,7 +555,7 @@ class _AddPlanState extends State<AddPlan> {
                                                                               Checkbox(
                                                                                   value: _allReflections[index].boolCheck,
                                                                                   onChanged: (val) {
-                                                                                    _allReflections[index].boolCheck = val;
+                                                                                    _allReflections[index].boolCheck = val!;
                                                                                     setState(() {});
                                                                                   })
                                                                             ],
@@ -706,7 +706,7 @@ class _AddPlanState extends State<AddPlan> {
                                                                               Checkbox(
                                                                                   value: _allQips[index].boolCheck,
                                                                                   onChanged: (val) {
-                                                                                    _allQips[index].boolCheck = val;
+                                                                                    _allQips[index].boolCheck = val!;
                                                                                     setState(() {});
                                                                                   })
                                                                             ],
@@ -914,7 +914,7 @@ class _AddPlanState extends State<AddPlan> {
                                             .add(TextEditingController());
                                         currentColor.add(Color(0xff9320cc));
                                         pickerColor.add(Color(0xff9320cc));
-                                        keyEditor.add(GlobalKey());
+                                        editorController.editorController.add(GlobalKey());
                                         headComment.add('');
 
                                         setState(() {});
@@ -1047,19 +1047,17 @@ class _AddPlanState extends State<AddPlan> {
                                           height: 4,
                                         ),
                                         Html(
-                                            data: unescape.convert(
-                                          headComment[index],
-                                        )),
+                                            data: parseFragment(headComment[index]).text),
                                         SizedBox(
                                           height: 4,
                                         ),
                                         HtmlEditor(
-                                          showBottomToolbar: false,
-                                          key: keyEditor[index],
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.35,
+                                          controller: editorController, 
+                                          key: keyEditor,
+                                          // height: MediaQuery.of(context)
+                                          //         .size
+                                          //         .height *
+                                          //     0.35,
                                         ),
                                         Row(
                                           mainAxisAlignment:
@@ -1068,9 +1066,7 @@ class _AddPlanState extends State<AddPlan> {
                                             ElevatedButton(
                                                 onPressed: () async {
                                                   final txt1 =
-                                                      await keyEditor[index]
-                                                          .currentState
-                                                          .getText();
+                                                      await editorController.getText();
                                                   String s = txt1;
 
                                                   if (headComment[index] ==
@@ -1081,8 +1077,7 @@ class _AddPlanState extends State<AddPlan> {
                                                         headComment[index] +
                                                             '<br><br> $s';
                                                   }
-                                                  keyEditor[index]
-                                                      .currentState
+                                                  editorController
                                                       .setText('');
                                                   setState(() {});
                                                 },
@@ -1211,73 +1206,67 @@ class _AddPlanState extends State<AddPlan> {
     }
   }
 
-  _selectStartDate() async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(1930),
-        lastDate: new DateTime(2050),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              primaryColor: Theme.of(context).primaryColor,
-              accentColor: Theme.of(context).primaryColor,
-              colorScheme:
-                  ColorScheme.light(primary: Theme.of(context).primaryColor),
-              buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-            ),
-            child: child,
-          );
-        });
-    if (picked != null)
-      setState(() {
-        //    var _value=picked.toString();
-        final DateFormat formatter = DateFormat('yyyy-MM-dd');
-        final String formatted = formatter.format(picked);
+  _selectStartDate(BuildContext context) async {
+  DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1930),
+    lastDate: DateTime(2050),
+    builder: (BuildContext context, Widget? child) { // ✅ child should be nullable (Widget?)
+      return Theme(
+        data: ThemeData.light().copyWith(
+          primaryColor: Theme.of(context).primaryColor,
+          colorScheme: ColorScheme.light(primary: Theme.of(context).primaryColor),
+          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+        ),
+        child: child ?? SizedBox(), // ✅ Use null check (child!)
+      );
+    },
+  );
 
-        var inputFormat = DateFormat("yyyy-MM-dd");
-        final DateFormat formati = DateFormat('dd/MM/yyyy');
-        var date = inputFormat.parse(formatted);
-        date1 = formati.format(date);
+  if (picked != null) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(picked);
 
-        _date1 = formatted;
-        print(formatted);
-      });
+    final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
+    final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
+    final DateTime date1 = inputFormat.parse(formatted);
+    final String date = outputFormat.format(date1);
+
+    print("Formatted Date: $formatted");
   }
+}
 
-  _selectEndDate() async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(1930),
-        lastDate: new DateTime(2050),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              primaryColor: Theme.of(context).primaryColor,
-              accentColor: Theme.of(context).primaryColor,
-              colorScheme:
-                  ColorScheme.light(primary: Theme.of(context).primaryColor),
-              buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-            ),
-            child: child,
-          );
-        });
-    if (picked != null)
-      setState(() {
-        //    var _value=picked.toString();
-        final DateFormat formatter = DateFormat('yyyy-MM-dd');
-        final String formatted = formatter.format(picked);
+  _selectEndDate(BuildContext context) async {
+  DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1930),
+    lastDate: DateTime(2050),
+    builder: (BuildContext context, Widget? child) { // ✅ child should be nullable (Widget?)
+      return Theme(
+        data: ThemeData.light().copyWith(
+          primaryColor: Theme.of(context).primaryColor,
+          colorScheme: ColorScheme.light(primary: Theme.of(context).primaryColor),
+          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+        ),
+        child: child ?? SizedBox(), // ✅ Use null check (child!)
+      );
+    },
+  );
 
-        var inputFormat = DateFormat("yyyy-MM-dd");
-        final DateFormat formati = DateFormat('dd/MM/yyyy');
-        var date = inputFormat.parse(formatted);
-        date2 = formati.format(date);
+  if (picked != null) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(picked);
 
-        _date2 = formatted;
-        print(formatted);
-      });
+    final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
+    final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
+    final DateTime date1 = inputFormat.parse(formatted);
+    final String date = outputFormat.format(date1);
+
+    print("Formatted Date: $formatted");
   }
+}
 
   getDialog(BuildContext context) {
     return showDialog(
@@ -1320,7 +1309,7 @@ class _AddPlanState extends State<AddPlan> {
                                   }
                                   setState(() {});
                                 },
-                                title: Text(userData[index].name),
+                                title: Text(userData[index].name??''),
                               );
                             }),
                       ),
@@ -1354,15 +1343,15 @@ class _AddPlanState extends State<AddPlan> {
 }
 
 class RoomData {
-  String id;
-  String title;
+  String? id;
+  String? title;
 
   RoomData({this.id, this.title});
 }
 
 class UserData {
-  String userid;
-  String name;
+  String? userid;
+  String? name;
 
   UserData({this.userid, this.name});
 }

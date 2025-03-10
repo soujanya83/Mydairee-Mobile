@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -11,7 +9,6 @@ import 'package:mykronicle_mobile/models/childmodel.dart';
 import 'package:mykronicle_mobile/models/roomsmodel.dart';
 import 'package:mykronicle_mobile/models/usermodel.dart';
 import 'package:mykronicle_mobile/rooms/addroom.dart';
-import 'package:mykronicle_mobile/rooms/childbasicdetails.dart';
 import 'package:mykronicle_mobile/rooms/editroom.dart';
 import 'package:mykronicle_mobile/rooms/roomdetails.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
@@ -29,14 +26,14 @@ class RoomsList extends StatefulWidget {
 class _RoomsListState extends State<RoomsList> {
   String _chosenValue = 'Select';
   String searchString = '';
-  List<RoomsModel> _rooms;
-  List<UserModel> _users;
+  List<RoomsModel> _rooms=[];
+  List<UserModel> _users=[];
   bool roomsFetched = false;
   bool usersFetched = false;
   int currentIndex = 0;
   List<bool> checkValues = [];
   List statList = [];
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   var d;
   bool permissionAdd = false;
@@ -202,7 +199,7 @@ class _RoomsListState extends State<RoomsList> {
                                     if (response.statusCode == 200) {
                                       setState(() {
                                         statList.clear();
-                                        _rooms = null;
+                                        _rooms = [];
                                         _fetchData();
                                       });
                                       MyApp.ShowToast("deleted", context);
@@ -289,7 +286,7 @@ class _RoomsListState extends State<RoomsList> {
                                       if (centers[i].id == value) {
                                         setState(() {
                                           currentIndex = i;
-                                          _rooms = null;
+                                          _rooms = [];
                                           _fetchData();
                                         });
                                         break;
@@ -393,7 +390,7 @@ class _RoomsListState extends State<RoomsList> {
                                     if (response.statusCode == 200) {
                                       setState(() {
                                         statList.clear();
-                                        _rooms = null;
+                                        _rooms = [];
                                         _fetchData();
                                       });
                                       MyApp.ShowToast("updated", context);
@@ -508,6 +505,7 @@ class _RoomsListState extends State<RoomsList> {
                     Checkbox(
                       value: checkValues[index],
                       onChanged: (val) {
+                        if(val==null)return;
                         checkValues[index] = val;
                         if (val == true) {
                           statList.add(r.room.id);

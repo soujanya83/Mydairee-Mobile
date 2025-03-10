@@ -13,11 +13,11 @@ class Permissions extends StatefulWidget {
 }
 
 class _PermissionsState extends State<Permissions> {
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentCenterIndex = 0;
 
-  List<UserModel> users;
+  List<UserModel> users=[];
   bool usersFetched = false;
   int currentUserIndex = 0;
 

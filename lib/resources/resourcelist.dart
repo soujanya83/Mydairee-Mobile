@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/resourcesapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -21,7 +19,7 @@ import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:mykronicle_mobile/utils/removeTags.dart';
 import 'package:mykronicle_mobile/utils/videoitem.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ResourceList extends StatefulWidget {
   @override
@@ -29,26 +27,26 @@ class ResourceList extends StatefulWidget {
 }
 
 class _ResourceListState extends State<ResourceList> {
-  var unescape = new HtmlUnescape();
+  // var unescape = new HtmlUnescape();
 
   GlobalKey<ScaffoldState> key = GlobalKey();
   bool resourcesFetched = false;
-  List<ResourceModels> _allResources;
-  List<TagsModel> _trendTags;
+  List<ResourceModels> _allResources=[];
+  List<TagsModel> _trendTags=[];
 
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<AuthorModel> authors;
+  List<AuthorModel> authors=[];
   bool authorsFetched = false;
   int currentAuthor = 0;
 
   String fromDate = '';
   String toDate = '';
 
-  TextEditingController startDate;
-  TextEditingController endDate;
+  TextEditingController startDate = TextEditingController();
+  TextEditingController endDate = TextEditingController();
 
   bool centerChoosen = false;
   bool authorChoosen = false;
@@ -622,10 +620,10 @@ class _ResourceListState extends State<ResourceList> {
                 SizedBox(
                   height: 5,
                 ),
-                _allResources[i].description != null
+                (_allResources?[i].description != null)
                     ? tagRemove(
                         _allResources[i].description, 'title', '', context)
-                    : null,
+                    : SizedBox(),
                 // Html(
                 //     data: unescape.convert(
                 //   _allResources[i].description,
@@ -754,7 +752,7 @@ class _ResourceListState extends State<ResourceList> {
                                   'title',
                                   '',
                                   context)
-                              : null,
+                              : SizedBox(),
                         ],
                       )
                     : Container(),
@@ -831,8 +829,8 @@ class _ResourceListState extends State<ResourceList> {
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 
-  Future<DateTime> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: new DateTime(1800),

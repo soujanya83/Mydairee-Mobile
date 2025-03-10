@@ -22,7 +22,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
     super.initState();
   }
 
-  RecipeModel _recipe;
+  RecipeModel? _recipe;
   bool dataFetched = false;
 
   Future<void> _fetchData() async {
@@ -76,7 +76,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                           width: 10,
                         ),
                         Text(
-                          _recipe.itemName,
+                          _recipe?.itemName??'',
                           style: TextStyle(color: Colors.grey, fontSize: 14),
                         )
                       ],
@@ -91,13 +91,13 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     ),
                     ListView.builder(
                         shrinkWrap: true,
-                        itemCount: _recipe.ingredients.length,
+                        itemCount: _recipe?.ingredients.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Row(
                             children: [
-                              Text(_recipe.ingredients[index]['qty']),
+                              Text(_recipe?.ingredients[index]['qty']),
                               SizedBox(width: 10),
-                              Text(_recipe.ingredients[index]['name'])
+                              Text(_recipe?.ingredients[index]['name'])
                             ],
                           );
                         }),
@@ -109,7 +109,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text(_recipe.recipe != null ? _recipe.recipe : ''),
+                    Text(_recipe?.recipe != null ? (_recipe?.recipe??'') : ''),
                     SizedBox(height: 15),
                     Text(
                       'Media',
@@ -121,14 +121,14 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: _recipe.media.length,
+                        itemCount: _recipe?.media.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return _recipe.media[index]['mediaType'] == 'Image'
+                          return _recipe?.media[index]['mediaType'] == 'Image'
                               ? Card(
                                   child: Container(
                                     child: Image.network(
                                       Constants.ImageBaseUrl +
-                                          _recipe.media[index]['mediaUrl'],
+                                          _recipe?.media[index]['mediaUrl'],
                                       height: 150,
                                       width: MediaQuery.of(context).size.width,
                                       fit: BoxFit.fill,
@@ -139,7 +139,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                                   child: Container(
                                     child: VideoItem(
                                         url: Constants.ImageBaseUrl +
-                                            _recipe.media[index]['mediaUrl']),
+                                            _recipe?.media[index]['mediaUrl']),
                                   ),
                                 );
                         })

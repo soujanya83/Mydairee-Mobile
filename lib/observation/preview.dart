@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:html_unescape/html_unescape.dart';
+import 'package:html/parser.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'addobservation.dart';
@@ -11,10 +11,14 @@ class Preview extends StatefulWidget {
 }
 
 class _PreviewState extends State<Preview> {
-  var unescape = new HtmlUnescape();
+  String unescapeHtml(String text) {
+    return parseFragment(text).text ?? '';
+  }
+
+  // var unescape = new HtmlUnescape();
   String notes = "";
-  String title='';
-  String ref='';
+  String title = '';
+  String ref = '';
   bool expandeylf = false;
   bool expandmontessori = false;
   bool expandmilestones = false;
@@ -29,18 +33,22 @@ class _PreviewState extends State<Preview> {
   }
 
   void _load() {
-    if(AddObservationState.type=='add'){
-      notes = AddObservationState.mentionNotes.currentState.controller.markupText??'';
-      title =AddObservationState
-                      .mentionTitle.currentState.controller.markupText??'';
-      ref=AddObservationState
-                    .mentionRef.currentState.controller.markupText??'';                
-    }else{
-      notes =AddObservationState.previewnotes??'';
-      title=AddObservationState.previewtitle??'';
-      ref=AddObservationState.previewRef??'';
+    if (AddObservationState.type == 'add') {
+      notes = AddObservationState
+              .mentionNotes.currentState?.controller?.markupText ??
+          '';
+      title = AddObservationState
+              .mentionTitle.currentState?.controller?.markupText ??
+          '';
+      ref =
+          AddObservationState.mentionRef.currentState?.controller?.markupText ??
+              '';
+    } else {
+      notes = AddObservationState.previewnotes ?? '';
+      title = AddObservationState.previewtitle ?? '';
+      ref = AddObservationState.previewRef ?? '';
     }
-    
+
     outcomes = List<bool>.generate(
         AddObservationState.assesData['EYLF']['outcome'].length,
         (index) => false);
@@ -130,26 +138,25 @@ class _PreviewState extends State<Preview> {
                   ),
                 if (notes != "")
                   Html(
-                      data: unescape.convert(
-                    notes,
-                  )),
-                SizedBox(
-                  height: 10,
-                ),
-                if (ref!=
-                    "")
-                 Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                    Text(
-                    'Reflection',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    data: parseFragment(notes).text, // Decodes HTML entities
                   ),
                 SizedBox(
                   height: 10,
                 ),
-                Text(ref),
-                 ],),
+                if (ref != "")
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Reflection',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(ref),
+                    ],
+                  ),
                 SizedBox(
                   height: 10,
                 ),
@@ -258,7 +265,7 @@ class _PreviewState extends State<Preview> {
                                                     ? Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 top: 8.0,
                                                                 bottom: 8.0),
                                                         child: Column(
@@ -316,10 +323,11 @@ class _PreviewState extends State<Preview> {
                                                                         index][p]
                                                                     : false,
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      left:
-                                                                          15.0),
+                                                                          left:
+                                                                              15.0),
                                                                   child:
                                                                       Container(
                                                                           child:
@@ -472,7 +480,7 @@ class _PreviewState extends State<Preview> {
                                                     ? Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 top: 8.0,
                                                                 bottom: 8.0),
                                                         child: Column(
@@ -530,10 +538,11 @@ class _PreviewState extends State<Preview> {
                                                                         index][p]
                                                                     : false,
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      left:
-                                                                          15.0),
+                                                                          left:
+                                                                              15.0),
                                                                   child:
                                                                       Container(
                                                                           child:
@@ -700,7 +709,7 @@ class _PreviewState extends State<Preview> {
                                                     ? Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 top: 8.0,
                                                                 bottom: 8.0),
                                                         child: Column(
@@ -758,10 +767,11 @@ class _PreviewState extends State<Preview> {
                                                                         index][p]
                                                                     : false,
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      left:
-                                                                          15.0),
+                                                                          left:
+                                                                              15.0),
                                                                   child:
                                                                       Container(
                                                                           child:

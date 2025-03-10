@@ -22,7 +22,7 @@ class EditRoom extends StatefulWidget {
 }
 
 class _EditRoomState extends State<EditRoom> {
-  TextEditingController name, capacity, ageFrom, ageTo;
+  TextEditingController? name, capacity, ageFrom, ageTo;
   String _chosenValue = 'Active';
   String roomError = '';
   String capacityError = '';
@@ -31,10 +31,10 @@ class _EditRoomState extends State<EditRoom> {
   String ageToError = '';
 
   bool roomDetailsFetched = false;
-  RoomsDescModel roomDesc;
+  RoomsDescModel? roomDesc;
   bool usersFetched = false;
 
-  List<UserModel> users;
+  List<UserModel> users=[];
 
   // int currentIndex = 0;
   // int currentIndexEdu = 0;
@@ -130,11 +130,11 @@ class _EditRoomState extends State<EditRoom> {
       print('roomsdd' + data['roomStaff'].toString());
       try {
         roomDesc = RoomsDescModel.fromJson(res);
-        name.text = roomDesc.name;
-        capacity.text = roomDesc.capacity;
-        _chosenValue = roomDesc.status;
-        ageFrom.text = roomDesc.ageFrom;
-        ageTo.text = roomDesc.ageTo;
+        name?.text = roomDesc?.name??'';
+        capacity?.text = roomDesc?.capacity??'';
+        _chosenValue = roomDesc?.status??'';
+        ageFrom?.text = roomDesc?.ageFrom??'';
+        ageTo?.text = roomDesc?.ageTo??'';
         // currentIndex = users.indexWhere((element) {
         //   print(element.userid);
         //   print(roomDesc.userId);
@@ -156,8 +156,8 @@ class _EditRoomState extends State<EditRoom> {
           }
           eduValues[selectedEdu[i].userid] = true;
         }
-        pickerColor = HexColor(roomDesc.color);
-        currentColor = HexColor(roomDesc.color);
+        pickerColor = HexColor(roomDesc?.color??'');
+        currentColor = HexColor(roomDesc?.color??'');
         roomDetailsFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
@@ -636,19 +636,19 @@ class _EditRoomState extends State<EditRoom> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                if (name.text.toString() == '') {
+                                if (name?.text.toString() == '') {
                                   roomError = 'Enter Room Name';
                                   setState(() {});
-                                } else if (capacity.text.toString() == '') {
+                                } else if (capacity?.text.toString() == '') {
                                   roomError = '';
                                   capacityError = 'Enter Capacity';
                                   setState(() {});
-                                } else if (ageFrom.text.toString() == '') {
+                                } else if (ageFrom?.text.toString() == '') {
                                   roomError = '';
                                   capacityError = '';
                                   ageFromError = 'Enter age';
                                   setState(() {});
-                                } else if (ageFrom.text.toString() == '') {
+                                } else if (ageFrom?.text.toString() == '') {
                                   roomError = '';
                                   capacityError = '';
                                   ageFromError = '';
@@ -679,10 +679,10 @@ class _EditRoomState extends State<EditRoom> {
                                     "centerid": widget.centerid,
                                     "id": widget.roomid,
                                     "userid": MyApp.LOGIN_ID_VALUE,
-                                    "room_name": name.text.toString(),
-                                    "room_capacity": capacity.text.toString(),
-                                    "ageFrom": ageFrom.text.toString(),
-                                    "ageTo": ageTo.text.toString(),
+                                    "room_name": name?.text.toString(),
+                                    "room_capacity": capacity?.text.toString(),
+                                    "ageFrom": ageFrom?.text.toString(),
+                                    "ageTo": ageTo?.text.toString(),
                                     "room_status": _chosenValue,
                                     "room_color": '#' +
                                         currentColor.toString().substring(10,

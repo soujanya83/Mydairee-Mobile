@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -8,7 +9,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
-import 'package:html_editor/html_editor.dart';
 import 'package:mime/mime.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/api/reflectionapi.dart';
@@ -39,29 +39,30 @@ class _EditReflectionState extends State<EditReflection> {
   List<File> files = [];
   TextEditingController? title;
   String titleErr = '';
-  GlobalKey<HtmlEditorState> keyEditor;
+  GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  HtmlEditorController editorController = HtmlEditorController();
 
-  List<Map<String, dynamic>> mentionUser;
-  List<Map<String, dynamic>> mentionMont;
+  List<Map<String, dynamic>> mentionUser=[];
+  List<Map<String, dynamic>> mentionMont=[];
   bool mChildFetched = false;
   bool mMontFetched = false;
   GlobalKey<FlutterMentionsState> ref = GlobalKey<FlutterMentionsState>();
   GlobalKey<ScaffoldState> key = GlobalKey();
 
   // Select child
-  List<ChildModel> _allChildrens;
+  List<ChildModel> _allChildrens=[];
   List<ChildModel> selectedChildrens = [];
   Map<String, bool> childValues = {};
   bool childrensFetched = false;
 
   // Select Educator
-  List<UserModel> users;
+  List<UserModel> users=[];
   List<UserModel> selectedEdu = [];
   Map<String, bool> eduValues = {};
   bool usersFetched = false;
   bool all = false;
 
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -83,7 +84,7 @@ class _EditReflectionState extends State<EditReflection> {
 
   @override
   void dispose() {
-    title.dispose();
+    title?.dispose();
     super.dispose();
   }
 
@@ -170,7 +171,7 @@ class _EditReflectionState extends State<EditReflection> {
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
         _allChildrens.add(ChildModel.fromJson(child[i]));
-        childValues[_allChildrens[i].childid] = false;
+        childValues[_allChildrens[i].childid??''] = false;
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
@@ -187,7 +188,7 @@ class _EditReflectionState extends State<EditReflection> {
 
     var alldata = data['Reflections'];
 
-    title.text = alldata['title'];
+    title?.text = alldata['title'];
 
     var child = alldata['childs'];
     status = alldata['status'];
@@ -196,7 +197,7 @@ class _EditReflectionState extends State<EditReflection> {
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
         selectedChildrens.add(ChildModel.fromJson(child[i]));
-        childValues[_allChildrens[i].childid] = true;
+        childValues[_allChildrens[i].childid??''] = true;
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
@@ -222,7 +223,7 @@ class _EditReflectionState extends State<EditReflection> {
     var check = await alldata['about'];
     print("object 1234");
     print(check);
-    print(title.text);
+    print(title?.text);
     print("object 123456");
     ref.currentState?.controller?.text = check;
   }
@@ -394,7 +395,7 @@ class _EditReflectionState extends State<EditReflection> {
                             }
                           }
 
-                          childValues[_allChildrens[index].childid] = value!;
+                          childValues[_allChildrens[index].childid??''] = value!;
                           setState(() {});
                         }),
                   );
@@ -521,7 +522,7 @@ class _EditReflectionState extends State<EditReflection> {
                                         onDeleted: () {
                                           setState(() {
                                             childValues[selectedChildrens[index]
-                                                .childid] = false;
+                                                .childid??''] = false;
                                             selectedChildrens.removeAt(index);
                                           });
                                         })
@@ -693,11 +694,11 @@ class _EditReflectionState extends State<EditReflection> {
                       ),
                       GestureDetector(
                           onTap: () async {
-                            FilePickerResult result =
+                            FilePickerResult? result =
                                 await FilePicker.platform.pickFiles();
 
                             if (result != null) {
-                              File file = File(result.files.single.path);
+                              File file = File(result.files.single.path??'');
                               var fileSizeInBytes = file.length();
                               var fileSizeInKB = await fileSizeInBytes / 1024;
                               var fileSizeInMB = fileSizeInKB / 1024;
@@ -753,10 +754,10 @@ class _EditReflectionState extends State<EditReflection> {
                               // verticalDirection: VerticalDirection.up,
                               children: List<Widget>.generate(files.length,
                                   (int index) {
-                                String mimeStr =
-                                    lookupMimeType(files[index].path);
-                                var fileType = mimeStr.split('/');
-                                if (fileType[0].toString() == 'image') {
+                                String? mimeStr =
+                                    lookupMimeType(files[index].path??'');
+                                var fileType = mimeStr?.split('/');
+                                if (fileType?[0].toString() == 'image') {
                                   return Stack(
                                     children: [
                                       Container(
@@ -1169,11 +1170,11 @@ class _EditReflectionState extends State<EditReflection> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            String refription =
-                                ref.currentState.controller.markupText;
-
+                            String? refription =
+                                ref.currentState?.controller?.markupText;
+                           if(refription==null)return;
                             for (int i = 0; i < mentionUser.length; i++) {
-                              if (refription.contains(mentionUser[i]['name'])) {
+                              if (refription!.contains(mentionUser[i]['name'])) {
                                 refription = refription.replaceAll(
                                     "@" + mentionUser[i]['name'],
                                     '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
@@ -1181,21 +1182,21 @@ class _EditReflectionState extends State<EditReflection> {
                             }
                             for (int i = 0; i < mentionMont.length; i++) {
                               if (refription
-                                  .contains(mentionMont[i]['display'])) {
+                                  !.contains(mentionMont[i]['display'])) {
                                 refription = refription.replaceAll(
                                     "#" + mentionMont[i]['display'],
                                     '<a data-tagid="${mentionMont[i]['rid']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="tags_${mentionMont[i]['id']}" link="tags_${mentionMont[i]['id']}"  >#${mentionMont[i]['display']}</a>');
                               }
                             }
 
-                            if (title.text.toString() == '') {
+                            if (title?.text.toString() == '') {
                               titleErr = 'title required';
                             } else {
                               titleErr = '';
                             }
 
                             setState(() {});
-                            if (title.text.toString() != '') {
+                            if (title?.text.toString() != '') {
                               titleErr = '';
                               setState(() {});
                               List edu = [];
@@ -1214,7 +1215,7 @@ class _EditReflectionState extends State<EditReflection> {
                               Map<String, dynamic> mp;
 
                               mp = {
-                                "title": title.text,
+                                "title": title?.text,
                                 "about": refription,
                                 "userid": MyApp.LOGIN_ID_VALUE,
                                 "centerid": widget.centerid,
@@ -1248,7 +1249,7 @@ class _EditReflectionState extends State<EditReflection> {
                               print(formData.fields.toString());
                               Dio dio = new Dio();
 
-                              Response response = await dio
+                              Response? response = await dio
                                   .post(
                                       Constants.BASE_URL +
                                           "Reflections/updateReflection/",
@@ -1297,16 +1298,23 @@ class _EditReflectionState extends State<EditReflection> {
                     ])))));
   }
 
-  Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+Future<File> compressAndGetFile(File file, String targetPath) async {
+  XFile? result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path, targetPath,
+    minWidth: 900, minHeight: 900, quality: 40,
+  );
 
-    print(file.lengthSync());
-    print(result.lengthSync());
-
-    return result;
+  if (result == null) {
+    throw Exception("Compression failed: Unable to get compressed file.");
   }
+
+  File compressedFile = File(result.path); // Convert XFile to File
+
+  print("Original size: ${file.lengthSync()} bytes");
+  print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+  return compressedFile;
+}
 
   Widget rectBorderWidget(Size size, var context) {
     return DottedBorder(

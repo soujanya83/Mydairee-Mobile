@@ -21,10 +21,10 @@ class AddGroup extends StatefulWidget {
 
 class _AddGroupState extends State<AddGroup> {
 
- TextEditingController gname;
- TextEditingController gDesc;
+ TextEditingController? gname;
+ TextEditingController? gDesc;
  
-  List<ChildModel> _allChildrens;
+  List<ChildModel> _allChildrens=[];
   List<ChildModel> _selectedChildrens=[]; 
   Map<String ,bool> childValues={};
   bool childrensFetched=false;
@@ -67,8 +67,8 @@ class _AddGroupState extends State<AddGroup> {
           
         }
         childrensFetched = true;
-        gname.text=details['name'];
-        gDesc.text=details['description'];
+        gname?.text=details['name'];
+        gDesc?.text=details['description'];
         if(this.mounted) setState(() {});
       }
       catch (e) {
@@ -312,9 +312,9 @@ class _AddGroupState extends State<AddGroup> {
                             GestureDetector(
                               onTap: () async {
 
-                                 if(gname.text.toString()==''){
+                                 if(gname?.text.toString()==''){
                                     MyApp.ShowToast('Enter name', context);
-                                 }else if(gDesc.text.toString()==''){ 
+                                 }else if(gDesc?.text.toString()==''){ 
                                     MyApp.ShowToast('Enter Description', context);
                                  }
                                  else{
@@ -328,8 +328,8 @@ class _AddGroupState extends State<AddGroup> {
                                      Constants.BASE_URL + 'Settings/saveChildGroup';
                                
                                   var objToSend = {
-                                    "name":gname.text.toString(),
-                                    "description":gDesc.text.toString(),
+                                    "name":gname?.text.toString(),
+                                    "description":gDesc?.text.toString(),
                                     "children":ids,
                                     "userid":MyApp.LOGIN_ID_VALUE
                                     };

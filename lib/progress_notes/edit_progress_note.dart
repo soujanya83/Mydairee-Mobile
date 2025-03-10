@@ -40,7 +40,7 @@ class _EditProgressNotesActivityState extends State<EditProgressNotesActivity> {
   TextEditingController childinter = new TextEditingController();
   TextEditingController othergoal = new TextEditingController();
   final _formKey = new GlobalKey<FormState>();
-  Records records;
+  Records? records;
   @override
   void initState() {
     phydeveloment == null
@@ -332,7 +332,7 @@ class _EditProgressNotesActivityState extends State<EditProgressNotesActivity> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            if (_formKey.currentState.validate()) {
+                            if (_formKey.currentState?.validate()??false) {
                               String _toSend = Constants.BASE_URL +
                                   'ProgressNotes/updateProgressNote';
                               var objToSend = {

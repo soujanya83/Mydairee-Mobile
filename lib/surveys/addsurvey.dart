@@ -27,10 +27,10 @@ class AddSurvey extends StatefulWidget {
 }
 
 class _AddSurveyState extends State<AddSurvey> {
-  TextEditingController title, desc;
+  TextEditingController? title, desc;
 
   bool childrensFetched = false;
-  List<ChildModel> _allChildrens;
+  List<ChildModel> _allChildrens=[];
   List<ChildModel> _selectedChildrens = [];
   List<QuestionHelper> _questions = [];
   Map<String, bool> childValues = {};
@@ -66,67 +66,69 @@ class _AddSurveyState extends State<AddSurvey> {
       helper: QuestionHelperModel(
         choosenValue: 'Multiple Choice',
         mandatory: false,
-        image: null,
-        video: null,
+        // image: ,
+        // video: null,
         question: '',
         options1: [],
         options2: [],
         options3: [],
-        options4: [],
+        options4: [], imgUrl: '', vidUrl: '', image: null,
       ),
       options1ListCallBack: (list) {
-        _questions[v].helper.options1 = list;
-        _questions[v].helper.options2 = [];
-        _questions[v].helper.options3 = [];
-        _questions[v].helper.options4 = [];
+        if(_questions[v].helper==null)return;
+        _questions[v].helper!.options1 = list as List<String>?;
+        _questions[v].helper!.options2 = [];
+        _questions[v].helper!.options3 = [];
+        _questions[v].helper!.options4 = [];
         setState(() {});
       },
       options2ListCallBack: (list) {
-        _questions[v].helper.options1 = [];
-        _questions[v].helper.options2 = list;
-        _questions[v].helper.options3 = [];
-        _questions[v].helper.options4 = [];
+        if(_questions[v].helper==null)return;
+        _questions[v].helper!.options1 = [];
+        _questions[v].helper!.options2 = list as List<String>?;
+        _questions[v].helper!.options3 = [];
+        _questions[v].helper!.options4 = [];
         setState(() {});
       },
       options3ListCallBack: (list) {
-        _questions[v].helper.options1 = [];
-        _questions[v].helper.options2 = [];
-        _questions[v].helper.options3 = list;
-        _questions[v].helper.options4 = [];
+        _questions[v].helper!.options1 = [];
+        _questions[v].helper!.options2 = [];
+        _questions[v].helper!.options3 = list as List<String>?;
+        _questions[v].helper!.options4 = [];
         setState(() {});
       },
       options4ListCallBack: (list) {
-        _questions[v].helper.options1 = [];
-        _questions[v].helper.options2 = [];
-        _questions[v].helper.options3 = [];
-        _questions[v].helper.options4 = list;
+        _questions[v].helper!.options1 = [];
+        _questions[v].helper!.options2 = [];
+        _questions[v].helper!.options3 = [];
+        _questions[v].helper!.options4 = list as List<String>?;
         setState(() {});
       },
       videoCallBack: (file) {
-        _questions[v].helper.video = file;
+        _questions[v].helper!.video = file;
         setState(() {});
       },
       imageCallBack: (file) {
-        _questions[v].helper.image = file;
+        _questions[v].helper!.image = file;
         setState(() {});
       },
       mandatoryCallback: (value) {
-        _questions[v].helper.mandatory = value!;
+        _questions[v].helper!.mandatory = value!;
         setState(() {});
       },
       questionCallback: (value) {
-        _questions[v].helper.question = value!;
+        _questions[v].helper!.question = value!;
         setState(() {});
       },
       choiceCallback: (value) {
-        _questions[v].helper.choosenValue = value!;
+        _questions[v].helper!.choosenValue = value!;
         setState(() {});
       },
       funcCallback: (value) {
         if (value == 'image') {
-          _questions[v].helper.image = null;
+          _questions[v].helper!.image = null;
         } else if (value == 'video') {
-          _questions[v].helper.video = null;
+          _questions[v].helper!.video = null;
         } else if (value == 'add') {
           _addQuestion(_questions.length);
         } else if (value == 'copy') {
@@ -145,69 +147,69 @@ class _AddSurveyState extends State<AddSurvey> {
     _questions.add(QuestionHelper(
       choose: 'copy',
       helper: QuestionHelperModel(
-        choosenValue: _questions[q].helper.choosenValue,
-        mandatory: _questions[q].helper.mandatory,
-        image: _questions[q].helper.image,
-        video: _questions[q].helper.video,
-        question: _questions[q].helper.question,
-        options1: _questions[q].helper.options1,
-        options2: _questions[q].helper.options2,
-        options3: _questions[q].helper.options3,
-        options4: _questions[q].helper.options4,
+        choosenValue: _questions[q].helper?.choosenValue,
+        mandatory: _questions[q].helper?.mandatory,
+        image: _questions[q].helper?.image,
+        video: _questions[q].helper?.video,
+        question: _questions[q].helper?.question,
+        options1: _questions[q].helper?.options1,
+        options2: _questions[q].helper?.options2,
+        options3: _questions[q].helper?.options3,
+        options4: _questions[q].helper?.options4,
       ),
       options1ListCallBack: (list) {
-        _questions[v].helper.options1 = list;
-        _questions[v].helper.options2 = [];
-        _questions[v].helper.options3 = [];
-        _questions[v].helper.options4 = [];
+        _questions[v].helper?.options1 = list as List<String>?;
+        _questions[v].helper?.options2 = [];
+        _questions[v].helper?.options3 = [];
+        _questions[v].helper?.options4 = [];
         setState(() {});
       },
       options2ListCallBack: (list) {
-        _questions[v].helper.options1 = [];
-        _questions[v].helper.options2 = list;
-        _questions[v].helper.options3 = [];
-        _questions[v].helper.options4 = [];
+        _questions[v].helper?.options1 = [];
+        _questions[v].helper?.options2 = list as List<String>?;
+        _questions[v].helper?.options3 = [];
+        _questions[v].helper?.options4 = [];
         setState(() {});
       },
       options3ListCallBack: (list) {
-        _questions[v].helper.options1 = [];
-        _questions[v].helper.options2 = [];
-        _questions[v].helper.options3 = list;
-        _questions[v].helper.options4 = [];
+        _questions[v].helper?.options1 = [];
+        _questions[v].helper?.options2 = [];
+        _questions[v].helper?.options3 = list as List<String>?;
+        _questions[v].helper?.options4 = [];
         setState(() {});
       },
       options4ListCallBack: (list) {
-        _questions[v].helper.options1 = [];
-        _questions[v].helper.options2 = [];
-        _questions[v].helper.options3 = [];
-        _questions[v].helper.options4 = list;
+        _questions[v].helper?.options1 = [];
+        _questions[v].helper?.options2 = [];
+        _questions[v].helper?.options3 = [];
+        _questions[v].helper?.options4 = list as List<String>?;
         setState(() {});
       },
       videoCallBack: (file) {
-        _questions[v].helper.video = file;
+        _questions[v].helper?.video = file;
         setState(() {});
       },
       imageCallBack: (file) {
-        _questions[v].helper.image = file;
+        _questions[v].helper?.image = file;
         setState(() {});
       },
       mandatoryCallback: (value) {
-        _questions[v].helper.mandatory = value!;
+        _questions[v].helper?.mandatory = value!;
         setState(() {});
       },
       questionCallback: (value) {
-        _questions[v].helper.question = value!;
+        _questions[v].helper?.question = value!;
         setState(() {});
       },
       choiceCallback: (value) {
-        _questions[v].helper.choosenValue = value!;
+        _questions[v].helper?.choosenValue = value!;
         setState(() {});
       },
       funcCallback: (value) {
         if (value == 'image') {
-          _questions[v].helper.image = null;
+          _questions[v].helper?.image = null;
         } else if (value == 'video') {
-          _questions[v].helper.video = null;
+          _questions[v].helper?.video = null;
         } else if (value == 'add') {
           _addQuestion(_questions.length);
           setState(() {});
@@ -256,8 +258,8 @@ class _AddSurveyState extends State<AddSurvey> {
         print(widget.id);
         res = d['Surveys'];
         print(res);
-        title.text = res['survey'][0]['title'];
-        desc.text = res['survey'][0]['description'];
+        title?.text = res['survey'][0]['title'];
+        desc?.text = res['survey'][0]['description'];
         for (var i = 0; i < res['surveyChild'].length; i++) {
           _selectedChildrens.add(ChildModel.fromJson(res['surveyChild'][i]));
           childValues[_selectedChildrens[i].id] = true;
@@ -324,10 +326,10 @@ class _AddSurveyState extends State<AddSurvey> {
               String url;
 
               for (int i = 0; i < res['surveyQuestionMedia'][v].length; i++) {
-                if (_questions[v].helper.vidUrl.toString() ==
+                if (_questions[v].helper?.vidUrl.toString() ==
                         res['surveyQuestionMedia'][v][i]['mediaUrl']
                             .toString() ||
-                    _questions[v].helper.imgUrl.toString() ==
+                    _questions[v].helper?.imgUrl.toString() ==
                         res['surveyQuestionMedia'][v][i]['mediaUrl']
                             .toString()) {
                   url = 'MEDIA/' + res['surveyQuestionMedia'][v][i]['id'];
@@ -337,14 +339,14 @@ class _AddSurveyState extends State<AddSurvey> {
                     SurveyAPIHandler handler = SurveyAPIHandler({"url": url});
                     handler.deleteQueItem().then((value) {
                       print(value);
-                      _questions[v].helper.imgUrl = null;
+                      _questions[v].helper?.imgUrl = null;
                       setState(() {});
                     });
                   } else {
                     SurveyAPIHandler handler = SurveyAPIHandler({"url": url});
                     handler.deleteQueItem().then((value) {
                       print(value);
-                      _questions[v].helper.vidUrl = null;
+                      _questions[v].helper?.vidUrl = null;
                       setState(() {});
                     });
                   }
@@ -354,58 +356,58 @@ class _AddSurveyState extends State<AddSurvey> {
               }
             },
             options1ListCallBack: (list) {
-              _questions[v].helper.options1 = list;
-              _questions[v].helper.options2 = [];
-              _questions[v].helper.options3 = [];
-              _questions[v].helper.options4 = [];
+              _questions[v].helper?.options1 = list as List<String>?;
+              _questions[v].helper?.options2 = [];
+              _questions[v].helper?.options3 = [];
+              _questions[v].helper?.options4 = [];
               setState(() {});
             },
             options2ListCallBack: (list) {
-              _questions[v].helper.options1 = [];
-              _questions[v].helper.options2 = list;
-              _questions[v].helper.options3 = [];
-              _questions[v].helper.options4 = [];
+              _questions[v].helper?.options1 = [];
+              _questions[v].helper?.options2 = list as List<String>?;
+              _questions[v].helper?.options3 = [];
+              _questions[v].helper?.options4 = [];
               setState(() {});
             },
             options3ListCallBack: (list) {
-              _questions[v].helper.options1 = [];
-              _questions[v].helper.options2 = [];
-              _questions[v].helper.options3 = list;
-              _questions[v].helper.options4 = [];
+              _questions[v].helper?.options1 = [];
+              _questions[v].helper?.options2 = [];
+              _questions[v].helper?.options3 = list as List<String>?;
+              _questions[v].helper?.options4 = [];
               setState(() {});
             },
             options4ListCallBack: (list) {
-              _questions[v].helper.options1 = [];
-              _questions[v].helper.options2 = [];
-              _questions[v].helper.options3 = [];
-              _questions[v].helper.options4 = list;
+              _questions[v].helper?.options1 = [];
+              _questions[v].helper?.options2 = [];
+              _questions[v].helper?.options3 = [];
+              _questions[v].helper?.options4 = list as List<String>?;
               setState(() {});
             },
             videoCallBack: (file) {
-              _questions[v].helper.video = file;
+              _questions[v].helper?.video = file;
               setState(() {});
             },
             imageCallBack: (file) {
-              _questions[v].helper.image = file;
+              _questions[v].helper?.image = file;
               setState(() {});
             },
             mandatoryCallback: (value) {
-              _questions[v].helper.mandatory = value!;
+              _questions[v].helper?.mandatory = value!;
               setState(() {});
             },
             questionCallback: (value) {
-              _questions[v].helper.question = value!;
+              _questions[v].helper?.question = value!;
               setState(() {});
             },
             choiceCallback: (value) {
-              _questions[v].helper.choosenValue = value!;
+              _questions[v].helper?.choosenValue = value!;
               setState(() {});
             },
             funcCallback: (value) async {
               if (value == 'image') {
-                _questions[v].helper.image = null;
+                _questions[v].helper?.image = null;
               } else if (value == 'video') {
-                _questions[v].helper.video = null;
+                _questions[v].helper?.video = null;
               } else if (value == 'add') {
                 _addQuestion(_questions.length);
                 setState(() {});
@@ -415,7 +417,7 @@ class _AddSurveyState extends State<AddSurvey> {
               } else if (value == 'delete') {
                 if (v != 0) {
                   SurveyAPIHandler handler =
-                      SurveyAPIHandler({"url": 'QUESTION/' + _questions[v].id});
+                      SurveyAPIHandler({"url": 'QUESTION/' + (_questions[v].id??'')});
 
                   var d = await handler.deleteQueItem();
                   if (!d.containsKey('error')) {
@@ -723,16 +725,16 @@ class _AddSurveyState extends State<AddSurvey> {
 
                               mp = {
                                 "childs": jsonEncode(ids),
-                                "title": title.text.toString(),
-                                "description": desc.text.toString(),
+                                "title": title?.text.toString(),
+                                "description": desc?.text.toString(),
                                 "userid": MyApp.LOGIN_ID_VALUE,
                                 "createdAt": DateTime.now(),
                                 "createdBY": MyApp.LOGIN_ID_VALUE,
                               };
 
                               for (int i = 0; i < _questions.length; i++) {
-                                File img = _questions[i].helper.image;
-                                File vid = _questions[i].helper.video;
+                                File? img = _questions[i].helper?.image;
+                                File? vid = _questions[i].helper?.video;
 
                                 if (img != null) {
                                   await MultipartFile.fromFile(img.path,
@@ -748,30 +750,30 @@ class _AddSurveyState extends State<AddSurvey> {
                                           filename: basename(vid.path));
                                 }
                                 mp['mandatory' + (i + 1).toString()] =
-                                    _questions[i].helper.mandatory ? 1 : 0;
+                                    (_questions[i].helper?.mandatory??false) ? 1 : 0;
                                 mp['qstn' + (i + 1).toString()] =
-                                    _questions[i].helper.question;
+                                    _questions[i].helper?.question;
                                 mp['qtype' + (i + 1).toString()] =
-                                    type[_questions[i].helper.choosenValue];
+                                    type[_questions[i].helper?.choosenValue];
                                 mp['ropt' + (i + 1).toString()] =
-                                    jsonEncode(_questions[i].helper.options1);
+                                    jsonEncode(_questions[i].helper?.options1);
                                 mp['copt' + (i + 1).toString()] =
-                                    jsonEncode(_questions[i].helper.options2);
+                                    jsonEncode(_questions[i].helper?.options2);
                                 mp['dopt' + (i + 1).toString()] =
-                                    jsonEncode(_questions[i].helper.options3);
+                                    jsonEncode(_questions[i].helper?.options3);
                                 mp['lilower' + (i + 1).toString()] =
-                                    _questions[i].helper.options4.length > 1
-                                        ? _questions[i].helper.options4[0]
+                                   ( _questions[i].helper?.options4?.length??0) > 1
+                                        ? (_questions[i].helper?.options4?[0]??"")
                                         : '';
                                 mp['lihigher' + (i + 1).toString()] =
-                                    _questions[i].helper.options4.length > 1
-                                        ? _questions[i].helper.options4[1]
+                                    (_questions[i].helper?.options4?.length??0) > 1
+                                        ? (_questions[i].helper?.options4?[1]??'')
                                         : '';
                                 if (_questions[i].id != null) {
                                   mp['qstnId_' +
                                       (i + 1).toString() +
                                       '_' +
-                                      _questions[i].id] = '';
+                                     ( _questions[i].id??'')] = '';
                                 }
                               }
 
@@ -792,7 +794,7 @@ class _AddSurveyState extends State<AddSurvey> {
                               print(formData.fields.toString());
                               Dio dio = new Dio();
                               print(url);
-                              Response response = await dio
+                              Response? response = await dio
                                   .post(url,
                                       data: formData,
                                       options: Options(headers: {

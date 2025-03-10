@@ -1,31 +1,31 @@
 import 'dart:io';
 
 class QuestionHelperModel {
-  String choosenValue;
-  bool mandatory;
-  File image;
-  File video;
-  String question;
-  String imgUrl;
-  String vidUrl;
-  List<String> options1;
-  List<String> options2;
-  List<String> options3;
-  List<String> options4;
-  List<String> options5;
+  String? choosenValue;
+  bool? mandatory;
+  File? image;
+  File? video;
+  String? question;
+  String? imgUrl;
+  String? vidUrl;
+  List<String>? options1;
+  List<String>? options2;
+  List<String>? options3;
+  List<String>? options4;
+  List<String>? options5;
 
   QuestionHelperModel({
-    required this.choosenValue,
-    required this.mandatory,
-    required this.imgUrl,
-    required this.vidUrl,
-    required this.image,
-    required this.video,
-    required this.question,
-    required this.options1,
-    required this.options2,
-    required this.options3,
-    required this.options4,
-    required this.options5,
+     this.choosenValue,
+     this.mandatory,
+     this.imgUrl,
+     this.vidUrl,
+     this.image,
+     this.video,
+     this.question,
+     this.options1,
+     this.options2,
+     this.options3,
+     this.options4,
+     this.options5,
   });
 }

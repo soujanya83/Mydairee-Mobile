@@ -453,7 +453,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               physics:
                                                   NeverScrollableScrollPhysics(),
                                               children: [
-                                                if (showType['breakfast'] ==
+                                                if (showType['breakfast?'] ==
                                                     '1')
                                                   ListTile(
                                                     subtitle: _allChildrens[
@@ -464,7 +464,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                         ? Text(_allChildrens[
                                                                 selectedIndex ??
                                                                     0]
-                                                            .breakfast['startTime'])
+                                                            .breakfast?['startTime'])
                                                         : Container(),
                                                     title: Text('Breakfast'),
                                                     trailing: _allChildrens[
@@ -476,7 +476,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               var time = _allChildrens[
                                                                       selectedIndex ??
                                                                           0]
-                                                                  .breakfast[
+                                                                  .breakfast?[
                                                                       'startTime']
                                                                   .toString()
                                                                   .split(":");
@@ -498,7 +498,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                           .toLowerCase() ==
                                                                       _allChildrens[selectedIndex ??
                                                                               0]
-                                                                          .breakfast[
+                                                                          .breakfast?[
                                                                               'item']
                                                                           .toString()
                                                                           .toLowerCase()) {
@@ -508,20 +508,20 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   }
                                                                 }
                                                               });
-                                                              hour = time[0];
+                                                              hour = time![0];
                                                               min = time[1];
                                                               quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
-                                                                      .breakfast['qty'];
+                                                                      .breakfast?['qty'];
                                                               cal?.text = _allChildrens[
                                                                           selectedIndex]
-                                                                      .breakfast[
+                                                                      .breakfast?[
                                                                   'calories'];
                                                               comments
                                                                   ?.text = _allChildrens[
                                                                           selectedIndex]
-                                                                      .breakfast[
+                                                                      .breakfast?[
                                                                   'comments'];
 
                                                               showPop = true;

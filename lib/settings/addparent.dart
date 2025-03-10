@@ -20,14 +20,14 @@ class AddParent extends StatefulWidget {
 }
 
 class _AddParentState extends State<AddParent> {
-  TextEditingController full, mobile, mail,pwd;
+  TextEditingController? full, mobile, mail,pwd;
 
   String status = 'Active';
   List<String> relation =['Father'];
   String _gender = 'MALE';
   String _dob = '';
   String dob = '';
-  List<ChildModel> children;
+  List<ChildModel> children=[];
   bool active = false;
   bool childrenFetched=false;
   List<int> currentIndex=[0];
@@ -52,10 +52,10 @@ class _AddParentState extends State<AddParent> {
       print('ress'+data.toString());
        
        var parent =data['parents'];
-       full.text=parent['name'];
-       mobile.text=parent['contactNo'];
-       mail.text=parent['emailid'];
-       pwd.text=parent['password']; 
+       full?.text=parent['name'];
+       mobile?.text=parent['contactNo'];
+       mail?.text=parent['emailid'];
+       pwd?.text=parent['password']; 
        _gender=parent['gender'];
       var inputFormat = DateFormat("yyyy-MM-dd");
       final DateFormat formati = DateFormat('dd-MM-yyyy');
@@ -609,15 +609,15 @@ class _AddParentState extends State<AddParent> {
                             GestureDetector(
                               onTap: () async {
 
-                              if (full.text.toString().length == 0) {
+                              if (full?.text.toString().length == 0) {
                                 MyApp.ShowToast('Enter Name', context);
                               }  else if (dob == '') {
                                 MyApp.ShowToast('Add Date', context);
-                              } else if (mobile.text.toString() == '') {
+                              } else if (mobile?.text.toString() == '') {
                                 MyApp.ShowToast('Enter Mobile Number', context);
-                              } else if (mail.text.toString()== '') {
+                              } else if (mail?.text.toString()== '') {
                                 MyApp.ShowToast('Enter Mail Id', context);
-                              }else if(pwd.text.length==0){
+                              }else if(pwd?.text.length==0){
                                    MyApp.ShowToast('Enter Password', context);
                               }
                               else{
@@ -633,12 +633,12 @@ class _AddParentState extends State<AddParent> {
                                     Constants.BASE_URL+'Settings/saveParentDetails';
 
                                 var objToSend ={
-                                   "name":full.text.toString(),
+                                   "name":full?.text.toString(),
                                    "gender":_gender.toUpperCase(),
                                    "dob":dob,
-                                   "contactNo":mobile.text.toString(),
-                                   "emailid":mail.text.toString(),
-                                   "password":pwd.text.toString(),
+                                   "contactNo":mobile?.text.toString(),
+                                   "emailid":mail?.text.toString(),
+                                   "password":pwd?.text.toString(),
                                    "relation":relations,
                                    "userid":MyApp.LOGIN_ID_VALUE};
 
@@ -690,8 +690,8 @@ class _AddParentState extends State<AddParent> {
                     ])))));
   }
 
-  Future<DateTime> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: new DateTime(1850),

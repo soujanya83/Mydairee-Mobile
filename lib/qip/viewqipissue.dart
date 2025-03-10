@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/issuesmodel.dart';
+import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 
 class ViewIssue extends StatefulWidget {
-  final IssuesModel issuesModel;
+  final IssuesModel? issuesModel;
   final String type;
   final String qipId;
   final String areaId;
   final String elementId;
   ViewIssue(
-      {required this.issuesModel, required this.type, required this.qipId, required this.areaId, required this.elementId});
+      { this.issuesModel, required this.type, required this.qipId, required this.areaId, required this.elementId});
 
   @override
   _ViewIssueState createState() => _ViewIssueState();
 }
 
 class _ViewIssueState extends State<ViewIssue> {
-  TextEditingController issue, whatoutcome, measure, getoutcome;
+  TextEditingController issue= TextEditingController(), whatoutcome= TextEditingController(), measure= TextEditingController(), getoutcome = TextEditingController();
   List<String> priority = ['HIGH', 'MEDIUM', 'LOW'];
   String selectedPriority = 'HIGH';
   List<String> status = ['CLOSED', 'OPEN'];
   String selectedStatus = 'CLOSED';
-  DateTime date;
+  DateTime? date;
 
   @override
   void initState() {
@@ -36,13 +36,13 @@ class _ViewIssueState extends State<ViewIssue> {
     measure = TextEditingController();
     getoutcome = TextEditingController();
     if (widget.type == 'edit') {
-      date = DateTime.parse(widget.issuesModel.expectedDate);
-      issue.text = widget.issuesModel.issueIdentified;
-      whatoutcome.text = widget.issuesModel.outcome;
-      measure.text = widget.issuesModel.successMeasure;
-      getoutcome.text = widget.issuesModel.howToGetOutcome;
-      selectedStatus = widget.issuesModel.status;
-      selectedPriority = widget.issuesModel.priority;
+      date = DateTime.parse(widget.issuesModel?.expectedDate??'');
+      issue.text = widget.issuesModel?.issueIdentified??'';
+      whatoutcome.text = widget.issuesModel?.outcome??'';
+      measure.text = widget.issuesModel?.successMeasure??'';
+      getoutcome.text = widget.issuesModel?.howToGetOutcome??'';
+      selectedStatus = widget.issuesModel?.status??'';
+      selectedPriority = widget.issuesModel?.priority??'';
     }
     super.initState();
   }
@@ -161,14 +161,14 @@ class _ViewIssueState extends State<ViewIssue> {
                     children: [
                       Text(
                         date != null
-                            ? DateFormat("dd-MM-yyyy").format(date)
+                            ? DateFormat("dd-MM-yyyy").format(date!)
                             : '',
                         style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            date = await _selectDate(context, date);
+                            date = await _selectDate(context, date!);
 
                             setState(() {});
                           },
@@ -290,14 +290,14 @@ class _ViewIssueState extends State<ViewIssue> {
                           "issueIdentified": issue.text,
                           "outcome": whatoutcome.text,
                           "priority": selectedPriority,
-                          "expectedDate": DateFormat("dd-MM-yyyy").format(date),
+                          "expectedDate": DateFormat("dd-MM-yyyy").format(date!),
                           "successMeasure": measure.text,
                           "howToGetOutcome": getoutcome.text,
                           "userid": MyApp.LOGIN_ID_VALUE,
                           "status": selectedStatus
                         };
                         if (widget.type == 'edit') {
-                          _objToSend['issueid'] = widget.issuesModel.id;
+                          _objToSend['issueid'] = widget.issuesModel?.id??'';
                         }
                         QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
                         await qipAPIHandler
@@ -314,8 +314,8 @@ class _ViewIssueState extends State<ViewIssue> {
     );
   }
 
-  Future<DateTime> _selectDate(BuildContext context, DateTime dateTime) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context, DateTime dateTime) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: dateTime,
       firstDate: new DateTime(1800),

@@ -15,7 +15,7 @@ class ChildGroups extends StatefulWidget {
 class _ChildGroupsState extends State<ChildGroups> {
 
   bool settingsDataFetched = false;
-  List<ChildGroupsModel> _allGroups;
+  List<ChildGroupsModel> _allGroups=[];
 
 @override
   void initState() {
@@ -88,7 +88,7 @@ class _ChildGroupsState extends State<ChildGroups> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => AddGroup('add',null))).then((value) {
+                                        builder: (context) => AddGroup('add',''))).then((value) {
                                       if (value != null) {
                                       settingsDataFetched=false;
                                         setState(() {});

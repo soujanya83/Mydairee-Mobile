@@ -254,7 +254,7 @@ class _MediaMenuState extends State<MediaMenu> {
                         _editEducators.add([]);
                         _editChildren.add([]);
                         captions.add(TextEditingController());
-                        File fImage = await cropImage(context, cFile);
+                        File? fImage = await cropImage(context, cFile);
                         if (fImage != null) {
                           files.add(fImage);
                         }
@@ -263,7 +263,7 @@ class _MediaMenuState extends State<MediaMenu> {
                         captions.add(TextEditingController());
                         _editEducators.add([]);
                         _editChildren.add([]);
-                        File fImage = await cropImage(context, file);
+                        File? fImage = await cropImage(context, file);
                         if (fImage != null) {
                           files.add(fImage);
                         }
@@ -1663,7 +1663,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                         .width *
                                                                     0.7,
                                                                 child: ListView(
-                                                                  children: [
+                                                                  children:[
                                                                     Container(
                                                                         width:
                                                                             size.height /

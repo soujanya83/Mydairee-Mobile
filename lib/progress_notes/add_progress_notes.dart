@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:mykronicle_mobile/api/progressnotes.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
@@ -250,20 +249,20 @@ class _AddProgressNotesActivityState extends State<AddProgressNotesActivity> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            if (_formKey.currentState.validate()) {
+                            if (_formKey.currentState?.validate()??false) {
                               String _toSend = Constants.BASE_URL +
                                   'ProgressNotes/addProgressNote';
                               var objToSend = {
                                 "userid": MyApp.LOGIN_ID_VALUE,
                                 "childid": widget.childid,
                                 "centerid": widget.centerid,
-                                "p_development": phydeveloment.text.toString(),
+                                "p_development": phydeveloment?.text.toString(),
                                 "emotion_development":
-                                    emodeveloment.text.toString(),
+                                    emodeveloment?.text.toString(),
                                 "social_development":
-                                    scodeveloment.text.toString(),
-                                "child_interests": childinter.text.toString(),
-                                "other_goal": othergoal.text.toString(),
+                                    scodeveloment?.text.toString(),
+                                "child_interests": childinter?.text.toString(),
+                                "other_goal": othergoal?.text.toString(),
                               };
                               print(jsonEncode(objToSend));
 

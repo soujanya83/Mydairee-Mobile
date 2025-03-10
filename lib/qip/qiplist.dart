@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -20,14 +19,14 @@ class QipList extends StatefulWidget {
 
 class _QipListState extends State<QipList> {
   bool qipsFetched = false;
-  List<QipListModel> _allQips;
+  List<QipListModel> _allQips=[];
 
   bool permission = true;
   bool permissionAdd = true;
   bool permissionDel = true;
   bool permissionEd = true;
 
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 

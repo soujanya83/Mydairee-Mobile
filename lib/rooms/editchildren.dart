@@ -27,7 +27,7 @@ class EditChildren extends StatefulWidget {
 }
 
 class _EditChildrenState extends State<EditChildren> {
-  TextEditingController first, last;
+  TextEditingController? first, last;
 
   String _chosenValue = 'Active';
   String _gender = 'Male';
@@ -37,28 +37,35 @@ class _EditChildrenState extends State<EditChildren> {
   String doj = '';
   String imageUrl = '';
   bool mon = true, tue = true, wed = true, thu = true, fri = true;
-  File _image;
+  File? _image;
 
-  Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+Future<File> compressAndGetFile(File file, String targetPath) async {
+  XFile? result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path, targetPath,
+    minWidth: 900, minHeight: 900, quality: 40,
+  );
 
-    print(file.lengthSync());
-    print(result.lengthSync());
-
-    return result;
+  if (result == null) {
+    throw Exception("Compression failed: Unable to get compressed file.");
   }
+
+  File compressedFile = File(result.path); // Convert XFile to File
+
+  print("Original size: ${file.lengthSync()} bytes");
+  print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+  return compressedFile;
+}
 
   Future _loadFromGallery(var context) async {
     print('heee');
     final picker = ImagePicker();
-    final _galleryImage = await picker.getImage(source: ImageSource.gallery);
+    final _galleryImage = await picker.pickImage(source: ImageSource.gallery);
 
     // setState(() {
     //   _image = File(_galleryImage.path);
     // });
-    File file = File(_galleryImage.path);
+    File file = File(_galleryImage?.path??'');
     var fileSizeInBytes = file.length();
     var fileSizeInKB = await fileSizeInBytes / 1024;
     var fileSizeInMB = fileSizeInKB / 1024;
@@ -73,13 +80,13 @@ class _EditChildrenState extends State<EditChildren> {
       final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
 
       File cFile = await compressAndGetFile(file, outPath);
-      File fImage = await cropImage(context, cFile);
+      File? fImage = await cropImage(context, cFile);
       if (fImage != null) {
         _image = file;
       }
       setState(() {});
     } else {
-      File fImage = await cropImage(context, file);
+      File? fImage = await cropImage(context, file);
       if (fImage != null) {
         _image = file;
       }
@@ -110,10 +117,10 @@ class _EditChildrenState extends State<EditChildren> {
       print(res);
       var name = res['name'].toString().split(" ");
       if (name.length > 1) {
-        first.text = name[0];
-        last.text = name[1];
+        first?.text = name[0];
+        last?.text = name[1];
       } else {
-        first.text = name[0];
+        first?.text = name[0];
       }
       _gender = res['gender'];
       _chosenValue = res['status'];
@@ -444,7 +451,7 @@ class _EditChildrenState extends State<EditChildren> {
                       ),
                       CheckboxListTile(
                         value: mon,
-                        onChanged: (val) {
+                        onChanged: (val) {if(val==null)return;
                           mon = val;
                           setState(() {});
                         },
@@ -453,6 +460,7 @@ class _EditChildrenState extends State<EditChildren> {
                       CheckboxListTile(
                         value: tue,
                         onChanged: (val) {
+                          if(val==null)return;
                           tue = val;
                           setState(() {});
                         },
@@ -460,7 +468,7 @@ class _EditChildrenState extends State<EditChildren> {
                       ),
                       CheckboxListTile(
                         value: wed,
-                        onChanged: (val) {
+                        onChanged: (val) {if(val==null)return;
                           wed = val;
                           setState(() {});
                         },
@@ -468,7 +476,7 @@ class _EditChildrenState extends State<EditChildren> {
                       ),
                       CheckboxListTile(
                         value: thu,
-                        onChanged: (val) {
+                        onChanged: (val) {if(val==null)return;
                           thu = val;
                           setState(() {});
                         },
@@ -476,7 +484,7 @@ class _EditChildrenState extends State<EditChildren> {
                       ),
                       CheckboxListTile(
                         value: fri,
-                        onChanged: (val) {
+                        onChanged: (val) {if(val==null)return;
                           fri = val;
                           setState(() {});
                         },
@@ -543,17 +551,17 @@ class _EditChildrenState extends State<EditChildren> {
                                   ))
                               : Stack(
                                   children: [
-                                    Container(
+                                  _image!=null?  Container(
                                         width: 120,
                                         height: 120,
                                         decoration: new BoxDecoration(
                                           //  borderRadius: BorderRadius.circular(15.0),
                                           shape: BoxShape.rectangle,
                                           image: new DecorationImage(
-                                            image: new FileImage(_image),
+                                            image: new FileImage(_image!),
                                             fit: BoxFit.cover,
                                           ),
-                                        )),
+                                        )):SizedBox(),
                                     Positioned(
                                         right: 0,
                                         top: 0,
@@ -611,8 +619,8 @@ class _EditChildrenState extends State<EditChildren> {
 
                               if (_image != null) {
                                 final bytes =
-                                    File(_image.path).readAsBytesSync();
-                                imgName = basename(_image.path);
+                                    File(_image!.path).readAsBytesSync();
+                                imgName = basename(_image!.path);
                                 img64 = base64Encode(bytes);
                               }
 
@@ -623,7 +631,7 @@ class _EditChildrenState extends State<EditChildren> {
                               days = days + (thu ? '1' : '0');
                               days = days + (fri ? '1' : '0');
                               print('dddd' + days);
-                              if (first.text.toString().length == 0) {
+                              if (first?.text.toString().length == 0) {
                                 MyApp.ShowToast('Enter First Name', context);
                               } else if (dob == '') {
                                 MyApp.ShowToast('Add Date', context);
@@ -641,8 +649,8 @@ class _EditChildrenState extends State<EditChildren> {
                                 Map<String, dynamic> mp;
 
                                 mp = {
-                                  "firstname": first.text,
-                                  "lastname": last.text,
+                                  "firstname": first?.text,
+                                  "lastname": last?.text,
                                   "dob": dob,
                                   "startDate": doj,
                                   "gender": _gender,
@@ -705,8 +713,8 @@ class _EditChildrenState extends State<EditChildren> {
                     ])))));
   }
 
-  Future<DateTime> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: new DateTime(1850),

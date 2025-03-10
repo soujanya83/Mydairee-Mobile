@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/surveyapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -19,7 +18,7 @@ class SurveyList extends StatefulWidget {
 
 class _SurveyListState extends State<SurveyList> {
   bool surveyFetched = false;
-  List<SurveyModel> _survey;
+  List<SurveyModel> _survey=[];
 
   @override
   void initState() {
@@ -79,7 +78,7 @@ class _SurveyListState extends State<SurveyList> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    AddSurvey(type: 'add')))
+                                                    AddSurvey(type: 'add', id: '',)))
                                         .then((value) => _fetchData());
                                   },
                                   child: Container(

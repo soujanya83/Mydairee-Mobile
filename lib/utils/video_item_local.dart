@@ -14,7 +14,7 @@ class VideoItemLocal extends StatefulWidget {
 }
 
 class _VideoItemLocalState extends State<VideoItemLocal> {
-  VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   int play = 0;
 
   @override
@@ -32,13 +32,14 @@ class _VideoItemLocalState extends State<VideoItemLocal> {
       height: widget.height ?? 150,
       width: widget.width ?? MediaQuery.of(context).size.width,
       child: Center(
-        child: _controller.value.isInitialized
+        child: (_controller?.value.isInitialized!=null)
             ? Stack(children: [
                 // AspectRatio(
                 //   aspectRatio: _controller.value.aspectRatio,
                 //   child: VideoPlayer(_controller),
                 // ),
-                VideoPlayer(_controller),
+                if(_controller!=null)
+                VideoPlayer(_controller!),
                 Center(
                     child: GestureDetector(
                         onTap: _playPause,
@@ -62,16 +63,17 @@ class _VideoItemLocalState extends State<VideoItemLocal> {
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _controller?.dispose();
   }
 
   _playPause() {
-    if (_controller.value.isPlaying) {
+    if(_controller==null)return;
+    if (_controller!.value.isPlaying) {
       play = 0;
-      _controller.pause();
+      _controller!.pause();
     } else {
       play = 1;
-      _controller.play();
+      _controller!.play();
     }
     setState(() {});
   }

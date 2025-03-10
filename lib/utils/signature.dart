@@ -11,7 +11,7 @@ class SignaturePage extends StatefulWidget {
 }
 
 class _SignaturePageState extends State<SignaturePage> {
-  SignatureController controller;
+  SignatureController controller= SignatureController();
 
   @override
   void initState() {
@@ -113,7 +113,7 @@ class _SignaturePageState extends State<SignaturePage> {
         onPressed: () => controller.clear(),
       );
 
-  Future<Uint8List> exportSignature() async {
+  Future<Uint8List?> exportSignature() async {
     final exportController = SignatureController(
       penStrokeWidth: 2,
       penColor: Colors.black,

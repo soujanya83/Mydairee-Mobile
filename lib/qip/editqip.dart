@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart'; 
 import 'package:mykronicle_mobile/api/qipapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/areamodel.dart';
@@ -18,10 +18,10 @@ class EditQip extends StatefulWidget {
 class _EditQipState extends State<EditQip> {
   TextEditingController name = TextEditingController();
   bool readOnly = true;
-  List<AreaModel> areas;
+  List<AreaModel> areas = [];
   bool areasFetched = false;
   int currentIndex = 0;
-  List<Color> colors = [
+  List<Color?> colors = [
     Colors.yellow[300],
     Colors.orange[300],
     Colors.red[300],

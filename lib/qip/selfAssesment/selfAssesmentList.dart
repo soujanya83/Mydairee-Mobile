@@ -17,7 +17,7 @@ class _SelfAssesmentState extends State<SelfAssesment> {
   List<AssesmentModel> assesments = [];
   bool assesmentsFetched = false;
 
-  List<CentersModel> centers;
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 

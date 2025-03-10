@@ -1202,6 +1202,7 @@ late List<StandardsModel> standards;
                                                                                                         Checkbox(
                                                                                                             value: _allSurveys[index].boolCheck,
                                                                                                             onChanged: (val) {
+                                                                                                              if(val==null)return;
                                                                                                               _allSurveys[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1416,7 +1417,7 @@ late List<StandardsModel> standards;
                                                                                                         ),
                                                                                                         Checkbox(
                                                                                                             value: _allPlans[index].boolCheck,
-                                                                                                            onChanged: (val) {
+                                                                                                            onChanged: (val) {if(val==null)return;
                                                                                                               _allPlans[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1694,7 +1695,7 @@ late List<StandardsModel> standards;
                                                                                                             )),
                                                                                                         Checkbox(
                                                                                                             value: _allMonts[index].boolCheck,
-                                                                                                            onChanged: (val) {
+                                                                                                            onChanged: (val) {if(val==null)return;
                                                                                                               _allMonts[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1743,7 +1744,7 @@ late List<StandardsModel> standards;
                                                                                                             )),
                                                                                                         Checkbox(
                                                                                                             value: _allMilestones[index].boolCheck,
-                                                                                                            onChanged: (val) {
+                                                                                                            onChanged: (val) {if(val==null)return;
                                                                                                               _allMilestones[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1792,7 +1793,7 @@ late List<StandardsModel> standards;
                                                                                                             )),
                                                                                                         Checkbox(
                                                                                                             value: _allEylf[index].boolCheck,
-                                                                                                            onChanged: (val) {
+                                                                                                            onChanged: (val) {if(val==null)return;
                                                                                                               _allEylf[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })

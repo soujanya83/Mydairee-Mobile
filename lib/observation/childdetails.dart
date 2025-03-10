@@ -24,14 +24,15 @@ class ChildDetails extends StatefulWidget {
 }
 
 class _ChildDetailsState extends State<ChildDetails> {
-  List<CentersModel> centers;
-  bool centersFetched = false;
-  int currentIndex = 0;
-  int childCurrentIndex = 0;
-  List<ChildModel> _allChildrens;
-  List<UserModel> _allRelatives;
-  List<MenuMediaModel> menuMedia;
-  List<ObservationModel> _allObservations;
+List<CentersModel> centers = [];
+bool centersFetched = false;
+int currentIndex = 0;
+int childCurrentIndex = 0;
+List<ChildModel> _allChildrens = [];
+List<UserModel> _allRelatives = [];
+List<MenuMediaModel> menuMedia = [];
+List<ObservationModel> _allObservations = [];
+
 
   bool dataFetched = false;
   bool childrensFetched = false;
@@ -391,7 +392,7 @@ class _ChildDetailsState extends State<ChildDetails> {
                                                               .ImageBaseUrl +
                                                           _allObservations[
                                                                   index]
-                                                              .observationsMedia),
+                                                              .observationsMedia, height: null,),
                                           SizedBox(
                                             height: 10,
                                           ),
@@ -617,9 +618,9 @@ class _ChildDetailsState extends State<ChildDetails> {
                     ),
                     Text(_allChildrens[index].name,
                         style: Constants.cardHeadingStyle),
-                    Text(_allChildrens[index].gender),
-                    Text(_allChildrens[index].status),
-                    Text(_allChildrens[index].dob)
+                    Text(_allChildrens[index].gender??''),
+                    Text(_allChildrens[index].status??''),
+                    Text(_allChildrens[index].dob??'')
                   ],
                 )
               ],

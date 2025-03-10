@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,37 +15,37 @@ import 'package:mykronicle_mobile/utils/video_item_local.dart';
 import 'package:mykronicle_mobile/utils/videoitem.dart';
 
 class QuestionHelper extends StatefulWidget {
-  final StringCallback funcCallback;
-  final StringCallback choiceCallback;
-  final StringCallback deleteMediaCallback;
-  final StringCallback questionCallback;
-  final BoolCallback mandatoryCallback;
-  final FileCallback imageCallBack;
-  final FileCallback videoCallBack;
-  final ListCallback options1ListCallBack;
-  final ListCallback options2ListCallBack;
-  final ListCallback options3ListCallBack;
-  final ListCallback options4ListCallBack;
-  final String choose;
-  final QuestionHelperModel helper;
-  final String id;
+  final StringCallback? funcCallback;
+  final StringCallback? choiceCallback;
+  final StringCallback? deleteMediaCallback;
+  final StringCallback? questionCallback;
+  final BoolCallback? mandatoryCallback;
+  final FileCallback? imageCallBack;
+  final FileCallback? videoCallBack;
+  final ListCallback? options1ListCallBack;
+  final ListCallback? options2ListCallBack;
+  final ListCallback? options3ListCallBack;
+  final ListCallback? options4ListCallBack;
+  final String? choose;
+  final QuestionHelperModel? helper;
+  final String? id;
 
   const QuestionHelper(
-      {Key key,
-      required this.funcCallback,
-      required this.choiceCallback,
-      required this.deleteMediaCallback,
-      required this.questionCallback,
-      required this.mandatoryCallback,
-      required this.imageCallBack,
-      required this.videoCallBack,
-      required this.options1ListCallBack,
-      required this.options2ListCallBack,
-      required this.options3ListCallBack,
-      required this.options4ListCallBack,
-      required this.choose,
-      required this.helper,
-      required this.id})
+      {Key? key,
+       this.funcCallback,
+       this.choiceCallback,
+       this.deleteMediaCallback,
+       this.questionCallback,
+       this.mandatoryCallback,
+       this.imageCallBack,
+       this.videoCallBack,
+       this.options1ListCallBack,
+       this.options2ListCallBack,
+       this.options3ListCallBack,
+       this.options4ListCallBack,
+       this.choose,
+       this.helper,
+       this.id})
       : super(key: key);
 
   @override
@@ -70,41 +69,52 @@ class _QuestionHelperState extends State<QuestionHelper> {
   TextEditingController first = TextEditingController(text: '');
   TextEditingController last = TextEditingController(text: '');
 
-  File _image;
+  File? _image;
   //String _uploadedFileURL;
 
-  File _video;
+  File? _video;
   final picker = ImagePicker();
 
 // This funcion will helps you to pick a Video File
   _pickVideo() async {
-    PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
-    _video = File(pickedFile.path);
+    PickedFile? pickedFile = (await picker.pickImage(source: ImageSource.gallery)) != null
+    ? PickedFile((await picker.pickImage(source: ImageSource.gallery))!.path)
+    : null; 
+    if(pickedFile==null)return;
+    _video = File(pickedFile.path??"");
     if (_video != null) {
-      widget.videoCallBack(_video);
+      widget.videoCallBack!(_video!);
     }
     setState(() {});
   }
 
-  Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+Future<File> compressAndGetFile(File file, String targetPath) async {
+  XFile? result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path, targetPath,
+    minWidth: 900, minHeight: 900, quality: 40,
+  );
 
-    print(file.lengthSync());
-    print(result.lengthSync());
-
-    return result;
+  if (result == null) {
+    throw Exception("Compression failed: Unable to get compressed file.");
   }
+
+  File compressedFile = File(result.path); // Convert XFile to File
+
+  print("Original size: ${file.lengthSync()} bytes");
+  print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+  return compressedFile;
+}
 
   Future _loadFromGallery(var context) async {
     print('heee');
     final picker = ImagePicker();
-    final _galleryImage = await picker.getImage(source: ImageSource.gallery);
+    final _galleryImage = await picker.pickImage(source: ImageSource.gallery);
 
     // setState(() {
     //   _image = File(_galleryImage.path);
     // });
+    if(_galleryImage==null)return;
     File file = File(_galleryImage.path);
     var fileSizeInBytes = file.length();
     var fileSizeInKB = await fileSizeInBytes / 1024;
@@ -120,35 +130,36 @@ class _QuestionHelperState extends State<QuestionHelper> {
       final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
 
       File cFile = await compressAndGetFile(file, outPath);
-      File fImage = await cropImage(context, cFile);
+      File? fImage = await cropImage(context, cFile);
       if (fImage != null) {
         _image = file;
       }
       setState(() {});
     } else {
-      File fImage = await cropImage(context, file);
+      File? fImage = await cropImage(context, file);
       if (fImage != null) {
         _image = file;
       }
       setState(() {});
     }
-    widget.imageCallBack(_image);
+    widget.imageCallBack!(_image!);
   }
 
   @override
   void initState() {
     print(widget.choose);
+
     if (widget.choose == 'copy') {
-      _choosenValue = widget.helper.choosenValue;
-      mandatory = widget.helper.mandatory;
-      question.text = widget.helper.question;
-      _image = widget.helper.image;
-      _video = widget.helper.video;
-      options1 = widget.helper.options1;
-      options2 = widget.helper.options2;
-      options3 = widget.helper.options3;
-      options4 = widget.helper.options4;
-      if (widget.helper.choosenValue == 'Multiple Choice') {
+      _choosenValue = widget.helper?.choosenValue??'';
+      mandatory = widget.helper?.mandatory??false;
+      question.text = widget.helper?.question??'';
+      _image = widget.helper?.image;
+      _video = widget.helper?.video;
+      options1 = widget.helper?.options1??[];
+      options2 = widget.helper?.options2??[];
+      options3 = widget.helper?.options3??[];
+      options4 = widget.helper?.options4??[];
+      if (widget.helper?.choosenValue == 'Multiple Choice') {
         for (var i = 0; i < options1.length; i++) {
           if (i == 0) {
             _mcqOptions[i].text = options1[i];
@@ -157,7 +168,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
           }
         }
       }
-      // else if(widget.helper.choosenValue=='TextField'){
+      // else if(widget.helper?.choosenValue=='TextField'){
       //   for(var i=0;i<options5.length;i++){
       //       if(i==0){
       //       _textFieldOptions[i].text=options5[i];
@@ -166,12 +177,12 @@ class _QuestionHelperState extends State<QuestionHelper> {
       //       }
       //   }
       // }
-      else if (widget.helper.choosenValue == 'Linear Scale') {
+      else if (widget.helper!.choosenValue == 'Linear Scale') {
         if (options4.length == 2) {
           first.text = options4[0];
           last.text = options4[1];
         }
-      } else if (widget.helper.choosenValue == 'CheckBox') {
+      } else if (widget.helper!.choosenValue == 'CheckBox') {
         for (var i = 0; i < options2.length; i++) {
           _checkBoxOptions2[i].text = options2[i];
           if (i == 0) {
@@ -241,7 +252,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                            onChanged: (String? value)  {
                             setState(() {
                               _choosenValue = value!;
-                              widget.choiceCallback(value);
+                              widget.choiceCallback!(value);
                               _mcqOptions = [TextEditingController()];
                               _checkBoxOptions2 = [TextEditingController()];
                               _checkBoxOptions3 = [TextEditingController()];
@@ -262,19 +273,19 @@ class _QuestionHelperState extends State<QuestionHelper> {
                 InkWell(
                     child: Icon(Ionicons.ios_add_circle_outline),
                     onTap: () {
-                      widget.funcCallback("add");
+                      widget.funcCallback!("add");
                     }),
                 InkWell(
                     child: Icon(EvilIcons.image),
                     onTap: () {
-                      if (widget.helper.imgUrl == null) {
+                      if (widget.helper?.imgUrl == null) {
                         _loadFromGallery(context);
                       }
                     }),
                 InkWell(
                     child: Icon(AntDesign.playcircleo),
                     onTap: () {
-                      if (widget.helper.vidUrl == null) {
+                      if (widget.helper?.vidUrl == null) {
                         _pickVideo();
                       }
                     }),
@@ -294,7 +305,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                       borderSide: new BorderSide(color: Colors.red))),
               onChanged: (value) {
                 print(value);
-                widget.questionCallback(question.text.toString());
+                widget.questionCallback!(question.text.toString());
               },
             ),
             optionsContainer(),
@@ -306,28 +317,28 @@ class _QuestionHelperState extends State<QuestionHelper> {
                   value: mandatory,
                   onChanged: (v) => setState(() {
                     mandatory = v;
-                    widget.mandatoryCallback(v);
+                    widget.mandatoryCallback!(v);
                   }),
                 ),
                 IconButton(
                   icon: Icon(Icons.copy),
                   onPressed: () {
-                    widget.funcCallback("copy");
+                    widget.funcCallback!("copy");
                   },
                 ),
                 IconButton(
                   icon: Icon(AntDesign.delete),
                   onPressed: () {
-                    widget.funcCallback("delete");
+                    widget.funcCallback!("delete");
                   },
                 ),
               ],
             ),
-            widget.helper.imgUrl != null
+            widget.helper?.imgUrl != null
                 ? Stack(
                     children: [
                       Image.network(
-                        Constants.ImageBaseUrl + widget.helper.imgUrl,
+                        Constants.ImageBaseUrl + (widget.helper?.imgUrl??''),
                         height: 150,
                         width: MediaQuery.of(context).size.width,
                         fit: BoxFit.fill,
@@ -339,7 +350,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                             icon: Icon(Icons.clear),
                             onPressed: () {
                               showDeleteDialog(context, () {
-                                widget.deleteMediaCallback('image');
+                                widget.deleteMediaCallback!('image');
                                 setState(() {});
                                 Navigator.pop(context);
                               });
@@ -348,11 +359,11 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     ],
                   )
                 : Container(),
-            widget.helper.vidUrl != null
+            widget.helper?.vidUrl != null
                 ? Stack(
                     children: [
                       VideoItem(
-                        url: Constants.ImageBaseUrl + widget.helper.vidUrl,
+                        url: Constants.ImageBaseUrl +( widget.helper?.vidUrl??""),
                       ),
                       Positioned(
                           right: 0,
@@ -361,7 +372,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                             icon: Icon(Icons.clear),
                             onPressed: () {
                               showDeleteDialog(context, () {
-                                widget.deleteMediaCallback('video');
+                                widget.deleteMediaCallback!('video');
                                 setState(() {});
                                 Navigator.pop(context);
                               });
@@ -370,19 +381,20 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     ],
                   )
                 : Container(),
-            widget.helper.image != null
+            widget.helper?.image != null
                 ? Stack(
                     children: [
+                      widget.helper?.image!=null?
                       Container(
                           height: 150,
                           width: MediaQuery.of(context).size.width,
                           decoration: new BoxDecoration(
                             shape: BoxShape.rectangle,
                             image: new DecorationImage(
-                              image: new FileImage(widget.helper.image),
+                              image: new FileImage(widget.helper!.image!),
                               fit: BoxFit.fill,
                             ),
-                          )),
+                          )):SizedBox(),
                       Positioned(
                           right: 0,
                           top: 0,
@@ -390,7 +402,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                             icon: Icon(Icons.clear),
                             onPressed: () {
                               showDeleteDialog(context, () {
-                                widget.funcCallback('image');
+                                widget.funcCallback!('image');
                                 setState(() {});
                                 Navigator.pop(context);
                               });
@@ -399,13 +411,14 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     ],
                   )
                 : Container(),
-            widget.helper.video != null
+            widget.helper?.video != null
                 ? Stack(
                     children: [
+                      if( widget.helper?.video!=null)
                       VideoItemLocal(
-                        // height: 150,
-                        // width: MediaQuery.of(context).size.width,
-                        file: widget.helper.video,
+                        height: 150,
+                        width: MediaQuery.of(context).size.width,
+                        file: widget.helper!.video!,
                       ),
                       Positioned(
                           right: 0,
@@ -414,7 +427,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                             icon: Icon(Icons.clear),
                             onPressed: () {
                               showDeleteDialog(context, () {
-                                widget.funcCallback('video');
+                                widget.funcCallback!('video');
                                 setState(() {});
                                 Navigator.pop(context);
                               });
@@ -466,7 +479,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     ),
                     onChanged: (value) {
                       options1[index] = _mcqOptions[index].text.toString();
-                      widget.options1ListCallBack(options1);
+                      widget.options1ListCallBack!(options1);
                       setState(() {});
                     },
                     // onEditingComplete: ,
@@ -513,7 +526,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 linearoptions[0] = first.text.toString();
-                widget.options4ListCallBack(linearoptions);
+                widget.options4ListCallBack!(linearoptions);
                 setState(() {});
               },
             ),
@@ -532,7 +545,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 linearoptions[1] = last.text.toString();
-                widget.options4ListCallBack(linearoptions);
+                widget.options4ListCallBack!(linearoptions);
                 setState(() {});
               },
             ),
@@ -580,7 +593,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     onChanged: (value) {
                       options2[index] =
                           _checkBoxOptions2[index].text.toString();
-                      widget.options2ListCallBack(options2);
+                      widget.options2ListCallBack!(options2);
                       setState(() {});
                     },
                     // onEditingComplete: ,
@@ -647,7 +660,7 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     onChanged: (value) {
                       options3[index] =
                           _checkBoxOptions3[index].text.toString();
-                      widget.options3ListCallBack(options3);
+                      widget.options3ListCallBack!(options3);
                       setState(() {});
                     },
                     // onEditingComplete: ,

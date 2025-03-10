@@ -13,7 +13,7 @@ class DailyJournalSettings extends StatefulWidget {
 }
 
 class _DailyJournalSettingsState extends State<DailyJournalSettings> {
-  List<CentersModel> centers;
+  List<CentersModel> centers=[];
   bool centersFetched = false;
   int currentIndex = 0;
 

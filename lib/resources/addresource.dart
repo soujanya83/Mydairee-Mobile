@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -8,7 +9,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
-import 'package:html_editor/html_editor.dart';
 import 'package:mime/mime.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -26,12 +26,13 @@ class Addresource extends StatefulWidget {
 
 class _AddresourceState extends State<Addresource> {
   List<File> files = [];
-  TextEditingController title;
+  TextEditingController title = TextEditingController();
   String titleErr = '';
-  GlobalKey<HtmlEditorState> keyEditor;
+  GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  HtmlEditorController editorController = HtmlEditorController();
 
-  List<Map<String, dynamic>> mentionUser;
-  List<Map<String, dynamic>> mentionMont;
+  List<Map<String, dynamic>> mentionUser = [];
+  List<Map<String, dynamic>> mentionMont = [];
   bool mChildFetched = false;
   bool mMontFetched = false;
   GlobalKey<FlutterMentionsState> desc = GlobalKey<FlutterMentionsState>();
@@ -225,22 +226,23 @@ class _AddresourceState extends State<Addresource> {
                         children: [
                           InkWell(
                               onTap: () async {
-                                FilePickerResult result =
+                                FilePickerResult? result =
                                     await FilePicker.platform.pickFiles();
 
                                 if (result != null) {
-                                  File file = File(result.files.single.path);
+                                  File file =
+                                      File(result.files.single.path ?? '');
                                   var fileSizeInBytes = file.length();
                                   var fileSizeInKB =
                                       await fileSizeInBytes / 1024;
                                   var fileSizeInMB = fileSizeInKB / 1024;
 
-                                  String mimeStr =
-                                      lookupMimeType(result.files.single.path);
-                                  var fileType = mimeStr.split('/');
+                                  String? mimeStr = lookupMimeType(
+                                      result.files.single.path ?? '');
+                                  var fileType = mimeStr?.split('/');
 
                                   if (fileSizeInMB > 2 &&
-                                      fileType[0].toString() == 'image') {
+                                      fileType?[0].toString() == 'image') {
                                     MyApp.ShowToast(
                                         'file size greater than 2 mb so image is being compressed',
                                         context);
@@ -255,14 +257,14 @@ class _AddresourceState extends State<Addresource> {
 
                                     File cFile =
                                         await compressAndGetFile(file, outPath);
-                                    File fImage =
+                                    File? fImage =
                                         await cropImage(context, cFile);
                                     if (fImage != null) {
                                       files.add(fImage);
                                       setState(() {});
                                     }
                                   } else {
-                                    File fImage =
+                                    File? fImage =
                                         await cropImage(context, file);
                                     if (fImage != null) {
                                       files.add(fImage);
@@ -289,12 +291,12 @@ class _AddresourceState extends State<Addresource> {
 
                               children: List<Widget>.generate(files.length,
                                   (int index) {
-                                String mimeStr =
+                                String? mimeStr =
                                     lookupMimeType(files[index].path);
-                                var fileType = mimeStr.split('/');
+                                var fileType = mimeStr?.split('/');
                                 print('dddt' + fileType.toString());
                                 //dddt[image, jpeg]
-                                if (fileType[0].toString() == 'image') {
+                                if (fileType?[0].toString() == 'image') {
                                   return Stack(
                                     children: [
                                       Container(
@@ -356,157 +358,172 @@ class _AddresourceState extends State<Addresource> {
                       SizedBox(
                         height: 10,
                       ),
-                      Row(mainAxisAlignment: MainAxisAlignment.end, children: <
-                          Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              width: 82,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                //    color: Constants.kButton,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'CANCEL',
-                                      style: TextStyle(color: Colors.black),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                  width: 82,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    //    color: Constants.kButton,
+                                    border: Border.all(
+                                      color: Colors.grey,
                                     ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            String description =
-                                desc.currentState.controller.markupText;
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          'CANCEL',
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                String? description =
+                                    desc.currentState?.controller?.markupText;
+                                if (description == null) return;
 
-                            for (int i = 0; i < mentionUser.length; i++) {
-                              if (description
-                                  .contains(mentionUser[i]['name'])) {
-                                description = description.replaceAll(
-                                    "@" + mentionUser[i]['name'],
-                                    '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
-                              }
-                            }
-                            for (int i = 0; i < mentionMont.length; i++) {
-                              if (description
-                                  .contains(mentionMont[i]['display'])) {
-                                description = description.replaceAll(
-                                    "#" + mentionMont[i]['display'],
-                                    '<a data-tagid="${mentionMont[i]['rid']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="tags_${mentionMont[i]['id']}" link="tags_${mentionMont[i]['id']}"  >#${mentionMont[i]['display']}</a>');
-                              }
-                            }
-                            print(description);
-
-                            if (title.text.toString() == '') {
-                              titleErr = 'title required';
-                            } else {
-                              titleErr = '';
-                            }
-
-                            setState(() {});
-                            if (title.text.toString() != '') {
-                              titleErr = '';
-                              setState(() {});
-                              Map<String, dynamic> mp;
-
-                              mp = {
-                                "title": title.text,
-                                "description": description,
-                                "userid": MyApp.LOGIN_ID_VALUE,
-                                "createdAt": DateTime.now(),
-                                "createdBy": MyApp.LOGIN_ID_VALUE,
-                              };
-
-                              for (int i = 0; i < files.length; i++) {
-                                File file = files[i];
-                                String m = 'resMedia' + i.toString();
-                                var d = await MultipartFile.fromFile(file.path,
-                                    filename: basename(file.path),
-                                    contentType: MediaType.parse('image/jpg'));
-                                // print('ddd' + d.toString());
-                                // String mimeStr = lookupMimeType(files[i].path);
-                                // var fileType = mimeStr.split('/');
-                                // mp[m] = {
-                                //   "mime": fileType[0] + '/' + fileType[1],
-                                //   "postname": basename(file.path),
-                                //   "name": d,
-                                // };
-                                mp[m] = d;
-                              }
-
-                              FormData formData = FormData.fromMap(mp);
-
-                              print(formData.fields.toString());
-                              Dio dio = new Dio();
-
-                              Response response = await dio
-                                  .post(
-                                      Constants.BASE_URL +
-                                          "resources/addResources/",
-                                      data: formData,
-                                      options: Options(headers: {
-                                        'X-DEVICE-ID':
-                                            await MyApp.getDeviceIdentity(),
-                                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                      }))
-                                  .then((value) {
-                                var v = jsonDecode(value.toString());
-                                if (v['Status'] == 'SUCCESS') {
-                                  Navigator.pop(context, 'kill');
-                                } else {
-                                  print(v);
-                                  MyApp.ShowToast("error", context);
+                                for (int i = 0; i < mentionUser.length; i++) {
+                                  if (description!
+                                      .contains(mentionUser[i]['name'])) {
+                                    description = description.replaceAll(
+                                        "@" + mentionUser[i]['name'],
+                                        '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
+                                  }
                                 }
-                              }).catchError((error) => print(error));
-                            }
-                          },
-                          child: Container(
-                              // width: 82,
-                              // height: 38,
-                              decoration: BoxDecoration(
-                                  color: Constants.kButton,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8))),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'ADD POST',
-                                      style: TextStyle(color: Colors.white),
+                                for (int i = 0; i < mentionMont.length; i++) {
+                                  if (description!
+                                      .contains(mentionMont[i]['display'])) {
+                                    description = description.replaceAll(
+                                        "#" + mentionMont[i]['display'],
+                                        '<a data-tagid="${mentionMont[i]['rid']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="tags_${mentionMont[i]['id']}" link="tags_${mentionMont[i]['id']}"  >#${mentionMont[i]['display']}</a>');
+                                  }
+                                }
+                                print(description);
+
+                                if (title.text.toString() == '') {
+                                  titleErr = 'title required';
+                                } else {
+                                  titleErr = '';
+                                }
+
+                                setState(() {});
+                                if (title.text.toString() != '') {
+                                  titleErr = '';
+                                  setState(() {});
+                                  Map<String, dynamic> mp;
+
+                                  mp = {
+                                    "title": title.text,
+                                    "description": description,
+                                    "userid": MyApp.LOGIN_ID_VALUE,
+                                    "createdAt": DateTime.now(),
+                                    "createdBy": MyApp.LOGIN_ID_VALUE,
+                                  };
+
+                                  for (int i = 0; i < files.length; i++) {
+                                    File file = files[i];
+                                    String m = 'resMedia' + i.toString();
+                                    var d = await MultipartFile.fromFile(
+                                        file.path,
+                                        filename: basename(file.path),
+                                        contentType:
+                                            MediaType.parse('image/jpg'));
+                                    // print('ddd' + d.toString());
+                                    // String mimeStr = lookupMimeType(files[i].path);
+                                    // var fileType = mimeStr.split('/');
+                                    // mp[m] = {
+                                    //   "mime": fileType[0] + '/' + fileType[1],
+                                    //   "postname": basename(file.path),
+                                    //   "name": d,
+                                    // };
+                                    mp[m] = d;
+                                  }
+
+                                  FormData formData = FormData.fromMap(mp);
+
+                                  print(formData.fields.toString());
+                                  Dio dio = new Dio();
+
+                                  Response? response = await dio
+                                      .post(
+                                          Constants.BASE_URL +
+                                              "resources/addResources/",
+                                          data: formData,
+                                          options: Options(headers: {
+                                            'X-DEVICE-ID':
+                                                await MyApp.getDeviceIdentity(),
+                                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                          }))
+                                      .then((value) {
+                                    var v = jsonDecode(value.toString());
+                                    if (v['Status'] == 'SUCCESS') {
+                                      Navigator.pop(context, 'kill');
+                                    } else {
+                                      print(v);
+                                      MyApp.ShowToast("error", context);
+                                    }
+                                  }).catchError((error) => print(error));
+                                }
+                              },
+                              child: Container(
+                                  // width: 82,
+                                  // height: 38,
+                                  decoration: BoxDecoration(
+                                      color: Constants.kButton,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          'ADD POST',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                      ])
+                                  )),
+                            ),
+                          ])
                     ])))));
   }
 
   Future<File> compressAndGetFile(File file, String targetPath) async {
-    var result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path, targetPath,
-        minWidth: 900, minHeight: 900, quality: 40);
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 900,
+      minHeight: 900,
+      quality: 40,
+    );
 
-    print(file.lengthSync());
-    print(result.lengthSync());
+    if (result == null) {
+      throw Exception("Compression failed: Unable to get compressed file.");
+    }
 
-    return result;
+    File compressedFile = File(result.path); // Convert XFile to File
+
+    print("Original size: ${file.lengthSync()} bytes");
+    print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+    return compressedFile;
   }
 
   Widget rectBorderWidget(Size size, var context) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:html_unescape/html_unescape.dart';
+import 'package:html/parser.dart';
 import 'package:mykronicle_mobile/api/programplanapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/usermodel.dart';
@@ -19,13 +19,13 @@ class ViewPlan extends StatefulWidget {
 }
 
 class _ViewPlanState extends State<ViewPlan> {
-  List<UserModel> users;
+  List<UserModel> users=[];
   bool usersFetched = false;
-  List headers;
-  List comments;
-  TextEditingController cmnt;
+  List headers=[];
+  List comments=[];
+  TextEditingController cmnt=TextEditingController();
 
-  var unescape = new HtmlUnescape();
+  // var unescape = new HtmlUnescape();
 
   @override
   void initState() {
@@ -154,9 +154,9 @@ class _ViewPlanState extends State<ViewPlan> {
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Html(
-                                            data: unescape.convert(
+                                            data:parseFragment(
                                           headers[index]['perhaps'] ?? '',
-                                        )),
+                                        ).text),
                                       ),
                                     ],
                                   ),

@@ -26,7 +26,7 @@ class _AddCenterState extends State<AddCenter> {
 
  List<String> statusValues =[];
 
-  TextEditingController name, city, address, state , code;
+  TextEditingController? name, city, address, state , code;
   
   List<TextEditingController> rname = [];
 
@@ -74,11 +74,11 @@ void changeColor(Color color) {
     if (!data.containsKey('error')) {
       print(data);
 
-        name.text=data['centerName'];
-        city.text = data['addressCity'];
-        address.text = data['adressStreet'];
-        state.text=data['addressState'];
-        code.text=data['addressZip'];
+        name?.text=data['centerName'];
+        city?.text = data['addressCity'];
+        address?.text = data['adressStreet'];
+        state?.text=data['addressState'];
+        code?.text=data['addressZip'];
     
        var rooms = data['Rooms'];
        for(var i=0;i<rooms.length;i++){
@@ -91,8 +91,8 @@ void changeColor(Color color) {
            currentColor.add(Color(0xff9320cc));
          }
 
-         rname[i].text=rooms[i]['name'];
-         capacity[i].text=rooms[i]['capacity'];
+         rname[i]?.text=rooms[i]['name'];
+         capacity[i]?.text=rooms[i]['capacity'];
          statusValues[i]=rooms[i]['status'];
          rid[i]=rooms[i]['id'];
          pickerColor[i]=HexColor(rooms[i]['color']);
@@ -434,7 +434,7 @@ void changeColor(Color color) {
                                                     decoration: BoxDecoration(
                                                         border: Border.all(
                                                             color: Colors
-                                                                .grey[300]),
+                                                                .grey[300]!),
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.all(
@@ -460,7 +460,7 @@ void changeColor(Color color) {
                                                             );
                                                           }).toList(),
                                                           onChanged:
-                                                              (String value) {
+                                                              (String? value) {
                                                             statusValues[index] = value!;
                                                             setState(() {});
                                                           },
@@ -553,18 +553,18 @@ void changeColor(Color color) {
                                   for (var i = 0; i < rname.length; i++) {
                                     data.add({
                                       "roomid":rid[i],
-                                      "roomName": rname[i].text.toString(),
-                                      "roomCapacity": capacity[i].text.toString(),
+                                      "roomName": rname[i]?.text.toString(),
+                                      "roomCapacity": capacity[i]?.text.toString(),
                                       "roomColor": '#'+currentColor[i].toString().substring(10,currentColor[i].toString().length-1),
                                       "roomStatus":statusValues[i],
                                     });
                                   }
                                   var objToSend = {
-                                      "centerName":name.text.toString(),
-                                      "adressStreet":address.text.toString(),
-                                      "addressCity":city.text.toString(),
-                                      "addressState":state.text.toString(),
-                                      "addressZip":code.text.toString(),
+                                      "centerName":name?.text.toString(),
+                                      "adressStreet":address?.text.toString(),
+                                      "addressCity":city?.text.toString(),
+                                      "addressState":state?.text.toString(),
+                                      "addressZip":code?.text.toString(),
                                       "userid":MyApp.LOGIN_ID_VALUE,
                                       "rooms": data
                                   };
@@ -619,8 +619,8 @@ void changeColor(Color color) {
                     ])))));
   }
 
-  Future<DateTime> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+  Future<DateTime?> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: new DateTime(1850),

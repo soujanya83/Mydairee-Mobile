@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:html/parser.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -149,7 +148,7 @@ Widget tagRemove(String htmlString, String type, String centerid, var context) {
 
 List removeAllHtmlTags(String htmlString) {
   final document = parse(htmlString);
-  var formatted = tokenize(document.body.text.toString());
+  var formatted = tokenize(document.body!.text.toString());
 
   return formatted;
 }
@@ -242,14 +241,14 @@ List tokenize(String tok) {
   print(tags);
   print(ids);
   print(tagType);
-  List d = [parse(tok).documentElement.text, tags, ids, tagType, tagDataType];
+  List d = [parse(tok).documentElement!.text, tags, ids, tagType, tagDataType];
 
   return d;
 }
 
 String removeHtmlData(String htmlString) {
   final document = parse(htmlString);
-  final String parsedString = parse(document.body.text).documentElement.text;
+  final String parsedString = parse(document.body!.text).documentElement!.text;
 
   return parsedString;
 }
