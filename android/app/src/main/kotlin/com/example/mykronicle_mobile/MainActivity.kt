@@ -1,4 +1,4 @@
-package com.example.mykronicle_mobile
+package com.mykronicle.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

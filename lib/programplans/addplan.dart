@@ -176,7 +176,7 @@ class _AddPlanState extends State<AddPlan> {
             .add(TextEditingController(text: headersList[i]['headingname']));
         currentColor.add(HexColor(headersList[i]['headingcolor']));
         pickerColor.add(HexColor(headersList[i]['headingcolor']));
-        editorController.editorController.add(GlobalKey());
+        // editorController.editorController.add(GlobalKey());
         headComment.add(headersList[i]['perhaps']);
       }
 
@@ -914,7 +914,7 @@ class _AddPlanState extends State<AddPlan> {
                                             .add(TextEditingController());
                                         currentColor.add(Color(0xff9320cc));
                                         pickerColor.add(Color(0xff9320cc));
-                                        editorController.editorController.add(GlobalKey());
+                                        // editorController.editorController.add(GlobalKey());
                                         headComment.add('');
 
                                         setState(() {});

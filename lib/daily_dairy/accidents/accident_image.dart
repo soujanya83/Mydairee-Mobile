@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_file/open_file.dart';
+// import 'package:open_file_plus/open_file_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AccidentImage extends StatefulWidget {

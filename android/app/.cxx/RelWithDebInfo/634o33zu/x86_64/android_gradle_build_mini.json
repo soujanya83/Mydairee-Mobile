@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "C:\\Users\\vicky\\fvm\\versions\\3.29.1\\packages\\flutter_tools\\gradle\\src\\main\\groovy\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\vicky\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "F:\\Flutter Project\\mykronicle-mobile-master2\\mykronicle-mobile-master\\android\\app\\.cxx\\RelWithDebInfo\\634o33zu\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\vicky\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "F:\\Flutter Project\\mykronicle-mobile-master2\\mykronicle-mobile-master\\android\\app\\.cxx\\RelWithDebInfo\\634o33zu\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

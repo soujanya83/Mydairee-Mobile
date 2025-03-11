@@ -1,0 +1,2 @@
+F:/Flutter Project/mykronicle-mobile-master2/mykronicle-mobile-master/android/app/.cxx/Debug/kp6h284r/armeabi-v7a/CMakeFiles/edit_cache.dir
+F:/Flutter Project/mykronicle-mobile-master2/mykronicle-mobile-master/android/app/.cxx/Debug/kp6h284r/armeabi-v7a/CMakeFiles/rebuild_cache.dir
