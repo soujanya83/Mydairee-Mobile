@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Constants {
-  static final String BASE_URL = 'http://65.2.155.185/mykronicle101/api/';
+  static final String BASE_URL = 'https://mydiaree.com/api/';
 
   static final String EMAIL = "Email";
   static final String PASSWORD_HASH = "PasswordHash";

@@ -38,11 +38,12 @@ class _AdminLoginState extends State<AdminLogin> {
       return "Enter password";
     } else {
       //    forgotNewPassword = val;
-      return '';
+      return null;
     }
   }
 
   Future<void> loginNow() async {
+    print('enter in login');
     if (_formKey.currentState?.validate() ?? false) {
       // No error in validation
       _formKey.currentState?.save();
@@ -62,11 +63,18 @@ class _AdminLoginState extends State<AdminLogin> {
           "devicetype": "MOBILE",
           "userType": 'Superadmin'
         };
-
+        print('_========================-');
         LoginAPIHandler login = LoginAPIHandler(loginBody);
-        var result = await login.login();
-
-        if (!result.containsKey('error')) {
+        print('+++++++++++++++++');
+        print('error');
+        var result;
+        try {
+          result = await login.login();
+        } catch (e) {
+          print(e);
+        }
+        print('after the login is done');
+        if (result!=null && !result.containsKey('error')) {
           print(result);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
@@ -89,8 +97,11 @@ class _AdminLoginState extends State<AdminLogin> {
           MyApp.PASSWORD_HASH_VALUE = digest1.toString();
           Navigator.of(context).pushReplacementNamed(Platform.Tag);
         } else {
+          print('enter in else form');
+          print('error');
           isSignInDisabled = false;
           loggingIn = false;
+          if(result!=null)
           errorText = result['error'];
           setState(() {});
           print('issue');

@@ -12,10 +12,18 @@ class LoginAPIHandler {
   LoginAPIHandler(this.body);
 
   Future<dynamic> login () async {
-    var loginURL = _loginURL;
+    try{
+      print('enter in login');
+ var loginURL = _loginURL;
     Service loginHelper = Service(loginURL, body);
     var loginData = await loginHelper.data();
     return loginData;
+    } catch (e,s){
+      print('++++++++login error++++++++');
+       print(e);
+       print(s);
+    }
+   
   }
 
 Future<dynamic> forgotpwd() async {

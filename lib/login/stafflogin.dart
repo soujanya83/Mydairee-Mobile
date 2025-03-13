@@ -49,7 +49,7 @@ class _StaffLoginState extends State<StaffLogin> {
       LoginAPIHandler login = LoginAPIHandler(loginBody);
       var result = await login.login();
 
-      if (!result.containsKey('error')) {
+      if (result!=null && !result.containsKey('error')) {
         print(result);
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
@@ -72,6 +72,7 @@ class _StaffLoginState extends State<StaffLogin> {
       } else {
         isSignInDisabled = false;
         loggingIn = false;
+        if(result!=null)
         errorText = result['error'];
         setState(() {});
         print('issue');

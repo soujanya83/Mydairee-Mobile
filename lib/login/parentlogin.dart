@@ -66,7 +66,7 @@ class _ParentLoginState extends State<ParentLogin> {
         LoginAPIHandler login = LoginAPIHandler(loginBody);
         var result = await login.login();
 
-        if (!result.containsKey('error')) {
+        if (result!=null && !result.containsKey('error')) {
           print(result);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
@@ -76,8 +76,7 @@ class _ParentLoginState extends State<ParentLogin> {
           sharedPreferences.setString(Constants.IMG_URL, result['imageUrl']);
           sharedPreferences.setString(Constants.NAME, result['name']);
           sharedPreferences.setString(Constants.EMAIL, loginEmail);
-          sharedPreferences.setString(
-              Constants.PASSWORD_HASH, digest1.toString());
+          sharedPreferences.setString(Constants.PASSWORD_HASH, digest1.toString());
           String role = "Parent";
           sharedPreferences.setString(Constants.USER_TYPE, role);
           MyApp.LOGIN_ID_VALUE = result['userid'];
@@ -91,6 +90,7 @@ class _ParentLoginState extends State<ParentLogin> {
         } else {
           isSignInDisabled = false;
           loggingIn = false;
+          if(result!=null)
           errorText = result['error'];
           setState(() {});
           print('issue');
