@@ -21,12 +21,12 @@ class RecipeModel{
 
   static RecipeModel fromJson(Map<String,dynamic> json){
     return RecipeModel(
-      id: json['id'],
-      itemName: json['itemName'],
-      type: json['type'],
-      recipe: json['recipe'],
-      createdAt: json['createdAt'],
-      createdBy: json['createdBy'],
+      id: json['id']??'',
+      itemName: json['itemName']??'',
+      type: json['type']??'',
+      recipe: json['recipe']??'',
+      createdAt: json['createdAt']??'',
+      createdBy: json['createdBy']??'',
       ingredients: json['ingredients'],
       media: json['media']
     );

@@ -21,7 +21,7 @@ class EylfOutcomeModel {
       title: json['title'] ?? '',
       name: json['name'] ?? '',
       id: json['id'] ?? '',
-      choosen: false,
+      choosen: false, // Default value
       activity: (json['activity'] as List<dynamic>?)
               ?.map((e) => EylfActivityModel.fromJson(e))
               .toList() ??
@@ -53,7 +53,7 @@ class EylfActivityModel {
     return EylfActivityModel(
       id: json['id'] ?? '',
       title: json['title'] ?? '',
-      choosen: false,
+      choosen: false, // Default value
       checked: json['checked'] ?? '',
       addedBy: json['added_by'] ?? '',
       boolCheck: json['checked'] != null && json['checked'] != 'null',

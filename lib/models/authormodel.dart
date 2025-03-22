@@ -9,8 +9,8 @@ class AuthorModel {
 
   static AuthorModel fromJson(Map<String, dynamic> json) {
     return AuthorModel(
-      id: json['id'],
-      name: json['name'],
+      id: json['id']??'',
+      name: json['name']??'',
     );
   }
 }

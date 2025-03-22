@@ -76,7 +76,7 @@ class _AddSurveyState extends State<AddSurvey> {
       ),
       options1ListCallBack: (list) {
         if(_questions[v].helper==null)return;
-        _questions[v].helper!.options1 = list as List<String>?;
+        _questions[v].helper!.options1 = list as List<String>;
         _questions[v].helper!.options2 = [];
         _questions[v].helper!.options3 = [];
         _questions[v].helper!.options4 = [];
@@ -85,7 +85,7 @@ class _AddSurveyState extends State<AddSurvey> {
       options2ListCallBack: (list) {
         if(_questions[v].helper==null)return;
         _questions[v].helper!.options1 = [];
-        _questions[v].helper!.options2 = list as List<String>?;
+        _questions[v].helper!.options2 = list as List<String>;
         _questions[v].helper!.options3 = [];
         _questions[v].helper!.options4 = [];
         setState(() {});
@@ -93,7 +93,7 @@ class _AddSurveyState extends State<AddSurvey> {
       options3ListCallBack: (list) {
         _questions[v].helper!.options1 = [];
         _questions[v].helper!.options2 = [];
-        _questions[v].helper!.options3 = list as List<String>?;
+        _questions[v].helper!.options3 = list as List<String>;
         _questions[v].helper!.options4 = [];
         setState(() {});
       },
@@ -101,7 +101,7 @@ class _AddSurveyState extends State<AddSurvey> {
         _questions[v].helper!.options1 = [];
         _questions[v].helper!.options2 = [];
         _questions[v].helper!.options3 = [];
-        _questions[v].helper!.options4 = list as List<String>?;
+        _questions[v].helper!.options4 = list as List<String>;
         setState(() {});
       },
       videoCallBack: (file) {
@@ -147,18 +147,18 @@ class _AddSurveyState extends State<AddSurvey> {
     _questions.add(QuestionHelper(
       choose: 'copy',
       helper: QuestionHelperModel(
-        choosenValue: _questions[q].helper?.choosenValue,
-        mandatory: _questions[q].helper?.mandatory,
+        choosenValue: _questions[q].helper?.choosenValue??'',
+      mandatory: _questions[q].helper?.mandatory??false,
         image: _questions[q].helper?.image,
         video: _questions[q].helper?.video,
-        question: _questions[q].helper?.question,
+        question: _questions[q].helper?.question??'',
         options1: _questions[q].helper?.options1,
         options2: _questions[q].helper?.options2,
         options3: _questions[q].helper?.options3,
         options4: _questions[q].helper?.options4,
       ),
       options1ListCallBack: (list) {
-        _questions[v].helper?.options1 = list as List<String>?;
+        _questions[v].helper?.options1 = list as List<String>;
         _questions[v].helper?.options2 = [];
         _questions[v].helper?.options3 = [];
         _questions[v].helper?.options4 = [];
@@ -166,7 +166,7 @@ class _AddSurveyState extends State<AddSurvey> {
       },
       options2ListCallBack: (list) {
         _questions[v].helper?.options1 = [];
-        _questions[v].helper?.options2 = list as List<String>?;
+        _questions[v].helper?.options2 = list as List<String>;
         _questions[v].helper?.options3 = [];
         _questions[v].helper?.options4 = [];
         setState(() {});
@@ -174,7 +174,7 @@ class _AddSurveyState extends State<AddSurvey> {
       options3ListCallBack: (list) {
         _questions[v].helper?.options1 = [];
         _questions[v].helper?.options2 = [];
-        _questions[v].helper?.options3 = list as List<String>?;
+        _questions[v].helper?.options3 = list as List<String>;
         _questions[v].helper?.options4 = [];
         setState(() {});
       },
@@ -182,7 +182,7 @@ class _AddSurveyState extends State<AddSurvey> {
         _questions[v].helper?.options1 = [];
         _questions[v].helper?.options2 = [];
         _questions[v].helper?.options3 = [];
-        _questions[v].helper?.options4 = list as List<String>?;
+        _questions[v].helper?.options4 = list as List<String>;
         setState(() {});
       },
       videoCallBack: (file) {
@@ -339,14 +339,14 @@ class _AddSurveyState extends State<AddSurvey> {
                     SurveyAPIHandler handler = SurveyAPIHandler({"url": url});
                     handler.deleteQueItem().then((value) {
                       print(value);
-                      _questions[v].helper?.imgUrl = null;
+                      _questions[v].helper?.imgUrl = '';
                       setState(() {});
                     });
                   } else {
                     SurveyAPIHandler handler = SurveyAPIHandler({"url": url});
                     handler.deleteQueItem().then((value) {
                       print(value);
-                      _questions[v].helper?.vidUrl = null;
+                      _questions[v].helper?.vidUrl = '';
                       setState(() {});
                     });
                   }
@@ -356,7 +356,7 @@ class _AddSurveyState extends State<AddSurvey> {
               }
             },
             options1ListCallBack: (list) {
-              _questions[v].helper?.options1 = list as List<String>?;
+              _questions[v].helper?.options1 = list as List<String>;
               _questions[v].helper?.options2 = [];
               _questions[v].helper?.options3 = [];
               _questions[v].helper?.options4 = [];
@@ -364,7 +364,7 @@ class _AddSurveyState extends State<AddSurvey> {
             },
             options2ListCallBack: (list) {
               _questions[v].helper?.options1 = [];
-              _questions[v].helper?.options2 = list as List<String>?;
+              _questions[v].helper?.options2 = list as List<String>;
               _questions[v].helper?.options3 = [];
               _questions[v].helper?.options4 = [];
               setState(() {});
@@ -372,7 +372,7 @@ class _AddSurveyState extends State<AddSurvey> {
             options3ListCallBack: (list) {
               _questions[v].helper?.options1 = [];
               _questions[v].helper?.options2 = [];
-              _questions[v].helper?.options3 = list as List<String>?;
+              _questions[v].helper?.options3 = list as List<String>;
               _questions[v].helper?.options4 = [];
               setState(() {});
             },
@@ -380,7 +380,7 @@ class _AddSurveyState extends State<AddSurvey> {
               _questions[v].helper?.options1 = [];
               _questions[v].helper?.options2 = [];
               _questions[v].helper?.options3 = [];
-              _questions[v].helper?.options4 = list as List<String>?;
+              _questions[v].helper?.options4 = list as List<String>;
               setState(() {});
             },
             videoCallBack: (file) {

@@ -26,19 +26,19 @@ class LessonChildSubModel {
 
 class LessonChildProcessModel {
   String activity;
-  String subactivity;
+  String subActivity;
   String subTitle;
 
   LessonChildProcessModel({
     required this.activity,
-    required this.subactivity,
+    required this.subActivity,
     required this.subTitle,
   });
 
   static LessonChildProcessModel fromJson(Map<String, dynamic> json) {
     return LessonChildProcessModel(
       activity: json['activity'] ?? '',
-      subactivity: json['subactivity'] ?? '',
+      subActivity: json['subactivity'] ?? '',
       subTitle: json['sub_title'] ?? '',
     );
   }

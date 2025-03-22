@@ -51,7 +51,7 @@ class _RoomsListState extends State<RoomsList> {
     RoomAPIHandler handler = RoomAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var data = await handler.getList();
-    if (!data.containsKey('error')) {
+    if ((data !=null) && !data.containsKey('error')) {
       checkValues.clear();
       print(data['permissions']);
       if (data['permissions'] != null ||
@@ -97,8 +97,9 @@ class _RoomsListState extends State<RoomsList> {
             permission = true;
             roomsFetched = true;
             if (this.mounted) setState(() {});
-          } catch (e) {
+          } catch (e,s) {
             print(e);
+            print(s);
           }
           var r = data['users'];
           _users = [];
@@ -109,8 +110,9 @@ class _RoomsListState extends State<RoomsList> {
             }
             usersFetched = true;
             if (this.mounted) setState(() {});
-          } catch (e) {
+          } catch (e,s) {
             print(e);
+            print(s);
           }
         } else {
           MyApp.Show401Dialog(context);
@@ -132,10 +134,12 @@ class _RoomsListState extends State<RoomsList> {
   Future<void> _fetchCenters() async {
     UtilsAPIHandler hlr = UtilsAPIHandler({});
     var dt = await hlr.getCentersList();
+    print('_fetchCenters api response');
     print(dt);
     if (!dt.containsKey('error')) {
       print(dt);
       var res = dt['Centers'];
+      ///
       centers = [];
       try {
         assert(res is List);
@@ -144,8 +148,9 @@ class _RoomsListState extends State<RoomsList> {
         }
         centersFetched = true;
         if (this.mounted) setState(() {});
-      } catch (e) {
+      } catch (e,s) {
         print(e);
+        print(s);
       }
     } else {
       MyApp.Show401Dialog(context);

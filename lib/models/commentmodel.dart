@@ -19,13 +19,13 @@ class CommentModel {
 
   static CommentModel fromJson(Map<String, dynamic> json) {
     return CommentModel(
-      id: json['id'],
-      qipId: json['qipid'],
-      elementId: json['element_id'],
-      commentText: json['commentText'],
-      addedBy: json['added_by'],
-      addedAt: json['added_at'],
-      userImg: json['user_img'],
+      id: json['id'] ?? '',
+      qipId: json['qipid'] ?? '',
+      elementId: json['element_id'] ?? '',
+      commentText: json['commentText'] ?? '',
+      addedBy: json['added_by'] ?? '',
+      addedAt: json['added_at'] ?? '',
+      userImg: json['user_img'] ?? '',
     );
   }
 }

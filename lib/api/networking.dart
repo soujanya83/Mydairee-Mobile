@@ -16,7 +16,7 @@ class Service {
     Response response = await post(Uri.parse(loginURL), body: jsonEncode(body));
     print(response.body);
     var status = jsonDecode(response.body);
-    print('dasss' + status.toString());
+    print('dasss' + status.toString());   
     if (status['Status'] == 'SUCCESS') {
       String data = response.body;
       return jsonDecode(data);
@@ -24,7 +24,7 @@ class Service {
       return {
         "error": status['Message'],
       };
-    }
+    } 
   }
 }
 

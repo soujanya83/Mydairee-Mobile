@@ -95,7 +95,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                         itemBuilder: (BuildContext context, int index) {
                           return Row(
                             children: [
-                              Text(_recipe?.ingredients[index]['qty']),
+                              Text(_recipe?.ingredients[index]['qty']??''),
                               SizedBox(width: 10),
                               Text(_recipe?.ingredients[index]['name'])
                             ],

@@ -138,7 +138,7 @@ class _ParentSettingsState extends State<ParentSettings> {
                             child: Theme(
                               data: new ThemeData(
                                 primaryColor: Colors.grey,
-                                primaryColorDark: Colors.grey,
+                                primaryColorDark: Colors.grey,  
                               ),
                               child: Container(
                                 height: 33.0,
@@ -365,7 +365,7 @@ class _ParentSettingsState extends State<ParentSettings> {
                                         MaterialPageRoute(
                                             builder: (context) => AddParent(
                                                 'edit',
-                                                _allParents[index].userid)))
+                                                _allParents[index].userId)))
                                     .then((value) {
                                   if (value != null) {
                                     settingsDataFetched = false;

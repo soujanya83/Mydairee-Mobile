@@ -243,7 +243,7 @@ class _LessonPlanState extends State<LessonPlan> {
                                                   .activity,
                                               "subid": child[index]
                                                   .lessonProcess[i]
-                                                  .subactivity,
+                                                  .subActivity,
                                               "updated_by":
                                                   MyApp.LOGIN_ID_VALUE,
                                               "updated_at":

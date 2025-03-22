@@ -23,11 +23,11 @@ class NewAnnouncements extends StatefulWidget {
 }
 
 class _NewAnnouncementsState extends State<NewAnnouncements> {
-  late TextEditingController title;
+   TextEditingController title = TextEditingController();
   GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
   HtmlEditorController editorController = HtmlEditorController();
-  late String _date;
-  late String date;
+   String _date = '';
+   String date = '';
   bool childrensFetched = false;
   late List<ChildModel> _allChildrens;
 

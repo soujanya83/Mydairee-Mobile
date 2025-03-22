@@ -18,12 +18,12 @@ class CentersModel{
 
   static CentersModel fromJson(Map<String,dynamic> json){
     return CentersModel(
-      id: json['id'],
-      centerName: json['centerName'],
-      adressStreet: json['adressStreet'],
-      addressCity: json['addressCity'],
-      addressState: json['addressState'],
-      addressZip: json['addressZip']
+      id: json['id']??'',
+      centerName: json['centerName']??'',
+      adressStreet: json['adressStreet']??'',
+      addressCity: json['addressCity']??'',
+      addressState: json['addressState']??'',
+      addressZip: json['addressZip']??''
     );
   }
 }

@@ -87,10 +87,10 @@ class SubjectModel {
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       milestoneid: json['milestoneid'] ?? '',
-      choosen: false,
       subject: json['subject'] ?? '',
       checked: json['checked'] ?? '',
       addedBy: json['added_by'] ?? '',
+      choosen: false,
       boolCheck: json['checked'] != null && json['checked'] != 'null',
       extras: (json['extras'] as List<dynamic>?)
               ?.map((e) => MilestoneExtrasModel.fromJson(e))
@@ -105,7 +105,7 @@ class MilestoneExtrasModel {
   String idsubactivity;
   String title;
   String addedBy;
-  String? checked; // यह Nullable हो सकता है
+  String? checked; // Nullable field
 
   MilestoneExtrasModel({
     required this.id,

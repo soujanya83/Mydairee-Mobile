@@ -28,9 +28,8 @@ class LoginAPIHandler {
 
 Future<dynamic> forgotpwd() async {
     var forgotpwdURL = _forgotpwdURL;
-    Service loginHelper = Service(forgotpwdURL, body);
+    Service loginHelper   = Service(forgotpwdURL, body);
     var loginData = await loginHelper.data();
     return loginData;
-  }
-  
+  } 
 }

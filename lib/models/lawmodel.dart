@@ -1,28 +1,25 @@
-
-class LawModel{
+class LawModel {
   String id;
-  String areaid;
+  String areaId;
   String section;
   String about;
   String element;
 
   LawModel({
     required this.id,
-    required this.areaid,
+    required this.areaId,
     required this.section,
     required this.about,
-    required this.element
-    });
+    required this.element,
+  });
 
-  static LawModel fromJson(Map<String,dynamic> json){
+  static LawModel fromJson(Map<String, dynamic> json) {
     return LawModel(
-      id: json['id'],
-      areaid: json['areaId'],
-      section: json['section'],
-      about: json['about'],
-      element: json['element']
+      id: json['id'] ?? '',
+      areaId: json['areaId'] ?? '',
+      section: json['section'] ?? '',
+      about: json['about'] ?? '',
+      element: json['element'] ?? '',
     );
   }
 }
-
-

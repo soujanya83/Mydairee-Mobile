@@ -44,14 +44,17 @@ class _ViewAssesmentState extends State<ViewAssesment>
     _controller = new TabController(length: 2, vsync: this);
     super.initState();
   }
-
+  
   Future<void> _fetchCenters() async {
+    print('reach here 1');
     UtilsAPIHandler hlr = UtilsAPIHandler({});
     var dt = await hlr.getCentersList();
+    print('reach here 2');
     if (!dt.containsKey('error')) {
       print(dt);
       var res = dt['Centers'];
       centers = [];
+      print('reach here 3');
       try {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
@@ -60,12 +63,20 @@ class _ViewAssesmentState extends State<ViewAssesment>
         centersFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
+        print('reach here 4');
         print(e);
       }
     } else {
       MyApp.Show401Dialog(context);
     }
-    _fetchData();
+    try{
+      print('reach here 5');
+      _fetchData();
+    }catch(e,s){
+      print('error error in _fetchData');
+      print(e,);
+      print(s);
+    }
   }
 
   void _fetchData() async {
@@ -74,28 +85,42 @@ class _ViewAssesmentState extends State<ViewAssesment>
       "centerid": centers[currentIndex].id,
       "userid": MyApp.LOGIN_ID_VALUE
     };
-
+    print('reach here 6');
     if (areas != null) {
-      _objToSend["areaid"] = areas[areaIndex].id;
+       try{
+        _objToSend["areaid"] = areas[areaIndex].id;
+       }catch(e,s){
+        print(e);
+        print(s);
+       }
     }
+     print('reach here 6.2');
     QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
+     print('reach here 6.3');
     var data = await qipAPIHandler.viewSelfAsses();
+    print('reach here 7');
+    print(areas);
+    print(areas.runtimeType);
     if (areas == null) {
       var area = data['Areas'];
       print(area);
       areas = [];
       lrController = [];
       qaController = [];
+      print('reach here 8');
       try {
         assert(area is List);
         for (int i = 0; i < area.length; i++) {
           areas.add(AreaModel.fromJson(area[i]));
         }
         if (this.mounted) setState(() {});
-      } catch (e) {
+      } catch (e,s) {
+        print('++++++error first++++++');
         print(e);
+        print(s);
       }
     }
+    print('reach here 9');
     var lr = data['LR'];
     print(lr);
     lrList = [];
@@ -106,13 +131,18 @@ class _ViewAssesmentState extends State<ViewAssesment>
         lrController.add(TextEditingController(text: lrList[i].actions));
       }
       if (this.mounted) setState(() {});
-    } catch (e) {
-      print(e);
+      print('reach here 10');
+    } catch (e,s) {
+      print('reach here 11');
+       print('++++++error third++++++');
+        print(e);
+        print(s);
     }
 
     var qa = data['QA'];
     print(qa);
     qaList = [];
+    print('reach here 12');
     try {
       assert(qa is List);
       for (int i = 0; i < qa.length; i++) {
@@ -120,9 +150,12 @@ class _ViewAssesmentState extends State<ViewAssesment>
         qaController
             .add(TextEditingController(text: qaList[i].identifiedPractice));
       }
+      print('reach here 13');
       if (this.mounted) setState(() {});
-    } catch (e) {
-      print(e);
+    } catch (e,s) {
+       print('++++++error third++++++');
+        print(e);
+        print(s);
     }
   }
 
@@ -183,7 +216,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                     ),
                   ),
                 ),
-              if (areas != null)
+              if (areas != null && areas.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5),
                   child: DropdownButtonHideUnderline(
@@ -227,7 +260,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () { 
                         Navigator.push(
                             context,
                             MaterialPageRoute(

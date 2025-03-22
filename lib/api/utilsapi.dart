@@ -15,7 +15,7 @@ var _getAuthors = Constants.BASE_URL + 'Resources/getAuthorsFromCenter/';
 var _getTrendingTags = Constants.BASE_URL + 'Resources/loadAjaxResources/';
 
 var _getChildTableDetails =
-    Constants.BASE_URL + 'observation/child_table_details';
+    Constants.BASE_URL + 'observation/child_table_details'  ;
 
 var _getActTagInfo = Constants.BASE_URL + 'Observation/getActTagInfo/';
 

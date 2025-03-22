@@ -1,5 +1,4 @@
-
-class ElementModel{
+class ElementModel {
   String id;
   String standardId;
   String name;
@@ -11,18 +10,16 @@ class ElementModel{
     required this.standardId,
     required this.name,
     required this.about,
-    required this.elementName
-    });
+    required this.elementName,
+  });
 
-  static ElementModel fromJson(Map<String,dynamic> json){
+  static ElementModel fromJson(Map<String, dynamic> json) {
     return ElementModel(
-      id: json['id'],
-      standardId: json['standardId'],
-      name: json['name'],
-      about: json['about'],
-      elementName: json['elementName']
+      id: json['id'] ?? '',
+      standardId: json['standardId'] ?? '',
+      name: json['name'] ?? '',
+      about: json['about'] ?? '',
+      elementName: json['elementName'] ?? '',
     );
   }
 }
-
-

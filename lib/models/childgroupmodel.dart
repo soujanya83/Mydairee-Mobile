@@ -1,24 +1,19 @@
-
-
-class ChildGroupsModel{
-
+class ChildGroupsModel {
   String id;
   String name;
-  List children;
+  List<dynamic> children;
 
   ChildGroupsModel({
     required this.id,
     required this.name,
-    required this.children
-    });
+    required this.children,
+  });
 
-  static ChildGroupsModel fromJson(Map<String,dynamic> json){
+  static ChildGroupsModel fromJson(Map<String, dynamic> json) {
     return ChildGroupsModel(
-      name: json['name'],
-      id: json['id'],
-      children: json['children']
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      children: json['children'] ?? [],
     );
   }
 }
-
-

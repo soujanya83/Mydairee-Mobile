@@ -13,10 +13,10 @@ class TagsModel {
 
   static TagsModel fromJson(Map<String, dynamic> json) {
     return TagsModel(
-      id: json['id'],
-      tags: json['tags'],
-      count: json['count'],
-      lastModified: json['last_modified'],
+      id: json['id']??'',
+      tags: json['tags']??'',
+      count: json['count']??'',
+      lastModified: json['last_modified']??'',
     );
   }
 }

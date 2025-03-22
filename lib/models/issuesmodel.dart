@@ -31,19 +31,19 @@ class IssuesModel {
 
   static IssuesModel fromJson(Map<String, dynamic> json) {
     return IssuesModel(
-      id: json['id'],
-      qipId: json['qip_id'],
-      elementId: json['element_id'],
-      issueIdentified: json['issueIdentified'],
-      outcome: json['outcome'],
-      priority: json['priority'],
-      expectedDate: json['expectedDate'],
-      successMeasure: json['successMeasure'],
-      howToGetOutcome: json['howToGetOutcome'],
-      addedBy: json['added_by'],
-      status: json['status'],
-      addedAt: json['added_at'],
-      userImg: json['user_img'],
+      id: json['id'] ?? '',
+      qipId: json['qip_id'] ?? '',
+      elementId: json['element_id'] ?? '',
+      issueIdentified: json['issueIdentified'] ?? '',
+      outcome: json['outcome'] ?? '',
+      priority: json['priority'] ?? '',
+      expectedDate: json['expectedDate'] ?? '',
+      successMeasure: json['successMeasure'] ?? '',
+      howToGetOutcome: json['howToGetOutcome'] ?? '',
+      addedBy: json['added_by'] ?? '',
+      status: json['status'] ?? '',
+      addedAt: json['added_at'] ?? '',
+      userImg: json['user_img'] ?? '',
     );
   }
 }

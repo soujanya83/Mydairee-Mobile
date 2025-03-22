@@ -1,22 +1,19 @@
-
-class OptionsModel{
+class OptionsModel {
   String id;
-  String idsubactivity;
+  String subActivityId;
   String title;
 
   OptionsModel({
     required this.id,
-    required this.idsubactivity,
-    required this.title
-    });
+    required this.subActivityId,
+    required this.title,
+  });
 
-  static OptionsModel fromJson(Map<String,dynamic> json){
+  static OptionsModel fromJson(Map<String, dynamic> json) {
     return OptionsModel(
-      id: json['id'],
-      idsubactivity: json['idsubactivity'],
-      title: json['title'],
+      id: json['id'] ?? '',
+      subActivityId: json['idsubactivity'] ?? '',
+      title: json['title'] ?? '',
     );
   }
 }
-
-

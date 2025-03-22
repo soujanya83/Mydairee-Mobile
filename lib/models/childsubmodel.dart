@@ -13,10 +13,10 @@ class ChildSubModel {
 
   static ChildSubModel fromJson(Map<String, dynamic> json) {
     return ChildSubModel(
-      childId: json['child_id'],
-      childName: json['child_name'],
-      dob: json['dob'],
-      imageUrl: json['imageUrl'],
+      childId: json['child_id'] ?? '',
+      childName: json['child_name'] ?? '',
+      dob: json['dob'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
     );
   }
 }
@@ -38,11 +38,11 @@ class EducatorMediaModel {
 
   static EducatorMediaModel fromJson(Map<String, dynamic> json) {
     return EducatorMediaModel(
-      id: json['id'],
-      mediaId: json['mediaId'],
-      userId: json['userId'],
-      name: json['name'],
-      imageUrl: json['imageUrl'],
+      id: json['id'] ?? '',
+      mediaId: json['mediaId'] ?? '',
+      userId: json['userId'] ?? '',
+      name: json['name'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
     );
   }
 }
@@ -64,11 +64,11 @@ class ChildMediaModel {
 
   static ChildMediaModel fromJson(Map<String, dynamic> json) {
     return ChildMediaModel(
-      id: json['id'],
-      mediaId: json['mediaId'],
-      childId: json['childId'],
-      name: json['name'],
-      imageUrl: json['imageUrl'],
+      id: json['id'] ?? '',
+      mediaId: json['mediaId'] ?? '',
+      childId: json['childId'] ?? '',
+      name: json['name'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
     );
   }
 }

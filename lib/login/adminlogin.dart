@@ -47,7 +47,7 @@ class _AdminLoginState extends State<AdminLogin> {
     if (_formKey.currentState?.validate() ?? false) {
       // No error in validation
       _formKey.currentState?.save();
-      setState(() {
+      setState((){
         loggingIn = true;
       });
       String deviceid = await MyApp.getDeviceIdentity();
@@ -75,12 +75,10 @@ class _AdminLoginState extends State<AdminLogin> {
         }
         print('after the login is done');
         if (result!=null && !result.containsKey('error')) {
-          print(result);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString(Constants.LOGIN_ID, result['userid']);
-          sharedPreferences.setString(
-              Constants.AUTH_TOKEN, result['AuthToken']);
+          sharedPreferences.setString(Constants.AUTH_TOKEN, result['AuthToken']);
           sharedPreferences.setString(Constants.IMG_URL, result['imageUrl']);
           sharedPreferences.setString(Constants.NAME, result['name']);
           sharedPreferences.setString(Constants.EMAIL, loginEmail);
@@ -96,6 +94,12 @@ class _AdminLoginState extends State<AdminLogin> {
           MyApp.EMAIL_VALUE = loginEmail;
           MyApp.PASSWORD_HASH_VALUE = digest1.toString();
           Navigator.of(context).pushReplacementNamed(Platform.Tag);
+          print(result);
+          print('++++login credential +++++');
+          print(MyApp.AUTH_TOKEN_VALUE);
+          print(deviceid);
+          print(result['AuthToken']);
+          print(result['deviceid']);
         } else {
           print('enter in else form');
           print('error');

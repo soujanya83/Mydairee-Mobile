@@ -31,6 +31,7 @@ class Header {
           ),
         ),
       ),
+      iconTheme: IconThemeData(color: Colors.white)
     );
   }
 }

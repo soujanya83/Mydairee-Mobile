@@ -29,10 +29,10 @@ class StandardSubModel{
 
   static StandardSubModel fromJson(Map<String,dynamic> json){
     return StandardSubModel(
-      id: json['id'],
-      areaid: json['areaId'],
-      name: json['name'],
-      about: json['about'],
+      id: json['id']??'',
+      areaid: json['areaId']??'',
+      name: json['name']??'',
+      about: json['about']??'',
     );
   }
 }

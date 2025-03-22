@@ -13,6 +13,7 @@ class DashboardAPIHandler {
   DashboardAPIHandler(this.data);
 
 Future<dynamic> getDashboardDetails() async {
+  print('000000000000000');
     var getDetailsURL = _getDashboardDetailsURL+MyApp.LOGIN_ID_VALUE+'/';
     ServiceWithHeader helper = ServiceWithHeader(getDetailsURL);
     var d = await helper.data();

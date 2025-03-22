@@ -107,9 +107,9 @@ class _GetDrawerState extends State<GetDrawer> {
                   MaterialPageRoute(builder: (context) => ObservationMain()));
             },
           ),
-
           if (MyApp.USER_TYPE_VALUE != 'Parent')
             Divider(
+              // ignore: deprecated_member_use
               color: Colors.white.withOpacity(0.8),
             ),
           if (MyApp.USER_TYPE_VALUE != 'Parent')
@@ -122,7 +122,7 @@ class _GetDrawerState extends State<GetDrawer> {
                 SimpleLineIcons.book_open,
                 color: Colors.white,
               ),
-              onTap: () {
+              onTap:(){
                 if (showQip == false) {
                   showQip = true;
                   setState(() {});

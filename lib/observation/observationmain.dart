@@ -79,6 +79,7 @@ class _ObservationMainState extends State<ObservationMain> {
     'Does Not Have Early Years Learning Framework': false,
     'Does Not Have Developmental Milestones': false,
   };
+
   Map<String, bool> commentsValues = {
     'With Comments': false,
     'With Staff Comments': false,
@@ -788,6 +789,7 @@ class _ObservationMainState extends State<ObservationMain> {
   }
 
   Future<void> _fetchCenters() async {
+    print('_fetchCenters');
     UtilsAPIHandler hlr = UtilsAPIHandler({});
     var dt = await hlr.getCentersList();
     if (!dt.containsKey('error')) {
@@ -801,8 +803,11 @@ class _ObservationMainState extends State<ObservationMain> {
         }
         centersFetched = true;
         if (this.mounted) setState(() {});
-      } catch (e) {
+        print('+++++++++++++success is in _fetchCenters+++++++++++++');
+      } catch (e,s) {
+        print('+++++++++++++error is in _fetchCenters+++++++++++++');
         print(e);
+        print(s);
       }
     } else {
       //MyApp.Show401Dialog(context);
@@ -812,6 +817,7 @@ class _ObservationMainState extends State<ObservationMain> {
   }
 
   Future<void> _fetchFilteredData() async {
+    print('+++++enter in _fetchFilteredData+++++');
     _allObservations.clear();
 
     var b = {
@@ -846,19 +852,27 @@ class _ObservationMainState extends State<ObservationMain> {
     if (res != null) {
       _allObservations = [];
       try {
+        print('enter in loop of _fetchFilteredData');
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
+          print('index $i loop _fetchFilteredData');
+          
           _allObservations.add(ObservationModel.fromJson(res[i]));
         }
+        print('after loop done');
         observationsFetched = true;
-        if (this.mounted) setState(() {});
-      } catch (e) {
+        if (this.mounted) setState((){});
+        print('+++++++++++++success is in _fetchFilteredData+++++++++++++');
+      } catch (e,s) {
+        print('+++++++++++++error is in _fetchFilteredData+++++++++++++');
         print(e);
+        print(s);
       }
     }
   }
 
   Future<void> _fetchData() async {
+    print('++++++++++_fetchData++++++');
     ObservationsAPIHandler handler = ObservationsAPIHandler({});
     var data = await handler.getList(centers[currentIndex].id);
     print('trashshsh' + data.toString());
@@ -881,14 +895,17 @@ class _ObservationMainState extends State<ObservationMain> {
         var res = data['observations'];
         _allObservations = [];
         try {
+        
           assert(res is List);
           for (int i = 0; i < res.length; i++) {
             _allObservations.add(ObservationModel.fromJson(res[i]));
           }
           observationsFetched = true;
           permission = true;
-          if (this.mounted) setState(() {});
-        } catch (e) {
+          if (this.mounted) setState((){});
+        } catch (e,s) {
+          print('+++error in fetch data++++');
+          print(s);
           print(e);
         }
 

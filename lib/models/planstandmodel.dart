@@ -10,31 +10,31 @@ class PlanStandModel {
   String updatedAt;
   String updatedBy;
 
-  PlanStandModel(
-      {required this.id,
-      required this.roomid,
-      required this.startDate,
-      required this.endDate,
-      required this.createdAt,
-      required this.createdBy,
-      required this.checked,
-      required this.boolCheck,
-      required this.updatedAt,
-      required this.updatedBy});
+  PlanStandModel({
+    required this.id,
+    required this.roomid,
+    required this.startDate,
+    required this.endDate,
+    required this.createdAt,
+    required this.createdBy,
+    required this.checked,
+    required this.boolCheck,
+    required this.updatedAt,
+    required this.updatedBy,
+  });
 
   static PlanStandModel fromJson(Map<String, dynamic> json) {
     return PlanStandModel(
-      id: json['id'],
-      roomid: json['room_id'],
-      startDate: json['startdate'],
-      endDate: json['enddate'],
-      createdAt: json['createdAt'],
-      createdBy: json['createdBy'],
-      checked: json['checked'],
-      boolCheck:
-          json['checked'] != null && json['checked'] != 'null' ? true : false,
-      updatedAt: json['updatedAt'],
-      updatedBy: json['updatedBy'],
+      id: json['id'] ?? '',
+      roomid: json['room_id'] ?? '',
+      startDate: json['startdate'] ?? '',
+      endDate: json['enddate'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      createdBy: json['createdBy'] ?? '',
+      checked: json['checked'] ?? '',
+      boolCheck: json['checked'] == 'true' || json['checked'] == '1', // Better boolean check
+      updatedAt: json['updatedAt'] ?? '',
+      updatedBy: json['updatedBy'] ?? '',
     );
   }
 }

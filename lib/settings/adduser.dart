@@ -743,8 +743,8 @@ class _AddUserState extends State<AddUser> {
                       SizedBox(
                         height: 15,
                       ),
-                      _image == null
-                          ? GestureDetector(
+                      (_image == null)? 
+                      GestureDetector(
                               onTap: () async {
                                 _loadFromGallery(context);
                               },
@@ -911,11 +911,12 @@ class _AddUserState extends State<AddUser> {
                                     if (v['Status'] == 'SUCCESS') {
                                       MyApp.ShowToast("updated", context);
                                       Navigator.pop(context, 'kill');
-                                    } else {
+                                    } else{
                                       MyApp.ShowToast("error", context);
                                     }
+                                  // ignore: invalid_return_type_for_catch_error
                                   }).catchError((error) => print(error));
-                                }
+                                } 
                               },
                               child: Container(
                                   decoration: BoxDecoration(

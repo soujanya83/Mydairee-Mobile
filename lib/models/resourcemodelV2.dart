@@ -2,39 +2,54 @@ class ResourceModels {
   String id;
   String title;
   String description;
-  Map createdBy;
+  Map<String, dynamic> createdBy;
   String createdAt;
-  List media;
-  Map likes;
-  Map comments;
+  List<dynamic> media;
+  Map<String, dynamic> likes;
+  Map<String, dynamic> comments;
   String checked;
   bool boolCheck;
 
-  ResourceModels(
-      {required this.id,
-      required this.title,
-      required this.description,
-      required this.createdBy,
-      required this.createdAt,
-      required this.media,
-      required this.likes,
-      required this.comments,
-      required this.checked,
-      required this.boolCheck});
+  ResourceModels({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.createdBy,
+    required this.createdAt,
+    required this.media,
+    required this.likes,
+    required this.comments,
+    required this.checked,
+    required this.boolCheck,
+  });
 
   static ResourceModels fromJson(Map<String, dynamic> json) {
     return ResourceModels(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      createdBy: json['createdBy'],
-      createdAt: json['createdAt'],
-      media: json['media'],
-      likes: json['likes'],
-      comments: json['comments'],
-      checked: json['checked'],
-      boolCheck:
-          json['checked'] != null && json['checked'] != 'null' ? true : false,
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      createdBy: json['createdBy'] != null ? Map<String, dynamic>.from(json['createdBy']) : {},
+      createdAt: json['createdAt'] ?? '',
+      media: json['media'] != null ? List<dynamic>.from(json['media']) : [],
+      likes: json['likes'] != null ? Map<String, dynamic>.from(json['likes']) : {},
+      comments: json['comments'] != null ? Map<String, dynamic>.from(json['comments']) : {},
+      checked: json['checked'] ?? 'false',
+      boolCheck: json['checked'] != null && json['checked'] != 'null' && json['checked'] != 'false',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'createdBy': createdBy,
+      'createdAt': createdAt,
+      'media': media,
+      'likes': likes,
+      'comments': comments,
+      'checked': checked,
+      'boolCheck': boolCheck,
+    };
   }
 }
