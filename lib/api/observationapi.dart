@@ -53,6 +53,9 @@ class ObservationsAPIHandler {
   Future<dynamic> getList(centerid) async {
     var listObservationsURL =
         _listObservationsURL + MyApp.LOGIN_ID_VALUE + '/$centerid';
+      print(listObservationsURL);
+      print("++++++listObservationsURL+++++");
+      print(MyApp.AUTH_TOKEN_VALUE);
     ServiceWithHeader helper = ServiceWithHeader(listObservationsURL);
     var d = await helper.data();
     return d;

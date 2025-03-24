@@ -14,7 +14,11 @@ class MilestonesTabs extends StatefulWidget {
   final List data;
   final Map totaldata;
   final IndexCallback changeTab;
-  MilestonesTabs({required this.count, required this.data, required this.changeTab, required this.totaldata});
+  MilestonesTabs(
+      {required this.count,
+      required this.data,
+      required this.changeTab,
+      required this.totaldata});
 
   @override
   _MilestonesTabsState createState() => _MilestonesTabsState();
@@ -140,18 +144,18 @@ class _MilestonesTabsState extends State<MilestonesTabs>
                         }
                       }
                     }
-
                     var objToSend = {
                       "userid": int.parse(MyApp.LOGIN_ID_VALUE),
                       "observationId": int.parse(obs.obsid),
                       "milestones": ac
                     };
                     print(jsonEncode(objToSend));
-                    final response = await http
-                        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
-                      'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                    });
+                    final response = await http.post(Uri.parse(_toSend),
+                        body: jsonEncode(objToSend),
+                        headers: {
+                          'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                        });
                     print(response.body);
                     if (response.statusCode == 200) {
                       MyApp.ShowToast("updated", context);
@@ -185,158 +189,250 @@ class _MilestonesTabsState extends State<MilestonesTabs>
     );
   }
 
-  Widget tabData(int val) {
-    return Container(
-      child: ListView.builder(
-        itemCount: widget.data[val]['subname'].length,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueAccent),
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
+ Widget tabData(int val) {
+  if (widget.data == null || widget.data.length <= val) {
+    return Center(child: Text("No Data Available"));
+  }
+
+  var subnameList = widget.data[val]['subname'];
+  if (subnameList == null || subnameList.isEmpty) {
+    return Center(child: Text("No Subnames Available"));
+  }
+
+  return Container(
+    child: ListView.builder(
+      itemCount: subnameList.length,
+      itemBuilder: (BuildContext context, int index) {
+        var subItem = subnameList[index];
+
+        if (subItem == null || subItem['name'] == null) {
+          return SizedBox.shrink(); // Skip rendering if data is null
+        }
+
+        bool isExpanded = (AddObservationState.emi != null &&
+                AddObservationState.emi.length > val &&
+                AddObservationState.emi[val].length > index)
+            ? AddObservationState.emi[val][index]
+            : false;
+
+        var titleList = subItem['title'];
+        double containerHeight = (titleList != null && titleList is List)
+            ? titleList.length * 60.0
+            : 0.0;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent),
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                ),
+                child: ListTile(
+                  title: Text(
+                    subItem['name'],
+                    style: TextStyle(fontSize: 15),
                   ),
-                  child: ListTile(
-                    title: Text(
-                      widget.data[val]['subname'][index]['name'],
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    trailing: InkWell(
-                      onTap: () {
-                        if (AddObservationState.emi[val][index]) {
-                          AddObservationState.emi[val][index] = false;
-                        } else {
-                          AddObservationState.emi[val][index] = true;
-                        }
-                        setState(() {});
-                      },
-                      child: Container(
-                        width: 72,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Constants.kMain,
-                            ),
-                            Text(
-                              'Expand',
-                              style: TextStyle(color: Constants.kMain),
-                            ),
-                          ],
-                        ),
+                  trailing: InkWell(
+                    onTap: () {
+                      if (AddObservationState.emi.length > val &&
+                          AddObservationState.emi[val].length > index) {
+                        AddObservationState.emi[val][index] =
+                            !AddObservationState.emi[val][index];
+                      }
+                      setState(() {});
+                    },
+                    child: Container(
+                      width: 72,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Constants.kMain,
+                          ),
+                          Text(
+                            'Expand',
+                            style: TextStyle(color: Constants.kMain),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                Visibility(
-                    visible: AddObservationState.emi != null
-                        ? AddObservationState.emi[val][index]
-                        : false,
-                    child: Container(
-                        height:
-                            widget.data[val]['subname'][index]['title'].length *
-                                60.0,
-                        width: MediaQuery.of(context).size.width,
-                        child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: widget
-                              .data[val]['subname'][index]['title'].length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                  child: Column(children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                        width: 140,
-                                        child: Text(widget.data[val]['subname']
-                                            [index]['title'][i]['name'])),
-                                    Expanded(
-                                      child: Container(),
-                                    ),
-                                    DropdownButtonHideUnderline(
-                                      child: Container(
-                                        height: 40,
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                180,
-                                        decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.grey),
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8))),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 8, right: 8),
-                                          child: Center(
-                                            child: DropdownButton<String>(
-                                              isExpanded: true,
-                                              value: AddObservationState
-                                                  .dropAnsM[val][index][i],
-                                              items: <String>[
-                                                'Not Observed',
-                                                'Not Interested',
-                                                'Not Calculated'
-                                              ].map((String value) {
-                                                return new DropdownMenuItem<
-                                                    String>(
-                                                  value: value,
-                                                  child: new Text(value),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? value) {
-                                                setState(() {
-                                                  AddObservationState
-                                                          .dropAnsM[val][index]
-                                                      [i] = value??'';
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        ),
+              ),
+              Visibility(
+                visible: isExpanded,
+                child: Container(
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: titleList != null ? titleList.length : 0,
+                    itemBuilder: (BuildContext context, int i) {
+                      var titleItem = titleList[i];
+
+                      if (titleItem == null || titleItem['name'] == null) {
+                        return SizedBox.shrink();
+                      }
+
+                      String dropdownValue =
+                          (AddObservationState.dropAnsM.length > val &&
+                                  AddObservationState.dropAnsM[val].length >
+                                      index &&
+                                  AddObservationState.dropAnsM[val][index]
+                                          .length >
+                                      i)
+                              ? AddObservationState.dropAnsM[val][index][i]
+                              : 'Not Observed';
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                    width: 140, child: Text(titleItem['name'])),
+                                Expanded(child: Container()),
+                                DropdownButtonHideUnderline(
+                                  child: Container(
+                                    height: 40,
+                                    width: MediaQuery.of(context).size.width -
+                                        180,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      child: DropdownButton<String>(
+                                        isExpanded: true,
+                                        value: dropdownValue,
+                                        items: <String>[
+                                          'Not Observed',
+                                          'Not Interested',
+                                          'Not Calculated'
+                                        ].map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            if (AddObservationState.dropAnsM
+                                                        .length >
+                                                    val &&
+                                                AddObservationState.dropAnsM[
+                                                            val].length >
+                                                        index &&
+                                                AddObservationState.dropAnsM[
+                                                            val][index]
+                                                        .length >
+                                                    i) {
+                                              AddObservationState.dropAnsM[val]
+                                                  [index][i] = value ?? '';
+                                            }
+                                          });
+                                        },
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                                Container(
-                                  height: AddObservationState
+                              ],
+                            ),
+                            Container(
+                              height: (AddObservationState.options.length >
+                                          val &&
+                                      AddObservationState.options[val].length >
+                                          index &&
+                                      AddObservationState
+                                              .options[val][index].length >
+                                          i)
+                                  ? AddObservationState
                                           .options[val][index][i].length *
-                                      60.0,
-                                  child: ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: AddObservationState
-                                          .options[val][index][i].length,
-                                      itemBuilder:
-                                          (BuildContext context, int j) {
-                                        return CheckboxListTile(
-                                            title: Text(AddObservationState
-                                                .options[val][index][i][j]
-                                                .title),
-                                            value: AddObservationState
-                                                    .selectedOptions[val][index]
-                                                [i][j],
-                                            onChanged: (value) {
-                                              AddObservationState
-                                                      .selectedOptions[val]
-                                                  [index][i][j] = value??false;
-                                              setState(() {});
-                                            });
-                                      }),
-                                )
-                              ])),
-                            );
-                          },
-                        ))),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
+                                      60.0
+                                  : 0.0,
+                              child: ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: (AddObservationState.options.length >
+                                            val &&
+                                        AddObservationState.options[val].length >
+                                            index &&
+                                        AddObservationState.options[val][index]
+                                                .length >
+                                            i)
+                                    ? AddObservationState
+                                        .options[val][index][i].length
+                                    : 0,
+                                itemBuilder: (BuildContext context, int j) {
+                                  var optionItem =
+                                      AddObservationState.options[val][index][i]
+                                          [j];
+
+                                  if (optionItem == null) {
+                                    return SizedBox.shrink();
+                                  }
+
+                                  bool isChecked =
+                                      (AddObservationState.selectedOptions
+                                                  .length >
+                                              val &&
+                                          AddObservationState.selectedOptions[val]
+                                                  .length >
+                                              index &&
+                                          AddObservationState.selectedOptions[val]
+                                                  [index].length >
+                                              i &&
+                                          AddObservationState.selectedOptions[val]
+                                                  [index][i].length >
+                                              j)
+                                          ? AddObservationState
+                                              .selectedOptions[val][index][i][j]
+                                          : false;
+
+                                  return CheckboxListTile(
+                                    title: Text(optionItem.title),
+                                    value: isChecked,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        if (AddObservationState
+                                                    .selectedOptions.length >
+                                                val &&
+                                            AddObservationState.selectedOptions[
+                                                        val].length >
+                                                    index &&
+                                            AddObservationState.selectedOptions[
+                                                        val][index].length >
+                                                    i &&
+                                            AddObservationState.selectedOptions[
+                                                        val][index][i].length >
+                                                    j) {
+                                          AddObservationState.selectedOptions[val]
+                                              [index][i][j] = value ?? false;
+                                        }
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
 }

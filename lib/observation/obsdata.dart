@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class Obsdata with ChangeNotifier {
   String _obsid = 'val';
 
-  Map _data={};
+  Map _data = {};
 
   String get obsid => _obsid;
 
@@ -16,6 +16,8 @@ class Obsdata with ChangeNotifier {
 
   set data(Map val) {
     _data = val;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 }

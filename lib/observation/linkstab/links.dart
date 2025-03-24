@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/main.dart';
+import 'package:mykronicle_mobile/models/getUserReflections.dart';
 import 'package:mykronicle_mobile/models/observationmodel.dart';
 import 'package:mykronicle_mobile/models/progplanmodel.dart';
 import 'package:mykronicle_mobile/models/qiplistmodel.dart';
@@ -39,7 +40,6 @@ class _LinksState extends State<Links> {
   List<bool> _addedQips = [];
   List<bool> _addedPlans = [];
   bool load = false;
-
 
   // Future<void> _fetchReflectionsData() async {
 
@@ -293,117 +293,133 @@ class _LinksState extends State<Links> {
             Container(
               height: 15,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    if (obs.obsid != 'val') {
-                      print(obs.data);
-                      load = true;
-                      choose = 1;
-                      setState(() {});
-                    }
-                  },
-                  child: Container(
-                      height: 38,
-                      decoration: BoxDecoration(
-                          color: Constants.kButton,
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add,
-                            color: Colors.blue[100],
-                          ),
-                          Text(
-                            'Observation ',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      )),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (obs.obsid != 'val') {
-                      load = true;
-                      choose = 2;
-                    }
-                    setState(() {});
-                  },
-                  child: Container(
-                      height: 38,
-                      decoration: BoxDecoration(
-                          color: Constants.kButton,
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add,
-                            color: Colors.blue[100],
-                          ),
-                          Text(
-                            'Reflection ',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      )),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (obs.obsid != 'val') {
-                      print(obs.data);
-                      load = true;
-                      choose = 3;
-                      setState(() {});
-                    }
-                  },
-                  child: Container(
-                      height: 38,
-                      decoration: BoxDecoration(
-                          color: Constants.kButton,
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add,
-                            color: Colors.blue[100],
-                          ),
-                          Text(
-                            'Qip ',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      )),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (obs.obsid != 'val') {
-                      print(obs.data);
-                      load = true;
-                      choose = 4;
-                      setState(() {});
-                    }
-                  },
-                  child: Container(
-                      height: 38,
-                      decoration: BoxDecoration(
-                          color: Constants.kButton,
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add,
-                            color: Colors.blue[100],
-                          ),
-                          Text(
-                            'Program Plan ',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      )),
-                ),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Builder(builder: (context) {
+                Widget widthPadding = SizedBox(
+                  width: 5,
+                );
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        if (obs.obsid != 'val') {
+                          print(obs.data);
+                          load = true;
+                          choose = 1;
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4))),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
+                                color: Colors.blue[100],
+                              ),
+                              Text(
+                                'Observation ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          )),
+                    ),
+                    widthPadding,
+                    GestureDetector(
+                      onTap: () {
+                        if (obs.obsid != 'val') {
+                          load = true;
+                          choose = 2;
+                        }
+                        setState(() {});
+                      },
+                      child: Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4))),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
+                                color: Colors.blue[100],
+                              ),
+                              Text(
+                                'Reflection ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          )),
+                    ),
+                    widthPadding,
+                    GestureDetector(
+                      onTap: () {
+                        if (obs.obsid != 'val') {
+                          print(obs.data);
+                          load = true;
+                          choose = 3;
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4))),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
+                                color: Colors.blue[100],
+                              ),
+                              Text(
+                                'Qip ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          )),
+                    ),
+                    widthPadding,
+                    GestureDetector(
+                      onTap: () {
+                        if (obs.obsid != 'val') {
+                          print(obs.data);
+                          load = true;
+                          choose = 4;
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4))),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
+                                color: Colors.blue[100],
+                              ),
+                              Text(
+                                'Program Plan ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          )),
+                    ),
+                    widthPadding,
+                  ],
+                );
+              }),
             ),
             if (choose == 0 ||
                 (choose == 1 && _allObservations == null) ||
@@ -479,15 +495,22 @@ class _LinksState extends State<Links> {
                                       Row(
                                         children: [
                                           Text('Author:'),
-                                          Text(
-                                            _allObservations[index]
-                                                        .approverName !=
-                                                    null
-                                                ? _allObservations[index]
-                                                    .approverName
-                                                : '',
-                                            style: TextStyle(
-                                                color: Constants.kMain),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .25,
+                                            child: Text(
+                                              _allObservations[index]
+                                                          .approverName !=
+                                                      null
+                                                  ? _allObservations[index]
+                                                      .approverName
+                                                  : '',
+                                              style: TextStyle(
+                                                  color: Constants.kMain),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -497,15 +520,22 @@ class _LinksState extends State<Links> {
                                       Row(
                                         children: [
                                           Text('Approved by:'),
-                                          Text(
-                                            _allObservations[index]
-                                                        .approverName !=
-                                                    null
-                                                ? _allObservations[index]
-                                                    .approverName
-                                                : '',
-                                            style: TextStyle(
-                                                color: Constants.kMain),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .25,
+                                            child: Text(
+                                              _allObservations[index]
+                                                          .approverName !=
+                                                      null
+                                                  ? _allObservations[index]
+                                                      .approverName
+                                                  : '',
+                                              style: TextStyle(
+                                                  color: Constants.kMain),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -534,7 +564,7 @@ class _LinksState extends State<Links> {
                                               fit: BoxFit.fill,
                                             )
                                           : VideoItem(
-                                            height: 150,
+                                              height: 150,
                                               width: MediaQuery.of(context)
                                                   .size
                                                   .width,
@@ -853,304 +883,310 @@ class _LinksState extends State<Links> {
                     }),
               ),
             if (obs.obsid != 'val')
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      List<int> data = [];
-                      List<int> dataRef = [];
-                      List<int> dataQip = [];
-                      List<int> dataPlan = [];
-
-                      var _toSend =
-                          Constants.BASE_URL + "observation/createLinks";
-                      if (_allObservations != null) {
-                        for (int i = 0; i < _allObservations.length; i++) {
-                          if (_added[i]) {
-                            data.add(int.parse(_allObservations[i].id));
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () async {
+                        List<int> data = [];
+                        List<int> dataRef = [];
+                        List<int> dataQip = [];
+                        List<int> dataPlan = [];
+                
+                        var _toSend =
+                            Constants.BASE_URL + "observation/createLinks";
+                        if (_allObservations != null) {
+                          for (int i = 0; i < _allObservations.length; i++) {
+                            if (_added[i]) {
+                              data.add(int.parse(_allObservations[i].id));
+                            }
                           }
                         }
-                      }
-
-                      if (_allReflections != null) {
-                        for (int i = 0; i < _allReflections.length; i++) {
-                          if (_addedRef[i]) {
-                            dataRef.add(int.parse(_allReflections[i].id));
+                
+                        if (_allReflections != null) {
+                          for (int i = 0; i < _allReflections.length; i++) {
+                            if (_addedRef[i]) {
+                              dataRef.add(int.parse(_allReflections[i].id));
+                            }
                           }
                         }
-                      }
-
-                      if (_allQips != null) {
-                        for (int i = 0; i < _allQips.length; i++) {
-                          if (_addedQips[i]) {
-                            dataQip.add(int.parse(_allQips[i].id));
+                
+                        if (_allQips != null) {
+                          for (int i = 0; i < _allQips.length; i++) {
+                            if (_addedQips[i]) {
+                              dataQip.add(int.parse(_allQips[i].id));
+                            }
                           }
                         }
-                      }
-
-                      if (_allPlans != null) {
-                        for (int i = 0; i < _allPlans.length; i++) {
-                          if (_addedPlans[i]) {
-                            dataPlan.add(int.parse(_allPlans[i].id));
+                
+                        if (_allPlans != null) {
+                          for (int i = 0; i < _allPlans.length; i++) {
+                            if (_addedPlans[i]) {
+                              dataPlan.add(int.parse(_allPlans[i].id));
+                            }
                           }
                         }
-                      }
-
-                      var objToSend = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "OBSERVATION",
-                        "obsLinks": data
-                      };
-                      var objToSend2 = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "REFLECTION",
-                        "obsLinks": dataRef
-                      };
-                      var objToSend3 = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "QIP",
-                        "obsLinks": dataQip,
-                        "centerid": AddObservationState.centerid,
-                      };
-                      var objToSend4 = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "PROGRAMPLAN",
-                        "obsLinks": dataPlan,
-                        "centerid": AddObservationState.centerid,
-                      };
-
-                      print(jsonEncode(objToSend));
-                      print(jsonEncode(objToSend2));
-                      print(jsonEncode(objToSend3));
-                      print(jsonEncode(objToSend4));
-
-                      final response = await http
-                          .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
-                        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                      });
-
-                      print(response.body);
-                      final resp = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend2),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print(resp.body);
-                      final resp2 = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend3),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print(resp2.body);
-                      final resp3 = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend4),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print(resp3.body);
-
-                      if (response.statusCode == 200 &&
-                          resp.statusCode == 200 &&
-                          resp2.statusCode == 200 &&
-                          resp3.statusCode == 200) {
-                        MyApp.ShowToast("updated", context);
-                        print('created');
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
-                      } else if (response.statusCode == 401) {
-                        MyApp.Show401Dialog(context);
-                      }
-                    },
-                    child: Container(
-                        width: 130,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          //    color: Constants.kButton,
-                          border: Border.all(
-                            color: Colors.grey,
+                
+                        var objToSend = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "OBSERVATION",
+                          "obsLinks": data
+                        };
+                        var objToSend2 = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "REFLECTION",
+                          "obsLinks": dataRef
+                        };
+                        var objToSend3 = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "QIP",
+                          "obsLinks": dataQip,
+                          "centerid": AddObservationState.centerid,
+                        };
+                        var objToSend4 = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "PROGRAMPLAN",
+                          "obsLinks": dataPlan,
+                          "centerid": AddObservationState.centerid,
+                        };
+                
+                        print(jsonEncode(objToSend));
+                        print(jsonEncode(objToSend2));
+                        print(jsonEncode(objToSend3));
+                        print(jsonEncode(objToSend4));
+                
+                        final response = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                
+                        print(response.body);
+                        final resp = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend2),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print(resp.body);
+                        final resp2 = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend3),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print(resp2.body);
+                        final resp3 = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend4),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print(resp3.body);
+                
+                        if (response.statusCode == 200 &&
+                            resp.statusCode == 200 &&
+                            resp2.statusCode == 200 &&
+                            resp3.statusCode == 200) {
+                          MyApp.ShowToast("updated", context);
+                          print('created');
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                        } else if (response.statusCode == 401) {
+                          MyApp.Show401Dialog(context);
+                        }
+                      },
+                      child: Container(
+                          width: 130,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            //    color: Constants.kButton,
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                'SAVE AS DRAFT',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      List<int> data = [];
-                      List<int> dataRef = [];
-                      List<int> dataQip = [];
-                      List<int> dataPlan = [];
-
-                      var _toSend =
-                          Constants.BASE_URL + "observation/createLinks";
-                      if (_allObservations != null) {
-                        for (int i = 0; i < _allObservations.length; i++) {
-                          if (_added[i]) {
-                            data.add(int.parse(_allObservations[i].id));
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  'SAVE AS DRAFT',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        List<int> data = [];
+                        List<int> dataRef = [];
+                        List<int> dataQip = [];
+                        List<int> dataPlan = [];
+                
+                        var _toSend =
+                            Constants.BASE_URL + "observation/createLinks";
+                        if (_allObservations != null) {
+                          for (int i = 0; i < _allObservations.length; i++) {
+                            if (_added[i]) {
+                              data.add(int.parse(_allObservations[i].id));
+                            }
                           }
                         }
-                      }
-
-                      if (_allReflections != null) {
-                        for (int i = 0; i < _allReflections.length; i++) {
-                          if (_addedRef[i]) {
-                            dataRef.add(int.parse(_allReflections[i].id));
+                
+                        if (_allReflections != null) {
+                          for (int i = 0; i < _allReflections.length; i++) {
+                            if (_addedRef[i]) {
+                              dataRef.add(int.parse(_allReflections[i].id));
+                            }
                           }
                         }
-                      }
-
-                      if (_allQips != null) {
-                        for (int i = 0; i < _allQips.length; i++) {
-                          if (_addedQips[i]) {
-                            dataQip.add(int.parse(_allQips[i].id));
+                
+                        if (_allQips != null) {
+                          for (int i = 0; i < _allQips.length; i++) {
+                            if (_addedQips[i]) {
+                              dataQip.add(int.parse(_allQips[i].id));
+                            }
                           }
                         }
-                      }
-
-                      if (_allPlans != null) {
-                        for (int i = 0; i < _allPlans.length; i++) {
-                          if (_addedPlans[i]) {
-                            dataPlan.add(int.parse(_allPlans[i].id));
+                
+                        if (_allPlans != null) {
+                          for (int i = 0; i < _allPlans.length; i++) {
+                            if (_addedPlans[i]) {
+                              dataPlan.add(int.parse(_allPlans[i].id));
+                            }
                           }
                         }
-                      }
-
-                      var objToSend = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "OBSERVATION",
-                        "obsLinks": data
-                      };
-                      var objToSend2 = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "REFLECTION",
-                        "obsLinks": dataRef
-                      };
-                      var objToSend3 = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "QIP",
-                        "obsLinks": dataQip,
-                        "centerid": AddObservationState.centerid,
-                      };
-                      var objToSend4 = {
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "observationId": obs.obsid,
-                        "linkType": "PROGRAMPLAN",
-                        "obsLinks": dataPlan,
-                        "centerid": AddObservationState.centerid,
-                      };
-
-                      var _toSend2 =
-                          Constants.BASE_URL + "Observation/changeObsStatus/";
-
-                      var objToSend5 = {
-                        "obsid": obs.obsid,
-                        "status": "1",
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                      };
-
-                      print(jsonEncode(objToSend));
-                      print(jsonEncode(objToSend2));
-                      print(jsonEncode(objToSend3));
-                      print(jsonEncode(objToSend4));
-
-                      final response = await http
-                          .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
-                        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                      });
-
-                      print(response.body);
-                      final resp = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend2),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print(resp.body);
-                      final resp2 = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend3),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print(resp2.body);
-                      final resp3 = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend4),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print('3');    
-                      print(resp3.body);
-
-                      final resp4 = await http.post(Uri.parse(_toSend),
-                          body: jsonEncode(objToSend5),
-                          headers: {
-                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                          });
-                      print('4');
-                      print(_toSend2);
-                      print(objToSend5);    
-                      print(resp4.body);
-
-                      if (response.statusCode == 200 &&
-                          resp.statusCode == 200 &&
-                          resp2.statusCode == 200 &&
-                          resp3.statusCode == 200 &&
-                          resp4.statusCode == 200) {
-                        MyApp.ShowToast("updated", context);
-                        print('created');
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
-                      } else if (response.statusCode == 401) {
-                        MyApp.Show401Dialog(context);
-                      }
-                    },
-                    child: Container(
-                        width: 160,
-                        height: 38,
-                        decoration: BoxDecoration(
-                            color: Constants.kButton,
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                'SAVE AS PUBLISHED',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ),
-                ],
-              )
+                
+                        var objToSend = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "OBSERVATION",
+                          "obsLinks": data
+                        };
+                        var objToSend2 = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "REFLECTION",
+                          "obsLinks": dataRef
+                        };
+                        var objToSend3 = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "QIP",
+                          "obsLinks": dataQip,
+                          "centerid": AddObservationState.centerid,
+                        };
+                        var objToSend4 = {
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                          "observationId": obs.obsid,
+                          "linkType": "PROGRAMPLAN",
+                          "obsLinks": dataPlan,
+                          "centerid": AddObservationState.centerid,
+                        };
+                
+                        var _toSend2 =
+                            Constants.BASE_URL + "Observation/changeObsStatus/";
+                
+                        var objToSend5 = {
+                          "obsid": obs.obsid,
+                          "status": "1",
+                          "userid": MyApp.LOGIN_ID_VALUE,
+                        };
+                
+                        print(jsonEncode(objToSend));
+                        print(jsonEncode(objToSend2));
+                        print(jsonEncode(objToSend3));
+                        print(jsonEncode(objToSend4));
+                
+                        final response = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                
+                        print(response.body);
+                        final resp = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend2),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print(resp.body);
+                        final resp2 = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend3),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print(resp2.body);
+                        final resp3 = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend4),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print('3');
+                        print(resp3.body);
+                
+                        final resp4 = await http.post(Uri.parse(_toSend),
+                            body: jsonEncode(objToSend5),
+                            headers: {
+                              'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                            });
+                        print('4');
+                        print(_toSend2);
+                        print(objToSend5);
+                        print(resp4.body);
+                
+                        if (response.statusCode == 200 &&
+                            resp.statusCode == 200 &&
+                            resp2.statusCode == 200 &&
+                            resp3.statusCode == 200 &&
+                            resp4.statusCode == 200) {
+                          MyApp.ShowToast("updated", context);
+                          print('created');
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                        } else if (response.statusCode == 401) {
+                          MyApp.Show401Dialog(context);
+                        }
+                      },
+                      child: Container(
+                          width: 160,
+                          height: 38,
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius: BorderRadius.all(Radius.circular(8))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  'SAVE AS PUBLISHED',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 60,)
           ],
         ),
       ),

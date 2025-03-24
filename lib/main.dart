@@ -67,6 +67,7 @@ class MyApp extends StatelessWidget {
   static String USER_TYPE_VALUE = '';
 
   static ShowToast(String msg, BuildContext context) {
+     ToastContext().init(context);
     Toast.show(msg, duration: Toast.lengthLong, gravity: Toast.bottom);
   }
 
