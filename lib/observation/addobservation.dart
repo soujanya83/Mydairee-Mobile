@@ -965,6 +965,8 @@ class AddObservationState extends State<AddObservation>
                                           children: <Widget>[
                                             IconButton(
                                               onPressed: () {
+                                                print(widget
+                                                    .selecChildrens.length);
                                                 key.currentState
                                                     ?.openEndDrawer();
                                               },
@@ -974,7 +976,7 @@ class AddObservationState extends State<AddObservation>
                                               ),
                                             ),
                                             Text(
-                                              'Select Children',
+                                              'Select Childredn',
                                               style: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -2170,8 +2172,7 @@ class AddObservationState extends State<AddObservation>
                                                         onTap: () {
                                                           showDeleteDialog(
                                                               context, () {
-                                                            mediaFiles.removeAt(
-                                                                index);
+                                                            mediaFiles.removeAt(index);
                                                             _editMediaFileChildren
                                                                 .removeAt(
                                                                     index);
@@ -2344,8 +2345,9 @@ class AddObservationState extends State<AddObservation>
                                               print(
                                                   "${media[0].id}-${media[0].mediaType}-${media[0].observationId}-${media[0].mediaUrl}");
                                             });
-                                            
-                                            if (media[index].mediaType == 'Image'){
+
+                                            if (media[index].mediaType ==
+                                                'Image') {
                                               return Stack(
                                                 children: [
                                                   Container(
@@ -2655,10 +2657,9 @@ class AddObservationState extends State<AddObservation>
                                                 ],
                                               );
                                             } else {
-                                              Timer(Duration(seconds: 10), (){
-                                                print(Constants
-                                                              .ImageBaseUrl +
-                                                          media[index].mediaUrl);
+                                              Timer(Duration(seconds: 10), () {
+                                                print(Constants.ImageBaseUrl +
+                                                    media[index].mediaUrl);
                                               });
                                               return Stack(
                                                 children: [
@@ -2672,9 +2673,10 @@ class AddObservationState extends State<AddObservation>
                                                   VideoItem(
                                                       width: 100,
                                                       height: 100,
-                                                      url:  Constants
+                                                      url: Constants
                                                               .ImageBaseUrl +
-                                                          media[index].mediaUrl),
+                                                          media[index]
+                                                              .mediaUrl),
                                                   Positioned(
                                                       right: 0,
                                                       top: 0,
@@ -2958,7 +2960,6 @@ class AddObservationState extends State<AddObservation>
                                                           });
                                                         },
                                                       ))
-                                               
                                                 ],
                                               );
                                             }
@@ -3641,11 +3642,12 @@ class AddObservationState extends State<AddObservation>
                                                 if (child_voice.contains(
                                                     mentionMont[i]
                                                         ['display'])) {
-                                                  child_voice = ref.replaceAll(
-                                                      "#" +
-                                                          mentionMont[i]
-                                                              ['display'],
-                                                      '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
+                                                  child_voice =
+                                                      child_voice.replaceAll(
+                                                          "#" +
+                                                              mentionMont[i]
+                                                                  ['display'],
+                                                          '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
                                                 }
                                               }
                                               print(child_voice);
@@ -3654,7 +3656,7 @@ class AddObservationState extends State<AddObservation>
                                             String future_plan = '';
                                             if (MyApp.USER_TYPE_VALUE !=
                                                 'Parent') {
-                                              child_voice = mentionFuturePlan
+                                              future_plan = mentionFuturePlan
                                                   .currentState!
                                                   .controller!
                                                   .markupText;
@@ -3677,11 +3679,12 @@ class AddObservationState extends State<AddObservation>
                                                 if (future_plan.contains(
                                                     mentionMont[i]
                                                         ['display'])) {
-                                                  future_plan = ref.replaceAll(
-                                                      "#" +
-                                                          mentionMont[i]
-                                                              ['display'],
-                                                      '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
+                                                  future_plan =
+                                                      future_plan.replaceAll(
+                                                          "#" +
+                                                              mentionMont[i]
+                                                                  ['display'],
+                                                          '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
                                                 }
                                               }
                                               print(future_plan);
@@ -3712,6 +3715,14 @@ class AddObservationState extends State<AddObservation>
                                                   'Parent') {
                                                 mp['reflection'] = ref;
                                               }
+                                              if (MyApp.USER_TYPE_VALUE !=
+                                                  'Parent') {
+                                                mp['child_voice'] = child_voice;
+                                              }
+                                              if (MyApp.USER_TYPE_VALUE !=
+                                                  'Parent') {
+                                                mp['future_plan'] = future_plan;
+                                              }
 
                                               List priorities = [];
                                               List origin = [];
@@ -3736,8 +3747,7 @@ class AddObservationState extends State<AddObservation>
                                                   priorities
                                                       .add(mediaFiles[k]['id']);
                                                   origin.add("UPLOADED");
-                                                  mediaApi
-                                                      .add(mediaFiles[k]['id']);
+                                                  mediaApi.add(mediaFiles[k]['id']);
                                                 }
                                               }
 
@@ -3825,8 +3835,8 @@ class AddObservationState extends State<AddObservation>
 
                                             for (int i = 0;
                                                 i < mediaFiles.length;
-                                                i++) {
-                                              String p =
+                                                i++){
+                                              String p = 
                                                   'upl-media-tags-child' +
                                                       mediaFiles[i]['id'];
                                               List ch = [];
@@ -3932,9 +3942,12 @@ class AddObservationState extends State<AddObservation>
                                             Dio dio = new Dio();
                                             print('fields');
                                             print(formData.fields);
-                                            // return;
-                                            Response? response = await dio
-                                                .post(
+                                            print(Constants.BASE_URL +
+                                                "observation/createObservation");
+                                            print(await MyApp
+                                                .getDeviceIdentity());
+                                            print(MyApp.AUTH_TOKEN_VALUE);
+                                            Response? response = await dio.post(
                                                     widget.type == 'edit'
                                                         ? Constants.BASE_URL +
                                                             "Observation/editObservation"

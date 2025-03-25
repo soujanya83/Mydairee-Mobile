@@ -22,13 +22,17 @@ class ViewObservation extends StatefulWidget {
   final String montCount;
   final String eylfCount;
   final String devCount;
-  ViewObservation({ required this.id,required this.montCount,required this.eylfCount,required this.devCount});
+  ViewObservation(
+      {required this.id,
+      required this.montCount,
+      required this.eylfCount,
+      required this.devCount});
   @override
   _ViewObservationState createState() => _ViewObservationState();
 }
 
 class _ViewObservationState extends State<ViewObservation> {
-  List<ChildSubModel> _allChildrens=[];
+  List<ChildSubModel> _allChildrens = [];
   TextEditingController? comment;
   ObservationModel? _observation;
   bool obsFetched = false;
@@ -40,15 +44,15 @@ class _ViewObservationState extends State<ViewObservation> {
   List? media;
   final DateFormat formatter = DateFormat('dd-MM-yyyy – kk:mm');
 
-  List<EylfOutcomeModel> eylfData=[];
-  List<MontessoriModel> montessoriData=[];
-  List<DevMilestoneModel> devData=[];
+  List<EylfOutcomeModel> eylfData = [];
+  List<MontessoriModel> montessoriData = [];
+  List<DevMilestoneModel> devData = [];
 
   bool childrensFetched = false;
   bool permission = true;
 
-  List<Map<String, dynamic>> mentionUser=[];
-  List<Map<String, dynamic>> mentionMont=[];
+  List<Map<String, dynamic>> mentionUser = [];
+  List<Map<String, dynamic>> mentionMont = [];
   bool mChildFetched = false;
   bool mMontFetched = false;
 
@@ -72,13 +76,13 @@ class _ViewObservationState extends State<ViewObservation> {
     } else {
       MyApp.Show401Dialog(context);
     }
-    
+
     ObservationsAPIHandler handler1 = ObservationsAPIHandler({
       "userid": MyApp.LOGIN_ID_VALUE,
       "observationId": widget.id,
     });
     var data1 = await handler1.getObservationDataDetails();
-   
+
     if (!data1.containsKey('error')) {
       if ((data1['permission'] != null &&
               data1['permission']['updateObservation'] == '1') ||
@@ -130,51 +134,51 @@ class _ViewObservationState extends State<ViewObservation> {
         for (int a = 0; a < displaydata1['devMilestone'].length; a++) {
           DevMilestoneModel devModel =
               DevMilestoneModel.fromJson(displaydata1['devMilestone'][a]);
-           if(displaydata1['devMilestone'][a]['Main']!=null){
-
-          List<MainModel> mainModelList = [];
-          for (int b = 0;
-              b < displaydata1['devMilestone'][a]['Main'].length;
-              b++) {
-            MainModel mainModel =
-                MainModel.fromJson(displaydata1['devMilestone'][a]['Main'][b]);
-            List<SubjectModel> subjects = [];
-            if (displaydata1['devMilestone'][a]['Main'][b]['Subjects'] !=
-                null) {
-              for (int c = 0;
-                  c <
-                      displaydata1['devMilestone'][a]['Main'][b]['Subjects']
-                          .length;
-                  c++) {
-                //
-                subjects.add(SubjectModel.fromJson(
-                    displaydata1['devMilestone'][a]['Main'][b]['Subjects'][c]));
-                List<MilestoneExtrasModel> milestoneExtrasModel = [];
-                if (displaydata1['devMilestone'][a]['Main'][b]['Subjects'][c]
-                        ['extras'] !=
-                    null) {
-                  for (int d = 0;
-                      d <
-                          displaydata1['devMilestone'][a]['Main'][b]['Subjects']
-                                  [c]['extras']
-                              .length;
-                      d++) {
-                    milestoneExtrasModel.add(MilestoneExtrasModel.fromJson(
+          if (displaydata1['devMilestone'][a]['Main'] != null) {
+            List<MainModel> mainModelList = [];
+            for (int b = 0;
+                b < displaydata1['devMilestone'][a]['Main'].length;
+                b++) {
+              MainModel mainModel = MainModel.fromJson(
+                  displaydata1['devMilestone'][a]['Main'][b]);
+              List<SubjectModel> subjects = [];
+              if (displaydata1['devMilestone'][a]['Main'][b]['Subjects'] !=
+                  null) {
+                for (int c = 0;
+                    c <
                         displaydata1['devMilestone'][a]['Main'][b]['Subjects']
-                            [c]['extras'][d]));
+                            .length;
+                    c++) {
+                  //
+                  subjects.add(SubjectModel.fromJson(
+                      displaydata1['devMilestone'][a]['Main'][b]['Subjects']
+                          [c]));
+                  List<MilestoneExtrasModel> milestoneExtrasModel = [];
+                  if (displaydata1['devMilestone'][a]['Main'][b]['Subjects'][c]
+                          ['extras'] !=
+                      null) {
+                    for (int d = 0;
+                        d <
+                            displaydata1['devMilestone'][a]['Main'][b]
+                                    ['Subjects'][c]['extras']
+                                .length;
+                        d++) {
+                      milestoneExtrasModel.add(MilestoneExtrasModel.fromJson(
+                          displaydata1['devMilestone'][a]['Main'][b]['Subjects']
+                              [c]['extras'][d]));
+                    }
                   }
-                }
 
-                subjects[c].extras = milestoneExtrasModel;
-                //
+                  subjects[c].extras = milestoneExtrasModel;
+                  //
+                }
               }
+              mainModel.subjects = subjects;
+              mainModelList.add(mainModel);
             }
-            mainModel.subjects = subjects;
-            mainModelList.add(mainModel);
+            devModel.main = mainModelList;
+            devData.add(devModel);
           }
-          devModel.main = mainModelList;
-          devData.add(devModel);
-           }
         }
       }
       print(devData);
@@ -210,7 +214,7 @@ class _ViewObservationState extends State<ViewObservation> {
       }
 
       var child = data1['childrens'];
-      print('heyuuu'+data1['childrens'].toString());
+      print('heyuuu' + data1['childrens'].toString());
       _allChildrens = [];
       try {
         assert(child is List);
@@ -302,7 +306,7 @@ class _ViewObservationState extends State<ViewObservation> {
                             width: size.width * 0.8,
                             child: _observation?.title != null
                                 ? tagRemove(
-                                    _observation?.title??"",
+                                    _observation?.title ?? "",
                                     'heading',
                                     displaydata1['observation']['centerid'],
                                     context)
@@ -316,27 +320,27 @@ class _ViewObservationState extends State<ViewObservation> {
                         //     displaydata1['observation']['status'] !=
                         //         'Published' &&
                         //     MyApp.USER_TYPE_VALUE != 'Parent')
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChangeNotifierProvider(
-                                              create: (context) => Obsdata(),
-                                              child: AddObservation(
-                                                type: "edit",
-                                                data: _observation,
-                                                selecChildrens: _allChildrens,
-                                                media: media??[],
-                                                totaldata: displaydata,
-                                                centerid:
-                                                    displaydata['observation']
-                                                        ['centerid'],
-                                              ))));
-                            },
-                          )
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChangeNotifierProvider(
+                                            create: (context) => Obsdata(),
+                                            child: AddObservation(
+                                              type: "edit",
+                                              data: _observation,
+                                              selecChildrens: _allChildrens,
+                                              media: media ?? [],
+                                              totaldata: displaydata,
+                                              centerid:
+                                                  displaydata['observation']
+                                                      ['centerid'],
+                                            ))));
+                          },
+                        )
                       ]),
                       SizedBox(
                         height: 10,
@@ -373,7 +377,7 @@ class _ViewObservationState extends State<ViewObservation> {
                                 Text('Author:'),
                                 Text(
                                   _observation?.userName != null
-                                      ? _observation?.userName??""
+                                      ? _observation?.userName ?? ""
                                       : '',
                                   style: TextStyle(color: Constants.kMain),
                                 )
@@ -383,27 +387,21 @@ class _ViewObservationState extends State<ViewObservation> {
                               height: 10,
                             ),
                             Text(''),
-                             Row(
-                                                            children: [
-                                                              Text(
-                                                                'Created on:',
-                                                               
-                                                              ),
-                                                              Text(
-                                                              _observation?.dateAdded
-                                                                           !=
-                                                                        null
-                                                                    ? formatter.format(DateTime.parse(_observation
-                                                                            ?.dateAdded??''))
-                                                                    : '',
-                                                                style: TextStyle(
-                                                                    color: Constants
-                                                                        .kMain,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                            ],
-                                                          ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Created on:',
+                                ),
+                                Text(
+                                  _observation?.dateAdded != null
+                                      ? formatter.format(DateTime.parse(
+                                          _observation?.dateAdded ?? ''))
+                                      : '',
+                                  style: TextStyle(
+                                      color: Constants.kMain, fontSize: 12),
+                                ),
+                              ],
+                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -418,44 +416,37 @@ class _ViewObservationState extends State<ViewObservation> {
                                 )
                               ],
                             ),
-                           SizedBox(height: 8,),
-                           Row(
-                                                        children: [
-                                                          widget.montCount!=null
-                                                              ? Text(
-                                                                  'Montessori: ' +
-                                                                     widget.montCount.toString()+
-                                                                      '  ,',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Constants
-                                                                        .kCount,
-                                                                  ))
-                                                              : SizedBox(),
-                                                          widget.eylfCount!=
-                                                                  null
-                                                              ? Text(
-                                                                  'EYLF: ' +
-                                                                     widget.eylfCount.toString()+"  ,",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Constants
-                                                                        .kCount,
-                                                                  ))
-                                                              : SizedBox(),
-                                                           widget.devCount!=
-                                                                  null
-                                                              ? Text(
-                                                                  'Milestone: ' +
-                                                                    widget.devCount.toString(),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Constants
-                                                                        .kCount,
-                                                                  ))
-                                                              : SizedBox(),    
-                                                              ]),
-
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(children: [
+                              widget.montCount != null
+                                  ? Text(
+                                      'Montessori: ' +
+                                          widget.montCount.toString() +
+                                          '  ,',
+                                      style: TextStyle(
+                                        color: Constants.kCount,
+                                      ))
+                                  : SizedBox(),
+                              widget.eylfCount != null
+                                  ? Text(
+                                      'EYLF: ' +
+                                          widget.eylfCount.toString() +
+                                          "  ,",
+                                      style: TextStyle(
+                                        color: Constants.kCount,
+                                      ))
+                                  : SizedBox(),
+                              widget.devCount != null
+                                  ? Text(
+                                      'Milestone: ' +
+                                          widget.devCount.toString(),
+                                      style: TextStyle(
+                                        color: Constants.kCount,
+                                      ))
+                                  : SizedBox(),
+                            ]),
                             SizedBox(
                               height: 10,
                             ),
@@ -519,7 +510,7 @@ class _ViewObservationState extends State<ViewObservation> {
                             ),
                             (_observation?.notes != null)
                                 ? tagRemove(
-                                    _observation?.notes??'',
+                                    _observation?.notes ?? '',
                                     'title',
                                     displaydata1['observation']['centerid'],
                                     context)
@@ -534,9 +525,9 @@ class _ViewObservationState extends State<ViewObservation> {
                             SizedBox(
                               height: 10,
                             ),
-                           ( _observation?.reflection != null)
+                            (_observation?.reflection != null)
                                 ? tagRemove(
-                                    _observation?.reflection??'',
+                                    _observation?.reflection ?? '',
                                     'title',
                                     displaydata1['observation']['centerid'],
                                     context)
@@ -624,7 +615,7 @@ class _ViewObservationState extends State<ViewObservation> {
                                                       return Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 left: 12.0),
                                                         child: Column(
                                                           children: [
@@ -781,7 +772,7 @@ class _ViewObservationState extends State<ViewObservation> {
                                                       return Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 left: 12.0),
                                                         child: Column(
                                                           children: [
@@ -934,7 +925,7 @@ class _ViewObservationState extends State<ViewObservation> {
                                                       return Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 left: 12.0),
                                                         child: Column(
                                                           children: [
@@ -1045,8 +1036,21 @@ class _ViewObservationState extends State<ViewObservation> {
                               itemBuilder: (BuildContext context, int index) {
                                 return Card(
                                   child: ListTile(
-                                    title: Text(displaydata1['Comments'][index]['userName'].toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                   trailing: Text(DateFormat.jm().format(DateTime.parse(displaydata1['Comments'][index]['date_added'].toString())),style: TextStyle(fontWeight: FontWeight.bold),),
+                                    title: Text(
+                                      displaydata1['Comments'][index]
+                                              ['userName']
+                                          .toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    trailing: Text(
+                                      DateFormat.jm().format(DateTime.parse(
+                                          displaydata1['Comments'][index]
+                                                  ['date_added']
+                                              .toString())),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                     subtitle: tagRemove(
                                         displaydata1['Comments'][index]
                                             ['comments'],
@@ -1137,74 +1141,79 @@ class _ViewObservationState extends State<ViewObservation> {
                       SizedBox(
                         height: 10,
                       ),
-                    if (mMontFetched && mChildFetched)
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () async {
-                                String comment =
-                                    cmntX.currentState?.controller?.markupText??'';
+                      if (mMontFetched && mChildFetched)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () async {
+                                  String comment = cmntX.currentState
+                                          ?.controller?.markupText ??
+                                      '';
 
-                                if (comment != '') {
-                                  for (int i = 0; i < mentionUser.length; i++) {
-                                    if (comment
-                                        .contains(mentionUser[i]['name'])) {
-                                      comment = comment.replaceAll(
-                                          "@" + mentionUser[i]['name'],
-                                          '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
+                                  if (comment != '') {
+                                    for (int i = 0;
+                                        i < mentionUser.length;
+                                        i++) {
+                                      if (comment
+                                          .contains(mentionUser[i]['name'])) {
+                                        comment = comment.replaceAll(
+                                            "@" + mentionUser[i]['name'],
+                                            '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
+                                      }
                                     }
-                                  }
-                                  for (int i = 0; i < mentionMont.length; i++) {
-                                    if (comment
-                                        .contains(mentionMont[i]['display'])) {
-                                      comment = comment.replaceAll(
-                                          "#" + mentionMont[i]['display'],
-                                          '<a href="tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
+                                    for (int i = 0;
+                                        i < mentionMont.length;
+                                        i++) {
+                                      if (comment.contains(
+                                          mentionMont[i]['display'])) {
+                                        comment = comment.replaceAll(
+                                            "#" + mentionMont[i]['display'],
+                                            '<a href="tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
+                                      }
                                     }
-                                  }
-                                  print(comment);
+                                    print(comment);
 
-                                  ObservationsAPIHandler handler =
-                                      ObservationsAPIHandler({
-                                    "comment": comment,
-                                    "userid": MyApp.LOGIN_ID_VALUE,
-                                    "id": widget.id
-                                  });
+                                    ObservationsAPIHandler handler =
+                                        ObservationsAPIHandler({
+                                      "comment": comment,
+                                      "userid": MyApp.LOGIN_ID_VALUE,
+                                      "id": widget.id
+                                    });
 
-                                  var data = await handler.createComment();
-                                  if (!data.containsKey('error')) {
-                                    cmntX.currentState?.controller?.clear();
+                                    var data = await handler.createComment();
+                                    if (!data.containsKey('error')) {
+                                      cmntX.currentState?.controller?.clear();
 
-                                    _fetchData();
+                                      _fetchData();
+                                    } else {
+                                      MyApp.Show401Dialog(context);
+                                    }
                                   } else {
-                                    MyApp.Show401Dialog(context);
+                                    MyApp.ShowToast('Enter comment', context);
                                   }
-                                } else {
-                                  MyApp.ShowToast('Enter comment', context);
-                                }
-                              },
-                              child: Container(
-                                  width: 75,
-                                  height: 38,
-                                  decoration: BoxDecoration(
-                                      color: Constants.kButton,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text(
-                                          'SUBMIT',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ),
-                            ),
-                          ]),
+                                },
+                                child: Container(
+                                    width: 75,
+                                    height: 38,
+                                    decoration: BoxDecoration(
+                                        color: Constants.kButton,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            'SUBMIT',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              ),
+                            ]),
                     ])))));
   }
 }

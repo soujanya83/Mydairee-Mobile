@@ -26,14 +26,14 @@ class RoomsList extends StatefulWidget {
 class _RoomsListState extends State<RoomsList> {
   String _chosenValue = 'Select';
   String searchString = '';
-  List<RoomsModel> _rooms=[];
-  List<UserModel> _users=[];
+  List<RoomsModel> _rooms = [];
+  List<UserModel> _users = [];
   bool roomsFetched = false;
   bool usersFetched = false;
   int currentIndex = 0;
   List<bool> checkValues = [];
   List statList = [];
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   var d;
   bool permissionAdd = false;
@@ -51,7 +51,7 @@ class _RoomsListState extends State<RoomsList> {
     RoomAPIHandler handler = RoomAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var data = await handler.getList();
-    if ((data !=null) && !data.containsKey('error')) {
+    if ((data != null) && !data.containsKey('error')) {
       checkValues.clear();
       print(data['permissions']);
       if (data['permissions'] != null ||
@@ -97,7 +97,7 @@ class _RoomsListState extends State<RoomsList> {
             permission = true;
             roomsFetched = true;
             if (this.mounted) setState(() {});
-          } catch (e,s) {
+          } catch (e, s) {
             print(e);
             print(s);
           }
@@ -110,7 +110,7 @@ class _RoomsListState extends State<RoomsList> {
             }
             usersFetched = true;
             if (this.mounted) setState(() {});
-          } catch (e,s) {
+          } catch (e, s) {
             print(e);
             print(s);
           }
@@ -139,6 +139,7 @@ class _RoomsListState extends State<RoomsList> {
     if (!dt.containsKey('error')) {
       print(dt);
       var res = dt['Centers'];
+
       ///
       centers = [];
       try {
@@ -148,7 +149,7 @@ class _RoomsListState extends State<RoomsList> {
         }
         centersFetched = true;
         if (this.mounted) setState(() {});
-      } catch (e,s) {
+      } catch (e, s) {
         print(e);
         print(s);
       }
@@ -193,7 +194,8 @@ class _RoomsListState extends State<RoomsList> {
                                       "rooms": statList,
                                     };
                                     print(jsonEncode(objToSend));
-                                    final response = await http.post(Uri.parse(_toSend),
+                                    final response = await http.post(
+                                        Uri.parse(_toSend),
                                         body: jsonEncode(objToSend),
                                         headers: {
                                           'X-DEVICE-ID':
@@ -367,7 +369,7 @@ class _RoomsListState extends State<RoomsList> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                 onChanged: (String? value)  async {
+                                onChanged: (String? value) async {
                                   setState(() {
                                     _chosenValue = value!;
                                   });
@@ -384,7 +386,8 @@ class _RoomsListState extends State<RoomsList> {
                                     };
 
                                     print(jsonEncode(objToSend));
-                                    final response = await http.post(Uri.parse(_toSend),
+                                    final response = await http.post(
+                                        Uri.parse(_toSend),
                                         body: jsonEncode(objToSend),
                                         headers: {
                                           'X-DEVICE-ID':
@@ -464,6 +467,14 @@ class _RoomsListState extends State<RoomsList> {
   }
 
   Widget roomCard(RoomsModel r, int index) {
+    Color _safeHexColor(String? color) {
+      try {
+        return HexColor(color ?? "#FFFFFF");
+      } catch (e) {
+        return HexColor("#FFFFFF"); // Default to white on error
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -510,7 +521,7 @@ class _RoomsListState extends State<RoomsList> {
                     Checkbox(
                       value: checkValues[index],
                       onChanged: (val) {
-                        if(val==null)return;
+                        if (val == null) return;
                         checkValues[index] = val;
                         if (val == true) {
                           statList.add(r.room.id);
@@ -554,9 +565,13 @@ class _RoomsListState extends State<RoomsList> {
             ),
           ),
           decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  stops: [0.02, 0.02],
-                  colors: [HexColor(r.room.color), Colors.white]),
+              gradient: new LinearGradient(stops: [
+                0.02,
+                0.02
+              ], colors: [
+                 _safeHexColor(r.room.color),
+                Colors.white
+              ]),
               borderRadius: new BorderRadius.all(const Radius.circular(6.0)))),
     );
   }
