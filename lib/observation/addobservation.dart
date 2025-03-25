@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -268,6 +269,14 @@ class AddObservationState extends State<AddObservation>
           removeHtmlData(widget.data?.reflection ?? '');
       previewRef = removeHtmlData(widget.data?.reflection ?? '');
 
+      mentionChildVoice.currentState?.controller?.text =
+          removeHtmlData(widget.data?.childVoice ?? '');
+      previewChildVoice = removeHtmlData(widget.data?.childVoice ?? '');
+
+      mentionFuturePlan.currentState?.controller?.text =
+          removeHtmlData(widget.data?.futurePlan ?? '');
+      previewFuturePlan = removeHtmlData(widget.data?.futurePlan ?? '');
+
       for (int i = 0; i < widget.selecChildrens.length; i++) {
         if (widget.selecChildrens[i].childId != null) {
           selectedChildrens.add(ChildModel(
@@ -502,7 +511,7 @@ class AddObservationState extends State<AddObservation>
 
   Widget childrenWidget(
     String key,
-  ){
+  ) {
     return Container(
       height: groups[key].length * 60.0,
       child:
@@ -552,7 +561,7 @@ class AddObservationState extends State<AddObservation>
                     : Container();
               }),
     );
-}
+  }
 
   String searchString = "";
 
@@ -2331,8 +2340,12 @@ class AddObservationState extends State<AddObservation>
                                           },
                                           children: List<Widget>.generate(
                                               media.length, (int index) {
-                                            if (media[index].mediaType ==
-                                                'Image') {
+                                            Timer(Duration(seconds: 4), () {
+                                              print(
+                                                  "${media[0].id}-${media[0].mediaType}-${media[0].observationId}-${media[0].mediaUrl}");
+                                            });
+                                            
+                                            if (media[index].mediaType == 'Image'){
                                               return Stack(
                                                 children: [
                                                   Container(
@@ -2642,15 +2655,26 @@ class AddObservationState extends State<AddObservation>
                                                 ],
                                               );
                                             } else {
+                                              Timer(Duration(seconds: 10), (){
+                                                print(Constants
+                                                              .ImageBaseUrl +
+                                                          media[index].mediaUrl);
+                                              });
                                               return Stack(
                                                 children: [
+                                                  // VideoItem(
+                                                  //     width: 100,
+                                                  //     height: 100,
+                                                  //     url:  Constants
+                                                  //             .ImageBaseUrl +
+                                                  //         mediaFiles[index]
+                                                  //             ['filename']),
                                                   VideoItem(
                                                       width: 100,
                                                       height: 100,
-                                                      url: Constants
+                                                      url:  Constants
                                                               .ImageBaseUrl +
-                                                          mediaFiles[index]
-                                                              ['filename']),
+                                                          media[index].mediaUrl),
                                                   Positioned(
                                                       right: 0,
                                                       top: 0,
@@ -2934,6 +2958,7 @@ class AddObservationState extends State<AddObservation>
                                                           });
                                                         },
                                                       ))
+                                               
                                                 ],
                                               );
                                             }
@@ -3099,11 +3124,12 @@ class AddObservationState extends State<AddObservation>
                                                     i++) {
                                                   if (child_voice.contains(
                                                       mentionUser[i]['name'])) {
-                                                    child_voice = child_voice.replaceAll(
-                                                        "@" +
-                                                            mentionUser[i]
-                                                                ['name'],
-                                                        '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
+                                                    child_voice =
+                                                        child_voice.replaceAll(
+                                                            "@" +
+                                                                mentionUser[i]
+                                                                    ['name'],
+                                                            '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
                                                   }
                                                 }
                                                 for (int i = 0;
@@ -3112,11 +3138,12 @@ class AddObservationState extends State<AddObservation>
                                                   if (child_voice.contains(
                                                       mentionMont[i]
                                                           ['display'])) {
-                                                    child_voice = child_voice.replaceAll(
-                                                        "#" +
-                                                            mentionMont[i]
-                                                                ['display'],
-                                                        '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
+                                                    child_voice =
+                                                        child_voice.replaceAll(
+                                                            "#" +
+                                                                mentionMont[i]
+                                                                    ['display'],
+                                                            '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
                                                   }
                                                 }
                                                 print(child_voice);
@@ -3133,14 +3160,15 @@ class AddObservationState extends State<AddObservation>
                                                 previewFuturePlan = future_plan;
                                                 for (int i = 0;
                                                     i < mentionUser.length;
-                                                    i++){
+                                                    i++) {
                                                   if (future_plan.contains(
                                                       mentionUser[i]['name'])) {
-                                                    future_plan = future_plan.replaceAll(
-                                                        "@" +
-                                                            mentionUser[i]
-                                                                ['name'],
-                                                        '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
+                                                    future_plan =
+                                                        future_plan.replaceAll(
+                                                            "@" +
+                                                                mentionUser[i]
+                                                                    ['name'],
+                                                            '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
                                                   }
                                                 }
                                                 for (int i = 0;
@@ -3149,11 +3177,12 @@ class AddObservationState extends State<AddObservation>
                                                   if (future_plan.contains(
                                                       mentionMont[i]
                                                           ['display'])) {
-                                                    future_plan = future_plan.replaceAll(
-                                                        "#" +
-                                                            mentionMont[i]
-                                                                ['display'],
-                                                        '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
+                                                    future_plan =
+                                                        future_plan.replaceAll(
+                                                            "#" +
+                                                                mentionMont[i]
+                                                                    ['display'],
+                                                            '<a data-tagid="${mentionMont[i]['id']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="#tags_${mentionMont[i]['id']}" link="#tags_${mentionMont[i]['id']}">#${mentionMont[i]['display']}</a>');
                                                   }
                                                 }
                                                 print(future_plan);

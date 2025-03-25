@@ -4,6 +4,8 @@ class ObservationModel {
   String title;
   String notes;
   String reflection;
+  String childVoice;
+  String futurePlan;
   String status;
   String approver;
   String dateAdded;
@@ -25,6 +27,8 @@ class ObservationModel {
     required this.title,
     required this.notes,
     required this.reflection,
+    required this.childVoice,
+    required this.futurePlan,
     required this.status,
     required this.approver,
     required this.dateAdded,
@@ -48,6 +52,8 @@ class ObservationModel {
       title: json['title'] ?? "",
       notes: json['notes'] ?? "",
       reflection: json['reflection'] ?? "",
+      childVoice: json['child_voice'] ?? "",
+      futurePlan: json['future_plan'] ?? "",
       status: json['status'] ?? "",
       approver: json['approver'] ?? "",
       dateAdded: json['date_added'] ?? "",
