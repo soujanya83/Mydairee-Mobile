@@ -34,7 +34,7 @@ class _EditRoomState extends State<EditRoom> {
   RoomsDescModel? roomDesc;
   bool usersFetched = false;
 
-  List<UserModel> users=[];
+  List<UserModel> users = [];
 
   // int currentIndex = 0;
   // int currentIndexEdu = 0;
@@ -130,11 +130,11 @@ class _EditRoomState extends State<EditRoom> {
       print('roomsdd' + data['roomStaff'].toString());
       try {
         roomDesc = RoomsDescModel.fromJson(res);
-        name?.text = roomDesc?.name??'';
-        capacity?.text = roomDesc?.capacity??'';
-        _chosenValue = roomDesc?.status??'';
-        ageFrom?.text = roomDesc?.ageFrom??'';
-        ageTo?.text = roomDesc?.ageTo??'';
+        name?.text = roomDesc?.name ?? '';
+        capacity?.text = roomDesc?.capacity ?? '';
+        _chosenValue = roomDesc?.status ?? '';
+        ageFrom?.text = roomDesc?.ageFrom ?? '';
+        ageTo?.text = roomDesc?.ageTo ?? '';
         // currentIndex = users.indexWhere((element) {
         //   print(element.userid);
         //   print(roomDesc.userId);
@@ -156,8 +156,12 @@ class _EditRoomState extends State<EditRoom> {
           }
           eduValues[selectedEdu[i].userid] = true;
         }
-        pickerColor = HexColor(roomDesc?.color??'');
-        currentColor = HexColor(roomDesc?.color??'');
+        try {
+          pickerColor = HexColor(roomDesc?.color ?? '');
+          currentColor = HexColor(roomDesc?.color ?? '');
+        } catch (e) {
+          print(e);
+        }
         roomDetailsFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
@@ -424,7 +428,7 @@ class _EditRoomState extends State<EditRoom> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                 onChanged: (String? value)  {
+                                onChanged: (String? value) {
                                   setState(() {
                                     _chosenValue = value!;
                                   });
@@ -685,12 +689,21 @@ class _EditRoomState extends State<EditRoom> {
                                     "ageTo": ageTo?.text.toString(),
                                     "room_status": _chosenValue,
                                     "room_color": '#' +
-                                        currentColor.toString().substring(10,
-                                            currentColor.toString().length - 1),
+                                        parseColorToHex('#' +
+                                            currentColor.toString().substring(
+                                                10,
+                                                currentColor.toString().length -
+                                                    1)),
                                     "educators": edu,
                                   };
+                                  print('000000000000000000');
                                   print(jsonEncode(objToSend));
-                                  final response = await http.post(Uri.parse(_toSend),
+                                  print(parseColorToHex('#' +
+                                      currentColor.toString().substring(10,
+                                          currentColor.toString().length - 1)));
+                                  // return;
+                                  final response = await http.post(
+                                      Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -745,5 +758,35 @@ class _EditRoomState extends State<EditRoom> {
         endDrawer: getEndDrawer(context),
         appBar: Header.appBar(),
         body: SafeArea(child: roomeditui()));
+  }
+}
+
+String parseColorToHex(String colorString) {
+  try {
+    // Extract RGBA values using RegExp
+    RegExp redExp = RegExp(r"red:\s*([\d.]+)");
+    RegExp greenExp = RegExp(r"green:\s*([\d.]+)");
+    RegExp blueExp = RegExp(r"blue:\s*([\d.]+)");
+
+    double red =
+        double.tryParse(redExp.firstMatch(colorString)?.group(1) ?? "0") ?? 0;
+    double green =
+        double.tryParse(greenExp.firstMatch(colorString)?.group(1) ?? "0") ?? 0;
+    double blue =
+        double.tryParse(blueExp.firstMatch(colorString)?.group(1) ?? "0") ?? 0;
+
+    // Convert to 0-255 range
+    int redInt = (red * 255).toInt();
+    int greenInt = (green * 255).toInt();
+    int blueInt = (blue * 255).toInt();
+
+    // Convert to hex format
+    return "#${redInt.toRadixString(16).padLeft(2, '0')}"
+            "${greenInt.toRadixString(16).padLeft(2, '0')}"
+            "${blueInt.toRadixString(16).padLeft(2, '0')}"
+        .toUpperCase();
+  } catch (e) {
+    print("Error parsing color: $e");
+    return "#FFFFFF"; // Default white color if parsing fails
   }
 }

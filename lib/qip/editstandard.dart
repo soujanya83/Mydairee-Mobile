@@ -243,7 +243,7 @@ class _EditStandardState extends State<EditStandard> {
                             : HtmlEditor(
                                 // showBottomToolbar: false,
                                 key: keyEditor2,
-                                controller: editorController3,
+                                controller: editorController2,
                                 // height:
                                 //     MediaQuery.of(context).size.height * 0.4,
                               ),
@@ -283,29 +283,37 @@ class _EditStandardState extends State<EditStandard> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          final txt1 = await editorController1.getText();
-                          String s1 = txt1;
-                          final txt2 = await editorController2.getText();
-                          String s2 = txt2;
-                          final txt3 = await editorController3.getText();
-                          String s3 = txt3;
+                          try {
+                            final txt1 = await editorController1.getText();
+                            String s1 = txt1;
+                            print('s1');
+                            print(s1);
+                            final txt2 = await editorController2.getText();
+                            String s2 = txt2;
+                            final txt3 = await editorController3.getText();
+                            String s3 = txt3;
 
-                          var _objToSend = {
-                            "stdid": standards[standardIndex].id,
-                            "val1": s1,
-                            "val2": s2,
-                            "val3": s3,
-                            "userid": MyApp.LOGIN_ID_VALUE,
-                            "qipid": widget.qipId,
-                          };
-                          QipAPIHandler qipAPIHandler =
-                              QipAPIHandler(_objToSend);
-                          var data =
-                              await qipAPIHandler.updateStandardDetails();
-                          print(data);
-                          if (data['Status'] == 'SUCCESS') {
-                            MyApp.ShowToast('Updated Sucessfully', context);
-                            RestartWidget.restartApp(context);
+                            var _objToSend = {
+                              "stdid": standards[standardIndex].id,
+                              "val1": s1,
+                              "val2": s2,
+                              "val3": s3,
+                              "userid": MyApp.LOGIN_ID_VALUE,
+                              "qipid": widget.qipId,
+                            };
+                            QipAPIHandler qipAPIHandler =
+                                QipAPIHandler(_objToSend);
+                            var data =
+                                await qipAPIHandler.updateStandardDetails();
+                            print(data);
+                            if (data['Status'] == 'SUCCESS') {
+                              MyApp.ShowToast('Updated Sucessfully', context);
+                              RestartWidget.restartApp(context);
+                            }
+                          } catch (e, s) {
+                            print('++++++++++++++++getting error++++++++++++++++');
+                            print(e);
+                            print(s);
                           }
                         },
                         child: Text('Update Now'),

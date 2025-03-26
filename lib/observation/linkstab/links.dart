@@ -894,7 +894,7 @@ class _LinksState extends State<Links> {
                         List<int> dataRef = [];
                         List<int> dataQip = [];
                         List<int> dataPlan = [];
-                
+
                         var _toSend =
                             Constants.BASE_URL + "observation/createLinks";
                         if (_allObservations != null) {
@@ -904,7 +904,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         if (_allReflections != null) {
                           for (int i = 0; i < _allReflections.length; i++) {
                             if (_addedRef[i]) {
@@ -912,7 +912,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         if (_allQips != null) {
                           for (int i = 0; i < _allQips.length; i++) {
                             if (_addedQips[i]) {
@@ -920,7 +920,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         if (_allPlans != null) {
                           for (int i = 0; i < _allPlans.length; i++) {
                             if (_addedPlans[i]) {
@@ -928,7 +928,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         var objToSend = {
                           "userid": MyApp.LOGIN_ID_VALUE,
                           "observationId": obs.obsid,
@@ -955,19 +955,19 @@ class _LinksState extends State<Links> {
                           "obsLinks": dataPlan,
                           "centerid": AddObservationState.centerid,
                         };
-                
+
                         print(jsonEncode(objToSend));
                         print(jsonEncode(objToSend2));
                         print(jsonEncode(objToSend3));
                         print(jsonEncode(objToSend4));
-                
+
                         final response = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend),
                             headers: {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                               'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                             });
-                
+
                         print(response.body);
                         final resp = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend2),
@@ -990,7 +990,7 @@ class _LinksState extends State<Links> {
                               'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                             });
                         print(resp3.body);
-                
+
                         if (response.statusCode == 200 &&
                             resp.statusCode == 200 &&
                             resp2.statusCode == 200 &&
@@ -1011,7 +1011,8 @@ class _LinksState extends State<Links> {
                             border: Border.all(
                               color: Colors.grey,
                             ),
-                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -1034,7 +1035,7 @@ class _LinksState extends State<Links> {
                         List<int> dataRef = [];
                         List<int> dataQip = [];
                         List<int> dataPlan = [];
-                
+
                         var _toSend =
                             Constants.BASE_URL + "observation/createLinks";
                         if (_allObservations != null) {
@@ -1044,7 +1045,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         if (_allReflections != null) {
                           for (int i = 0; i < _allReflections.length; i++) {
                             if (_addedRef[i]) {
@@ -1052,7 +1053,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         if (_allQips != null) {
                           for (int i = 0; i < _allQips.length; i++) {
                             if (_addedQips[i]) {
@@ -1060,7 +1061,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         if (_allPlans != null) {
                           for (int i = 0; i < _allPlans.length; i++) {
                             if (_addedPlans[i]) {
@@ -1068,7 +1069,7 @@ class _LinksState extends State<Links> {
                             }
                           }
                         }
-                
+
                         var objToSend = {
                           "userid": MyApp.LOGIN_ID_VALUE,
                           "observationId": obs.obsid,
@@ -1095,28 +1096,27 @@ class _LinksState extends State<Links> {
                           "obsLinks": dataPlan,
                           "centerid": AddObservationState.centerid,
                         };
-                
+
                         var _toSend2 =
                             Constants.BASE_URL + "Observation/changeObsStatus/";
-                
+
                         var objToSend5 = {
                           "obsid": obs.obsid,
                           "status": "1",
                           "userid": MyApp.LOGIN_ID_VALUE,
                         };
-                
+
                         print(jsonEncode(objToSend));
                         print(jsonEncode(objToSend2));
                         print(jsonEncode(objToSend3));
                         print(jsonEncode(objToSend4));
-                
+
                         final response = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend),
                             headers: {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                               'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                             });
-                
                         print(response.body);
                         final resp = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend2),
@@ -1140,7 +1140,7 @@ class _LinksState extends State<Links> {
                             });
                         print('3');
                         print(resp3.body);
-                
+
                         final resp4 = await http.post(Uri.parse(_toSend2),
                             body: jsonEncode(objToSend5),
                             headers: {
@@ -1151,17 +1151,17 @@ class _LinksState extends State<Links> {
                         print(_toSend2);
                         print(objToSend5);
                         print(resp4.body);
-                
+
                         if (response.statusCode == 200 &&
                             resp.statusCode == 200 &&
                             resp2.statusCode == 200 &&
                             resp3.statusCode == 200 &&
-                            resp4.statusCode == 200){
+                            resp4.statusCode == 200) {
                           MyApp.ShowToast("updated", context);
                           print('created');
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);
-                        } else if (response.statusCode == 401){
+                        } else if (response.statusCode == 401) {
                           MyApp.Show401Dialog(context);
                         }
                       },
@@ -1170,7 +1170,8 @@ class _LinksState extends State<Links> {
                           height: 38,
                           decoration: BoxDecoration(
                               color: Constants.kButton,
-                              borderRadius: BorderRadius.all(Radius.circular(8))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8))),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Row(
@@ -1186,7 +1187,9 @@ class _LinksState extends State<Links> {
                   ],
                 ),
               ),
-              SizedBox(height: 60,)
+            SizedBox(
+              height: 60,
+            )
           ],
         ),
       ),

@@ -202,6 +202,7 @@ class _RoomsListState extends State<RoomsList> {
                                               await MyApp.getDeviceIdentity(),
                                           'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                         });
+                                    print(response.statusCode);
                                     print(response.body);
                                     if (response.statusCode == 200) {
                                       setState(() {
@@ -211,7 +212,8 @@ class _RoomsListState extends State<RoomsList> {
                                       });
                                       MyApp.ShowToast("deleted", context);
                                     } else if (response.statusCode == 401) {
-                                      MyApp.Show401Dialog(context);
+                                      // MyApp.ShowToast(jsonDecode(response.body)['Message'].toString(), context);
+                                      // MyApp.Show401Dialog(context);
                                     }
                                   } else {
                                     MyApp.ShowToast("select rooms", context);
@@ -220,7 +222,8 @@ class _RoomsListState extends State<RoomsList> {
                                 child: Icon(
                                   AntDesign.delete,
                                   color: Constants.kMain,
-                                )),
+                                )
+                                ),
                           SizedBox(
                             width: 8,
                           ),

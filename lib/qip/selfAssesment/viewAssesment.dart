@@ -86,7 +86,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
       "userid": MyApp.LOGIN_ID_VALUE
     };
     print('reach here 6');
-    if (areas != null) {
+    if (areas.isNotEmpty) {
        try{
         _objToSend["areaid"] = areas[areaIndex].id;
        }catch(e,s){
@@ -101,7 +101,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
     print('reach here 7');
     print(areas);
     print(areas.runtimeType);
-    if (areas == null) {
+    if (areas.isEmpty) {
       var area = data['Areas'];
       print(area);
       areas = [];
@@ -216,7 +216,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                     ),
                   ),
                 ),
-              if (areas != null && areas.isNotEmpty)
+              if (areas.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5),
                   child: DropdownButtonHideUnderline(
@@ -233,7 +233,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                           child: DropdownButton<String>(
                             isExpanded: true,
                             value: areas[areaIndex].id,
-                            items: areas.map((AreaModel value) {
+                            items: areas.map((AreaModel value){
                               return new DropdownMenuItem<String>(
                                 value: value.id,
                                 child: new Text(value.title),
@@ -268,28 +268,38 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                     widget.assesmentModel.id)));
                       },
                       child: Text("+ Add Educators")),
-                  Row(
-                    children: [
-                      if (widget.assesmentModel.educators.length > 0)
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(widget.assesmentModel
-                                      .educators[0]['imageUrl'] !=
-                                  ""
-                              ? Constants.ImageBaseUrl +
-                                  widget.assesmentModel.educators[0]['imageUrl']
-                              : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
-                        ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      if (widget.assesmentModel.educators.length - 1 > 0)
-                        CircleAvatar(
-                          backgroundColor: Constants.greyColor,
-                          child: Text("+" +
-                              (widget.assesmentModel.educators.length - 1)
-                                  .toString()),
-                        ),
-                    ],
+                  Builder(
+                    builder: (context) {
+                      Future.delayed(Duration(seconds: 10),(){
+                         print(widget.assesmentModel
+                                          .educators[0]['imageUrl']);
+                            print(widget.assesmentModel.educators[0]['imageUrl']);
+
+                      });
+                      return Row(
+                        children: [
+                          if (widget.assesmentModel.educators.length > 0)
+                            CircleAvatar(
+                              backgroundImage: NetworkImage(widget.assesmentModel
+                                          .educators[0]['imageUrl'] !=
+                                      ""
+                                  ? Constants.ImageBaseUrl +
+                                      widget.assesmentModel.educators[0]['imageUrl']
+                                  : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
+                            ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          if (widget.assesmentModel.educators.length - 1 > 0)
+                            CircleAvatar(
+                              backgroundColor: Constants.greyColor,
+                              child: Text("+" +
+                                  (widget.assesmentModel.educators.length - 1)
+                                      .toString()),
+                            ),
+                        ],
+                      );
+                    }
                   )
                 ],
               ),

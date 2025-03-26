@@ -40,8 +40,8 @@ class _StandardsState extends State<Standards> {
   bool discuss = true;
   TextEditingController add = TextEditingController();
   var comments = [];
-late int currentIndex;
-late List<StandardsModel> standards;
+  int currentIndex = 0;
+  List<StandardsModel> standards = [];
 
   @override
   void initState() {
@@ -113,7 +113,7 @@ late List<StandardsModel> standards;
                   height: 40,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                     border: Border.all(color: Colors.grey.shade300),
+                      border: Border.all(color: Colors.grey.shade300),
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Padding(
@@ -150,7 +150,9 @@ late List<StandardsModel> standards;
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
+                
                     style: ButtonStyle(
+                      padding: MaterialStateProperty.all(EdgeInsets.only(left: 10,right: 10)),
                         backgroundColor: MaterialStateProperty.all(
                             discuss ? Constants.kMain : Colors.white)),
                     onPressed: () {
@@ -162,9 +164,10 @@ late List<StandardsModel> standards;
                       style: TextStyle(
                           color: discuss ? Colors.white : Colors.black),
                     )),
+                    // Expanded(child: SizedBox(width: 10,)),
                 ElevatedButton(
                     style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
+                        backgroundColor: WidgetStateProperty.all(
                             discuss ? Colors.white : Constants.kMain)),
                     onPressed: () {
                       discuss = false;
@@ -302,8 +305,8 @@ late List<StandardsModel> standards;
                                                                     index,
                                                                     currentIndex,
                                                                     standards,
-                                                                    widget.qipid
-                                                                    )));
+                                                                    widget
+                                                                        .qipid)));
                                                   },
                                                 ),
                                                 SizedBox(
@@ -392,8 +395,9 @@ late List<StandardsModel> standards;
                                                                       itemBuilder:
                                                                           (context, j) =>
                                                                               Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.all(2.0),
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            2.0),
                                                                         child:
                                                                             Container(
                                                                           height:
@@ -543,7 +547,7 @@ late List<StandardsModel> standards;
                                                                                                         Checkbox(
                                                                                                             value: _allObservations[index].boolCheck,
                                                                                                             onChanged: (val) {
-                                                                                                              _allObservations[index].boolCheck = val??false;
+                                                                                                              _allObservations[index].boolCheck = val ?? false;
                                                                                                               setState(() {});
                                                                                                             })
                                                                                                       ],
@@ -644,7 +648,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -783,7 +787,7 @@ late List<StandardsModel> standards;
                                                                                                         Checkbox(
                                                                                                             value: _allReflections[index].boolCheck,
                                                                                                             onChanged: (val) {
-                                                                                                              _allReflections[index].boolCheck = val??false;
+                                                                                                              _allReflections[index].boolCheck = val ?? false;
                                                                                                               setState(() {});
                                                                                                             })
                                                                                                       ],
@@ -851,7 +855,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -896,11 +900,14 @@ late List<StandardsModel> standards;
                                                                       .LOGIN_ID_VALUE,
                                                                   "centerid": widget
                                                                       .centerid,
-                                                                  "qipid":
-                                                                      widget
-                                                                          .qipid,
-                                                                  "elementid":standards[index]
-                                                            .elements[i].id,        
+                                                                  "qipid": widget
+                                                                      .qipid,
+                                                                  "elementid":
+                                                                      standards[
+                                                                              index]
+                                                                          .elements[
+                                                                              i]
+                                                                          .id,
                                                                 };
                                                                 QipAPIHandler
                                                                     qipAPIHandler =
@@ -1055,7 +1062,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -1090,7 +1097,10 @@ late List<StandardsModel> standards;
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
-                                                              child: Icon(Icons.search, color: Colors.black),
+                                                              child: Icon(
+                                                                  Icons.search,
+                                                                  color: Colors
+                                                                      .black),
                                                               onTap: () async {
                                                                 var _objToSend =
                                                                     {
@@ -1098,11 +1108,14 @@ late List<StandardsModel> standards;
                                                                       .LOGIN_ID_VALUE,
                                                                   "centerid": widget
                                                                       .centerid,
-                                                                  "qipid":
-                                                                      widget
-                                                                          .qipid,
-                                                                   "elementid":standards[index]
-                                                            .elements[i].id,            
+                                                                  "qipid": widget
+                                                                      .qipid,
+                                                                  "elementid":
+                                                                      standards[
+                                                                              index]
+                                                                          .elements[
+                                                                              i]
+                                                                          .id,
                                                                 };
                                                                 QipAPIHandler
                                                                     qipAPIHandler =
@@ -1202,7 +1215,7 @@ late List<StandardsModel> standards;
                                                                                                         Checkbox(
                                                                                                             value: _allSurveys[index].boolCheck,
                                                                                                             onChanged: (val) {
-                                                                                                              if(val==null)return;
+                                                                                                              if (val == null) return;
                                                                                                               _allSurveys[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1259,7 +1272,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -1304,11 +1317,14 @@ late List<StandardsModel> standards;
                                                                       .LOGIN_ID_VALUE,
                                                                   "centerid": widget
                                                                       .centerid,
-                                                                  "qipid":
-                                                                      widget
-                                                                          .qipid,
-                                                                   "elementid":standards[index]
-                                                            .elements[i].id,            
+                                                                  "qipid": widget
+                                                                      .qipid,
+                                                                  "elementid":
+                                                                      standards[
+                                                                              index]
+                                                                          .elements[
+                                                                              i]
+                                                                          .id,
                                                                 };
                                                                 QipAPIHandler
                                                                     qipAPIHandler =
@@ -1417,7 +1433,8 @@ late List<StandardsModel> standards;
                                                                                                         ),
                                                                                                         Checkbox(
                                                                                                             value: _allPlans[index].boolCheck,
-                                                                                                            onChanged: (val) {if(val==null)return;
+                                                                                                            onChanged: (val) {
+                                                                                                              if (val == null) return;
                                                                                                               _allPlans[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1463,7 +1480,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -1508,11 +1525,14 @@ late List<StandardsModel> standards;
                                                                       .LOGIN_ID_VALUE,
                                                                   "centerid": widget
                                                                       .centerid,
-                                                                  "qipid":
-                                                                      widget
-                                                                          .qipid,
-                                                                   "elementid":standards[index]
-                                                            .elements[i].id,            
+                                                                  "qipid": widget
+                                                                      .qipid,
+                                                                  "elementid":
+                                                                      standards[
+                                                                              index]
+                                                                          .elements[
+                                                                              i]
+                                                                          .id,
                                                                 };
                                                                 QipAPIHandler
                                                                     qipAPIHandler =
@@ -1695,7 +1715,8 @@ late List<StandardsModel> standards;
                                                                                                             )),
                                                                                                         Checkbox(
                                                                                                             value: _allMonts[index].boolCheck,
-                                                                                                            onChanged: (val) {if(val==null)return;
+                                                                                                            onChanged: (val) {
+                                                                                                              if (val == null) return;
                                                                                                               _allMonts[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1744,7 +1765,8 @@ late List<StandardsModel> standards;
                                                                                                             )),
                                                                                                         Checkbox(
                                                                                                             value: _allMilestones[index].boolCheck,
-                                                                                                            onChanged: (val) {if(val==null)return;
+                                                                                                            onChanged: (val) {
+                                                                                                              if (val == null) return;
                                                                                                               _allMilestones[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1793,7 +1815,8 @@ late List<StandardsModel> standards;
                                                                                                             )),
                                                                                                         Checkbox(
                                                                                                             value: _allEylf[index].boolCheck,
-                                                                                                            onChanged: (val) {if(val==null)return;
+                                                                                                            onChanged: (val) {
+                                                                                                              if (val == null) return;
                                                                                                               _allEylf[index].boolCheck = val;
                                                                                                               setState(() {});
                                                                                                             })
@@ -1831,7 +1854,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -1861,7 +1884,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
@@ -1891,7 +1914,7 @@ late List<StandardsModel> standards;
                                                                                                 "linkids": linkids,
                                                                                                 "qipid": widget.qipid,
                                                                                                 "userid": MyApp.LOGIN_ID_VALUE,
-                                                                                                 "elementid":standards[index].elements[i].id,     
+                                                                                                "elementid": standards[index].elements[i].id,
                                                                                               };
                                                                                               print(jsonEncode(_objToSend));
                                                                                               final response = await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {

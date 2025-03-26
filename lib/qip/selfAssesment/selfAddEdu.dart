@@ -56,6 +56,7 @@ class _SelfAddEducatorsState extends State<SelfAddEducators> {
           child: Column(
             children: [
               ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: staff.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
@@ -64,7 +65,7 @@ class _SelfAddEducatorsState extends State<SelfAddEducators> {
                           trailing: Checkbox(
                             value: staff[index].selected == 'checked',
                             onChanged: (val) {
-                              if(val==null)return;
+                              if (val == null) return;
                               if (val) {
                                 staff[index].selected = 'checked';
                               } else {
@@ -119,7 +120,7 @@ class _SelfAddEducatorsState extends State<SelfAddEducators> {
                         var status = data['Status'];
                         if (status == 'SUCCESS') {
                           MyApp.ShowToast('Upadated Successfully', context);
-                            RestartWidget.restartApp(context);
+                          RestartWidget.restartApp(context);
                         }
                       },
                       child: Text('Save')),
