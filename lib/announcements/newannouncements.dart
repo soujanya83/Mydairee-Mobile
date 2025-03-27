@@ -23,11 +23,11 @@ class NewAnnouncements extends StatefulWidget {
 }
 
 class _NewAnnouncementsState extends State<NewAnnouncements> {
-   TextEditingController title = TextEditingController();
+  TextEditingController title = TextEditingController();
   GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
   HtmlEditorController editorController = HtmlEditorController();
-   String _date = '';
-   String date = '';
+  String _date = '';
+  String date = '';
   bool childrensFetched = false;
   late List<ChildModel> _allChildrens;
 
@@ -85,7 +85,20 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
         var date1 = inputFormat.parse(_date);
         date = formati.format(date1);
 
-        textData = dataDetail['text'];
+        if (dataDetail['text'].isNotEmpty) {
+          Future.delayed(Duration(seconds: 1), () {
+            print('++++data seted ++++');
+            print(textData);
+            setState(() {
+              textData = dataDetail['text'];
+              editorController.setText(textData);
+            });
+          });
+        }{
+          print('++++data is the empty+++++');
+        }
+
+        // Set the fetched data as the initial content of the editor
 
         var child = dataDetail['children'];
         _selectedChildrens = [];
@@ -326,7 +339,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                             borderRadius: BorderRadius.circular(3),
                             border: Border.all(color: Colors.grey)),
                         child: ListTile(
-                            title: Text(_date != null ? date : ''),
+                            title: Text(_date.isNotEmpty ? _date : date),
                             trailing: Icon(Icons.calendar_today)),
                       ),
                     ),
@@ -369,7 +382,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                           final txt = await editorController.getText(); 
+                              final txt = await editorController.getText();
                               String s = txt;
 
                               List<String> ids = [];
@@ -472,34 +485,36 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                 )))));
   }
 
- void _selectDate(BuildContext context) async {
-  DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(1930),
-    lastDate: DateTime(2050),
-    builder: (BuildContext context, Widget? child) { // ✅ child should be nullable (Widget?)
-      return Theme(
-        data: ThemeData.light().copyWith(
-          primaryColor: Theme.of(context).primaryColor,
-          colorScheme: ColorScheme.light(primary: Theme.of(context).primaryColor),
-          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-        ),
-        child: child ?? SizedBox(), // ✅ Use null check (child!)
-      );
-    },
-  );
+  void _selectDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1930),
+      lastDate: DateTime(2050),
+      builder: (BuildContext context, Widget? child) {
+        // ✅ child should be nullable (Widget?)
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Theme.of(context).primaryColor,
+            colorScheme:
+                ColorScheme.light(primary: Theme.of(context).primaryColor),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child ?? SizedBox(), // ✅ Use null check (child!)
+        );
+      },
+    );
 
-  if (picked != null) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String formatted = formatter.format(picked);
+    if (picked != null) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(picked);
 
-    final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
-    final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
-    final DateTime date1 = inputFormat.parse(formatted);
-    final String date = outputFormat.format(date1);
-
-    print("Formatted Date: $formatted");
+      final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
+      final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
+      final DateTime date1 = inputFormat.parse(formatted);
+      _date = outputFormat.format(date1);
+      setState(() {});
+      print("Formatted Date: $formatted");
+    }
   }
-}
 }

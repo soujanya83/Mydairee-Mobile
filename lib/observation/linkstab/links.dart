@@ -1096,7 +1096,7 @@ class _LinksState extends State<Links> {
                           "obsLinks": dataPlan,
                           "centerid": AddObservationState.centerid,
                         };
-
+                        
                         var _toSend2 =
                             Constants.BASE_URL + "Observation/changeObsStatus/";
 
@@ -1137,7 +1137,7 @@ class _LinksState extends State<Links> {
                             headers: {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                               'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                            });
+                            }); 
                         print('3');
                         print(resp3.body);
 
@@ -1163,7 +1163,7 @@ class _LinksState extends State<Links> {
                               .popUntil((route) => route.isFirst);
                         } else if (response.statusCode == 401) {
                           MyApp.Show401Dialog(context);
-                        }
+                        } 
                       },
                       child: Container(
                           width: 160,

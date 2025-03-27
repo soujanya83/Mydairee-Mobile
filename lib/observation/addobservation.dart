@@ -660,7 +660,7 @@ class AddObservationState extends State<AddObservation>
                     all = value!;
                     for (var i = 0; i < childValues.length; i++) {
                       String key = childValues.keys.elementAt(i);
-                      childValues[key] = value!;
+                      childValues[key] = value;
                       if (value == true) {
                         if (!selectedChildrens.contains(_allChildrens[i])) {
                           selectedChildrens.add(_allChildrens[i]);
@@ -722,6 +722,21 @@ class AddObservationState extends State<AddObservation>
                                   childValues[_allChildrens[index].childid ??
                                       ''] = value!;
                                   setState(() {});
+                                  print('+++++++++++++++');
+                                  print(value);
+                                  print(_allChildrens[index].childid);
+                                  print('id');
+                                  for (int i = 0;
+                                      i < selectedChildrens.length;
+                                      i++) {
+                                    print(selectedChildrens[i].id);
+                                  }
+                                  print('child id');
+                                  for (int i = 0;
+                                      i < selectedChildrens.length;
+                                      i++) {
+                                    print(selectedChildrens[i].childid);
+                                  }
                                 }),
                           )
                         : Container();
@@ -952,6 +967,11 @@ class AddObservationState extends State<AddObservation>
                                   ),
                                   GestureDetector(
                                     onTap: () {
+                                      // print(selectedChildrens.length);
+                                      // for(int i=0;i<selectedChildrens.length;i++){
+                                      //   print(selectedChildrens[i].id);
+                                      // }
+                                      //           return;
                                       key.currentState?.openEndDrawer();
                                     },
                                     child: Container(
@@ -2172,7 +2192,8 @@ class AddObservationState extends State<AddObservation>
                                                         onTap: () {
                                                           showDeleteDialog(
                                                               context, () {
-                                                            mediaFiles.removeAt(index);
+                                                            mediaFiles.removeAt(
+                                                                index);
                                                             _editMediaFileChildren
                                                                 .removeAt(
                                                                     index);
@@ -3441,7 +3462,8 @@ class AddObservationState extends State<AddObservation>
                                                         filename: basename(
                                                             file.path));
                                               }
-
+                                              print(
+                                                  '+++++++++start here+++++++++');
                                               print(mp);
                                               print(Constants.BASE_URL +
                                                   "Observation/editObservation");
@@ -3450,6 +3472,7 @@ class AddObservationState extends State<AddObservation>
 
                                               print(formData.fields.toString());
                                               Dio dio = new Dio();
+                                              print('++++++++formdata++++++++');
                                               print(formData);
 
                                               Response? response = await dio
@@ -3747,7 +3770,8 @@ class AddObservationState extends State<AddObservation>
                                                   priorities
                                                       .add(mediaFiles[k]['id']);
                                                   origin.add("UPLOADED");
-                                                  mediaApi.add(mediaFiles[k]['id']);
+                                                  mediaApi
+                                                      .add(mediaFiles[k]['id']);
                                                 }
                                               }
 
@@ -3835,8 +3859,8 @@ class AddObservationState extends State<AddObservation>
 
                                             for (int i = 0;
                                                 i < mediaFiles.length;
-                                                i++){
-                                              String p = 
+                                                i++) {
+                                              String p =
                                                   'upl-media-tags-child' +
                                                       mediaFiles[i]['id'];
                                               List ch = [];
@@ -3932,8 +3956,16 @@ class AddObservationState extends State<AddObservation>
                                                       filename:
                                                           basename(file.path));
                                             }
-
+                                            print('++++++++++++++++++');
                                             print(mp);
+                                            var entries = mp.entries.toList();
+                                            for (int i = 0;
+                                                i < entries.length;
+                                                i++) {
+                                              var entry = entries[i];
+                                              print(
+                                                  '${entry.key}:${entry.value}');
+                                            }
 
                                             FormData formData =
                                                 FormData.fromMap(mp);
@@ -3942,17 +3974,18 @@ class AddObservationState extends State<AddObservation>
                                             Dio dio = new Dio();
                                             print('fields');
                                             print(formData.fields);
-                                            print(Constants.BASE_URL +
-                                                "observation/createObservation");
+
+                                            String url = widget.type == 'edit'
+                                                ? Constants.BASE_URL +
+                                                    "Observation/editObservation"
+                                                : Constants.BASE_URL +
+                                                    "observation/createObservation";
+                                            print(url);
                                             print(await MyApp
                                                 .getDeviceIdentity());
                                             print(MyApp.AUTH_TOKEN_VALUE);
-                                            Response? response = await dio.post(
-                                                    widget.type == 'edit'
-                                                        ? Constants.BASE_URL +
-                                                            "Observation/editObservation"
-                                                        : Constants.BASE_URL +
-                                                            "observation/createObservation",
+                                            Response? response = await dio
+                                                .post(url,
                                                     data: formData,
                                                     options: Options(headers: {
                                                       'X-DEVICE-ID': await MyApp
