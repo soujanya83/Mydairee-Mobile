@@ -656,7 +656,7 @@ class _LinksState extends State<Links> {
                       return GestureDetector(
                         child: Card(
                           child: Container(
-                              height: 130,
+                              height: 150,
                               width: MediaQuery.of(context).size.width * 0.85,
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -690,10 +690,14 @@ class _LinksState extends State<Links> {
                                     ),
                                     Text(_allReflections[index].about != null
                                         ? _allReflections[index].about
-                                        : ''),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
+                                        : '',overflow: TextOverflow.ellipsis,),
+                                    // SizedBox(
+                                    //   height: 10,
+                                    // ),
+                                    Expanded(
+                                          flex: 1,
+                                          child: Container(),
+                                        ),
                                     Row(
                                       children: [
                                         Expanded(child: SizedBox()),
@@ -815,7 +819,7 @@ class _LinksState extends State<Links> {
                       return GestureDetector(
                         child: Card(
                           child: Container(
-                              height: 100,
+                              height: 110,
                               width: MediaQuery.of(context).size.width * 0.85,
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),

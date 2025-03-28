@@ -107,25 +107,24 @@ class SettingsApiHandler {
   }
 
   Future<dynamic> getUsersData() async {
-    ServiceWithHeaderDataPost helper =
+    ServiceWithHeaderDataPost helper = 
         ServiceWithHeaderDataPost(getUserDataURL, this.data);
     var d = await helper.data();
     return d;
   }
 
   Future<dynamic> getCenterSettings() async {
-    ServiceWithHeaderDataPost helper =
-        ServiceWithHeaderDataPost(getCenterSettingsURL, this.data);
+    ServiceWithHeaderDataPost helper =  ServiceWithHeaderDataPost(getCenterSettingsURL, this.data);
     var d = await helper.data();
     return d;
-  }
+ }
 
 // Future<dynamic> saveCenterSettings() async {
 //     ServiceWithHeaderDataPost helper =
 //         ServiceWithHeaderDataPost(saveCenterSetttingsURL, this.data);
 //     var d = await helper.data();
 //     return d;
-//   }
+//}
 
   Future<dynamic> getCenterDetails() async {
     ServiceWithHeaderDataPost helper =

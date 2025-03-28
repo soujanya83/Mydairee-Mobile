@@ -88,6 +88,7 @@ class ServiceWithHeaderDataPost {
   ServiceWithHeaderDataPost(this.url, this.b);
 
   Future data() async {
+    print('post api called for...');
     print(jsonEncode(b));
     final response = await http.post(
       Uri.parse(url),

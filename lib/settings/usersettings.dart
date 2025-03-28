@@ -36,10 +36,10 @@ class _UserSettingsState extends State<UserSettings> {
   List gender = [];
   List status = [];
 
-  List groupsData=[];
+  List groupsData = [];
   String order = 'ASC';
-  List<UserModel> _allUsers=[];
-  Map<String, dynamic> userStats={};
+  List<UserModel> _allUsers = [];
+  Map<String, dynamic> userStats = {};
   GlobalKey<ScaffoldState> key = GlobalKey();
 
   Map<String, bool> groupValues = {};
@@ -309,7 +309,6 @@ class _UserSettingsState extends State<UserSettings> {
   }
 
   Future<void> _fetchData() async {
-    
     SettingsApiHandler handler = SettingsApiHandler({
       "userid": MyApp.LOGIN_ID_VALUE,
       "order": order,
@@ -352,8 +351,8 @@ class _UserSettingsState extends State<UserSettings> {
       "userid": MyApp.LOGIN_ID_VALUE
     };
     print(jsonEncode(objToSend));
-    final response =
-        await http.post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
+    final response = await http
+        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -435,38 +434,38 @@ class _UserSettingsState extends State<UserSettings> {
                                 SizedBox(
                                   width: 5,
                                 ),
-                               if(MyApp.USER_TYPE_VALUE=='Superadmin') 
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddUser('add', '')))
-                                        .then((value) {
-                                      if (value != null) {
-                                        settingsDataFetched = false;
-                                        setState(() {});
-                                        _fetchData();
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Constants.kButton,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8))),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            12, 8, 12, 8),
-                                        child: Text(
-                                          '+ Add User',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ),
-                                      )),
-                                )
+                                if (MyApp.USER_TYPE_VALUE == 'Superadmin')
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddUser('add', '')))
+                                          .then((value) {
+                                        if (value != null) {
+                                          settingsDataFetched = false;
+                                          setState(() {});
+                                          _fetchData();
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Constants.kButton,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              12, 8, 12, 8),
+                                          child: Text(
+                                            '+ Add User',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                        )),
+                                  )
                               ],
                             ),
                             SizedBox(
@@ -664,22 +663,21 @@ class _UserSettingsState extends State<UserSettings> {
                           ),
                           GestureDetector(
                               onTap: () {
-                              if(MyApp.USER_TYPE_VALUE=='Superadmin') {
-                                 Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => AddUser(
-                                                'edit',
-                                                _allUsers[index].userid)))
-                                    .then((value) {
-                                  if (value != null) {
-                                    settingsDataFetched = false;
-                                    setState(() {});
-                                    _fetchData();
-                                  }
-                                });
-                               }  
-                               
+                                if (MyApp.USER_TYPE_VALUE == 'Superadmin') {
+                                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddUser(
+                                                  'edit',
+                                                  _allUsers[index].userid)))
+                                      .then((value) {
+                                    if (value != null) {
+                                      settingsDataFetched = false;
+                                      setState(() {});
+                                      _fetchData();
+                                    }
+                                  });
+                                }
                               },
                               child: Text(_allUsers[index].name,
                                   style: Constants.cardHeadingStyle)),

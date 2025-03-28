@@ -109,6 +109,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
   }
 
   Future<void> _fetchData() async {
+    roomsFetched = true;
     Map<String, String> data = {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers[currentIndex].id
@@ -334,10 +335,15 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(8))),
-                                              child: Padding(
+
+                                              child: 
+                                              
+                                              Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 8, right: 8),
-                                                child: Center(
+                                                child: 
+                                                rooms.isEmpty?null:
+                                                Center(
                                                   child: DropdownButton<String>(
                                                     isExpanded: true,
                                                     value:

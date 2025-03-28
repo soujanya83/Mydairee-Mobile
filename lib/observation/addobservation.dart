@@ -926,7 +926,7 @@ class AddObservationState extends State<AddObservation>
                                           MaterialPageRoute(
                                               builder: (context) => Preview()));
                                     },
-                                    child: Text("Preview")))
+                                    child: Text("Preview",style: TextStyle(color: Colors.white),)))
                         ],
                       ),
                       new Container(
