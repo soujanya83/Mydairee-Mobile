@@ -12,6 +12,7 @@ class Service {
 
   Future data() async {
     print(loginURL);
+    
     print(jsonEncode(body));
     Response response = await post(Uri.parse(loginURL), body: jsonEncode(body));
     print(response.body);

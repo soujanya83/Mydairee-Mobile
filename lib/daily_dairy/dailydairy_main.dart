@@ -508,8 +508,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                               'item']
                                                                           .toString()
                                                                           .toLowerCase()) {
-                                                                    currentItemIndex =
-                                                                        i;
+                                                                    currentItemIndex = i;
                                                                     break;
                                                                   }
                                                                 }
