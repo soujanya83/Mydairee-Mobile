@@ -181,10 +181,11 @@ class _GetDrawerState extends State<GetDrawer> {
                     .push(MaterialPageRoute(builder: (context) => RoomsList()));
               },
             ),
-
+           if (MyApp.USER_TYPE_VALUE != 'Parent')
           Divider(
             color: Colors.white.withOpacity(0.8),
           ),
+         if (MyApp.USER_TYPE_VALUE != 'Parent')
           ListTile(
             leading: Icon(
               FontAwesome.newspaper_o,
@@ -232,11 +233,11 @@ class _GetDrawerState extends State<GetDrawer> {
           //     ],
           //   ),
           // ),
-
+ if (MyApp.USER_TYPE_VALUE != 'Parent')
           Divider(
             color: Colors.white.withOpacity(0.8),
           ),
-
+ if (MyApp.USER_TYPE_VALUE != 'Parent')
           ListTile(
             leading: Icon(
               Ionicons.md_image,
@@ -345,7 +346,9 @@ class _GetDrawerState extends State<GetDrawer> {
                         MaterialPageRoute(builder: (context) => MenuList()));
                   },
                 ),
+                 if (MyApp.USER_TYPE_VALUE != 'Parent')
                 Divider(color: Colors.transparent),
+                 if (MyApp.USER_TYPE_VALUE != 'Parent')
                 ListTile(
                   title: Text(
                     Constants.RECIPES_TAG,
@@ -451,7 +454,7 @@ class _GetDrawerState extends State<GetDrawer> {
           Divider(
             color: Colors.white.withOpacity(0.8),
           ),
- if (MyApp.USER_TYPE_VALUE != 'Parent')
+//  if (MyApp.USER_TYPE_VALUE != 'Parent')
           ListTile(
             leading: Icon(
               Icons.refresh,
@@ -525,6 +528,8 @@ class _GetDrawerState extends State<GetDrawer> {
                   },
                 ),
                 Divider(color: Colors.transparent),
+                  if (MyApp.USER_TYPE_VALUE !=
+                                                    'Parent')
                 ListTile(
                   title: Text(
                     Constants.LESSONPLAN_TAG,

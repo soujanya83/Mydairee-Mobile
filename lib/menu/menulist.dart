@@ -22,21 +22,21 @@ class MenuList extends StatefulWidget {
 }
 
 class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
- late TabController _controller;
-DateTime? currentCreateDate;
-List<CentersModel> centers = [];
-bool centersFetched = false;
-int currentIndex = 0;
-List<bool> selected = [];
+  late TabController _controller;
+  DateTime? currentCreateDate;
+  List<CentersModel> centers = [];
+  bool centersFetched = false;
+  int currentIndex = 0;
+  List<bool> selected = [];
 
-bool recipedataFetched = false;
-List<RecipeModel> _lunch = [];
-List<RecipeModel> _breakfast = [];
-List<RecipeModel> _snacks = [];
-String? choose;
+  bool recipedataFetched = false;
+  List<RecipeModel> _lunch = [];
+  List<RecipeModel> _breakfast = [];
+  List<RecipeModel> _snacks = [];
+  String? choose;
 
   var menuData;
-  bool loading =true;
+  bool loading = true;
   bool menuDataFetched = false;
   bool permissionMenu = false;
   bool permissionRecipe = false;
@@ -75,9 +75,9 @@ String? choose;
         }
 
         var res = data['Recipes'];
-       _lunch = [];
-_breakfast = [];
-_snacks = [];
+        _lunch = [];
+        _breakfast = [];
+        _snacks = [];
 
         try {
           assert(res is List);
@@ -87,7 +87,7 @@ _snacks = [];
             } else if (res[i]['type'] == 'BREAKFAST') {
               _breakfast.add(RecipeModel.fromJson(res[i]));
             } else if (res[i]['type'] == 'SNACKS') {
-              print('this'+res[i].toString());
+              print('this' + res[i].toString());
               _snacks.add(RecipeModel.fromJson(res[i]));
             }
           }
@@ -121,7 +121,8 @@ _snacks = [];
     var d = await apiHandler.getMenuList();
     if (!d.containsKey('error')) {
       if (data['permissions'] != null ||
-          MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Parent' ) {
+          MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+          MyApp.USER_TYPE_VALUE == 'Parent') {
         print('hawala');
         print(d.keys);
         menuData = d;
@@ -130,7 +131,7 @@ _snacks = [];
       } else {
         permissionMenu = false;
       }
-      loading=false;
+      loading = false;
       if (this.mounted) setState(() {});
     }
   }
@@ -200,7 +201,7 @@ _snacks = [];
                                   trailing: Checkbox(
                                     value: selected[index],
                                     onChanged: (v) {
-                                      if(v==null)return;
+                                      if (v == null) return;
                                       selected[index] = v;
                                       setState(() {});
                                     },
@@ -215,7 +216,7 @@ _snacks = [];
                               GestureDetector(
                                 onTap: () async {
                                   var dt = DateFormat("yyyy-MM-dd")
-                                      .format(currentCreateDate! .add(Duration(
+                                      .format(currentCreateDate!.add(Duration(
                                           days: int.parse(
                                               _controller.index.toString()))))
                                       .toString();
@@ -239,7 +240,8 @@ _snacks = [];
                                   };
 
                                   print(objToSend);
-                                  final response = await http.post(Uri.parse(_toSend),
+                                  final response = await http.post(
+                                      Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -250,8 +252,8 @@ _snacks = [];
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("updated", context);
                                     _lunch = [];
-_breakfast = [];
-_snacks = [];
+                                    _breakfast = [];
+                                    _snacks = [];
 
                                     recipedataFetched = false;
                                     choose = null;
@@ -314,7 +316,7 @@ _snacks = [];
                                   trailing: Checkbox(
                                     value: selected[index],
                                     onChanged: (v) {
-                                      if(v==null)return;
+                                      if (v == null) return;
                                       selected[index] = v;
                                       setState(() {});
                                     },
@@ -353,7 +355,8 @@ _snacks = [];
                                   };
 
                                   print(objToSend);
-                                  final response = await http.post(Uri.parse(_toSend),
+                                  final response = await http.post(
+                                      Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -364,8 +367,8 @@ _snacks = [];
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("updated", context);
                                     _lunch = [];
-_breakfast = [];
-_snacks = [];
+                                    _breakfast = [];
+                                    _snacks = [];
 
                                     recipedataFetched = false;
                                     choose = null;
@@ -428,7 +431,7 @@ _snacks = [];
                                   trailing: Checkbox(
                                     value: selected[index],
                                     onChanged: (v) {
-                                      if(v==null)return;
+                                      if (v == null) return;
                                       selected[index] = v;
                                       setState(() {});
                                     },
@@ -467,7 +470,8 @@ _snacks = [];
                                   };
 
                                   print(objToSend);
-                                  final response = await http.post(Uri.parse(_toSend),
+                                  final response = await http.post(
+                                      Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),
                                       headers: {
                                         'X-DEVICE-ID':
@@ -478,8 +482,8 @@ _snacks = [];
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("updated", context);
                                     _lunch = [];
-_breakfast = [];
-_snacks = [];
+                                    _breakfast = [];
+                                    _snacks = [];
 
                                     recipedataFetched = false;
                                     choose = null;
@@ -614,8 +618,8 @@ _snacks = [];
                                         setState(() {
                                           currentIndex = i;
                                           _lunch = [];
-_breakfast = [];
-_snacks = [];
+                                          _breakfast = [];
+                                          _snacks = [];
 
                                           recipedataFetched = false;
                                           choose = null;
@@ -657,19 +661,18 @@ _snacks = [];
                       ],
                     ),
                   ),
-                  if(loading)
-                   Expanded(
+                  if (loading)
+                    Expanded(
                       child: Container(
                           child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Center(
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator())
-                          )
+                              child: Container(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator()))
                         ],
                       )),
                     ),
@@ -687,6 +690,7 @@ _snacks = [];
                         ],
                       )),
                     ),
+                    SizedBox(height: 10),
                   menuDataFetched && permissionMenu && !loading
                       ? Expanded(
                           child: new TabBarView(
@@ -718,8 +722,8 @@ _snacks = [];
                                                       i++) {
                                                     selected.add(false);
                                                   }
-                                                  key.currentState
-                                                     !.openEndDrawer();
+                                                  key.currentState!
+                                                      .openEndDrawer();
                                                   choose = 'breakfast';
                                                   setState(() {});
                                                   // Navigator.push(context,MaterialPageRoute(
@@ -735,7 +739,7 @@ _snacks = [];
                                                                     8))),
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                              .fromLTRB(
+                                                          .fromLTRB(
                                                           12, 8, 12, 8),
                                                       child: Text(
                                                         'Add Item',
@@ -763,17 +767,17 @@ _snacks = [];
                                               return Card(
                                                 child: Column(
                                                   children: [
-                                                 //   Text(menuData['Menu'][j][0][index]['recipeDetails'].toString()),
-                                                   menuData['Menu'][j][0][index]['recipeDetails']!=null&& menuData['Menu'][j][0][index]
+                                                    //   Text(menuData['Menu'][j][0][index]['recipeDetails'].toString()),
+                                                    menuData['Menu'][j][0][index][
+                                                                    'recipeDetails'] !=
+                                                                null &&
+                                                            menuData['Menu'][j][0][index]
                                                                         ['recipeDetails']
                                                                     ['media'] !=
                                                                 null &&
-                                                            menuData['Menu'][j][0][index]['recipeDetails'][
-                                                                        'media']
-                                                                    .length >
+                                                            menuData['Menu'][j][0][index]['recipeDetails']['media'].length >
                                                                 0
-                                                        ? 
-                                                       menuData['Menu'][j][0][index]
+                                                        ? menuData['Menu'][j][0][index]
                                                                         ['recipeDetails']['media'][0]
                                                                     ['mediaType'] ==
                                                                 'Image'
@@ -788,10 +792,9 @@ _snacks = [];
                                                                         [
                                                                         'mediaUrl']),
                                                               )
-                                                            : 
-                                                            Center(child: Icon(Icons.video_collection))
+                                                            : Center(child: Icon(Icons.video_collection))
                                                         : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-                                                   
+
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -809,19 +812,17 @@ _snacks = [];
                                                                       .width *
                                                                   0.23,
                                                               child:
-                                                                  AutoSizeText(menuData['Menu'][j][0]
+                                                                  AutoSizeText(
+                                                                menuData['Menu'][j][0][index]
                                                                             [
-                                                                            index]
-                                                                        [
-                                                                        'recipeDetails']!=null?
-                                                                menuData['Menu'][j][0]
+                                                                            'recipeDetails'] !=
+                                                                        null
+                                                                    ? menuData['Menu'][j]
                                                                             [
-                                                                            index]
+                                                                            0][index]['recipeDetails']
                                                                         [
-                                                                        'recipeDetails']
-                                                                    [
-                                                                    'itemName']:''
-                                                                    ,
+                                                                        'itemName']
+                                                                    : '',
                                                                 minFontSize: 8,
                                                                 maxLines: 2,
                                                                 overflow:
@@ -841,16 +842,17 @@ _snacks = [];
                                                                   ),
                                                                   onTap:
                                                                       () async {
-                                                                       
                                                                     MenuAPIHandler
                                                                         handler =
                                                                         MenuAPIHandler({
                                                                       "userid":
                                                                           MyApp
                                                                               .LOGIN_ID_VALUE,
-                                                                      "id": menuData['Menu'][j][0][index]
+                                                                      "id": menuData['Menu'][j][0]
                                                                               [
-                                                                              'id'],
+                                                                              index]
+                                                                          [
+                                                                          'id'],
                                                                     });
                                                                     var data =
                                                                         await handler
@@ -904,6 +906,19 @@ _snacks = [];
                                         Row(
                                           children: [
                                             Text(
+                                              'Morning Tea',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black54),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
                                               'Lunch',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -921,8 +936,8 @@ _snacks = [];
                                                       i++) {
                                                     selected.add(false);
                                                   }
-                                                  key.currentState
-                                                      !.openEndDrawer();
+                                                  key.currentState!
+                                                      .openEndDrawer();
                                                   choose = 'lunch';
                                                   setState(() {});
                                                   // Navigator.push(context,MaterialPageRoute(
@@ -938,7 +953,7 @@ _snacks = [];
                                                                     8))),
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                              .fromLTRB(
+                                                          .fromLTRB(
                                                           12, 8, 12, 8),
                                                       child: Text(
                                                         'Add Item',
@@ -1046,9 +1061,11 @@ _snacks = [];
                                                                       "userid":
                                                                           MyApp
                                                                               .LOGIN_ID_VALUE,
-                                                                      "id": menuData['Menu'][j][1][index]
+                                                                      "id": menuData['Menu'][j][1]
                                                                               [
-                                                                              'id'],
+                                                                              index]
+                                                                          [
+                                                                          'id'],
                                                                     });
                                                                     var data =
                                                                         await handler
@@ -1102,7 +1119,20 @@ _snacks = [];
                                         Row(
                                           children: [
                                             Text(
-                                              'Snacks',
+                                              'Afternoon Tea',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black54),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Late Snacks',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.black54),
@@ -1119,8 +1149,8 @@ _snacks = [];
                                                       i++) {
                                                     selected.add(false);
                                                   }
-                                                  key.currentState
-                                                      !.openEndDrawer();
+                                                  key.currentState!
+                                                      .openEndDrawer();
                                                   choose = 'snacks';
                                                   setState(() {});
                                                   // Navigator.push(context,MaterialPageRoute(
@@ -1136,7 +1166,7 @@ _snacks = [];
                                                                     8))),
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                              .fromLTRB(
+                                                          .fromLTRB(
                                                           12, 8, 12, 8),
                                                       child: Text(
                                                         'Add Item',
@@ -1170,9 +1200,9 @@ _snacks = [];
                                                             MainAxisAlignment
                                                                 .start,
                                                         children: [
-      
-                                                          menuData['Menu'][j][2][index]['recipeDetails']['media'] !=
-                                                                  null && menuData['Menu'][j][2][index]['recipeDetails']['media'].length>0
+                                                          menuData['Menu'][j][2][index]['recipeDetails']['media'] != null &&
+                                                                  menuData['Menu'][j][2][index]['recipeDetails']['media'].length >
+                                                                      0
                                                               ? menuData['Menu'][j][2][index]['recipeDetails']['media'][0]['mediaType'] ==
                                                                       'Image'
                                                                   ? AspectRatio(
@@ -1186,18 +1216,16 @@ _snacks = [];
                                                                               'mediaUrl']),
                                                                     )
                                                                   : Center(
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .video_collection))
+                                                                      child: Icon(Icons
+                                                                          .video_collection))
                                                               : AspectRatio(
                                                                   aspectRatio:
-                                                                      18.0 /
-                                                                          16.0,
+                                                                      18.0 / 16.0,
                                                                   child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-                                                           Padding(
+                                                          Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     left: 2.0,
                                                                     right: 2),
                                                             child: Row(

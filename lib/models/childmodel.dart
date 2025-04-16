@@ -20,7 +20,7 @@ class ChildModel {
   Map<String, dynamic> afternoontea;
   Map<String, dynamic> snacks;
   List<dynamic> sunscreen;
-  Map<String, dynamic> toileting;
+  dynamic toileting;
   String? childid;
 
   ChildModel({
@@ -72,7 +72,7 @@ class ChildModel {
       afternoontea: json['afternoontea'] ?? {},
       snacks: json['snacks'] ?? {},
       sunscreen: json['sunscreen'] ?? [],
-      toileting: json['toileting'] ?? {},
+      toileting: json['toileting'],
       childid: json['childid'] ?? '',
     );
   }

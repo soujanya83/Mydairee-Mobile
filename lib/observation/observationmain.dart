@@ -45,8 +45,8 @@ class _ObservationMainState extends State<ObservationMain> {
   bool showLinks = false;
 
   bool observationsFetched = false;
-  List<ObservationModel> _allObservations=[];
-  List<ChildModel> _allChildrens=[];
+  List<ObservationModel> _allObservations = [];
+  List<ChildModel> _allChildrens = [];
   Map<String, bool> childValues = {};
   bool childrensFetched = false;
   bool obsStatusDraft = false;
@@ -776,7 +776,7 @@ class _ObservationMainState extends State<ObservationMain> {
     ));
   }
 
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
   bool permission = true;
@@ -785,6 +785,7 @@ class _ObservationMainState extends State<ObservationMain> {
   @override
   void initState() {
     _fetchCenters();
+
     super.initState();
   }
 
@@ -804,13 +805,13 @@ class _ObservationMainState extends State<ObservationMain> {
         centersFetched = true;
         if (this.mounted) setState(() {});
         print('+++++++++++++success is in _fetchCenters+++++++++++++');
-      } catch (e,s) {
+      } catch (e, s) {
         print('+++++++++++++error is in _fetchCenters+++++++++++++');
         print(e);
         print(s);
       }
     } else {
-      //MyApp.Show401Dialog(context);
+      MyApp.Show401Dialog(context);
     }
 
     _fetchData();
@@ -833,7 +834,7 @@ class _ObservationMainState extends State<ObservationMain> {
     };
     print(jsonEncode(b));
     final response = await http.post(
-     Uri.parse( Constants.BASE_URL +
+      Uri.parse(Constants.BASE_URL +
           "observation/getListFilterObservations/" +
           MyApp.LOGIN_ID_VALUE),
       headers: {
@@ -856,14 +857,14 @@ class _ObservationMainState extends State<ObservationMain> {
         assert(res is List);
         for (int i = 0; i < res.length; i++) {
           print('index $i loop _fetchFilteredData');
-          
+
           _allObservations.add(ObservationModel.fromJson(res[i]));
         }
         print('after loop done');
         observationsFetched = true;
-        if (this.mounted) setState((){});
+        if (this.mounted) setState(() {});
         print('+++++++++++++success is in _fetchFilteredData+++++++++++++');
-      } catch (e,s) {
+      } catch (e, s) {
         print('+++++++++++++error is in _fetchFilteredData+++++++++++++');
         print(e);
         print(s);
@@ -879,6 +880,11 @@ class _ObservationMainState extends State<ObservationMain> {
     print(data['observations']);
     print(data['permissions']);
     print(MyApp.USER_TYPE_VALUE);
+
+    if (data['observations'] != null) {
+      if (this.mounted) setState(() {});
+    }
+    observationsFetched = true;
     if (!data.containsKey('error')) {
       if ((data['permissions'] != null &&
               data['permissions']['addObservation'] == '1') ||
@@ -895,15 +901,14 @@ class _ObservationMainState extends State<ObservationMain> {
         var res = data['observations'];
         _allObservations = [];
         try {
-        
           assert(res is List);
           for (int i = 0; i < res.length; i++) {
             _allObservations.add(ObservationModel.fromJson(res[i]));
           }
           observationsFetched = true;
           permission = true;
-          if (this.mounted) setState((){});
-        } catch (e,s) {
+          if (this.mounted) setState(() {});
+        } catch (e, s) {
           print('+++error in fetch data++++');
           print(s);
           print(e);
@@ -956,7 +961,7 @@ class _ObservationMainState extends State<ObservationMain> {
                             Expanded(
                               child: Container(),
                             ),
-                            if (permission)
+                            if (permission && MyApp.USER_TYPE_VALUE != 'Parent')
                               GestureDetector(
                                   onTap: () {
                                     key.currentState?.openEndDrawer();
@@ -968,7 +973,8 @@ class _ObservationMainState extends State<ObservationMain> {
                             SizedBox(
                               width: 6,
                             ),
-                            if (permissionAdd)
+                            if (permissionAdd &&
+                                MyApp.USER_TYPE_VALUE != 'Parent')
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -984,7 +990,9 @@ class _ObservationMainState extends State<ObservationMain> {
                                                     centerid:
                                                         centers[currentIndex]
                                                             .id,
-                                                    selecChildrens: [], media: [], totaldata: {},
+                                                    selecChildrens: [],
+                                                    media: [],
+                                                    totaldata: {},
                                                   ))));
                                 },
                                 child: Container(
@@ -1013,8 +1021,8 @@ class _ObservationMainState extends State<ObservationMain> {
                                   height: 30,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Constants.greyColor),
+                                      border: Border.all(
+                                          color: Constants.greyColor),
                                       color: Colors.white,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(8))),
@@ -1129,15 +1137,21 @@ class _ObservationMainState extends State<ObservationMain> {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewObservation(
-                                                          id: _allObservations[
-                                                                  index]
-                                                              .id,
-                                                          montCount: _allObservations[index].montessoricount,
-                                              eylfCount: _allObservations[index].eylfcount,
-                                              devCount:_allObservations[index].milestonecount    
-                                                        )));
+                                                    builder: (context) => ViewObservation(
+                                                        id: _allObservations[
+                                                                index]
+                                                            .id,
+                                                        montCount:
+                                                            _allObservations[
+                                                                    index]
+                                                                .montessoricount,
+                                                        eylfCount:
+                                                            _allObservations[
+                                                                    index]
+                                                                .eylfcount,
+                                                        devCount: _allObservations[
+                                                                index]
+                                                            .milestonecount)));
                                           },
                                           child: Card(
                                             child: Container(
@@ -1162,20 +1176,23 @@ class _ObservationMainState extends State<ObservationMain> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .fromLTRB(
+                                                                .fromLTRB(
                                                                 0, 8, 0, 8),
                                                         child: _allObservations[
                                                                         index]
                                                                     .title !=
                                                                 null
-                                                            ? tagRemove(
-                                                                _allObservations[
-                                                                        index]
-                                                                    .title,
-                                                                'heading',
-                                                                centers[currentIndex]
-                                                                    .id,
-                                                                context)
+                                                            ? SizedBox(
+                                                                height: 100,
+                                                                child: tagRemove(
+                                                                    _allObservations[
+                                                                            index]
+                                                                        .title,
+                                                                    'heading',
+                                                                    centers[currentIndex]
+                                                                        .id,
+                                                                    context),
+                                                              )
                                                             : null,
                                                       ),
                                                       Row(
@@ -1197,7 +1214,8 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                         null
                                                                     ? _allObservations[
                                                                             index]
-                                                                        .userName.toString()
+                                                                        .userName
+                                                                        .toString()
                                                                     : '',
                                                                 style: TextStyle(
                                                                     color: Constants
@@ -1221,7 +1239,8 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                         null
                                                                     ? _allObservations[
                                                                             index]
-                                                                        .userName.toString()
+                                                                        .userName
+                                                                        .toString()
                                                                     : '',
                                                                 style: TextStyle(
                                                                     color: Constants
@@ -1233,30 +1252,43 @@ class _ObservationMainState extends State<ObservationMain> {
                                                           ),
                                                         ],
                                                       ),
-                                                      SizedBox(height: 5,),
-                                                       Row(
-                                                            children: [
-                                                              Text(
-                                                                'Created on:',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                              Text(
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            'Created on:',
+                                                            style: TextStyle(
+                                                                fontSize: 12),
+                                                          ),
+                                                          Builder(builder:
+                                                              (context) {
+                                                            try {
+                                                              return Text(
                                                                 _allObservations[index]
                                                                             .dateAdded !=
                                                                         null
-                                                                    ? formatter.format(DateTime.parse(_allObservations[index]
-                                                                            .dateAdded))
+                                                                    ? formatter.format(
+                                                                        DateTime.parse(
+                                                                            _allObservations[index].dateAdded))
                                                                     : '',
                                                                 style: TextStyle(
                                                                     color: Constants
                                                                         .kMain,
                                                                     fontSize:
                                                                         12),
-                                                              ),
-                                                            ],
-                                                          ),
+                                                              );
+                                                            } catch (e) {
+                                                              return Text(
+                                                                  _allObservations[
+                                                                          index]
+                                                                      .dateAdded
+                                                                      .toString());
+                                                            }
+                                                          }),
+                                                        ],
+                                                      ),
                                                       SizedBox(
                                                         height: 10,
                                                       ),
@@ -1343,7 +1375,8 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                   child: Container(
                                                                       decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.all(Radius.circular(8))),
                                                                       child: Padding(
-                                                                        padding: const EdgeInsets.fromLTRB(
+                                                                        padding: const EdgeInsets
+                                                                            .fromLTRB(
                                                                             12,
                                                                             8,
                                                                             12,
@@ -1375,7 +1408,8 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                   child: Container(
                                                                       decoration: BoxDecoration(color: Color(0xffFFEFB8), borderRadius: BorderRadius.all(Radius.circular(8))),
                                                                       child: Padding(
-                                                                        padding: const EdgeInsets.fromLTRB(
+                                                                        padding: const EdgeInsets
+                                                                            .fromLTRB(
                                                                             12,
                                                                             8,
                                                                             12,

@@ -320,6 +320,7 @@ class _ViewObservationState extends State<ViewObservation> {
                         //     displaydata1['observation']['status'] !=
                         //         'Published' &&
                         //     MyApp.USER_TYPE_VALUE != 'Parent')
+                      if( MyApp.USER_TYPE_VALUE != 'Parent')
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {

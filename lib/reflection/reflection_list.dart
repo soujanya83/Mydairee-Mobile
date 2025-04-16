@@ -20,11 +20,11 @@ class ReflectionList extends StatefulWidget {
 }
 
 class _ReflectionListState extends State<ReflectionList> {
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<Reflections> _reflection=[];
+  List<Reflections> _reflection = [];
   bool reflectionFetched = false;
 
   var details;
@@ -117,32 +117,34 @@ class _ReflectionListState extends State<ReflectionList> {
                         'Reflection',
                         style: Constants.header1,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddReflection(
-                                        centerid: centers[currentIndex].id,
-                                      ))).then((value) {
-                            details = null;
-                            _fetchData();
-                          });
-                        },
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Constants.kButton,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                              child: Text(
-                                'Add New',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                            )),
-                      )
+                      if (MyApp.USER_TYPE_VALUE != 'Parent')
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddReflection(
+                                          centerid: centers[currentIndex].id,
+                                        ))).then((value) {
+                              details = null;
+                              _fetchData();
+                            });
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  color: Constants.kButton,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                child: Text(
+                                  'Add New',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 12),
+                                ),
+                              )),
+                        )
                     ],
                   ),
                   SizedBox(
@@ -229,117 +231,123 @@ class _ReflectionListState extends State<ReflectionList> {
                                                   ],
                                                 ),
                                                 Expanded(child: Container()),
-                                                IconButton(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            0.0),
-                                                    iconSize: 20,
-                                                    onPressed: () {
-                                                       showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title: new Text(
-                                                                "Delete Reflection"),
-                                                            content: new Text(
-                                                                "Are you sure you want to delete Reflection"),
-                                                            actions: <Widget>[
-                                                              new TextButton(
-                                                                child: new Text(
-                                                                    "Cancel"),
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                              new TextButton(
-                                                                child: new Text(
-                                                                    "Ok"),
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      Constants
-                                                                              .BASE_URL +
-                                                                          'Reflections/deleteReflection';
-                                                                  var objTOSend =
-                                                                      {
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "reflectionid":
-                                                                        _reflection[index]
-                                                                            .id,
-                                                                  };
-                                                                  final response = await http.post(
-                                                                      Uri.parse(_toSend),
-                                                                      body: jsonEncode(
-                                                                          objTOSend),
-                                                                      headers: {
-                                                                        "X-DEVICE-ID":
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        "X-TOKEN":
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
-
-                                                                  if (response
-                                                                          .statusCode ==
-                                                                      200) {
-                                                                    details =
-                                                                        null;
-                                                                    setState(
-                                                                        () {});
-                                                                    details =
-                                                                        null;
-                                                                    _fetchData();
+                                                if (MyApp.USER_TYPE_VALUE !=
+                                                    'Parent')
+                                                  IconButton(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0.0),
+                                                      iconSize: 20,
+                                                      onPressed: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: new Text(
+                                                                  "Delete Reflection"),
+                                                              content: new Text(
+                                                                  "Are you sure you want to delete Reflection"),
+                                                              actions: <Widget>[
+                                                                new TextButton(
+                                                                  child: new Text(
+                                                                      "Cancel"),
+                                                                  onPressed:
+                                                                      () {
                                                                     Navigator.pop(
                                                                         context);
-                                                                    MyApp.ShowToast(
-                                                                        "deleted",
-                                                                        context);
-                                                                  } else if (response
-                                                                          .statusCode ==
-                                                                      401) {
-                                                                    MyApp.Show401Dialog(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                              )
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.delete,
-                                                      color: Colors.red,
-                                                    )),
-                                                IconButton(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            0.0),
-                                                    iconSize: 20,
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  EditReflection(
-                                                                    centerid:
-                                                                        centers[currentIndex]
-                                                                            .id,
-                                                                    reflectionid:
-                                                                        _reflection[index]
-                                                                            .id,
-                                                                  ))).then(
-                                                          (value) {
-                                                        details = null;
-                                                        _fetchData();
-                                                      });
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.edit,
-                                                      color: Colors.blue,
-                                                    )),
+                                                                  },
+                                                                ),
+                                                                new TextButton(
+                                                                  child:
+                                                                      new Text(
+                                                                          "Ok"),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    var _toSend =
+                                                                        Constants.BASE_URL +
+                                                                            'Reflections/deleteReflection';
+                                                                    var objTOSend =
+                                                                        {
+                                                                      "userid":
+                                                                          MyApp
+                                                                              .LOGIN_ID_VALUE,
+                                                                      "reflectionid":
+                                                                          _reflection[index]
+                                                                              .id,
+                                                                    };
+                                                                    final response = await http.post(
+                                                                        Uri.parse(
+                                                                            _toSend),
+                                                                        body: jsonEncode(
+                                                                            objTOSend),
+                                                                        headers: {
+                                                                          "X-DEVICE-ID":
+                                                                              await MyApp.getDeviceIdentity(),
+                                                                          "X-TOKEN":
+                                                                              MyApp.AUTH_TOKEN_VALUE,
+                                                                        });
+
+                                                                    if (response
+                                                                            .statusCode ==
+                                                                        200) {
+                                                                      details =
+                                                                          null;
+                                                                      setState(
+                                                                          () {});
+                                                                      details =
+                                                                          null;
+                                                                      _fetchData();
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                      MyApp.ShowToast(
+                                                                          "deleted",
+                                                                          context);
+                                                                    } else if (response
+                                                                            .statusCode ==
+                                                                        401) {
+                                                                      MyApp.Show401Dialog(
+                                                                          context);
+                                                                    }
+                                                                  },
+                                                                )
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      )),
+                                                if (MyApp.USER_TYPE_VALUE !=
+                                                    'Parent')
+                                                  IconButton(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0.0),
+                                                      iconSize: 20,
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        EditReflection(
+                                                                          centerid:
+                                                                              centers[currentIndex].id,
+                                                                          reflectionid:
+                                                                              _reflection[index].id,
+                                                                        ))).then(
+                                                            (value) {
+                                                          details = null;
+                                                          _fetchData();
+                                                        });
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.edit,
+                                                        color: Colors.blue,
+                                                      )),
                                                 _reflection[index].status ==
                                                         'PUBLISHED'
                                                     ? GestureDetector(
@@ -355,7 +363,7 @@ class _ReflectionListState extends State<ReflectionList> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .fromLTRB(
+                                                                      .fromLTRB(
                                                                       12,
                                                                       8,
                                                                       12,
@@ -403,7 +411,7 @@ class _ReflectionListState extends State<ReflectionList> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .fromLTRB(
+                                                                      .fromLTRB(
                                                                       12,
                                                                       8,
                                                                       12,
@@ -464,7 +472,7 @@ class _ReflectionListState extends State<ReflectionList> {
                                                               return Container(
                                                                 child: Padding(
                                                                   padding: const EdgeInsets
-                                                                          .only(
+                                                                      .only(
                                                                       left: 8.0,
                                                                       right:
                                                                           8.0),

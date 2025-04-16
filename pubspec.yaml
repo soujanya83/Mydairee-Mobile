@@ -67,6 +67,7 @@ dependencies:
   image_painter: ^0.7.1
   open_file: ^3.5.10 # Replaces open_file (deprecated)
   table_calendar: ^3.2.0
+  
   # flutter_inappwebview: ^6.0.0
   # webview_flutter_android: ^4.3.3
 

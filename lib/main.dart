@@ -1,4 +1,6 @@
 // import 'package:device_info/device_info.dart';
+import 'dart:async';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,11 +21,30 @@ import 'package:toast/toast.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize();
-  runApp(
-    RestartWidget(
-      child: MyApp(),
-    ),
-  );
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('Flutter UI Error: ${details.exception}');
+    debugPrint('Flutter UI Stacktrack: ${details.stack.toString().substring(1,200)}');
+  };
+
+  runZonedGuarded(() {
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      // 👇 Show default fallback text when widget fails
+      return const Text(
+        'error',
+        style: TextStyle(color: Colors.red),
+      );
+    };
+
+    runApp(
+      RestartWidget(
+        child: MyApp(),
+      ),
+    );
+  }, (error, stackTrace) {
+    debugPrint('Async Error: $error');
+  });
 }
 
 class RestartWidget extends StatefulWidget {
@@ -67,7 +88,7 @@ class MyApp extends StatelessWidget {
   static String USER_TYPE_VALUE = '';
 
   static ShowToast(String msg, BuildContext context) {
-     ToastContext().init(context);
+    ToastContext().init(context);
     Toast.show(msg, duration: Toast.lengthLong, gravity: Toast.bottom);
   }
 

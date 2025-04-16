@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:mime/mime.dart';
+import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
+import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
@@ -21,6 +23,7 @@ import 'package:mykronicle_mobile/models/extrasmodel.dart';
 import 'package:mykronicle_mobile/models/observationmodel.dart';
 import 'package:mykronicle_mobile/models/obsmediamodel.dart';
 import 'package:mykronicle_mobile/models/optionsmodel.dart';
+import 'package:mykronicle_mobile/models/roomsmodel.dart';
 import 'package:mykronicle_mobile/models/staffmodel.dart';
 import 'package:mykronicle_mobile/observation/assesmentstab/assesmentsmaintab.dart';
 import 'package:mykronicle_mobile/observation/childdetails.dart';
@@ -134,6 +137,7 @@ class AddObservationState extends State<AddObservation>
 
   List<Map<String, dynamic>> mentionUser = [];
   List<Map<String, dynamic>> mentionMont = [];
+  List<RoomsModel> _rooms = [];
 
   bool mChildFetched = false;
   bool mMontFetched = false;
@@ -162,6 +166,55 @@ class AddObservationState extends State<AddObservation>
     super.initState();
   }
 
+  List<MultiSelectItem<RoomsModel>> roomItems = [];
+  List<RoomsModel> selectedRooms = [];
+
+  Future<void> fetchRoomsOnly() async {
+    try {
+      RoomAPIHandler handler = RoomAPIHandler({
+        "userid": MyApp.LOGIN_ID_VALUE,
+        "centerid": widget.centerid, // ✅ Use correct center id
+      });
+
+      var data = await handler.getList();
+
+      if (data != null && !data.containsKey('error')) {
+        var res = data['rooms'];
+        _rooms = [];
+
+        if (res != null && res is List) {
+          for (int i = 0; i < res.length; i++) {
+            List<ChildModel> childs = [];
+
+            if (res[i]['childs'] != null && res[i]['childs'] is List) {
+              for (int j = 0; j < res[i]['childs'].length; j++) {
+                childs.add(ChildModel.fromJson(res[i]['childs'][j]));
+              }
+            }
+
+            RoomsDescModel roomDesc = RoomsDescModel.fromJson(res[i]);
+            _rooms.add(RoomsModel(child: childs, room: roomDesc));
+          }
+
+          if (mounted) {
+            setState(() {
+              roomItems = _rooms
+                  .map((room) => MultiSelectItem(room, room.room.name))
+                  .toList();
+            });
+          }
+        } else {
+          print("Rooms list is null or not a List");
+        }
+      } else {
+        print("Error in API: $data");
+      }
+    } catch (e, s) {
+      print("Exception in fetchRoomsOnly: $e");
+      print(s);
+    }
+  }
+
   Future<void> _fetchData() async {
     ObservationsAPIHandler handler = ObservationsAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": widget.centerid});
@@ -181,6 +234,8 @@ class AddObservationState extends State<AddObservation>
     } catch (e) {
       print(e);
     }
+
+    await fetchRoomsOnly();
 
     UtilsAPIHandler utilsApiHandler = UtilsAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": widget.centerid});
@@ -926,7 +981,10 @@ class AddObservationState extends State<AddObservation>
                                           MaterialPageRoute(
                                               builder: (context) => Preview()));
                                     },
-                                    child: Text("Preview",style: TextStyle(color: Colors.white),)))
+                                    child: Text(
+                                      "Preview",
+                                      style: TextStyle(color: Colors.white),
+                                    )))
                         ],
                       ),
                       new Container(
@@ -952,7 +1010,7 @@ class AddObservationState extends State<AddObservation>
                         ),
                       ),
                       new Container(
-                        height: MediaQuery.of(context).size.height + 150 + h,
+                        height: MediaQuery.of(context).size.height + 350 + h,
                         child: new TabBarView(
                           controller: _controller,
                           children: <Widget>[
@@ -996,7 +1054,7 @@ class AddObservationState extends State<AddObservation>
                                               ),
                                             ),
                                             Text(
-                                              'Select Childredn',
+                                              'Select Children',
                                               style: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -1053,6 +1111,49 @@ class AddObservationState extends State<AddObservation>
                                                 : Container();
                                           }))
                                       : Container(),
+                                  // SizedBox(
+                                  //   height: 10,
+                                  // ),
+                                  // Text(
+                                  //   'Select Children',
+                                  //   style: TextStyle(color: Colors.black),
+                                  // ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  // InkWell(
+                                  //     onTap: () {
+                                  //       fetchRoomsOnly();
+                                  //     },
+                                  //     child: Text(roomItems.length.toString() +
+                                  //         'hgdfhgdhbghfhg')),
+
+                                  MultiSelectDialogField(
+                                    items: roomItems,
+                                    title: Text(
+                                      'Select Classroom',
+                                    ),
+                                    selectedColor: Constants.kButton,
+                                    backgroundColor: Colors.white,
+                                    decoration: BoxDecoration(
+                                        color: Colors.transparent),
+                                    buttonText: Text("Classroom"),
+                                    onConfirm: (results) {
+                                      selectedRooms =
+                                          results.cast<RoomsModel>();
+                                    },
+                                    // buttonIcon: Icon(
+                                    //   Icons.note_rounded,
+                                    //   color: Colors.white,
+                                    // ),
+                                    chipDisplay: MultiSelectChipDisplay(
+                                      onTap: (value) {
+                                        setState(() {
+                                          selectedRooms.remove(value);
+                                        });
+                                      },
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1391,7 +1492,7 @@ class AddObservationState extends State<AddObservation>
                                       ),
                                     ),
                                   SizedBox(
-                                    height: 5,
+                                    height: 10,
                                   ),
                                   Text('Media'),
                                   SizedBox(
@@ -1399,135 +1500,187 @@ class AddObservationState extends State<AddObservation>
                                   ),
                                   GestureDetector(
                                       onTap: () async {
-                                        showDialog(
-                                            context: context,
-                                            barrierDismissible: true,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text('Choose'),
-                                                content: Container(
-                                                  color: Colors.white,
-                                                  height: 100,
-                                                  width: size.width * 0.8,
-                                                  child: Column(
-                                                    children: [
-                                                      SizedBox(
-                                                        width: size.width * 0.7,
-                                                        child: ElevatedButton(
-                                                          onPressed: () async {
-                                                            Navigator.pop(
-                                                                context);
-                                                            FilePickerResult?
-                                                                result =
-                                                                await FilePicker
-                                                                    .platform
-                                                                    .pickFiles();
+                                        FilePickerResult? result =
+                                            await FilePicker.platform
+                                                .pickFiles();
 
-                                                            if (result !=
-                                                                null) {
-                                                              File? file = File(
-                                                                  result
-                                                                          .files
-                                                                          .single
-                                                                          .path ??
-                                                                      '');
-                                                              var fileSizeInBytes =
-                                                                  file.length();
-                                                              var fileSizeInKB =
-                                                                  await fileSizeInBytes /
-                                                                      1024;
-                                                              var fileSizeInMB =
-                                                                  fileSizeInKB /
-                                                                      1024;
-                                                              String mimeStr =
-                                                                  lookupMimeType(result
-                                                                              .files
-                                                                              .single
-                                                                              .path ??
-                                                                          '') ??
-                                                                      '';
-                                                              var fileType =
-                                                                  mimeStr.split(
-                                                                      '/');
+                                        if (result != null) {
+                                          File? file = File(
+                                              result.files.single.path ?? '');
+                                          var fileSizeInBytes = file.length();
+                                          var fileSizeInKB =
+                                              await fileSizeInBytes / 1024;
+                                          var fileSizeInMB =
+                                              fileSizeInKB / 1024;
+                                          String mimeStr = lookupMimeType(
+                                                  result.files.single.path ??
+                                                      '') ??
+                                              '';
+                                          var fileType = mimeStr.split('/');
 
-                                                              if (fileSizeInMB >
-                                                                      2 &&
-                                                                  fileType[0]
-                                                                          .toString() ==
-                                                                      'image') {
-                                                                MyApp.ShowToast(
-                                                                    'file size greater than 2 mb so image is being compressed',
-                                                                    context);
+                                          if (fileSizeInMB > 2 &&
+                                              fileType[0].toString() ==
+                                                  'image') {
+                                            MyApp.ShowToast(
+                                                'file size greater than 2 mb so image is being compressed',
+                                                context);
 
-                                                                final filePath =
-                                                                    file.absolute
-                                                                        .path;
-                                                                final lastIndex =
-                                                                    filePath.lastIndexOf(
-                                                                        new RegExp(
-                                                                            r'.jp'));
-                                                                final splitted =
-                                                                    filePath.substring(
-                                                                        0,
-                                                                        lastIndex);
-                                                                final outPath =
-                                                                    "${splitted}_out${filePath.substring(lastIndex)}";
+                                            final filePath = file.absolute.path;
+                                            final lastIndex =
+                                                filePath.lastIndexOf(
+                                                    new RegExp(r'.jp'));
+                                            final splitted = filePath.substring(
+                                                0, lastIndex);
+                                            final outPath =
+                                                "${splitted}_out${filePath.substring(lastIndex)}";
 
-                                                                File cFile =
-                                                                    await compressAndGetFile(
-                                                                        file,
-                                                                        outPath);
-                                                                files
-                                                                    .add(cFile);
-                                                              } else {
-                                                                files.add(file);
-                                                              }
-                                                              captions.add(
-                                                                  TextEditingController());
-                                                              _editChildren
-                                                                  .add([]);
-                                                              _editEducators
-                                                                  .add([]);
-                                                              h = h + 100.0;
-                                                              setState(() {});
-                                                            } else {
-                                                              // User canceled the picker
-                                                            }
-                                                          },
-                                                          child:
-                                                              Text("Gallery"),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width:
-                                                              size.width * 0.7,
-                                                          child: ElevatedButton(
-                                                            onPressed:
-                                                                () async {
-                                                              ObservationsAPIHandler
-                                                                  handler =
-                                                                  ObservationsAPIHandler(
-                                                                      {});
+                                            File cFile =
+                                                await compressAndGetFile(
+                                                    file, outPath);
+                                            files.add(cFile);
+                                          } else {
+                                            files.add(file);
+                                          }
+                                          captions.add(TextEditingController());
+                                          _editChildren.add([]);
+                                          _editEducators.add([]);
+                                          h = h + 100.0;
+                                          setState(() {});
+                                        } else {
+                                          // User canceled the picker
+                                        }
 
-                                                              var data =
-                                                                  await handler
-                                                                      .getMediaImages();
+                                        result;
 
-                                                              _dialog(
-                                                                  context,
-                                                                  data[
-                                                                      'uploadedMediaList']);
+                                        // showDialog(
+                                        //     context: context,
+                                        //     barrierDismissible: true,
+                                        //     builder: (BuildContext context) {
+                                        //       return AlertDialog(
+                                        //         title: Text('Choose'),
+                                        //         content: Container(
+                                        //           color: Colors.white,
+                                        //           height: 100,
+                                        //           width: size.width * 0.8,
+                                        //           child: Column(
+                                        //             children: [
+                                        //               SizedBox(
+                                        //                 width: size.width * 0.7,
+                                        //                 child: ElevatedButton(
+                                        //                   onPressed: () async {
+                                        //                     Navigator.pop(
+                                        //                         context);
+                                        //                     FilePickerResult?
+                                        //                         result =
+                                        //                         await FilePicker
+                                        //                             .platform
+                                        //                             .pickFiles();
 
-                                                              print(data);
-                                                            },
-                                                            child:
-                                                                Text("Media"),
-                                                          )),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).then((value) => setState(() {}));
+                                        //                     if (result !=
+                                        //                         null) {
+                                        //                       File? file = File(
+                                        //                           result
+                                        //                                   .files
+                                        //                                   .single
+                                        //                                   .path ??
+                                        //                               '');
+                                        //                       var fileSizeInBytes =
+                                        //                           file.length();
+                                        //                       var fileSizeInKB =
+                                        //                           await fileSizeInBytes /
+                                        //                               1024;
+                                        //                       var fileSizeInMB =
+                                        //                           fileSizeInKB /
+                                        //                               1024;
+                                        //                       String mimeStr =
+                                        //                           lookupMimeType(result
+                                        //                                       .files
+                                        //                                       .single
+                                        //                                       .path ??
+                                        //                                   '') ??
+                                        //                               '';
+                                        //                       var fileType =
+                                        //                           mimeStr.split(
+                                        //                               '/');
+
+                                        //                       if (fileSizeInMB >
+                                        //                               2 &&
+                                        //                           fileType[0]
+                                        //                                   .toString() ==
+                                        //                               'image') {
+                                        //                         MyApp.ShowToast(
+                                        //                             'file size greater than 2 mb so image is being compressed',
+                                        //                             context);
+
+                                        //                         final filePath =
+                                        //                             file.absolute
+                                        //                                 .path;
+                                        //                         final lastIndex =
+                                        //                             filePath.lastIndexOf(
+                                        //                                 new RegExp(
+                                        //                                     r'.jp'));
+                                        //                         final splitted =
+                                        //                             filePath.substring(
+                                        //                                 0,
+                                        //                                 lastIndex);
+                                        //                         final outPath =
+                                        //                             "${splitted}_out${filePath.substring(lastIndex)}";
+
+                                        //                         File cFile =
+                                        //                             await compressAndGetFile(
+                                        //                                 file,
+                                        //                                 outPath);
+                                        //                         files
+                                        //                             .add(cFile);
+                                        //                       } else {
+                                        //                         files.add(file);
+                                        //                       }
+                                        //                       captions.add(
+                                        //                           TextEditingController());
+                                        //                       _editChildren
+                                        //                           .add([]);
+                                        //                       _editEducators
+                                        //                           .add([]);
+                                        //                       h = h + 100.0;
+                                        //                       setState(() {});
+                                        //                     } else {
+                                        //                       // User canceled the picker
+                                        //                     }
+                                        //                   },
+                                        //                   child:
+                                        //                       Text("Gallery"),
+                                        //                 ),
+                                        //               ),
+                                        //               SizedBox(
+                                        //                   width:
+                                        //                       size.width * 0.7,
+                                        //                   child: ElevatedButton(
+                                        //                     onPressed:
+                                        //                         () async {
+                                        //                       ObservationsAPIHandler
+                                        //                           handler =
+                                        //                           ObservationsAPIHandler(
+                                        //                               {});
+
+                                        //                       var data =
+                                        //                           await handler
+                                        //                               .getMediaImages();
+
+                                        //                       _dialog(
+                                        //                           context,
+                                        //                           data[
+                                        //                               'uploadedMediaList']);
+
+                                        //                       print(data);
+                                        //                     },
+                                        //                     child:
+                                        //                         Text("Media"),
+                                        //                   )),
+                                        //             ],
+                                        //           ),
+                                        //         ),
+                                        //       );
+                                        //     }).then((value) => setState(() {}));
                                       },
                                       child: rectBorderWidget(size, context)),
                                   SizedBox(
@@ -1795,132 +1948,113 @@ class AddObservationState extends State<AddObservation>
                                                           });
                                                         },
                                                       )),
-                                                  Positioned(
-                                                      right: 0,
-                                                      top: 22,
-                                                      child: GestureDetector(
-                                                        child: Icon(
-                                                          Icons.edit,
-                                                          size: 20,
-                                                        ),
-                                                        onTap: () {
-                                                          showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      "Edit Image"),
-                                                                  content:
-                                                                      SingleChildScrollView(
-                                                                    child:
-                                                                        Container(
-                                                                      height: MediaQuery.of(context)
-                                                                              .size
-                                                                              .height *
-                                                                          0.6,
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.7,
+                                                  if (MyApp.USER_TYPE_VALUE !=
+                                                      "Parent")
+                                                    Positioned(
+                                                        right: 0,
+                                                        top: 22,
+                                                        child: GestureDetector(
+                                                          child: Icon(
+                                                            Icons.edit,
+                                                            size: 20,
+                                                          ),
+                                                          onTap: () {
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AlertDialog(
+                                                                    title: Text(
+                                                                        "Edit Image"),
+                                                                    content:
+                                                                        SingleChildScrollView(
                                                                       child:
-                                                                          ListView(
-                                                                        children: [
-                                                                          VideoItemLocal(
-                                                                              width: size.width / 8,
-                                                                              height: size.height / 8,
-                                                                              file: files[index]),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                8,
-                                                                          ),
-                                                                          Text(
-                                                                              'Children'),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                3,
-                                                                          ),
-                                                                          MultiSelectDialogField(
-                                                                            items:
-                                                                                _allChildrens.map((e) => MultiSelectItem(e, e.name)).toList(),
-                                                                            initialValue:
-                                                                                _editChildren[index],
-                                                                            listType:
-                                                                                MultiSelectListType.CHIP,
-                                                                            onConfirm:
-                                                                                (values) {
-                                                                              _editChildren[index] = values;
-                                                                            },
-                                                                          ),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                8,
-                                                                          ),
-                                                                          Text(
-                                                                              'Educators'),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                3,
-                                                                          ),
-                                                                          MultiSelectDialogField(
-                                                                            items:
-                                                                                _allEductarors.map((e) => MultiSelectItem(e, e.name)).toList(),
-                                                                            initialValue:
-                                                                                _editEducators[index],
-                                                                            listType:
-                                                                                MultiSelectListType.CHIP,
-                                                                            onConfirm:
-                                                                                (values) {
-                                                                              _editEducators[index] = values;
-                                                                            },
-                                                                          ),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                8,
-                                                                          ),
-                                                                          Text(
-                                                                              'Caption'),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                3,
-                                                                          ),
                                                                           Container(
-                                                                            height:
-                                                                                30,
-                                                                            child: TextField(
-                                                                                maxLines: 1,
-                                                                                controller: captions[index],
-                                                                                decoration: new InputDecoration(
-                                                                                  enabledBorder: const OutlineInputBorder(
-                                                                                    borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                                  ),
-                                                                                  border: new OutlineInputBorder(
-                                                                                    borderRadius: const BorderRadius.all(
-                                                                                      const Radius.circular(4),
+                                                                        height: MediaQuery.of(context).size.height *
+                                                                            0.6,
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.7,
+                                                                        child:
+                                                                            ListView(
+                                                                          children: [
+                                                                            VideoItemLocal(
+                                                                                width: size.width / 8,
+                                                                                height: size.height / 8,
+                                                                                file: files[index]),
+                                                                            SizedBox(
+                                                                              height: 8,
+                                                                            ),
+                                                                            Text('Children'),
+                                                                            SizedBox(
+                                                                              height: 3,
+                                                                            ),
+                                                                            MultiSelectDialogField(
+                                                                              items: _allChildrens.map((e) => MultiSelectItem(e, e.name)).toList(),
+                                                                              initialValue: _editChildren[index],
+                                                                              listType: MultiSelectListType.CHIP,
+                                                                              onConfirm: (values) {
+                                                                                _editChildren[index] = values;
+                                                                              },
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 8,
+                                                                            ),
+                                                                            Text('Educators'),
+                                                                            SizedBox(
+                                                                              height: 3,
+                                                                            ),
+                                                                            MultiSelectDialogField(
+                                                                              items: _allEductarors.map((e) => MultiSelectItem(e, e.name)).toList(),
+                                                                              initialValue: _editEducators[index],
+                                                                              listType: MultiSelectListType.CHIP,
+                                                                              onConfirm: (values) {
+                                                                                _editEducators[index] = values;
+                                                                              },
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 8,
+                                                                            ),
+                                                                            Text('Caption'),
+                                                                            SizedBox(
+                                                                              height: 3,
+                                                                            ),
+                                                                            Container(
+                                                                              height: 30,
+                                                                              child: TextField(
+                                                                                  maxLines: 1,
+                                                                                  controller: captions[index],
+                                                                                  decoration: new InputDecoration(
+                                                                                    enabledBorder: const OutlineInputBorder(
+                                                                                      borderSide: const BorderSide(color: Colors.black26, width: 0.0),
                                                                                     ),
-                                                                                  ),
-                                                                                )),
-                                                                          ),
-                                                                        ],
+                                                                                    border: new OutlineInputBorder(
+                                                                                      borderRadius: const BorderRadius.all(
+                                                                                        const Radius.circular(4),
+                                                                                      ),
+                                                                                    ),
+                                                                                  )),
+                                                                            ),
+                                                                          ],
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                  actions: <Widget>[
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child: Text(
-                                                                          'ok'),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              });
-                                                        },
-                                                      ))
+                                                                    actions: <Widget>[
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child: Text(
+                                                                            'ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          },
+                                                        ))
                                                 ],
                                               );
                                             }
@@ -3720,11 +3854,26 @@ class AddObservationState extends State<AddObservation>
                                               child
                                                   .add(selectedChildrens[i].id);
                                             }
+                                            String rooms = '';
+
+                                            for (int i = 0;
+                                                i < selectedRooms.length;
+                                                i++) {
+                                              if (i ==
+                                                  (selectedRooms.length - 1)) {
+                                                rooms +=
+                                                    selectedRooms[i].room.id;
+                                              } else
+                                                rooms +=
+                                                    selectedRooms[i].room.id +
+                                                        ',';
+                                            }
 
                                             Map<String, dynamic> mp;
                                             if (widget.type == 'edit') {
                                               mp = {
                                                 "childrens": jsonEncode(child),
+                                                "room": rooms,
                                                 "title": title,
                                                 "notes": notes,
                                                 "userid": MyApp.LOGIN_ID_VALUE,
@@ -3798,6 +3947,7 @@ class AddObservationState extends State<AddObservation>
                                             } else {
                                               mp = {
                                                 "childrens": jsonEncode(child),
+                                                "room": rooms,
                                                 "title": title,
                                                 "notes": notes,
                                                 "userid": MyApp.LOGIN_ID_VALUE,
@@ -4031,7 +4181,7 @@ class AddObservationState extends State<AddObservation>
                                                     Radius.circular(8))),
                                             child: Padding(
                                               padding:
-                                                  const EdgeInsets.all(10.0),
+                                                  const EdgeInsets.all(0.0),
                                               child: Row(
                                                 children: <Widget>[
                                                   Text(

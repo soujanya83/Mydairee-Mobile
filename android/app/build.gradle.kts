@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "com.mykronicle.mobile"
     compileSdk = 34
-    ndkVersion "25.2.9519653" 
+    ndkVersion "25.2.9519653"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

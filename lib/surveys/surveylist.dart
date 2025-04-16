@@ -18,7 +18,7 @@ class SurveyList extends StatefulWidget {
 
 class _SurveyListState extends State<SurveyList> {
   bool surveyFetched = false;
-  List<SurveyModel> _survey=[];
+  List<SurveyModel> _survey = [];
 
   @override
   void initState() {
@@ -77,8 +77,10 @@ class _SurveyListState extends State<SurveyList> {
                                     Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddSurvey(type: 'add', id: '',)))
+                                                builder: (context) => AddSurvey(
+                                                      type: 'add',
+                                                      id: '',
+                                                    )))
                                         .then((value) => _fetchData());
                                   },
                                   child: Container(
@@ -103,7 +105,14 @@ class _SurveyListState extends State<SurveyList> {
                             Container(
                               height: MediaQuery.of(context).size.height * 0.75,
                               width: MediaQuery.of(context).size.width,
-                              child: ListView.builder(
+                              child: 
+                              _survey.length == 0?Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("No survey found"),
+                                ],
+                              ):
+                              ListView.builder(
                                   itemCount:
                                       _survey != null ? _survey.length : 0,
                                   itemBuilder:

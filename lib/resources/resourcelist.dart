@@ -443,7 +443,7 @@ class _ResourceListState extends State<ResourceList> {
                                         }
                                       });
                                     },
-                                    child: Container(
+                                    child: Container( 
                                         decoration: BoxDecoration(
                                             color: Constants.kButton,
                                             borderRadius: BorderRadius.all(

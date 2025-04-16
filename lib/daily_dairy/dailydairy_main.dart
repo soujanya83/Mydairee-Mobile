@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
+import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/daily_dairy/dailydairy_add.dart';
 import 'package:mykronicle_mobile/daily_dairy/dailydairy_multiple.dart';
@@ -104,22 +105,62 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     } else {
       MyApp.Show401Dialog(context);
     }
+    await _fetchRooms();
+  }
 
-    _fetchData();
+  Future<void> _fetchRooms() async {
+    RoomAPIHandler handler = RoomAPIHandler(
+        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
+    var data = await handler.getList();
+    print('HEE' + data['permission'].toString());
+    var res = data['rooms'];
+    rooms = [];
+    try {
+      assert(res is List);
+      for (int i = 0; i < res.length; i++) {
+        RoomsDescModel roomDescModel = RoomsDescModel.fromJson(res[i]);
+        rooms.add(roomDescModel);
+      }
+      roomsFetched = true;
+      if (this.mounted) setState(() {});
+
+      _fetchData();
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
   }
 
   Future<void> _fetchData() async {
+    print('enter in _fetchData');
     roomsFetched = true;
     Map<String, String> data = {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers[currentIndex].id
     };
+    print('++++++data++++++++');
+    try {
+      print(rooms[currentRoomIndex].id);
+      print(DateFormat("yyyy-MM-dd").format(date!));
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+    print('roomsFetched');
 
+    print(data);
     if (roomsFetched) {
       data['roomid'] = rooms[currentRoomIndex].id;
       data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     }
-
+    if (MyApp.USER_TYPE_VALUE == 'Superadmin') {
+      data['superadmin'] = '1';
+    } else if (MyApp.USER_TYPE_VALUE == 'Parent') {
+      data['superadmin'] = '2';
+    } else if (MyApp.USER_TYPE_VALUE == 'Staff') {
+      data['superadmin'] = '3';
+    }
+    print('+++++++++++');
     print(data);
     DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
     var dt = await hlr.getData();
@@ -134,8 +175,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
           rooms.add(RoomsDescModel.fromJson(res[i]));
         }
         roomsFetched = true;
-      } catch (e) {
+      } catch (e, s) {
+        print('getting error in center');
         print(e);
+        print(s);
       }
       var child = dt['childs'];
       _allChildrens = [];
@@ -146,8 +189,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
           childValues[_allChildrens[i].id] = false;
         }
         childrensFetched = true;
-      } catch (e) {
+      } catch (e, s) {
+        print('getting error in children');
         print(e);
+        print(s);
       }
 
       showType = dt['columns'];
@@ -335,51 +380,53 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(8))),
-
-                                              child: 
-                                              
-                                              Padding(
+                                              child: Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 8, right: 8),
-                                                child: 
-                                                rooms.isEmpty?null:
-                                                Center(
-                                                  child: DropdownButton<String>(
-                                                    isExpanded: true,
-                                                    value:
-                                                        rooms[currentRoomIndex]
-                                                            .id,
-                                                    items: rooms.map(
-                                                        (RoomsDescModel value) {
-                                                      return new DropdownMenuItem<
-                                                          String>(
-                                                        value: value.id,
-                                                        child: new Text(
-                                                            value.name),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (value) {
-                                                      for (int i = 0;
-                                                          i < rooms.length;
-                                                          i++) {
-                                                        if (rooms[i].id ==
-                                                            value) {
-                                                          setState(() {
-                                                            currentRoomIndex =
-                                                                i;
-                                                            details = null;
-                                                            childrensFetched =
-                                                                false;
-                                                            _selectedChildrens =
-                                                                [];
-                                                            _fetchData();
-                                                          });
-                                                          break;
-                                                        }
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
+                                                child: rooms.isEmpty
+                                                    ? null
+                                                    : Center(
+                                                        child: DropdownButton<
+                                                            String>(
+                                                          isExpanded: true,
+                                                          value: rooms[
+                                                                  currentRoomIndex]
+                                                              .id,
+                                                          items: rooms.map(
+                                                              (RoomsDescModel
+                                                                  value) {
+                                                            return new DropdownMenuItem<
+                                                                String>(
+                                                              value: value.id,
+                                                              child: new Text(
+                                                                  value.name),
+                                                            );
+                                                          }).toList(),
+                                                          onChanged: (value) {
+                                                            for (int i = 0;
+                                                                i <
+                                                                    rooms
+                                                                        .length;
+                                                                i++) {
+                                                              if (rooms[i].id ==
+                                                                  value) {
+                                                                setState(() {
+                                                                  currentRoomIndex =
+                                                                      i;
+                                                                  details =
+                                                                      null;
+                                                                  childrensFetched =
+                                                                      false;
+                                                                  _selectedChildrens =
+                                                                      [];
+                                                                  _fetchData();
+                                                                });
+                                                                break;
+                                                              }
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
                                               ),
                                             ),
                                           )
@@ -468,9 +515,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .breakfast !=
                                                             null
                                                         ? Text(_allChildrens[
-                                                                selectedIndex ??
-                                                                    0]
-                                                            .breakfast?['startTime'])
+                                                                    selectedIndex ??
+                                                                        0]
+                                                                .breakfast?[
+                                                            'startTime'])
                                                         : Container(),
                                                     title: Text('Breakfast'),
                                                     trailing: _allChildrens[
@@ -508,7 +556,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                               'item']
                                                                           .toString()
                                                                           .toLowerCase()) {
-                                                                    currentItemIndex = i;
+                                                                    currentItemIndex =
+                                                                        i;
                                                                     break;
                                                                   }
                                                                 }
@@ -622,151 +671,151 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .morningtea !=
                                                             null
                                                         ? Text(_allChildrens[
-                                                                    selectedIndex]
-                                                                .morningtea[
-                                                            'startTime'])
+                                                                selectedIndex]
+                                                            .morningtea[
+                                                                'startTime']
+                                                            .toString())
                                                         : Container(),
                                                     title: Text('Morning Tea'),
-                                                    trailing: _allChildrens[
-                                                                    selectedIndex]
-                                                                .morningtea !=
-                                                            null
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              var time = _allChildrens[
-                                                                      selectedIndex]
-                                                                  .morningtea[
-                                                                      'startTime']
-                                                                  .toString()
-                                                                  .split(":");
-                                                              print(time);
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                    .morningtea !=
+                                                                null
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  var time = _allChildrens[selectedIndex]
+                                                                      .morningtea[
+                                                                          'startTime']
+                                                                      .toString()
+                                                                      .split(
+                                                                          ":");
+                                                                  print(time);
 
-                                                              type =
-                                                                  'MorningTea';
-                                                              _getItems(
-                                                                      'MORNINGTEA')
-                                                                  .then(
-                                                                      (value) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        recipes
-                                                                            .length;
-                                                                    i++) {
-                                                                  if (recipes[i]
-                                                                          .itemName
-                                                                          .toLowerCase() ==
-                                                                      _allChildrens[
+                                                                  type =
+                                                                      'MorningTea';
+                                                                  _getItems(
+                                                                          'MORNINGTEA')
+                                                                      .then(
+                                                                          (value) {
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < recipes.length;
+                                                                        i++) {
+                                                                      if (recipes[i]
+                                                                              .itemName
+                                                                              .toLowerCase() ==
+                                                                          _allChildrens[selectedIndex]
+                                                                              .morningtea['item']
+                                                                              .toString()
+                                                                              .toLowerCase()) {
+                                                                        currentItemIndex =
+                                                                            i;
+                                                                        break;
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                  hour =
+                                                                      time[0];
+                                                                  min = time[1];
+                                                                  quant?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .morningtea[
+                                                                          'qty'];
+                                                                  cal?.text = _allChildrens[
                                                                               selectedIndex]
                                                                           .morningtea[
-                                                                              'item']
-                                                                          .toString()
-                                                                          .toLowerCase()) {
-                                                                    currentItemIndex =
-                                                                        i;
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              });
-                                                              hour = time[0];
-                                                              min = time[1];
-                                                              quant?.text =
-                                                                  _allChildrens[
-                                                                          selectedIndex]
-                                                                      .morningtea['qty'];
-                                                              cal?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .morningtea[
-                                                                  'calories'];
-                                                              comments
-                                                                  ?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .morningtea[
-                                                                  'comments'];
+                                                                      'calories'];
+                                                                  comments
+                                                                      ?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .morningtea[
+                                                                      'comments'];
 
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Edit',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type =
-                                                                  'MorningTea';
-                                                              _getItems(
-                                                                  'MORNINGTEA');
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Edit',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'MorningTea';
+                                                                  _getItems(
+                                                                      'MORNINGTEA');
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['lunch'] == '1')
                                                   ListTile(
@@ -776,147 +825,150 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             null
                                                         ? Text(_allChildrens[
                                                                 selectedIndex]
-                                                            .lunch['startTime'])
+                                                            .lunch['startTime']
+                                                            .toString())
                                                         : Container(),
                                                     title: Text('Lunch'),
-                                                    trailing: _allChildrens[
-                                                                    selectedIndex]
-                                                                .lunch !=
-                                                            null
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              var time = _allChildrens[
-                                                                      selectedIndex]
-                                                                  .lunch[
-                                                                      'startTime']
-                                                                  .toString()
-                                                                  .split(":");
-                                                              print(time);
-
-                                                              type = 'Lunch';
-                                                              _getItems('LUNCH')
-                                                                  .then(
-                                                                      (value) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        recipes
-                                                                            .length;
-                                                                    i++) {
-                                                                  if (recipes[i]
-                                                                          .itemName
-                                                                          .toLowerCase() ==
-                                                                      _allChildrens[
-                                                                              selectedIndex]
-                                                                          .lunch[
-                                                                              'item']
-                                                                          .toString()
-                                                                          .toLowerCase()) {
-                                                                    currentItemIndex =
-                                                                        i;
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              });
-                                                              hour = time[0];
-                                                              min = time[1];
-                                                              quant?.text =
-                                                                  _allChildrens[
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                    .lunch !=
+                                                                null
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  var time = _allChildrens[
                                                                           selectedIndex]
-                                                                      .lunch['qty'];
-                                                              cal?.text =
-                                                                  _allChildrens[
+                                                                      .lunch[
+                                                                          'startTime']
+                                                                      .toString()
+                                                                      .split(
+                                                                          ":");
+                                                                  print(time);
+
+                                                                  type =
+                                                                      'Lunch';
+                                                                  _getItems(
+                                                                          'LUNCH')
+                                                                      .then(
+                                                                          (value) {
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < recipes.length;
+                                                                        i++) {
+                                                                      if (recipes[i]
+                                                                              .itemName
+                                                                              .toLowerCase() ==
+                                                                          _allChildrens[selectedIndex]
+                                                                              .lunch['item']
+                                                                              .toString()
+                                                                              .toLowerCase()) {
+                                                                        currentItemIndex =
+                                                                            i;
+                                                                        break;
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                  hour =
+                                                                      time[0];
+                                                                  min = time[1];
+                                                                  quant?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .lunch[
+                                                                          'qty'];
+                                                                  cal?.text = _allChildrens[
                                                                               selectedIndex]
                                                                           .lunch[
                                                                       'calories'];
-                                                              comments?.text =
-                                                                  _allChildrens[
+                                                                  comments
+                                                                      ?.text = _allChildrens[
                                                                               selectedIndex]
                                                                           .lunch[
                                                                       'comments'];
 
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Edit',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type = 'Lunch';
-                                                              _getItems(
-                                                                  'LUNCH');
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Edit',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'Lunch';
+                                                                  _getItems(
+                                                                      'LUNCH');
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['sleep'] == '1')
                                                   ListTile(
@@ -931,121 +983,126 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                     .length >
                                                                 0
                                                         ? Text(_allChildrens[
-                                                                    selectedIndex]
-                                                                .sleep[0]
-                                                            ['startTime'])
-                                                        : Container(),
-                                                    trailing: _allChildrens[
                                                                         selectedIndex]
-                                                                    .sleep !=
-                                                                null &&
+                                                                    .sleep[0]
+                                                                ['startTime'] +
+                                                            ' to ' +
                                                             _allChildrens[
                                                                         selectedIndex]
-                                                                    .sleep
-                                                                    .length >
-                                                                0
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) => DailyDairyMultiple(
-                                                                          _allChildrens[
-                                                                              selectedIndex],
-                                                                          'Sleep',
-                                                                          details))).then(
-                                                                  (value) {
-                                                                if (value !=
-                                                                    null) {
-                                                                  details =
-                                                                      null;
-                                                                  childrensFetched =
-                                                                      false;
-                                                                  //       viewAdd = false;
-                                                                  _fetchData();
+                                                                    .sleep[0]
+                                                                ['endTime'])
+                                                        : Container(),
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                        .sleep !=
+                                                                    null &&
+                                                                _allChildrens[
+                                                                            selectedIndex]
+                                                                        .sleep
+                                                                        .length >
+                                                                    0
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => DailyDairyMultiple(
+                                                                              _allChildrens[
+                                                                                  selectedIndex],
+                                                                              'Sleep',
+                                                                              details))).then(
+                                                                      (value) {
+                                                                    if (value !=
+                                                                        null) {
+                                                                      details =
+                                                                          null;
+                                                                      childrensFetched =
+                                                                          false;
+                                                                      //       viewAdd = false;
+                                                                      _fetchData();
+                                                                      setState(
+                                                                          () {});
+                                                                    }
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            75,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                AntDesign.eye,
+                                                                                size: 14,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' View',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'Sleep';
+                                                                  showPop =
+                                                                      true;
                                                                   setState(
                                                                       () {});
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                                width: 75,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        AntDesign
-                                                                            .eye,
-                                                                        size:
-                                                                            14,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' View',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type = 'Sleep';
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['afternoontea'] ==
                                                     '1')
@@ -1055,150 +1112,151 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .afternoontea !=
                                                             null
                                                         ? Text(_allChildrens[
-                                                                    selectedIndex]
-                                                                .afternoontea[
-                                                            'startTime'])
+                                                                selectedIndex]
+                                                            .afternoontea[
+                                                                'startTime']
+                                                            .toString())
                                                         : Container(),
                                                     title:
                                                         Text('Afternoon Tea'),
-                                                    trailing: _allChildrens[
-                                                                    selectedIndex]
-                                                                .afternoontea !=
-                                                            null
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              var time = _allChildrens[selectedIndex]
-                                                                  .afternoontea[
-                                                                      'startTime']
-                                                                  .toString()
-                                                                  .split(":");
-                                                              print(time);
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                    .afternoontea !=
+                                                                null
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  var time = _allChildrens[selectedIndex]
+                                                                      .afternoontea[
+                                                                          'startTime']
+                                                                      .toString()
+                                                                      .split(
+                                                                          ":");
+                                                                  print(time);
 
-                                                              type =
-                                                                  'AfternoonTea';
-                                                              _getItems(
-                                                                      'AFTERNOONTEA')
-                                                                  .then(
-                                                                      (value) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        recipes
-                                                                            .length;
-                                                                    i++) {
-                                                                  if (recipes[i]
-                                                                          .itemName
-                                                                          .toLowerCase() ==
-                                                                      _allChildrens[
+                                                                  type =
+                                                                      'AfternoonTea';
+                                                                  _getItems(
+                                                                          'AFTERNOONTEA')
+                                                                      .then(
+                                                                          (value) {
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < recipes.length;
+                                                                        i++) {
+                                                                      if (recipes[i]
+                                                                              .itemName
+                                                                              .toLowerCase() ==
+                                                                          _allChildrens[selectedIndex]
+                                                                              .afternoontea['item']
+                                                                              .toString()
+                                                                              .toLowerCase()) {
+                                                                        currentItemIndex =
+                                                                            i;
+                                                                        break;
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                  hour =
+                                                                      time[0];
+                                                                  min = time[1];
+                                                                  quant?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .afternoontea[
+                                                                          'qty'];
+                                                                  cal?.text = _allChildrens[
                                                                               selectedIndex]
                                                                           .afternoontea[
-                                                                              'item']
-                                                                          .toString()
-                                                                          .toLowerCase()) {
-                                                                    currentItemIndex =
-                                                                        i;
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              });
-                                                              hour = time[0];
-                                                              min = time[1];
-                                                              quant?.text =
-                                                                  _allChildrens[
-                                                                          selectedIndex]
-                                                                      .afternoontea['qty'];
-                                                              cal?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .afternoontea['calories'];
-                                                              comments
-                                                                  ?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .afternoontea[
-                                                                  'comments'];
-
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Edit',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type =
-                                                                  'AfternoonTea';
-                                                              _getItems(
-                                                                  'AFTERNOONTEA');
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                      'calories'];
+                                                                  comments
+                                                                      ?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .afternoontea[
+                                                                      'comments'];
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Edit',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'AfternoonTea';
+                                                                  _getItems(
+                                                                      'AFTERNOONTEA');
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['latesnacks'] ==
                                                     '1')
@@ -1209,147 +1267,150 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             null
                                                         ? Text(_allChildrens[
                                                                 selectedIndex]
-                                                            .snacks['startTime'])
+                                                            .snacks['startTime']
+                                                            .toString())
                                                         : Container(),
                                                     title: Text('Late Snacks'),
-                                                    trailing: _allChildrens[
-                                                                    selectedIndex]
-                                                                .snacks !=
-                                                            null
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              var time = _allChildrens[
-                                                                      selectedIndex]
-                                                                  .snacks[
-                                                                      'startTime']
-                                                                  .toString()
-                                                                  .split(":");
-                                                              print(time);
-
-                                                              type = 'Snacks';
-                                                              _getItems(
-                                                                      'SNACKS')
-                                                                  .then(
-                                                                      (value) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        recipes
-                                                                            .length;
-                                                                    i++) {
-                                                                  if (recipes[i]
-                                                                          .itemName
-                                                                          .toLowerCase() ==
-                                                                      _allChildrens[
-                                                                              selectedIndex]
-                                                                          .snacks[
-                                                                              'item']
-                                                                          .toString()
-                                                                          .toLowerCase()) {
-                                                                    currentItemIndex =
-                                                                        i;
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              });
-                                                              hour = time[0];
-                                                              min = time[1];
-                                                              quant?.text =
-                                                                  _allChildrens[
-                                                                          selectedIndex]
-                                                                      .snacks['qty'];
-                                                              cal?.text = _allChildrens[
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                    .snacks !=
+                                                                null
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  var time = _allChildrens[
                                                                           selectedIndex]
                                                                       .snacks[
-                                                                  'calories'];
-                                                              comments?.text =
-                                                                  _allChildrens[
+                                                                          'startTime']
+                                                                      .toString()
+                                                                      .split(
+                                                                          ":");
+                                                                  print(time);
+
+                                                                  type =
+                                                                      'Snacks';
+                                                                  _getItems(
+                                                                          'SNACKS')
+                                                                      .then(
+                                                                          (value) {
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < recipes.length;
+                                                                        i++) {
+                                                                      if (recipes[i]
+                                                                              .itemName
+                                                                              .toLowerCase() ==
+                                                                          _allChildrens[selectedIndex]
+                                                                              .snacks['item']
+                                                                              .toString()
+                                                                              .toLowerCase()) {
+                                                                        currentItemIndex =
+                                                                            i;
+                                                                        break;
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                  hour =
+                                                                      time[0];
+                                                                  min = time[1];
+                                                                  quant?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .snacks[
+                                                                          'qty'];
+                                                                  cal?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .snacks[
+                                                                      'calories'];
+                                                                  comments
+                                                                      ?.text = _allChildrens[
                                                                               selectedIndex]
                                                                           .snacks[
                                                                       'comments'];
 
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Edit',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type = 'Snacks';
-                                                              _getItems(
-                                                                  'SNACKS');
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Edit',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'Snacks';
+                                                                  _getItems(
+                                                                      'SNACKS');
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['sunscreen'] ==
                                                     '1')
@@ -1364,123 +1425,142 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                     .sunscreen
                                                                     .length >
                                                                 0
-                                                        ? Text(_allChildrens[
+                                                        ? _allChildrens[
                                                                     selectedIndex]
-                                                                .sunscreen[0]
-                                                            ['startTime'])
-                                                        : Container(),
-                                                    trailing: _allChildrens[
-                                                                        selectedIndex]
-                                                                    .sunscreen !=
-                                                                null &&
-                                                            _allChildrens[
+                                                                .toileting
+                                                                .isEmpty
+                                                            ? Text(
+                                                                'No toileting data')
+                                                            : Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: _allChildrens[
                                                                         selectedIndex]
                                                                     .sunscreen
-                                                                    .length >
-                                                                0
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) => DailyDairyMultiple(
-                                                                          _allChildrens[
-                                                                              selectedIndex],
-                                                                          'Sunscreen',
-                                                                          details))).then(
-                                                                  (value) {
-                                                                if (value !=
-                                                                    null) {
-                                                                  details =
-                                                                      null;
-                                                                  childrensFetched =
-                                                                      false;
-                                                                  //  viewAdd = false;
-                                                                  _fetchData();
+                                                                    .map<Widget>(
+                                                                        (item) {
+                                                                  return Text(
+                                                                    item['startTime']
+                                                                        .toString(),
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16),
+                                                                  );
+                                                                }).toList(),
+                                                              )
+                                                        : Container(),
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                        .sunscreen !=
+                                                                    null &&
+                                                                _allChildrens[
+                                                                            selectedIndex]
+                                                                        .sunscreen
+                                                                        .length >
+                                                                    0
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => DailyDairyMultiple(
+                                                                              _allChildrens[
+                                                                                  selectedIndex],
+                                                                              'Sunscreen',
+                                                                              details))).then(
+                                                                      (value) {
+                                                                    if (value !=
+                                                                        null) {
+                                                                      details =
+                                                                          null;
+                                                                      childrensFetched =
+                                                                          false;
+                                                                      //  viewAdd = false;
+                                                                      _fetchData();
+                                                                      setState(
+                                                                          () {});
+                                                                    }
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            75,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                AntDesign.eye,
+                                                                                size: 14,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' View',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'SunScreen';
+                                                                  showPop =
+                                                                      true;
                                                                   setState(
                                                                       () {});
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                                width: 75,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        AntDesign
-                                                                            .eye,
-                                                                        size:
-                                                                            14,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' View',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type =
-                                                                  'SunScreen';
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        'Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                'Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['toileting'] ==
                                                     '1')
@@ -1490,141 +1570,174 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                     selectedIndex]
                                                                 .toileting !=
                                                             null
-                                                        ? Text(_allChildrens[
+                                                        ? Builder(
+                                                            builder: (context) {
+                                                            if (_allChildrens[
+                                                                        selectedIndex]
+                                                                    .toileting
+                                                                    .runtimeType ==
+                                                                List) {
+                                                              return _allChildrens[
+                                                                          selectedIndex]
+                                                                      .toileting
+                                                                      .isEmpty
+                                                                  ? Text(
+                                                                      'No toileting data')
+                                                                  : Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: _allChildrens[
+                                                                              selectedIndex]
+                                                                          .toileting
+                                                                          .map<Widget>(
+                                                                              (item) {
+                                                                        return Text(
+                                                                          item['startTime']
+                                                                              .toString(),
+                                                                          style:
+                                                                              TextStyle(fontSize: 16),
+                                                                        );
+                                                                      }).toList(),
+                                                                    );
+                                                            }
+                                                            return Text(_allChildrens[
                                                                     selectedIndex]
                                                                 .toileting[
-                                                            'startTime'])
+                                                                    'startTime']
+                                                                .toString());
+                                                          })
                                                         : Container(),
-                                                    trailing: _allChildrens[
-                                                                    selectedIndex]
-                                                                .toileting !=
-                                                            null
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              var time = _allChildrens[
-                                                                      selectedIndex]
-                                                                  .toileting[
-                                                                      'startTime']
-                                                                  .toString()
-                                                                  .split(":");
-                                                              print(time);
-                                                              print(_allChildrens[
-                                                                      selectedIndex]
-                                                                  .toileting);
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : _allChildrens[selectedIndex]
+                                                                    .toileting !=
+                                                                null
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  var time = _allChildrens[selectedIndex]
+                                                                      .toileting[
+                                                                          'startTime']
+                                                                      .toString()
+                                                                      .split(
+                                                                          ":");
+                                                                  print(time);
+                                                                  print(_allChildrens[
+                                                                          selectedIndex]
+                                                                      .toileting);
 
-                                                              type =
-                                                                  'Toileting';
-                                                              hour = time[0];
-                                                              min = time[1];
-                                                              nappy?.text =
-                                                                  _allChildrens[
-                                                                              selectedIndex]
-                                                                          .toileting[
-                                                                      'nappy'];
-                                                              potty?.text =
-                                                                  _allChildrens[
-                                                                              selectedIndex]
-                                                                          .toileting[
-                                                                      'potty'];
-                                                              toilet?.text =
-                                                                  _allChildrens[
+                                                                  type =
+                                                                      'Toileting';
+                                                                  hour =
+                                                                      time[0];
+                                                                  min = time[1];
+                                                                  nappy?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .toileting[
+                                                                          'nappy'];
+                                                                  potty?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .toileting[
+                                                                          'potty'];
+                                                                  toilet
+                                                                      ?.text = _allChildrens[
                                                                               selectedIndex]
                                                                           .toileting[
                                                                       'toilet'];
-                                                              signature
-                                                                  ?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .toileting[
-                                                                  'signature'];
+                                                                  signature
+                                                                      ?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .toileting[
+                                                                      'signature'];
 
-                                                              comments
-                                                                  ?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .toileting[
-                                                                  'comments'];
+                                                                  comments
+                                                                      ?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .toileting[
+                                                                      'comments'];
 
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Edit',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type =
-                                                                  'Toileting';
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                'Edit',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'Toileting';
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                               ],
                                             )
@@ -1705,6 +1818,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             title:
                                                                 GestureDetector(
                                                               onTap: () {
+                                                                print(_allChildrens[
+                                                                        index]
+                                                                    .toString());
                                                                 selectedIndex =
                                                                     index;
                                                                 timeScreen =
@@ -1738,7 +1854,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                   height: 10,
                                 ),
                                 // viewAdd
-                                _selectedChildrens.length > 0
+                                _selectedChildrens.length > 0 &&
+                                        (MyApp.USER_TYPE_VALUE != 'Parent')
                                     ? Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
@@ -3032,7 +3149,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               objToSend));
                                                           final response =
                                                               await http.post(
-                                                                  Uri.parse(_toSend),
+                                                                  Uri.parse(
+                                                                      _toSend),
                                                                   body: jsonEncode(
                                                                       objToSend),
                                                                   headers: {
@@ -3173,7 +3291,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             width: 80,
                                                             decoration: BoxDecoration(
                                                                 border: Border.all(
-                                                                    color: Constants.greyColor),
+                                                                    color: Constants
+                                                                        .greyColor),
                                                                 color: Colors
                                                                     .white,
                                                                 borderRadius: BorderRadius
@@ -3206,7 +3325,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   onChanged:
                                                                       (String?
                                                                           value) {
-                                                                            if(value==null)return;
+                                                                    if (value ==
+                                                                        null)
+                                                                      return;
                                                                     hour =
                                                                         value!;
                                                                     setState(
@@ -3228,7 +3349,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             width: 80,
                                                             decoration: BoxDecoration(
                                                                 border: Border.all(
-                                                                    color: Constants.greyColor),
+                                                                    color: Constants
+                                                                        .greyColor),
                                                                 color: Colors
                                                                     .white,
                                                                 borderRadius: BorderRadius
@@ -3260,8 +3382,12 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   }).toList(),
                                                                   onChanged:
                                                                       (String?
-                                                                          value) {    if(value==null)return;
-                                                                    min = value!;
+                                                                          value) {
+                                                                    if (value ==
+                                                                        null)
+                                                                      return;
+                                                                    min =
+                                                                        value!;
                                                                     setState(
                                                                         () {});
                                                                   },
@@ -3485,7 +3611,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             objToSend));
                                                         final response =
                                                             await http.post(
-                                                                Uri.parse(_toSend),
+                                                                Uri.parse(
+                                                                    _toSend),
                                                                 body: jsonEncode(
                                                                     objToSend),
                                                                 headers: {

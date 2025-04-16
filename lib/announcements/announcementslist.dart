@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:mykronicle_mobile/announcements/newannouncements.dart';
 import 'package:mykronicle_mobile/api/announcementsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
@@ -10,6 +13,7 @@ import 'package:mykronicle_mobile/utils/floatingButton.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:intl/intl.dart';
+import 'package:mykronicle_mobile/utils/removeTags.dart';
 
 class AnnouncementsList extends StatefulWidget {
   @override
@@ -18,7 +22,7 @@ class AnnouncementsList extends StatefulWidget {
 
 class _AnnouncementsListState extends State<AnnouncementsList> {
   bool announcementsFetched = false;
-List<AnnouncementModel> _announcements = [];
+  List<AnnouncementModel> _announcements = [];
   late List<CentersModel> centers;
   bool centersFetched = false;
   int currentIndex = 0;
@@ -62,16 +66,19 @@ List<AnnouncementModel> _announcements = [];
     var data = await handler.getList(centers[currentIndex].id.toString());
     if (!data.containsKey('error')) {
       if (data['permissions'] != null ||
-          MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Parent') {
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Parent' ||
-            data['permissions']['addAnnouncement'] == '1'  ) {
+          MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+          MyApp.USER_TYPE_VALUE == 'Parent') {
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+            MyApp.USER_TYPE_VALUE == 'Parent' ||
+            data['permissions']['addAnnouncement'] == '1') {
           permissionAdd = true;
         } else {
           permissionAdd = false;
         }
 
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Parent' ||
-            data['permissions']['viewAllAnnouncement'] == '1' ) {
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+            MyApp.USER_TYPE_VALUE == 'Parent' ||
+            data['permissions']['viewAllAnnouncement'] == '1') {
           var res = data['records'];
           _announcements = [];
           try {
@@ -118,7 +125,7 @@ List<AnnouncementModel> _announcements = [];
                           'Announcements',
                           style: Constants.header1,
                         ),
-                        if (permissionAdd && MyApp.USER_TYPE_VALUE!='Parent')
+                        if (permissionAdd && MyApp.USER_TYPE_VALUE != 'Parent')
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -126,7 +133,8 @@ List<AnnouncementModel> _announcements = [];
                                   MaterialPageRoute(
                                       builder: (context) => NewAnnouncements(
                                             type: 'new',
-                                            centerid: centers[currentIndex].id, id: '',
+                                            centerid: centers[currentIndex].id,
+                                            id: '',
                                           )));
                             },
                             child: Container(
@@ -240,22 +248,26 @@ List<AnnouncementModel> _announcements = [];
                               var date1 = inputFormat
                                   .parse(_announcements[index].eventDate);
                               var date = formatter.format(date1);
- 
+
                               return Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                                 child: GestureDetector(
                                   onTap: () {
-                                    print(_announcements[index].id);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                NewAnnouncements(
-                                                  type: 'update',
-                                                  id: _announcements[index].aid,
-                                                  centerid:
-                                                      centers[currentIndex].id,
-                                                )));
+                                    if (MyApp.USER_TYPE_VALUE != 'Parent') {
+                                      print(_announcements[index].id);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NewAnnouncements(
+                                                    type: 'update',
+                                                    id: _announcements[index]
+                                                        .aid,
+                                                    centerid:
+                                                        centers[currentIndex]
+                                                            .id,
+                                                  )));
+                                    }
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(6),
@@ -344,6 +356,40 @@ List<AnnouncementModel> _announcements = [];
                                                   ))
                                             ],
                                           ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Builder(builder: (context) {
+                                                String htmlToPlainText(
+                                                    String htmlString) {
+                                                  final document =
+                                                      parse(htmlString);
+                                                  return parse(document
+                                                                  .body?.text ??
+                                                              "")
+                                                          .documentElement
+                                                          ?.text ??
+                                                      "";
+                                                }
+
+                                                return SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      55,
+                                                  child: Text(
+                                                    htmlToPlainText(
+                                                        _announcements[index]
+                                                            .text),
+                                                    maxLines: 4,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }),
+                                            ],
+                                          )
                                         ],
                                       ),
                                     ),

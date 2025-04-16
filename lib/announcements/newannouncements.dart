@@ -94,7 +94,8 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
               editorController.setText(textData);
             });
           });
-        }{
+        }
+        {
           print('++++data is the empty+++++');
         }
 
@@ -314,7 +315,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                       child: textData != ''
                           ? HtmlEditor(
                               key: keyEditor,
-                              controller: editorController, 
+                              controller: editorController,
                             )
                           : HtmlEditor(
                               key: keyEditor,

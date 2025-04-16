@@ -21,8 +21,8 @@ class LessonPlan extends StatefulWidget {
 
 class _LessonPlanState extends State<LessonPlan> {
   bool dataFetched = false;
-  List<LessonChildSubModel> child =[];
-  List<CentersModel> centers=[];
+  List<LessonChildSubModel> child = [];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
   String dirloc = '';
@@ -52,7 +52,7 @@ class _LessonPlanState extends State<LessonPlan> {
         if (tasks != null) FlutterDownloader.open(taskId: id);
       }
     });
-    FlutterDownloader.registerCallback(downloadCallback as DownloadCallback);
+    // FlutterDownloader.registerCallback(downloadCallback as DownloadCallback);
   }
 
   @override
