@@ -35,7 +35,7 @@ class Platform extends StatefulWidget {
   PlatformState createState() => PlatformState();
 }
 
-class PlatformState extends State<Platform> {
+class PlatformState extends State<Platform>{
   PAGE_INDEX currentPage = PAGE_INDEX.DASHBOARD;
 
   @override
@@ -49,7 +49,7 @@ class GetDrawer extends StatefulWidget {
   _GetDrawerState createState() => _GetDrawerState();
 }
 
-class _GetDrawerState extends State<GetDrawer> {
+class _GetDrawerState extends State<GetDrawer>{
   bool show = false;
   bool showDailyDairy = false;
   bool showMontessori = false;
@@ -89,7 +89,6 @@ class _GetDrawerState extends State<GetDrawer> {
                   .push(MaterialPageRoute(builder: (context) => Dashboard()));
             },
           ),
-
           Divider(
             color: Colors.white.withOpacity(0.8),
           ),
@@ -423,7 +422,7 @@ class _GetDrawerState extends State<GetDrawer> {
                   },
                 ),
                 Divider(color: Colors.transparent),
-               if(MyApp.USER_TYPE_VALUE!='Parent') 
+               if(MyApp.USER_TYPE_VALUE!='Parent')
                 ListTile(
                   title: Text(
                     Constants.HEADCHECKS_TAG,

@@ -100,6 +100,10 @@ class ServiceWithHeaderDataPost {
       body: jsonEncode(b),
     );
     print(url);
+    print({
+        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+      });
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
     print('authtoken' + MyApp.AUTH_TOKEN_VALUE);
     print('dataaa' + response.body.toString());

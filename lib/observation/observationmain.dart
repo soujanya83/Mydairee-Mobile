@@ -1088,7 +1088,7 @@ class _ObservationMainState extends State<ObservationMain> {
                               ),
                               onChanged: (value) {
                                 setState(() {
-                                  searchString = value!;
+                                  searchString = value;
                                 });
                               },
                             ),
@@ -1180,20 +1180,18 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                 0, 8, 0, 8),
                                                         child: _allObservations[
                                                                         index]
-                                                                    .title !=
+                                                                    .title ==
                                                                 null
-                                                            ? SizedBox(
-                                                                height: 100,
-                                                                child: tagRemove(
-                                                                    _allObservations[
-                                                                            index]
-                                                                        .title,
-                                                                    'heading',
-                                                                    centers[currentIndex]
-                                                                        .id,
-                                                                    context),
-                                                              )
-                                                            : null,
+                                                            ? null
+                                                            : tagRemove(
+                                                                _allObservations[
+                                                                        index]
+                                                                    .title,
+                                                                maxLines: 5,
+                                                                'heading',
+                                                                centers[currentIndex]
+                                                                    .id,
+                                                                context),
                                                       ),
                                                       Row(
                                                         mainAxisAlignment:
@@ -1459,4 +1457,8 @@ class _ObservationMainState extends State<ObservationMain> {
       ),
     );
   }
+}
+
+String textcustom() {
+  return 'hbfdjhfjdhfjdhfjhfjhfjdhfjhfjhfjhfjhfjhfjjjjjjjjjN DH FHSD FHS DFH F HFH SDHFSUFD H UFHUFHUFHUFHU FHF HFH G FU FUF  F FF  HH FUFHUFHDU FHUF F  DHFUFHUEHURHUGF   F F jjj jjjj jjjj jjjjjjjjjjjjjjj    fdujfhudfh uf hu h eudf uch ufi hiufgayugf AFG F GAG DFAFESUYFG  FHF UFHUI FF   HF GDG  HFUFHH F F F FUHFDU FDHSUFHUDSFHUSHFU   HDSUFHSUGFUFGF';
 }

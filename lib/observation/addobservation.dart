@@ -95,28 +95,33 @@ class AddObservationState extends State<AddObservation>
   Map viewData = {};
   static Map assesData = {};
   static String centerid = '';
-  static String previewnotes = '';
-  static String previewtitle = '';
-  static String previewRef = '';
-  static String previewChildVoice = '';
-  static String previewFuturePlan = '';
+  // static String previewnotes = '';
+  // static String previewtitle = '';
+  // static String previewRef = '';
+  // static String previewChildVoice = '';
+  // static String previewFuturePlan = '';
   static String type = '';
 
   Widget assetmentWidget = Container();
   // static TextEditingController title;
 //  static TextEditingController reflection;
-  static GlobalKey<FlutterMentionsState> mentionTitle =
-      GlobalKey<FlutterMentionsState>();
-  static GlobalKey<FlutterMentionsState> mentionNotes =
-      GlobalKey<FlutterMentionsState>();
-  static GlobalKey<FlutterMentionsState> mentionRef =
-      GlobalKey<FlutterMentionsState>();
+  // static GlobalKey<FlutterMentionsState> mentionTitle =
+  //     GlobalKey<FlutterMentionsState>();
 
-  static GlobalKey<FlutterMentionsState> mentionChildVoice =
-      GlobalKey<FlutterMentionsState>();
-  static GlobalKey<FlutterMentionsState> mentionFuturePlan =
-      GlobalKey<FlutterMentionsState>();
+  // static GlobalKey<FlutterMentionsState> mentionNotes =
+  //     GlobalKey<FlutterMentionsState>();
+  // static GlobalKey<FlutterMentionsState> mentionRef =
+  //     GlobalKey<FlutterMentionsState>();
 
+  // static GlobalKey<FlutterMentionsState> mentionChildVoice =
+  //     GlobalKey<FlutterMentionsState>();
+  // static GlobalKey<FlutterMentionsState> mentionFuturePlan =
+  //     GlobalKey<FlutterMentionsState>();
+  static TextEditingController titleController = TextEditingController();
+  static TextEditingController notesController = TextEditingController();
+  static TextEditingController refController = TextEditingController();
+  static TextEditingController childVoiceController = TextEditingController();
+  static TextEditingController futurePlanController = TextEditingController();
   List mediaFiles = [];
 
 // assesment data
@@ -166,8 +171,9 @@ class AddObservationState extends State<AddObservation>
     super.initState();
   }
 
-  List<MultiSelectItem<RoomsModel>> roomItems = [];
-  List<RoomsModel> selectedRooms = [];
+  static List<MultiSelectItem<RoomsModel>> roomItems = [];
+  static List<RoomsModel> selectedRooms = [];
+  bool isSelectedRoomFetched = false;
 
   Future<void> fetchRoomsOnly() async {
     try {
@@ -194,6 +200,36 @@ class AddObservationState extends State<AddObservation>
 
             RoomsDescModel roomDesc = RoomsDescModel.fromJson(res[i]);
             _rooms.add(RoomsModel(child: childs, room: roomDesc));
+          }
+
+          ///// assign selected rooms
+          try {
+            print('taped');
+            selectedRooms.clear();
+            print(widget.totaldata['observation']['room'].toString());
+            List<String> selectedRoomsList =
+                widget.totaldata['observation']['room'].toString().split(',');
+            print(selectedRoomsList);
+            for (int i = 0; i < _rooms.length; i++) {
+              for (int j = 0; j < selectedRoomsList.length; j++) {
+                print('comarision for $i');
+                print('${_rooms[i].room.id} === ${selectedRoomsList[j]}');
+                if (_rooms[i].room.id == selectedRoomsList[j]) {
+                  selectedRooms.add(_rooms[i]);
+                  break;
+                }
+              }
+            }
+
+            if (mounted) {
+              setState(() {
+                isSelectedRoomFetched = true;
+              });
+            }
+          } catch (e, s) {
+            print('==============');
+            print(e);
+            // print(s.toString);
           }
 
           if (mounted) {
@@ -312,28 +348,37 @@ class AddObservationState extends State<AddObservation>
 
     if (widget.type == 'edit') {
       type = 'edit';
-      mentionTitle.currentState?.controller?.text =
-          removeHtmlData(widget.data?.title ?? '');
-      previewtitle = removeHtmlData(widget.data?.title ?? '');
+      titleController.text = removeHtmlData(widget.data?.title ?? '');
+      notesController.text = removeHtmlData(widget.data?.notes ?? '');
 
-      mentionNotes.currentState?.controller?.text =
-          removeHtmlData(widget.data?.notes ?? '');
-      previewnotes = removeHtmlData(widget.data?.notes ?? '');
+      refController.text = removeHtmlData(widget.data?.reflection ?? '');
 
-      mentionRef.currentState?.controller?.text =
-          removeHtmlData(widget.data?.reflection ?? '');
-      previewRef = removeHtmlData(widget.data?.reflection ?? '');
+      childVoiceController.text = removeHtmlData(widget.data?.childVoice ?? '');
 
-      mentionChildVoice.currentState?.controller?.text =
-          removeHtmlData(widget.data?.childVoice ?? '');
-      previewChildVoice = removeHtmlData(widget.data?.childVoice ?? '');
+      futurePlanController.text = removeHtmlData(widget.data?.futurePlan ?? '');
 
-      mentionFuturePlan.currentState?.controller?.text =
-          removeHtmlData(widget.data?.futurePlan ?? '');
-      previewFuturePlan = removeHtmlData(widget.data?.futurePlan ?? '');
+      // previewtitle = removeHtmlData(widget.data?.title ?? '');
+
+      // mentionNotes.currentState?.controller?.text =
+      //     removeHtmlData(widget.data?.notes ?? '');
+      // previewnotes = removeHtmlData(widget.data?.notes ?? '');
+
+      // mentionRef.currentState?.controller?.text =
+      //     removeHtmlData(widget.data?.reflection ?? '');
+      // previewRef = removeHtmlData(widget.data?.reflection ?? '');
+
+      // mentionChildVoice.currentState?.controller?.text =
+      //     removeHtmlData(widget.data?.childVoice ?? '');
+      // previewChildVoice = removeHtmlData(widget.data?.childVoice ?? '');
+
+      // mentionFuturePlan.currentState?.controller?.text =
+      //     removeHtmlData(widget.data?.futurePlan ?? '');
+      // previewFuturePlan = removeHtmlData(widget.data?.futurePlan ?? '');
 
       for (int i = 0; i < widget.selecChildrens.length; i++) {
-        if (widget.selecChildrens[i].childId != null) {
+        print('+++++++++assigning the data here of children+++++++++');
+        print("widget.selecChildrens[i].childId"+widget.selecChildrens[i].childId);
+        if (widget.selecChildrens[i].childId != null){
           selectedChildrens.add(ChildModel(
               id: widget.selecChildrens[i].childId,
               name: widget.selecChildrens[i].childName,
@@ -346,8 +391,14 @@ class AddObservationState extends State<AddObservation>
               snacks: {},
               sunscreen: [],
               toileting: {}));
-          childValues[selectedChildrens[i].id ?? ''] = true;
+          childValues[selectedChildrens[i].childid ?? ''] = true;
+            print('+++++++++child values+++++++++');
+          print(childValues);
         }
+        print(List.generate(selectedChildrens.length, (index){
+          
+        }));
+        
       }
       for (int i = 0; i < widget.media.length; i++) {
         media.add(ObsMediaModel.fromJson(widget.media[i]));
@@ -460,9 +511,11 @@ class AddObservationState extends State<AddObservation>
             cur1.add(
                 widget.totaldata['obsMontessori'][k]['assesment'].toString());
           } else {
-            cur1.add('Not Assesed');
+            // cur1.add('Not Assesed');
+            cur1.add('');
           }
         }
+        //////////
         in3.add(in2);
         inx3.add(inx2);
         cur2.add(cur1);
@@ -784,7 +837,7 @@ class AddObservationState extends State<AddObservation>
                                   for (int i = 0;
                                       i < selectedChildrens.length;
                                       i++) {
-                                    print(selectedChildrens[i].id);
+                                    print(selectedChildrens[i].childid);
                                   }
                                   print('child id');
                                   for (int i = 0;
@@ -1127,33 +1180,36 @@ class AddObservationState extends State<AddObservation>
                                   //     },
                                   //     child: Text(roomItems.length.toString() +
                                   //         'hgdfhgdhbghfhg')),
-
-                                  MultiSelectDialogField(
-                                    items: roomItems,
-                                    title: Text(
-                                      'Select Classroom',
-                                    ),
-                                    selectedColor: Constants.kButton,
-                                    backgroundColor: Colors.white,
-                                    decoration: BoxDecoration(
-                                        color: Colors.transparent),
-                                    buttonText: Text("Classroom"),
-                                    onConfirm: (results) {
-                                      selectedRooms =
-                                          results.cast<RoomsModel>();
-                                    },
-                                    // buttonIcon: Icon(
-                                    //   Icons.note_rounded,
-                                    //   color: Colors.white,
-                                    // ),
-                                    chipDisplay: MultiSelectChipDisplay(
-                                      onTap: (value) {
-                                        setState(() {
-                                          selectedRooms.remove(value);
-                                        });
+                                  if ((widget.type == 'edit' &&
+                                          isSelectedRoomFetched) ||
+                                      widget.type != 'edit')
+                                    MultiSelectDialogField(
+                                      initialValue: selectedRooms,
+                                      items: roomItems,
+                                      title: Text(
+                                        'Select Classroom',
+                                      ),
+                                      selectedColor: Constants.kButton,
+                                      backgroundColor: Colors.white,
+                                      decoration: BoxDecoration(
+                                          color: Colors.transparent),
+                                      buttonText: Text("Classroom"),
+                                      onConfirm: (results) {
+                                        selectedRooms =
+                                            results.cast<RoomsModel>();
                                       },
+                                      // buttonIcon: Icon(
+                                      //   Icons.note_rounded,
+                                      //   color: Colors.white,
+                                      // ),
+                                      chipDisplay: MultiSelectChipDisplay(
+                                        onTap: (value) {
+                                          setState(() {
+                                            selectedRooms.remove(value);
+                                          });
+                                        },
+                                      ),
                                     ),
-                                  ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1161,67 +1217,70 @@ class AddObservationState extends State<AddObservation>
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  if (mMontFetched && mChildFetched)
-                                    Container(
-                                      // height: 40,
-                                      padding: const EdgeInsets.all(3.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: Border.all(
-                                              color: Colors.blueAccent)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: FlutterMentions(
-                                          // onChanged: (txt) {
-                                          //   print('$txt');
-                                          // },
-                                          key: mentionTitle,
-                                          suggestionPosition:
-                                              SuggestionPosition.Top,
-                                          // maxLines: 5,
-                                          minLines: 1,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                          mentions: [
-                                            Mention(
-                                                trigger: '@',
-                                                style: TextStyle(
-                                                  color: Colors.amber,
-                                                ),
-                                                data: mentionUser,
-                                                disableMarkup: true,
-                                                matchAll: false,
-                                                suggestionBuilder: (data) {
-                                                  print(data);
-                                                  return Container(
-                                                    padding:
-                                                        EdgeInsets.all(10.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Column(
-                                                          children: <Widget>[
-                                                            Text(data['name']),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                            Mention(
-                                              trigger: '#',
-                                              disableMarkup: true,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                              data: mentionMont,
-                                              matchAll: true,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  // if (mMontFetched && mChildFetched)
+                                  customTextField(
+                                      context: context,
+                                      controller: titleController),
+                                  // Container(
+                                  //   // height: 40,
+                                  //   padding: const EdgeInsets.all(3.0),
+                                  //   decoration: BoxDecoration(
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(4),
+                                  //       border: Border.all(
+                                  //           color: Colors.blueAccent)),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(3.0),
+                                  //     child: FlutterMentions(
+                                  //       // onChanged: (txt) {
+                                  //       //   print('$txt');
+                                  //       // },
+                                  //       key: mentionTitle,
+                                  //       suggestionPosition:
+                                  //           SuggestionPosition.Top,
+                                  //       // maxLines: 5,
+                                  //       minLines: 1,
+                                  //       decoration: InputDecoration(
+                                  //         border: InputBorder.none,
+                                  //       ),
+                                  //       mentions: [
+                                  //         Mention(
+                                  //             trigger: '@',
+                                  //             style: TextStyle(
+                                  //               color: Colors.amber,
+                                  //             ),
+                                  //             data: mentionUser,
+                                  //             disableMarkup: true,
+                                  //             matchAll: false,
+                                  //             suggestionBuilder: (data) {
+                                  //               print(data);
+                                  //               return Container(
+                                  //                 padding:
+                                  //                     EdgeInsets.all(10.0),
+                                  //                 child: Row(
+                                  //                   children: <Widget>[
+                                  //                     Column(
+                                  //                       children: <Widget>[
+                                  //                         Text(data['name']),
+                                  //                       ],
+                                  //                     )
+                                  //                   ],
+                                  //                 ),
+                                  //               );
+                                  //             }),
+                                  //         Mention(
+                                  //           trigger: '#',
+                                  //           disableMarkup: true,
+                                  //           style: TextStyle(
+                                  //             color: Colors.blue,
+                                  //           ),
+                                  //           data: mentionMont,
+                                  //           matchAll: true,
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1229,67 +1288,73 @@ class AddObservationState extends State<AddObservation>
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  if (mMontFetched && mChildFetched)
-                                    Container(
-                                      // height: 40,
-                                      padding: const EdgeInsets.all(3.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: Border.all(
-                                              color: Colors.blueAccent)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: FlutterMentions(
-                                          key: mentionNotes,
-                                          suggestionPosition:
-                                              SuggestionPosition.Top,
-                                          maxLines: 5,
-                                          minLines: 3,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                          onMentionAdd:
-                                              (Map<String, dynamic> _map) {
-                                            print(_map);
-                                          },
-                                          mentions: [
-                                            Mention(
-                                                trigger: '@',
-                                                style: TextStyle(
-                                                  color: Colors.amber,
-                                                ),
-                                                data: mentionUser,
-                                                disableMarkup: true,
-                                                matchAll: false,
-                                                suggestionBuilder: (data) {
-                                                  return Container(
-                                                    padding:
-                                                        EdgeInsets.all(10.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Column(
-                                                          children: <Widget>[
-                                                            Text(data['name']),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                            Mention(
-                                              trigger: '#',
-                                              disableMarkup: true,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                              data: mentionMont,
-                                              matchAll: true,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  // if (mMontFetched && mChildFetched)
+                                  customMultilineTextField(
+                                    context: context,
+                                    controller: notesController,
+                                    maxLines: 5,
+                                    minLines: 3,
+                                  ),
+                                  // Container(
+                                  //   // height: 40,
+                                  //   padding: const EdgeInsets.all(3.0),
+                                  //   decoration: BoxDecoration(
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(4),
+                                  //       border: Border.all(
+                                  //           color: Colors.blueAccent)),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(3.0),
+                                  //     child: FlutterMentions(
+                                  //       key: mentionNotes,
+                                  //       suggestionPosition:
+                                  //           SuggestionPosition.Top,
+                                  //       maxLines: 5,
+                                  //       minLines: 3,
+                                  //       decoration: InputDecoration(
+                                  //         border: InputBorder.none,
+                                  //       ),
+                                  //       onMentionAdd:
+                                  //           (Map<String, dynamic> _map) {
+                                  //         print(_map);
+                                  //       },
+                                  //       mentions: [
+                                  //         Mention(
+                                  //             trigger: '@',
+                                  //             style: TextStyle(
+                                  //               color: Colors.amber,
+                                  //             ),
+                                  //             data: mentionUser,
+                                  //             disableMarkup: true,
+                                  //             matchAll: false,
+                                  //             suggestionBuilder: (data) {
+                                  //               return Container(
+                                  //                 padding:
+                                  //                     EdgeInsets.all(10.0),
+                                  //                 child: Row(
+                                  //                   children: <Widget>[
+                                  //                     Column(
+                                  //                       children: <Widget>[
+                                  //                         Text(data['name']),
+                                  //                       ],
+                                  //                     )
+                                  //                   ],
+                                  //                 ),
+                                  //               );
+                                  //             }),
+                                  //         Mention(
+                                  //           trigger: '#',
+                                  //           disableMarkup: true,
+                                  //           style: TextStyle(
+                                  //             color: Colors.blue,
+                                  //           ),
+                                  //           data: mentionMont,
+                                  //           matchAll: true,
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1298,65 +1363,71 @@ class AddObservationState extends State<AddObservation>
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  if (mMontFetched &&
-                                      mChildFetched &&
-                                      MyApp.USER_TYPE_VALUE != 'Parent')
-                                    Container(
-                                      // height: 40,
-                                      padding: const EdgeInsets.all(3.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: Border.all(
-                                              color: Colors.blueAccent)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: FlutterMentions(
-                                          key: mentionRef,
-                                          suggestionPosition:
-                                              SuggestionPosition.Top,
-                                          maxLines: 3,
-                                          minLines: 2,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                          mentions: [
-                                            Mention(
-                                                trigger: '@',
-                                                style: TextStyle(
-                                                  color: Colors.amber,
-                                                ),
-                                                data: mentionUser,
-                                                disableMarkup: true,
-                                                matchAll: false,
-                                                suggestionBuilder: (data) {
-                                                  return Container(
-                                                    padding:
-                                                        EdgeInsets.all(10.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Column(
-                                                          children: <Widget>[
-                                                            Text(data['name']),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                            Mention(
-                                              trigger: '#',
-                                              disableMarkup: true,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                              data: mentionMont,
-                                              matchAll: true,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  // if (mMontFetched &&
+                                  //     mChildFetched &&
+                                  //     MyApp.USER_TYPE_VALUE != 'Parent')
+                                  customMultilineTextField(
+                                    context: context,
+                                    controller: refController,
+                                    maxLines: 5,
+                                    minLines: 3,
+                                  ),
+                                  // Container(
+                                  //   // height: 40,
+                                  //   padding: const EdgeInsets.all(3.0),
+                                  //   decoration: BoxDecoration(
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(4),
+                                  //       border: Border.all(
+                                  //           color: Colors.blueAccent)),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(3.0),
+                                  //     child: FlutterMentions(
+                                  //       key: mentionRef,
+                                  //       suggestionPosition:
+                                  //           SuggestionPosition.Top,
+                                  //       maxLines: 3,
+                                  //       minLines: 2,
+                                  //       decoration: InputDecoration(
+                                  //         border: InputBorder.none,
+                                  //       ),
+                                  //       mentions: [
+                                  //         Mention(
+                                  //             trigger: '@',
+                                  //             style: TextStyle(
+                                  //               color: Colors.amber,
+                                  //             ),
+                                  //             data: mentionUser,
+                                  //             disableMarkup: true,
+                                  //             matchAll: false,
+                                  //             suggestionBuilder: (data) {
+                                  //               return Container(
+                                  //                 padding:
+                                  //                     EdgeInsets.all(10.0),
+                                  //                 child: Row(
+                                  //                   children: <Widget>[
+                                  //                     Column(
+                                  //                       children: <Widget>[
+                                  //                         Text(data['name']),
+                                  //                       ],
+                                  //                     )
+                                  //                   ],
+                                  //                 ),
+                                  //               );
+                                  //             }),
+                                  //         Mention(
+                                  //           trigger: '#',
+                                  //           disableMarkup: true,
+                                  //           style: TextStyle(
+                                  //             color: Colors.blue,
+                                  //           ),
+                                  //           data: mentionMont,
+                                  //           matchAll: true,
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1365,65 +1436,71 @@ class AddObservationState extends State<AddObservation>
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  if (mMontFetched &&
-                                      mChildFetched &&
-                                      MyApp.USER_TYPE_VALUE != 'Parent')
-                                    Container(
-                                      // height: 40,
-                                      padding: const EdgeInsets.all(3.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: Border.all(
-                                              color: Colors.blueAccent)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: FlutterMentions(
-                                          key: mentionChildVoice,
-                                          suggestionPosition:
-                                              SuggestionPosition.Top,
-                                          maxLines: 3,
-                                          minLines: 2,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                          mentions: [
-                                            Mention(
-                                                trigger: '@',
-                                                style: TextStyle(
-                                                  color: Colors.amber,
-                                                ),
-                                                data: mentionUser,
-                                                disableMarkup: true,
-                                                matchAll: false,
-                                                suggestionBuilder: (data) {
-                                                  return Container(
-                                                    padding:
-                                                        EdgeInsets.all(10.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Column(
-                                                          children: <Widget>[
-                                                            Text(data['name']),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                            Mention(
-                                              trigger: '#',
-                                              disableMarkup: true,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                              data: mentionMont,
-                                              matchAll: true,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  // if (mMontFetched &&
+                                  //     mChildFetched &&
+                                  //     MyApp.USER_TYPE_VALUE != 'Parent')
+                                  customMultilineTextField(
+                                    context: context,
+                                    controller: childVoiceController,
+                                    maxLines: 5,
+                                    minLines: 3,
+                                  ),
+                                  // Container(
+                                  //   // height: 40,
+                                  //   padding: const EdgeInsets.all(3.0),
+                                  //   decoration: BoxDecoration(
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(4),
+                                  //       border: Border.all(
+                                  //           color: Colors.blueAccent)),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(3.0),
+                                  //     child: FlutterMentions(
+                                  //       key: mentionChildVoice,
+                                  //       suggestionPosition:
+                                  //           SuggestionPosition.Top,
+                                  //       maxLines: 3,
+                                  //       minLines: 2,
+                                  //       decoration: InputDecoration(
+                                  //         border: InputBorder.none,
+                                  //       ),
+                                  //       mentions: [
+                                  //         Mention(
+                                  //             trigger: '@',
+                                  //             style: TextStyle(
+                                  //               color: Colors.amber,
+                                  //             ),
+                                  //             data: mentionUser,
+                                  //             disableMarkup: true,
+                                  //             matchAll: false,
+                                  //             suggestionBuilder: (data) {
+                                  //               return Container(
+                                  //                 padding:
+                                  //                     EdgeInsets.all(10.0),
+                                  //                 child: Row(
+                                  //                   children: <Widget>[
+                                  //                     Column(
+                                  //                       children: <Widget>[
+                                  //                         Text(data['name']),
+                                  //                       ],
+                                  //                     )
+                                  //                   ],
+                                  //                 ),
+                                  //               );
+                                  //             }),
+                                  //         Mention(
+                                  //           trigger: '#',
+                                  //           disableMarkup: true,
+                                  //           style: TextStyle(
+                                  //             color: Colors.blue,
+                                  //           ),
+                                  //           data: mentionMont,
+                                  //           matchAll: true,
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1432,65 +1509,71 @@ class AddObservationState extends State<AddObservation>
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  if (mMontFetched &&
-                                      mChildFetched &&
-                                      MyApp.USER_TYPE_VALUE != 'Parent')
-                                    Container(
-                                      // height: 40,
-                                      padding: const EdgeInsets.all(3.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: Border.all(
-                                              color: Colors.blueAccent)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: FlutterMentions(
-                                          key: mentionFuturePlan,
-                                          suggestionPosition:
-                                              SuggestionPosition.Top,
-                                          maxLines: 3,
-                                          minLines: 2,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                          mentions: [
-                                            Mention(
-                                                trigger: '@',
-                                                style: TextStyle(
-                                                  color: Colors.amber,
-                                                ),
-                                                data: mentionUser,
-                                                disableMarkup: true,
-                                                matchAll: false,
-                                                suggestionBuilder: (data) {
-                                                  return Container(
-                                                    padding:
-                                                        EdgeInsets.all(10.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Column(
-                                                          children: <Widget>[
-                                                            Text(data['name']),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                            Mention(
-                                              trigger: '#',
-                                              disableMarkup: true,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                              data: mentionMont,
-                                              matchAll: true,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  // if (mMontFetched &&
+                                  //     mChildFetched &&
+                                  //     MyApp.USER_TYPE_VALUE != 'Parent')
+                                  customMultilineTextField(
+                                    context: context,
+                                    controller: futurePlanController,
+                                    maxLines: 5,
+                                    minLines: 3,
+                                  ),
+                                  // Container(
+                                  //   // height: 40,
+                                  //   padding: const EdgeInsets.all(3.0),
+                                  //   decoration: BoxDecoration(
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(4),
+                                  //       border: Border.all(
+                                  //           color: Colors.blueAccent)),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(3.0),
+                                  //     child: FlutterMentions(
+                                  //       key: mentionFuturePlan,
+                                  //       suggestionPosition:
+                                  //           SuggestionPosition.Top,
+                                  //       maxLines: 3,
+                                  //       minLines: 2,
+                                  //       decoration: InputDecoration(
+                                  //         border: InputBorder.none,
+                                  //       ),
+                                  //       mentions: [
+                                  //         Mention(
+                                  //             trigger: '@',
+                                  //             style: TextStyle(
+                                  //               color: Colors.amber,
+                                  //             ),
+                                  //             data: mentionUser,
+                                  //             disableMarkup: true,
+                                  //             matchAll: false,
+                                  //             suggestionBuilder: (data) {
+                                  //               return Container(
+                                  //                 padding:
+                                  //                     EdgeInsets.all(10.0),
+                                  //                 child: Row(
+                                  //                   children: <Widget>[
+                                  //                     Column(
+                                  //                       children: <Widget>[
+                                  //                         Text(data['name']),
+                                  //                       ],
+                                  //                     )
+                                  //                   ],
+                                  //                 ),
+                                  //               );
+                                  //             }),
+                                  //         Mention(
+                                  //           trigger: '#',
+                                  //           disableMarkup: true,
+                                  //           style: TextStyle(
+                                  //             color: Colors.blue,
+                                  //           ),
+                                  //           data: mentionMont,
+                                  //           matchAll: true,
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -3163,12 +3246,9 @@ class AddObservationState extends State<AddObservation>
                                         GestureDetector(
                                           onTap: () async {
                                             if (selectedChildrens.length > 0) {
-                                              String title = mentionTitle
-                                                      .currentState
-                                                      ?.controller
-                                                      ?.markupText ??
-                                                  '';
-                                              previewtitle = title;
+                                              String title =
+                                                  titleController.text;
+                                              // previewtitle = title;
                                               for (int i = 0;
                                                   i < mentionUser.length;
                                                   i++) {
@@ -3195,13 +3275,15 @@ class AddObservationState extends State<AddObservation>
                                                 }
                                               }
                                               print(title);
+                                              String notes =
+                                                  notesController.text;
 
-                                              String notes = mentionNotes
-                                                      .currentState
-                                                      ?.controller
-                                                      ?.markupText ??
-                                                  "";
-                                              previewnotes = notes;
+                                              // String notes = mentionNotes
+                                              //         .currentState
+                                              //         ?.controller
+                                              //         ?.markupText ??
+                                              //     "";
+                                              // previewnotes = notes;
                                               for (int i = 0;
                                                   i < mentionUser.length;
                                                   i++) {
@@ -3232,12 +3314,13 @@ class AddObservationState extends State<AddObservation>
                                               String ref = '';
                                               if (MyApp.USER_TYPE_VALUE !=
                                                   'Parent') {
-                                                ref = mentionRef
-                                                        .currentState
-                                                        ?.controller
-                                                        ?.markupText ??
-                                                    '';
-                                                previewRef = ref;
+                                                ref = refController.text;
+                                                // ref = mentionRef
+                                                //         .currentState
+                                                //         ?.controller
+                                                //         ?.markupText ??
+                                                //     '';
+                                                // previewRef = ref;
                                                 for (int i = 0;
                                                     i < mentionUser.length;
                                                     i++) {
@@ -3269,12 +3352,14 @@ class AddObservationState extends State<AddObservation>
                                               String child_voice = '';
                                               if (MyApp.USER_TYPE_VALUE !=
                                                   'Parent') {
-                                                child_voice = mentionChildVoice
-                                                        .currentState
-                                                        ?.controller
-                                                        ?.markupText ??
-                                                    '';
-                                                previewChildVoice = child_voice;
+                                                child_voice =
+                                                    childVoiceController.text;
+                                                // child_voice = mentionChildVoice
+                                                //         .currentState
+                                                //         ?.controller
+                                                //         ?.markupText ??
+                                                //     '';
+                                                // previewChildVoice = child_voice;
                                                 for (int i = 0;
                                                     i < mentionUser.length;
                                                     i++) {
@@ -3308,12 +3393,14 @@ class AddObservationState extends State<AddObservation>
                                               String future_plan = '';
                                               if (MyApp.USER_TYPE_VALUE !=
                                                   'Parent') {
-                                                future_plan = mentionFuturePlan
-                                                        .currentState
-                                                        ?.controller
-                                                        ?.markupText ??
-                                                    '';
-                                                previewFuturePlan = future_plan;
+                                                future_plan =
+                                                    futurePlanController.text;
+                                                // future_plan = mentionFuturePlan
+                                                //         .currentState
+                                                //         ?.controller
+                                                //         ?.markupText ??
+                                                //     '';
+                                                // previewFuturePlan = future_plan;
                                                 for (int i = 0;
                                                     i < mentionUser.length;
                                                     i++) {
@@ -3348,8 +3435,8 @@ class AddObservationState extends State<AddObservation>
                                               for (int i = 0;
                                                   i < selectedChildrens.length;
                                                   i++) {
-                                                child.add(
-                                                    selectedChildrens[i].id);
+                                                child.add(selectedChildrens[i]
+                                                    .childid);
                                               }
 
                                               Map<String, dynamic> mp;
@@ -3601,6 +3688,7 @@ class AddObservationState extends State<AddObservation>
                                               print(mp);
                                               print(Constants.BASE_URL +
                                                   "Observation/editObservation");
+                                              return;
                                               FormData formData =
                                                   FormData.fromMap(mp);
 
@@ -3684,11 +3772,9 @@ class AddObservationState extends State<AddObservation>
                                       ),
                                       GestureDetector(
                                         onTap: () async {
-                                          if (selectedChildrens.length > 0) {
-                                            String title = mentionTitle
-                                                .currentState!
-                                                .controller!
-                                                .markupText;
+                                          if (selectedChildrens.length > 0 &&
+                                              selectedRooms.length > 0) {
+                                            String title = titleController.text;
                                             for (int i = 0;
                                                 i < mentionUser.length;
                                                 i++) {
@@ -3714,10 +3800,11 @@ class AddObservationState extends State<AddObservation>
                                             }
                                             print(title);
 
-                                            String notes = mentionNotes
-                                                .currentState!
-                                                .controller!
-                                                .markupText;
+                                            // String notes = mentionNotes
+                                            //     .currentState!
+                                            //     .controller!
+                                            //     .markupText;
+                                            String notes = notesController.text;
                                             for (int i = 0;
                                                 i < mentionUser.length;
                                                 i++) {
@@ -3745,8 +3832,9 @@ class AddObservationState extends State<AddObservation>
                                             String ref = '';
                                             if (MyApp.USER_TYPE_VALUE !=
                                                 'Parent') {
-                                              ref = mentionRef.currentState!
-                                                  .controller!.markupText;
+                                              // ref = mentionRef.currentState!
+                                              //     .controller!.markupText;
+                                              ref = refController.text;
                                               for (int i = 0;
                                                   i < mentionUser.length;
                                                   i++) {
@@ -3777,10 +3865,12 @@ class AddObservationState extends State<AddObservation>
                                             String child_voice = '';
                                             if (MyApp.USER_TYPE_VALUE !=
                                                 'Parent') {
-                                              child_voice = mentionChildVoice
-                                                  .currentState!
-                                                  .controller!
-                                                  .markupText;
+                                              // child_voice = mentionChildVoice
+                                              //     .currentState!
+                                              //     .controller!
+                                              //     .markupText;
+                                              child_voice =
+                                                  childVoiceController.text;
                                               for (int i = 0;
                                                   i < mentionUser.length;
                                                   i++) {
@@ -3813,10 +3903,12 @@ class AddObservationState extends State<AddObservation>
                                             String future_plan = '';
                                             if (MyApp.USER_TYPE_VALUE !=
                                                 'Parent') {
-                                              future_plan = mentionFuturePlan
-                                                  .currentState!
-                                                  .controller!
-                                                  .markupText;
+                                              // future_plan = mentionFuturePlan
+                                              //     .currentState!
+                                              //     .controller!
+                                              //     .markupText;
+                                              future_plan =
+                                                  futurePlanController.text;
                                               for (int i = 0;
                                                   i < mentionUser.length;
                                                   i++) {
@@ -3851,11 +3943,18 @@ class AddObservationState extends State<AddObservation>
                                             for (int i = 0;
                                                 i < selectedChildrens.length;
                                                 i++) {
-                                              child
-                                                  .add(selectedChildrens[i].id);
+                                                print(selectedChildrens[i].childid);
+                                                print(selectedChildrens[i].id);
+                                              child.add(
+                                                  selectedChildrens[i].childid);
                                             }
+                                            print('++++++++++++++');
+                                            print(selectedChildrens.length);
+                                            print(selectedChildrens.toList());
+                                            print(child.length);
+                                            print(child.toList());
+                                            return;
                                             String rooms = '';
-
                                             for (int i = 0;
                                                 i < selectedRooms.length;
                                                 i++) {
@@ -4134,6 +4233,7 @@ class AddObservationState extends State<AddObservation>
                                             print(await MyApp
                                                 .getDeviceIdentity());
                                             print(MyApp.AUTH_TOKEN_VALUE);
+                                            return;
                                             Response? response = await dio
                                                 .post(url,
                                                     data: formData,
@@ -4165,8 +4265,13 @@ class AddObservationState extends State<AddObservation>
                                               print(stacktrace);
                                             });
                                           } else {
-                                            MyApp.ShowToast(
-                                                "select children", context);
+                                            if (selectedChildrens.length == 0) {
+                                              MyApp.ShowToast(
+                                                  "select children", context);
+                                            } else {
+                                              MyApp.ShowToast(
+                                                  "select Rooms", context);
+                                            }
                                           }
                                         },
                                         child: Container(
@@ -4181,7 +4286,7 @@ class AddObservationState extends State<AddObservation>
                                                     Radius.circular(8))),
                                             child: Padding(
                                               padding:
-                                                  const EdgeInsets.all(0.0),
+                                                  const EdgeInsets.all(10.0),
                                               child: Row(
                                                 children: <Widget>[
                                                   Text(
@@ -4358,4 +4463,84 @@ class AddObservationState extends State<AddObservation>
       ),
     );
   }
+}
+
+Widget customTextField({
+  required TextEditingController controller,
+  required BuildContext context,
+  String? hintText,
+  bool obscureText = false,
+}) {
+  return TextField(
+    onTapOutside: (focus) {
+      FocusScope.of(context).unfocus();
+    },
+    onSubmitted: (value) {
+      FocusScope.of(context).nextFocus();
+    },
+    onEditingComplete: () {
+      // FocusScope.of(context).nextFocus();
+    },
+    controller: controller,
+    obscureText: obscureText,
+    decoration: InputDecoration(
+      hintText: hintText,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Constants.kButton,
+          width: 1.0,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Constants.kButton,
+          width: 1.5,
+        ),
+      ),
+      border: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(4),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget customMultilineTextField(
+    {required TextEditingController controller,
+    required BuildContext context,
+    String? hintText,
+    int minLines = 3,
+    int maxLines = 5}) {
+  return TextField(
+    scrollPadding: EdgeInsets.only(bottom: 200),
+    controller: controller,
+    minLines: minLines,
+    maxLines: maxLines,
+    onTapOutside: (focus) {
+      FocusScope.of(context).unfocus();
+    },
+    keyboardType: TextInputType.multiline,
+    decoration: InputDecoration(
+      hintText: hintText,
+      focusColor: Constants.kButton,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Constants.kButton,
+          width: 1.0,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Constants.kButton,
+          width: 1.5,
+        ),
+      ),
+      border: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(4),
+        ),
+      ),
+    ),
+  );
 }

@@ -702,14 +702,217 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                   child: Container(
                                     child: Column(
                                       children: [
+                                          SizedBox(height:10,),
+                                            /////
+                                         Row(
+                                          children: [
+                                            Text(
+                                              'Morning Tea',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black54,decoration: TextDecoration.underline),
+                                            ),
+                                             SizedBox(height: 5,),
+                                            Expanded(
+                                              child: Container(),
+                                            ),
+                                            if (addRecipePermission)
+                                              GestureDetector(
+                                                onTap: () {
+                                                  selected = [];
+                                                  for (var i = 0;
+                                                      i < _snacks.length;
+                                                      i++) {
+                                                    selected.add(false);
+                                                  }
+                                                  key.currentState!
+                                                      .openEndDrawer();
+                                                  choose = 'MORNING_TEA';
+                                                  setState(() {});
+                                                  // Navigator.push(context,MaterialPageRoute(
+                                                  //   builder: (context) =>Addrecipe(type: 'SNACK',)));
+                                                },
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Constants.kButton,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          12, 8, 12, 8),
+                                                      child: Text(
+                                                        'Add Item',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 12),
+                                                      ),
+                                                    )),
+                                              )
+                                          ],
+                                        ),
+                                        menuData['Menu'][j][3].length > 0
+                                            ? GridView.builder(
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: menuData['Menu'][j]
+                                                        [3]
+                                                    .length,
+                                                gridDelegate:
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                        childAspectRatio:
+                                                            8.0 / 9.0,
+                                                        crossAxisCount: 2),
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return new Card(
+                                                    child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          menuData['Menu'][j][3][index]['recipeDetails']['media'] != null &&
+                                                                  menuData['Menu'][j][3][index]['recipeDetails']['media'].length >
+                                                                      0
+                                                              ? menuData['Menu'][j][3][index]['recipeDetails']['media'][0]['mediaType'] ==
+                                                                      'Image'
+                                                                  ? Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                    child: AspectRatio(
+                                                                        aspectRatio:
+                                                                            18.0 /
+                                                                                16.0,
+                                                                        child: Image.network(Constants
+                                                                                .ImageBaseUrl +
+                                                                            menuData['Menu'][j][3][index]['recipeDetails']['media'][0]
+                                                                                [
+                                                                                'mediaUrl']),
+                                                                      ),
+                                                                  ))
+                                                                  : Center(
+                                                                      child: Icon(Icons
+                                                                          .video_collection))
+                                                              : AspectRatio(
+                                                                  aspectRatio:
+                                                                      18.0 / 16.0,
+                                                                  child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10.0,
+                                                                    right: 2),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Container(
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.23,
+                                                                    child:
+                                                                        AutoSizeText(
+                                                                      menuData['Menu'][j][3][index]
+                                                                              [
+                                                                              'recipeDetails']
+                                                                          [
+                                                                          'itemName'],
+                                                                      minFontSize:
+                                                                          8,
+                                                                      maxLines:
+                                                                          2,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    )),
+                                                                Row(
+                                                                  children: [
+                                                                    if (deleteRecipePermission)
+                                                                      GestureDetector(
+                                                                        child:
+                                                                            Icon(
+                                                                          AntDesign
+                                                                              .delete,
+                                                                          color:
+                                                                              Constants.kMain,
+                                                                          size:
+                                                                              14,
+                                                                        ),
+                                                                        onTap:
+                                                                            () async {
+                                                                          MenuAPIHandler
+                                                                              handler =
+                                                                              MenuAPIHandler({
+                                                                            "userid":
+                                                                                MyApp.LOGIN_ID_VALUE,
+                                                                            "id":
+                                                                                menuData['Menu'][j][3][index]['id'],
+                                                                          });
+                                                                          var data =
+                                                                              await handler.deleteListItem();
+                                                                          print(
+                                                                              data);
+                                                                          if (!data
+                                                                              .containsKey('error')) {
+                                                                            menuDataFetched =
+                                                                                false;
+                                                                            _fetchData();
+                                                                            setState(() {});
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      child:
+                                                                          Icon(
+                                                                        AntDesign
+                                                                            .eyeo,
+                                                                        color: Constants
+                                                                            .kMain,
+                                                                        size:
+                                                                            16,
+                                                                      ),
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) => ViewRecipe(
+                                                                                      id: menuData['Menu'][j][3][index]['recipeDetails']['id'],
+                                                                                    )));
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ]),
+                                                  );
+                                                },
+                                              )
+                                            : Container(),
+                                            SizedBox(height:10,),
                                         Row(
                                           children: [
                                             Text(
                                               'Breakfast',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black54),
+                                                  color: Colors.black54,decoration: TextDecoration.underline),
                                             ),
+                                             SizedBox(height: 5,),
                                             Expanded(
                                               child: Container(),
                                             ),
@@ -766,6 +969,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                 int index) {
                                               return Card(
                                                 child: Column(
+                                                
                                                   children: [
                                                     //   Text(menuData['Menu'][j][0][index]['recipeDetails'].toString()),
                                                     menuData['Menu'][j][0][index][
@@ -781,17 +985,28 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                         ['recipeDetails']['media'][0]
                                                                     ['mediaType'] ==
                                                                 'Image'
-                                                            ? AspectRatio(
-                                                                aspectRatio:
-                                                                    18.0 / 16.0,
-                                                                child: Image.network(Constants
-                                                                        .ImageBaseUrl +
-                                                                    menuData['Menu'][j][0][index]['recipeDetails']
-                                                                            [
-                                                                            'media'][0]
-                                                                        [
-                                                                        'mediaUrl']),
-                                                              )
+                                                            ? Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                child: Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                  child: AspectRatio(
+                                                                      aspectRatio:
+                                                                          18.0 / 16.0,
+                                                                      child: Image.network(Constants
+                                                                              .ImageBaseUrl +
+                                                                          menuData['Menu'][j][0][index]['recipeDetails']
+                                                                                  [
+                                                                                  'media'][0]
+                                                                              [
+                                                                              'mediaUrl']),
+                                                                    ),
+                                                                ),
+                                                              ),
+                                                            ))
                                                             : Center(child: Icon(Icons.video_collection))
                                                         : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
 
@@ -799,7 +1014,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                       padding:
                                                           const EdgeInsets.only(
                                                               right: 2,
-                                                              left: 2),
+                                                              left: 10),
                                                       child: Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -868,10 +1083,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                           () {});
                                                                     }
                                                                   },
-                                                                ),
-                                                              SizedBox(
-                                                                width: 10,
                                                               ),
+                                                              SizedBox(width: 10),
                                                               GestureDetector(
                                                                 child: Icon(
                                                                   AntDesign
@@ -881,13 +1094,12 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                           .kMain,
                                                                   size: 16,
                                                                 ),
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
+                                                                onTap:(){
+                                                                  Navigator.push(context,
                                                                       MaterialPageRoute(
                                                                           builder: (context) => ViewRecipe(
                                                                                 id: menuData['Menu'][j][0][index]['recipeDetails']['id'],
-                                                                              )));
+                                                                   )));
                                                                 },
                                                               ),
                                                             ],
@@ -903,16 +1115,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Morning Tea',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black54),
-                                            ),
-                                          ],
-                                        ),
+                                        
                                         SizedBox(
                                           height: 10,
                                         ),
@@ -922,8 +1125,9 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               'Lunch',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black54),
+                                                  color: Colors.black54,decoration: TextDecoration.underline),
                                             ),
+                                            SizedBox(height: 5,),
                                             Expanded(
                                               child: Container(),
                                             ),
@@ -998,23 +1202,33 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                         ['recipeDetails']['media'][0]
                                                                     ['mediaType'] ==
                                                                 'Image'
-                                                            ? AspectRatio(
-                                                                aspectRatio:
-                                                                    18.0 / 16.0,
-                                                                child: Image.network(Constants
-                                                                        .ImageBaseUrl +
-                                                                    menuData['Menu'][j][1][index]['recipeDetails']
+                                                            ? Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              child: Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                child: AspectRatio(
+                                                                    aspectRatio:
+                                                                        18.0 / 16.0,
+                                                                    child: Image.network(Constants
+                                                                            .ImageBaseUrl +
+                                                                        menuData['Menu'][j][1][index]['recipeDetails']
+                                                                                [
+                                                                                'media'][0]
                                                                             [
-                                                                            'media'][0]
-                                                                        [
-                                                                        'mediaUrl']),
-                                                              )
+                                                                            'mediaUrl']),
+                                                                  ),
+                                                              ),
+                                                            )))
                                                             : Center(child: Icon(Icons.video_collection))
                                                         : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              left: 2.0,
+                                                              left: 10.0,
                                                               right: 2),
                                                       child: Row(
                                                         mainAxisAlignment:
@@ -1116,16 +1330,201 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                         Row(
                                           children: [
                                             Text(
                                               'Afternoon Tea',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black54),
+                                                  
+                                                  color: Colors.black54,decoration: TextDecoration.underline),
+                                                  
                                             ),
+                                          SizedBox(height: 5,),
+                                            Expanded(
+                                              child: Container(),
+                                            ),
+                                            if (addRecipePermission)
+                                              GestureDetector(
+                                                onTap: () {
+                                                  selected = [];
+                                                  for (var i = 0;
+                                                      i < _snacks.length;
+                                                      i++) {
+                                                    selected.add(false);
+                                                  }
+                                                  key.currentState!
+                                                      .openEndDrawer();
+                                                  choose = 'AFTERNOON_TEA';
+                                                  setState(() {});
+                                                  // Navigator.push(context,MaterialPageRoute(
+                                                  //   builder: (context) =>Addrecipe(type: 'SNACK',)));
+                                                },
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Constants.kButton,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          12, 8, 12, 8),
+                                                      child: Text(
+                                                        'Add Item',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 12),
+                                                      ),
+                                                    )),
+                                              )
                                           ],
                                         ),
+                                        menuData['Menu'][j][4].length > 0
+                                            ? GridView.builder(
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: menuData['Menu'][j]
+                                                        [4]
+                                                    .length,
+                                                gridDelegate:
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                        childAspectRatio:
+                                                            8.0 / 9.0,
+                                                        crossAxisCount: 2),
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return new Card(
+                                                    child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          menuData['Menu'][j][4][index]['recipeDetails']['media'] != null &&
+                                                                  menuData['Menu'][j][4][index]['recipeDetails']['media'].length >
+                                                                      0
+                                                              ? menuData['Menu'][j][4][index]['recipeDetails']['media'][0]['mediaType'] ==
+                                                                      'Image'
+                                                                  ? Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                    child: AspectRatio(
+                                                                        aspectRatio:
+                                                                            18.0 /
+                                                                                16.0,
+                                                                        child: Image.network(Constants
+                                                                                .ImageBaseUrl +
+                                                                            menuData['Menu'][j][4][index]['recipeDetails']['media'][0]
+                                                                                [
+                                                                                'mediaUrl']),
+                                                                      ),
+                                                                  ))
+                                                                  : Center(
+                                                                      child: Icon(Icons
+                                                                          .video_collection))
+                                                              : AspectRatio(
+                                                                  aspectRatio:
+                                                                      18.0 / 16.0,
+                                                                  child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10.0,
+                                                                    right: 2),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Container(
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.23,
+                                                                    child:
+                                                                        AutoSizeText(
+                                                                      menuData['Menu'][j][4][index]
+                                                                              [
+                                                                              'recipeDetails']
+                                                                          [
+                                                                          'itemName'],
+                                                                      minFontSize:
+                                                                          8,
+                                                                      maxLines:
+                                                                          2,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    )),
+                                                                Row(
+                                                                  children: [
+                                                                    if (deleteRecipePermission)
+                                                                      GestureDetector(
+                                                                        child: Icon(
+                                                                          AntDesign.delete,
+                                                                          color: Constants.kMain,
+                                                                          size: 14,
+                                                                        ),
+                                                                        onTap:
+                                                                            () async {
+                                                                          MenuAPIHandler
+                                                                              handler =
+                                                                              MenuAPIHandler({
+                                                                            "userid": MyApp.LOGIN_ID_VALUE,
+                                                                            "id": menuData['Menu'][j][4][index]['id'],
+                                                                          });
+                                                                          var data =
+                                                                              await handler.deleteListItem();
+                                                                          print(
+                                                                              data);
+                                                                          if (!data
+                                                                              .containsKey('error')) {
+                                                                            menuDataFetched =
+                                                                                false;
+                                                                            _fetchData();
+                                                                            setState(() {});
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      child:
+                                                                          Icon(
+                                                                        AntDesign
+                                                                            .eyeo,
+                                                                        color: Constants
+                                                                            .kMain,
+                                                                        size:
+                                                                            16,
+                                                                      ),
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) => ViewRecipe(
+                                                                                      id: menuData['Menu'][j][4][index]['recipeDetails']['id'],
+                                                                                    )));
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ]),
+                                                  );
+                                                },
+                                              )
+                                            : Container(),
                                         SizedBox(
                                           height: 10,
                                         ),
@@ -1135,8 +1534,9 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               'Late Snacks',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black54),
+                                                  color: Colors.black54,decoration: TextDecoration.underline),
                                             ),
+                                             SizedBox(height: 5,),
                                             Expanded(
                                               child: Container(),
                                             ),
@@ -1205,16 +1605,21 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                       0
                                                               ? menuData['Menu'][j][2][index]['recipeDetails']['media'][0]['mediaType'] ==
                                                                       'Image'
-                                                                  ? AspectRatio(
-                                                                      aspectRatio:
-                                                                          18.0 /
-                                                                              16.0,
-                                                                      child: Image.network(Constants
-                                                                              .ImageBaseUrl +
-                                                                          menuData['Menu'][j][2][index]['recipeDetails']['media'][0]
-                                                                              [
-                                                                              'mediaUrl']),
-                                                                    )
+                                                                  ? Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                    child: AspectRatio(
+                                                                        aspectRatio:
+                                                                            18.0 /
+                                                                                16.0,
+                                                                        child: Image.network(Constants
+                                                                                .ImageBaseUrl +
+                                                                            menuData['Menu'][j][2][index]['recipeDetails']['media'][0]
+                                                                                [
+                                                                                'mediaUrl']),
+                                                                      ),
+                                                                  ))
                                                                   : Center(
                                                                       child: Icon(Icons
                                                                           .video_collection))
@@ -1226,7 +1631,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                             padding:
                                                                 const EdgeInsets
                                                                     .only(
-                                                                    left: 2.0,
+                                                                    left: 10.0,
                                                                     right: 2),
                                                             child: Row(
                                                               mainAxisAlignment:
@@ -1322,6 +1727,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                 },
                                               )
                                             : Container(),
+                                       
                                       ],
                                     ),
                                   ),

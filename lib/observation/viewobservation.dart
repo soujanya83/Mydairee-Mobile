@@ -83,7 +83,7 @@ class _ViewObservationState extends State<ViewObservation> {
     });
     var data1 = await handler1.getObservationDataDetails();
 
-    if (!data1.containsKey('error')) {
+    if (!data1.containsKey('error')){
       if ((data1['permission'] != null &&
               data1['permission']['updateObservation'] == '1') ||
           MyApp.USER_TYPE_VALUE == 'Superadmin') {

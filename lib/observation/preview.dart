@@ -19,6 +19,8 @@ class _PreviewState extends State<Preview> {
   String notes = "";
   String title = '';
   String ref = '';
+  String childVoice = '';
+  String futurePlan = '';
   bool expandeylf = false;
   bool expandmontessori = false;
   bool expandmilestones = false;
@@ -34,19 +36,24 @@ class _PreviewState extends State<Preview> {
 
   void _load() {
     if (AddObservationState.type == 'add') {
-      notes = AddObservationState
-              .mentionNotes.currentState?.controller?.markupText ??
-          '';
-      title = AddObservationState
-              .mentionTitle.currentState?.controller?.markupText ??
-          '';
-      ref =
-          AddObservationState.mentionRef.currentState?.controller?.markupText ??
-              '';
+      // notes = AddObservationState
+      //         .mentionNotes.currentState?.controller?.markupText ??
+      notes = AddObservationState.notesController.text;
+      '';
+      title = AddObservationState.titleController.text;
+      // ref =
+      //     AddObservationState.mentionRef.currentState?.controller?.markupText ??
+      //         '';
+      ref = AddObservationState.refController.text;
     } else {
-      notes = AddObservationState.previewnotes ?? '';
-      title = AddObservationState.previewtitle ?? '';
-      ref = AddObservationState.previewRef ?? '';
+      // notes = AddObservationState.previewnotes ?? '';
+      // title = AddObservationState.previewtitle ?? '';
+      // ref = AddObservationState.previewRef ?? '';
+      notes = AddObservationState.notesController.text;
+      title = AddObservationState.titleController.text;
+      ref = AddObservationState.refController.text;
+      childVoice = AddObservationState.childVoiceController.text;
+      futurePlan = AddObservationState.futurePlanController.text;
     }
 
     outcomes = List<bool>.generate(
@@ -94,6 +101,11 @@ class _PreviewState extends State<Preview> {
                 SizedBox(
                   height: 5,
                 ),
+                 if (AddObservationState.selectedRooms.length > 0)
+                   Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 8),
+                     child:  Text('Childrens',style: TextStyle(color:Colors.black,fontSize: 15),),
+                   ),
                 if (AddObservationState.selectedChildrens.length > 0)
                   Wrap(
                       spacing: 8.0, // gap between adjacent chips
@@ -131,15 +143,41 @@ class _PreviewState extends State<Preview> {
                 SizedBox(
                   height: 5,
                 ),
+                 if (AddObservationState.selectedRooms.length > 0)
+                   Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 8),
+                     child: Text('Rooms',style: TextStyle(color:Colors.black,fontSize: 15),),
+                   ),
+                if (AddObservationState.selectedRooms.length > 0)
+                  Wrap(
+                      spacing: 8.0, // gap between adjacent chips
+                      runSpacing: 6.0, // gap between lines
+                      children: List<Widget>.generate(
+                          AddObservationState.selectedRooms.length,
+                          (int index){
+                        return Container(
+                          padding: EdgeInsets.only(left: 8,right: 8,top: 5,bottom: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            // ignore: deprecated_member_use
+                            border: Border.all(color: Constants.kButton.withOpacity(.7))
+                          ),
+                          child: Text(AddObservationState
+                                      .selectedRooms[index].room.name !=
+                                  null
+                              ? AddObservationState
+                                  .selectedRooms[index].room.name
+                              : ''),
+                        );
+                      })),
+                SizedBox(height: 10,),
                 if (notes != "")
                   Text(
                     'Notes',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 if (notes != "")
-                  Html(
-                    data: parseFragment(notes).text, // Decodes HTML entities
-                  ),
+                 Text(notes),
                 SizedBox(
                   height: 10,
                 ),
@@ -151,10 +189,38 @@ class _PreviewState extends State<Preview> {
                         'Reflection',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                     
                       Text(ref),
+                    ],
+                  ),
+                  SizedBox(
+                  height: 10,
+                ),
+                if (childVoice != "")
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Child Voice',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                     
+                      Text(childVoice),
+                    ],
+                  ),
+                   SizedBox(
+                  height: 10,
+                ),
+                if (futurePlan != "")
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Future Plan',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                     
+                      Text(futurePlan),
                     ],
                   ),
                 SizedBox(

@@ -8,7 +8,7 @@ import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/observation/childdetails.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 
-Widget tagRemove(String htmlString, String type, String centerid, var context) {
+Widget tagRemove(String htmlString, String type, String centerid, var context,{int? maxLines}) {
   var data = removeAllHtmlTags(htmlString);
   var title = data[0];
   var tags = data[1];
@@ -31,7 +31,9 @@ Widget tagRemove(String htmlString, String type, String centerid, var context) {
         style: type == 'heading' ? Constants.header3 : Constants.header5,
       ));
     }
-    txt.add(TextSpan(
+    txt.add(
+      TextSpan(
+        
       text: tags[j],
       style: type == 'heading' ? Constants.header3 : Constants.header5,
       recognizer: TapGestureRecognizer()
@@ -143,7 +145,7 @@ Widget tagRemove(String htmlString, String type, String centerid, var context) {
       style: type == 'heading' ? Constants.header3 : Constants.header5,
     ));
   }
-  return RichText(text: TextSpan(children: txt));
+  return RichText(text: TextSpan(children: txt),maxLines: maxLines,);
 }
 
 List removeAllHtmlTags(String htmlString) {

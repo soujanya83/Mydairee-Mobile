@@ -688,16 +688,19 @@ class _LinksState extends State<Links> {
                                         ),
                                       ],
                                     ),
-                                    Text(_allReflections[index].about != null
-                                        ? _allReflections[index].about
-                                        : '',overflow: TextOverflow.ellipsis,),
+                                    Text(
+                                      _allReflections[index].about != null
+                                          ? _allReflections[index].about
+                                          : '',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     // SizedBox(
                                     //   height: 10,
                                     // ),
                                     Expanded(
-                                          flex: 1,
-                                          child: Container(),
-                                        ),
+                                      flex: 1,
+                                      child: Container(),
+                                    ),
                                     Row(
                                       children: [
                                         Expanded(child: SizedBox()),
@@ -1100,7 +1103,7 @@ class _LinksState extends State<Links> {
                           "obsLinks": dataPlan,
                           "centerid": AddObservationState.centerid,
                         };
-                        
+
                         var _toSend2 =
                             Constants.BASE_URL + "Observation/changeObsStatus/";
 
@@ -1109,12 +1112,13 @@ class _LinksState extends State<Links> {
                           "status": "1",
                           "userid": MyApp.LOGIN_ID_VALUE,
                         };
+                        print('========objToSend=========');
 
                         print(jsonEncode(objToSend));
                         print(jsonEncode(objToSend2));
                         print(jsonEncode(objToSend3));
                         print(jsonEncode(objToSend4));
-
+                        print('=================');
                         final response = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend),
                             headers: {
@@ -1141,7 +1145,7 @@ class _LinksState extends State<Links> {
                             headers: {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                               'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                            }); 
+                            });
                         print('3');
                         print(resp3.body);
 
@@ -1163,11 +1167,11 @@ class _LinksState extends State<Links> {
                             resp4.statusCode == 200) {
                           MyApp.ShowToast("updated", context);
                           print('created');
-                          Navigator.of(context)
-                              .popUntil((route) => route.isFirst);
+                          // Navigator.of(context)
+                          //     .popUntil((route) => route.isFirst);
                         } else if (response.statusCode == 401) {
                           MyApp.Show401Dialog(context);
-                        } 
+                        }
                       },
                       child: Container(
                           width: 160,

@@ -108,7 +108,7 @@ class ObservationsAPIHandler {
     return d;
   }
 
-  Future<dynamic> getObservationDataDetails() async {
+  Future<dynamic> getObservationDataDetails()async{
     ServiceWithHeaderDataPost helper =
         ServiceWithHeaderDataPost(_viewObservationDataURL, data);
     var d = await helper.data();
