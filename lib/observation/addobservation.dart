@@ -167,8 +167,22 @@ class AddObservationState extends State<AddObservation>
     //  title = new TextEditingController();
     // reflection = new TextEditingController();
     centerid = widget.centerid;
+    clearAllData();
     _fetchData();
     super.initState();
+  }
+
+  ScrollController scrollController = ScrollController();
+
+  clearAllData() {
+    titleController.clear();
+    notesController.clear();
+    refController.clear();
+    childVoiceController.clear();
+    futurePlanController.clear();
+    selectedChildrens.clear();
+    selectedRooms.clear();
+    media.clear();
   }
 
   static List<MultiSelectItem<RoomsModel>> roomItems = [];
@@ -374,32 +388,42 @@ class AddObservationState extends State<AddObservation>
       // mentionFuturePlan.currentState?.controller?.text =
       //     removeHtmlData(widget.data?.futurePlan ?? '');
       // previewFuturePlan = removeHtmlData(widget.data?.futurePlan ?? '');
+      List<String> allChildrenIdList = [];
+      allChildrenIdList = List.generate(
+          _allChildrens.length, (i) => _allChildrens[i].childid ?? '');
+      List<String> selectedChildrenIdList = [];
 
-      for (int i = 0; i < widget.selecChildrens.length; i++) {
-        print('+++++++++assigning the data here of children+++++++++');
-        print("widget.selecChildrens[i].childId"+widget.selecChildrens[i].childId);
-        if (widget.selecChildrens[i].childId != null){
-          selectedChildrens.add(ChildModel(
-              id: widget.selecChildrens[i].childId,
-              name: widget.selecChildrens[i].childName,
-              dob: widget.selecChildrens[i].dob,
-              imageUrl: widget.selecChildrens[i].imageUrl,
-              morningtea: {},
-              lunch: {},
-              sleep: [],
-              afternoontea: {},
-              snacks: {},
-              sunscreen: [],
-              toileting: {}));
-          childValues[selectedChildrens[i].childid ?? ''] = true;
-            print('+++++++++child values+++++++++');
-          print(childValues);
+      selectedChildrenIdList = List.generate(widget.selecChildrens.length,
+          (i) => widget.selecChildrens[i].childId);
+
+      for (int i = 0; i < allChildrenIdList.length; i++) {
+        if (selectedChildrenIdList.contains(allChildrenIdList[i])) {
+          selectedChildrens.add(_allChildrens[i]);
+          childValues[allChildrenIdList[i]] = true;
         }
-        print(List.generate(selectedChildrens.length, (index){
-          
-        }));
-        
       }
+
+      // for (int i = 0; i < widget.selecChildrens.length; i++) {
+      //   print('+++++++++assigning the data here of children+++++++++');
+      //   print("widget.selecChildrens[i].childId" +
+      //       widget.selecChildrens[i].childId);
+      //   if (widget.selecChildrens[i].childId != null) {
+      //     selectedChildrens.add(ChildModel(
+      //         id: widget.selecChildrens[i].childId,
+      //         name: widget.selecChildrens[i].childName,
+      //         dob: widget.selecChildrens[i].dob,
+      //         imageUrl: widget.selecChildrens[i].imageUrl,
+      //         morningtea: {},
+      //         lunch: {},
+      //         sleep: [],
+      //         afternoontea: {},
+      //         snacks: {},
+      //         sunscreen: [],
+      //         toileting: {}));
+      //     childValues[widget.selecChildrens[i].childId] = true;
+      //   }
+      // }
+      print(List.generate(selectedChildrens.length, (index) {}));
       for (int i = 0; i < widget.media.length; i++) {
         media.add(ObsMediaModel.fromJson(widget.media[i]));
         h = h + 100;
@@ -809,6 +833,9 @@ class AddObservationState extends State<AddObservation>
                                 value:
                                     childValues[_allChildrens[index].childid],
                                 onChanged: (value) {
+                                  // print(selectedChildrens
+                                  //       .contains(_allChildrens[index]));
+                                  // return;
                                   if (all) {
                                     all = !all;
                                   }
@@ -826,7 +853,6 @@ class AddObservationState extends State<AddObservation>
                                           .remove(_allChildrens[index]);
                                     }
                                   }
-
                                   childValues[_allChildrens[index].childid ??
                                       ''] = value!;
                                   setState(() {});
@@ -1004,6 +1030,7 @@ class AddObservationState extends State<AddObservation>
       body: _controller == null
           ? SizedBox()
           : SingleChildScrollView(
+              controller: scrollController,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 child: Container(
@@ -1063,7 +1090,11 @@ class AddObservationState extends State<AddObservation>
                         ),
                       ),
                       new Container(
-                        height: MediaQuery.of(context).size.height + 350 + h,
+                        height: MediaQuery.of(context).size.height +
+                            selectedChildrens.length * 50 +
+                            h +
+                            selectedRooms.length * 50 +
+                            300,
                         child: new TabBarView(
                           controller: _controller,
                           children: <Widget>[
@@ -1071,10 +1102,18 @@ class AddObservationState extends State<AddObservation>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                                    child: Text('Children'),
+                                  InkWell(
+                                    onTap: () {
+                                      print(selectedChildrens.length);
+                                      print(selectedRooms.length);
+                                      print('======================');
+                                      print(childValues);
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                      child: Text('Children'),
+                                    ),
                                   ),
                                   GestureDetector(
                                     onTap: () {
@@ -3688,7 +3727,6 @@ class AddObservationState extends State<AddObservation>
                                               print(mp);
                                               print(Constants.BASE_URL +
                                                   "Observation/editObservation");
-                                              return;
                                               FormData formData =
                                                   FormData.fromMap(mp);
 
@@ -3943,8 +3981,9 @@ class AddObservationState extends State<AddObservation>
                                             for (int i = 0;
                                                 i < selectedChildrens.length;
                                                 i++) {
-                                                print(selectedChildrens[i].childid);
-                                                print(selectedChildrens[i].id);
+                                              print(
+                                                  selectedChildrens[i].childid);
+                                              print(selectedChildrens[i].id);
                                               child.add(
                                                   selectedChildrens[i].childid);
                                             }
@@ -3953,7 +3992,6 @@ class AddObservationState extends State<AddObservation>
                                             print(selectedChildrens.toList());
                                             print(child.length);
                                             print(child.toList());
-                                            return;
                                             String rooms = '';
                                             for (int i = 0;
                                                 i < selectedRooms.length;
@@ -4233,7 +4271,6 @@ class AddObservationState extends State<AddObservation>
                                             print(await MyApp
                                                 .getDeviceIdentity());
                                             print(MyApp.AUTH_TOKEN_VALUE);
-                                            return;
                                             Response? response = await dio
                                                 .post(url,
                                                     data: formData,
@@ -4254,6 +4291,7 @@ class AddObservationState extends State<AddObservation>
                                                     obs.obsid + 'val' + obsid);
                                                 print(obs.data.toString() +
                                                     'val');
+                                                scrollController.jumpTo(0);
                                                 _controller!.index = 1;
                                               } else {
                                                 MyApp.ShowToast(

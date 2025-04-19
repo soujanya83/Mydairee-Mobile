@@ -90,7 +90,7 @@ class Constants {
   static final String DAILYDAIRY_TAG = "DAILY DAIRY";
   static final String DAILYJOURNAL_TAG = "DAILY JOURNAL";
 
-  static final String REFLECTION_TAG = "REFLECTION";
+  static final String REFLECTION_TAG = "DAILY REFLECTION";
 
   static final String HEADCHECKS_TAG = "HEADCHECKS";
   static final String ACCIDENT_TAG = "ACCIDENT";

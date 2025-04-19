@@ -1167,8 +1167,8 @@ class _LinksState extends State<Links> {
                             resp4.statusCode == 200) {
                           MyApp.ShowToast("updated", context);
                           print('created');
-                          // Navigator.of(context)
-                          //     .popUntil((route) => route.isFirst);
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
                         } else if (response.statusCode == 401) {
                           MyApp.Show401Dialog(context);
                         }

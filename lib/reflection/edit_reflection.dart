@@ -26,6 +26,7 @@ import 'package:mykronicle_mobile/utils/deleteDialog.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:path/path.dart';
+import 'package:http/http.dart' as http;
 
 class EditReflection extends StatefulWidget {
   final String reflectionid;
@@ -42,27 +43,27 @@ class _EditReflectionState extends State<EditReflection> {
   GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
   HtmlEditorController editorController = HtmlEditorController();
 
-  List<Map<String, dynamic>> mentionUser=[];
-  List<Map<String, dynamic>> mentionMont=[];
+  List<Map<String, dynamic>> mentionUser = [];
+  List<Map<String, dynamic>> mentionMont = [];
   bool mChildFetched = false;
   bool mMontFetched = false;
   GlobalKey<FlutterMentionsState> ref = GlobalKey<FlutterMentionsState>();
   GlobalKey<ScaffoldState> key = GlobalKey();
 
   // Select child
-  List<ChildModel> _allChildrens=[];
+  List<ChildModel> _allChildrens = [];
   List<ChildModel> selectedChildrens = [];
   Map<String, bool> childValues = {};
   bool childrensFetched = false;
 
   // Select Educator
-  List<UserModel> users=[];
+  List<UserModel> users = [];
   List<UserModel> selectedEdu = [];
   Map<String, bool> eduValues = {};
   bool usersFetched = false;
   bool all = false;
 
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -171,7 +172,7 @@ class _EditReflectionState extends State<EditReflection> {
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
         _allChildrens.add(ChildModel.fromJson(child[i]));
-        childValues[_allChildrens[i].childid??''] = false;
+        childValues[_allChildrens[i].childid ?? ''] = false;
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
@@ -182,8 +183,11 @@ class _EditReflectionState extends State<EditReflection> {
   }
 
   Future<void> _fetchUserDate() async {
-    ReflectionApiHandler handler = ReflectionApiHandler(
-        {"userid": MyApp.LOGIN_ID_VALUE, "reflectionid": widget.reflectionid});
+    ReflectionApiHandler handler = ReflectionApiHandler({
+      "userid": MyApp.LOGIN_ID_VALUE,
+      "reflectionid": widget.reflectionid,
+      "centerid": widget.centerid
+    });
     var data = await handler.geteditDetails();
 
     var alldata = data['Reflections'];
@@ -197,7 +201,7 @@ class _EditReflectionState extends State<EditReflection> {
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
         selectedChildrens.add(ChildModel.fromJson(child[i]));
-        childValues[_allChildrens[i].childid??''] = true;
+        childValues[_allChildrens[i].childid ?? ''] = true;
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
@@ -395,7 +399,8 @@ class _EditReflectionState extends State<EditReflection> {
                             }
                           }
 
-                          childValues[_allChildrens[index].childid??''] = value!;
+                          childValues[_allChildrens[index].childid ?? ''] =
+                              value!;
                           setState(() {});
                         }),
                   );
@@ -456,9 +461,18 @@ class _EditReflectionState extends State<EditReflection> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                      Text(
-                        'Reflections',
-                        style: Constants.header1,
+                      InkWell(
+                        onTap: () {
+                          // _load();
+                          // _fetchData1();
+                          // _fetchData();
+
+                          _fetchUserDate();
+                        },
+                        child: Text(
+                          'Reflections',
+                          style: Constants.header1,
+                        ),
                       ),
                       SizedBox(
                         height: 10,
@@ -522,7 +536,8 @@ class _EditReflectionState extends State<EditReflection> {
                                         onDeleted: () {
                                           setState(() {
                                             childValues[selectedChildrens[index]
-                                                .childid??''] = false;
+                                                    .childid ??
+                                                ''] = false;
                                             selectedChildrens.removeAt(index);
                                           });
                                         })
@@ -698,7 +713,7 @@ class _EditReflectionState extends State<EditReflection> {
                                 await FilePicker.platform.pickFiles();
 
                             if (result != null) {
-                              File file = File(result.files.single.path??'');
+                              File file = File(result.files.single.path ?? '');
                               var fileSizeInBytes = file.length();
                               var fileSizeInKB = await fileSizeInBytes / 1024;
                               var fileSizeInMB = fileSizeInKB / 1024;
@@ -755,7 +770,7 @@ class _EditReflectionState extends State<EditReflection> {
                               children: List<Widget>.generate(files.length,
                                   (int index) {
                                 String? mimeStr =
-                                    lookupMimeType(files[index].path??'');
+                                    lookupMimeType(files[index].path ?? '');
                                 var fileType = mimeStr?.split('/');
                                 if (fileType?[0].toString() == 'image') {
                                   return Stack(
@@ -1136,185 +1151,212 @@ class _EditReflectionState extends State<EditReflection> {
                       SizedBox(
                         height: 10,
                       ),
-                      Row(mainAxisAlignment: MainAxisAlignment.end, children: <
-                          Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              width: 82,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                //    color: Constants.kButton,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'CANCEL',
-                                      style: TextStyle(color: Colors.black),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                  width: 82,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    //    color: Constants.kButton,
+                                    border: Border.all(
+                                      color: Colors.grey,
                                     ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            String? refription =
-                                ref.currentState?.controller?.markupText;
-                           if(refription==null)return;
-                            for (int i = 0; i < mentionUser.length; i++) {
-                              if (refription!.contains(mentionUser[i]['name'])) {
-                                refription = refription.replaceAll(
-                                    "@" + mentionUser[i]['name'],
-                                    '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
-                              }
-                            }
-                            for (int i = 0; i < mentionMont.length; i++) {
-                              if (refription
-                                  !.contains(mentionMont[i]['display'])) {
-                                refription = refription.replaceAll(
-                                    "#" + mentionMont[i]['display'],
-                                    '<a data-tagid="${mentionMont[i]['rid']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="tags_${mentionMont[i]['id']}" link="tags_${mentionMont[i]['id']}"  >#${mentionMont[i]['display']}</a>');
-                              }
-                            }
-
-                            if (title?.text.toString() == '') {
-                              titleErr = 'title required';
-                            } else {
-                              titleErr = '';
-                            }
-
-                            setState(() {});
-                            if (title?.text.toString() != '') {
-                              titleErr = '';
-                              setState(() {});
-                              List edu = [];
-                              for (int i = 0; i < selectedEdu.length; i++) {
-                                edu.add(selectedEdu[i].userid.toString());
-                              }
-
-                              List child = [];
-                              for (int i = 0;
-                                  i < selectedChildrens.length;
-                                  i++) {
-                                child.add(
-                                    selectedChildrens[i].childid.toString());
-                              }
-
-                              Map<String, dynamic> mp;
-
-                              mp = {
-                                "title": title?.text,
-                                "about": refription,
-                                "userid": MyApp.LOGIN_ID_VALUE,
-                                "centerid": widget.centerid,
-                                "childs": jsonEncode(child),
-                                "educators": jsonEncode(edu),
-                                "status": status,
-                                "reflectionid": widget.reflectionid,
-                              };
-                              for (int i = 0; i < files.length; i++) {
-                                File file = files[i];
-                                String m = 'resMedia' + i.toString();
-                                var d = await MultipartFile.fromFile(file.path,
-                                    filename: basename(file.path),
-                                    contentType: MediaType.parse('image/jpg'));
-                                // print('ddd' + d.toString());
-                                // String mimeStr = lookupMimeType(files[i].path);
-                                // var fileType = mimeStr.split('/');
-                                // mp[m] = {
-                                //   "mime": fileType[0] + '/' + fileType[1],
-                                //   "postname": basename(file.path),
-                                //   "name": d,
-                                // };
-
-                                mp[m] = d;
-                              }
-                              print(mp);
-
-                              FormData formData = FormData.fromMap(mp);
-
-                              print("object check");
-                              print(formData.fields.toString());
-                              Dio dio = new Dio();
-
-                              Response? response = await dio
-                                  .post(
-                                      Constants.BASE_URL +
-                                          "Reflections/updateReflection/",
-                                      data: formData,
-                                      options: Options(headers: {
-                                        'X-DEVICE-ID':
-                                            await MyApp.getDeviceIdentity(),
-                                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                      }))
-                                  .then((value) {
-                                var v = jsonDecode(value.toString());
-                                print("object check");
-                                print(v);
-                                if (v['Status'] == 'SUCCESS') {
-                                  Navigator.pop(context, 'kill');
-                                  // Navigator.pop(context);
-                                } else {
-                                  print(v);
-                                  MyApp.ShowToast("error", context);
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          'CANCEL',
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                String? refription =
+                                    ref.currentState?.controller?.markupText;
+                                if (refription == null) return;
+                                for (int i = 0; i < mentionUser.length; i++) {
+                                  if (refription!
+                                      .contains(mentionUser[i]['name'])) {
+                                    refription = refription.replaceAll(
+                                        "@" + mentionUser[i]['name'],
+                                        '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
+                                  }
                                 }
-                              }).catchError((error) => print(error));
-                              print(response);
-                            }
-                          },
-                          child: Container(
-                              // width: 82,
-                              // height: 38,
-                              decoration: BoxDecoration(
-                                  color: Constants.kButton,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8))),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'ADD POST',
-                                      style: TextStyle(color: Colors.white),
+                                for (int i = 0; i < mentionMont.length; i++) {
+                                  if (refription!
+                                      .contains(mentionMont[i]['display'])) {
+                                    refription = refription.replaceAll(
+                                        "#" + mentionMont[i]['display'],
+                                        '<a data-tagid="${mentionMont[i]['rid']}" data-type="${mentionMont[i]['type']}" data-toggle="modal" data-target="#tagsModal" href="tags_${mentionMont[i]['id']}" link="tags_${mentionMont[i]['id']}"  >#${mentionMont[i]['display']}</a>');
+                                  }
+                                }
+
+                                if (title?.text.toString() == '') {
+                                  titleErr = 'title required';
+                                } else {
+                                  titleErr = '';
+                                }
+
+                                setState(() {});
+                                if (title?.text.toString() != '') {
+                                  titleErr = '';
+                                  setState(() {});
+                                  List edu = [];
+                                  for (int i = 0; i < selectedEdu.length; i++) {
+                                    edu.add(selectedEdu[i].userid.toString());
+                                  }
+
+                                  List child = [];
+                                  for (int i = 0;
+                                      i < selectedChildrens.length;
+                                      i++) {
+                                    child.add(selectedChildrens[i]
+                                        .childid
+                                        .toString());
+                                  }
+
+                                  try {
+                                    var uri = Uri.parse(
+                                        "${Constants.BASE_URL}Reflections/updateReflection/");
+
+                                    var request =
+                                        http.MultipartRequest('POST', uri);
+
+                                    // ✅ Add headers
+                                    request.headers.addAll({
+                                      'X-DEVICE-ID':
+                                          await MyApp.getDeviceIdentity(),
+                                      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                    });
+
+                                    // ✅ Add form fields
+                                    request.fields.addAll({
+                                      'title': title?.text ?? '',
+                                      'about': refription ?? '',
+                                      'userid': MyApp.LOGIN_ID_VALUE.toString(),
+                                      'centerid': widget.centerid.toString(),
+                                      'childs': jsonEncode(child),
+                                      'educators': jsonEncode(edu),
+                                      'status': status,
+                                      'reflectionid': widget.reflectionid
+                                          .toString(), // if updating
+                                    });
+                                    print('+++++++++++++++++++');
+                                    print({
+                                      'title': title?.text ?? '',
+                                      'about': refription ?? '',
+                                      'userid': MyApp.LOGIN_ID_VALUE.toString(),
+                                      'centerid': widget.centerid.toString(),
+                                      'childs': jsonEncode(child),
+                                      'educators': jsonEncode(edu),
+                                      'status': status,
+                                      'reflectionid': widget.reflectionid
+                                          .toString(), // if updating
+                                    });
+                                    print(files[0].path);
+                                    // return;
+
+                                    // ✅ Add files to request
+                                    for (int i = 0; i < files.length; i++) {
+                                      File file = files[i];
+                                      String fieldName = 'resMedia$i';
+
+                                      request.files.add(
+                                          await http.MultipartFile.fromPath(
+                                        fieldName,
+                                        file.path,
+                                        // contentType: MediaType('image', 'jpg'),
+                                        // filename: basename(file.path),
+                                      ));
+                                    }
+
+                                    // ✅ Send the request
+                                    http.StreamedResponse response =
+                                        await request.send();
+
+                                    // ✅ Get response as string
+                                    final responseString =
+                                        await response.stream.bytesToString();
+                                    print('responseString');
+                                    print(responseString);
+                                    final responseJson =
+                                        jsonDecode(responseString);
+
+                                    print("Response: $responseJson");
+
+                                    if (response.statusCode == 200 &&
+                                        responseJson['Status'] == 'SUCCESS') {
+                                      // Navigator.pop(context, 'kill');
+                                    } else {
+                                      MyApp.ShowToast("error", context);
+                                    }
+                                  } catch (e, s) {
+                                    print("++++++++++++++error+++++++++++++++");
+                                    print(e);
+                                    print(s);
+                                  }
+                                }
+                              },
+                              child: Container(
+                                  // width: 82,
+                                  // height: 38,
+                                  decoration: BoxDecoration(
+                                      color: Constants.kButton,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          'ADD POST',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                      ])
+                                  )),
+                            ),
+                          ])
                     ])))));
   }
 
-Future<File> compressAndGetFile(File file, String targetPath) async {
-  XFile? result = await FlutterImageCompress.compressAndGetFile(
-    file.absolute.path, targetPath,
-    minWidth: 900, minHeight: 900, quality: 40,
-  );
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 900,
+      minHeight: 900,
+      quality: 40,
+    );
 
-  if (result == null) {
-    throw Exception("Compression failed: Unable to get compressed file.");
+    if (result == null) {
+      throw Exception("Compression failed: Unable to get compressed file.");
+    }
+
+    File compressedFile = File(result.path); // Convert XFile to File
+
+    print("Original size: ${file.lengthSync()} bytes");
+    print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+    return compressedFile;
   }
-
-  File compressedFile = File(result.path); // Convert XFile to File
-
-  print("Original size: ${file.lengthSync()} bytes");
-  print("Compressed size: ${compressedFile.lengthSync()} bytes");
-
-  return compressedFile;
-}
 
   Widget rectBorderWidget(Size size, var context) {
     return DottedBorder(

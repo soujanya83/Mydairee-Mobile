@@ -293,7 +293,21 @@ class _ViewObservationState extends State<ViewObservation> {
     return Scaffold(
         drawer: GetDrawer(),
         appBar: Header.appBar(),
-        body: SingleChildScrollView(
+        body: 
+        _observation==null?SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: Constants.kBlack,
+              ),
+            ],
+          ),
+        ):
+        SingleChildScrollView(
             child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Container(
@@ -529,6 +543,36 @@ class _ViewObservationState extends State<ViewObservation> {
                             (_observation?.reflection != null)
                                 ? tagRemove(
                                     _observation?.reflection ?? '',
+                                    'title',
+                                    displaydata1['observation']['centerid'],
+                                    context)
+                                : SizedBox(),
+                            SizedBox(height: 10,),
+                             Text(
+                              'Child Voice',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            (_observation?.childVoice != null)
+                                ? tagRemove(
+                                    _observation?.childVoice ?? '',
+                                    'title',
+                                    displaydata1['observation']['centerid'],
+                                    context)
+                                : SizedBox(),
+                            
+                                 Text(
+                              'Future Plan',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height:5,
+                            ),
+                            (_observation?.futurePlan != null)
+                                ? tagRemove(
+                                    _observation?.futurePlan ?? '',
                                     'title',
                                     displaydata1['observation']['centerid'],
                                     context)

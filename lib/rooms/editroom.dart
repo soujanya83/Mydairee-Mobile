@@ -80,6 +80,7 @@ class _EditRoomState extends State<EditRoom> {
         ),
       ),
       ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: users != null ? users.length : 0,
           itemBuilder: (BuildContext context, int index) {
@@ -102,7 +103,35 @@ class _EditRoomState extends State<EditRoom> {
                     setState(() {});
                   }),
             );
-          })
+          }),
+      SizedBox(
+        height: 30,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Constants.kButton,
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                )),
+          ),
+          SizedBox(width: 30)
+        ],
+      ),
+      SizedBox(
+        height: 40,
+      ),
     ])));
   }
 
@@ -121,8 +150,10 @@ class _EditRoomState extends State<EditRoom> {
         }
         usersFetched = true;
         if (this.mounted) setState(() {});
-      } catch (e) {
+      } catch (e, s) {
+        print('first time error');
         print(e);
+        print(s);
       }
 
       print(data);
@@ -154,7 +185,12 @@ class _EditRoomState extends State<EditRoom> {
           if (sel.isNotEmpty) {
             selectedEdu.add(sel.first);
           }
-          eduValues[selectedEdu[i].userid] = true;
+          try {
+            eduValues[selectedEdu[i].userid] = true;
+          } catch (e, s) {
+            print(e);
+            print(s);
+          }
         }
         try {
           pickerColor = HexColor(roomDesc?.color ?? '');
@@ -164,8 +200,10 @@ class _EditRoomState extends State<EditRoom> {
         }
         roomDetailsFetched = true;
         if (this.mounted) setState(() {});
-      } catch (e) {
+      } catch (e, s) {
+        print('second time error');
         print(e);
+        print(s);
       }
     } else {
       MyApp.Show401Dialog(context);
@@ -747,7 +785,19 @@ class _EditRoomState extends State<EditRoom> {
                             ),
                           ])
                     ]))
-              : Container()),
+              : SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Constants.kBlack,
+                      ),
+                    ],
+                  ),
+                )),
     );
   }
 

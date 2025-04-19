@@ -114,7 +114,7 @@ class _ReflectionListState extends State<ReflectionList> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Reflection',
+                        'Daily Reflection',
                         style: Constants.header1,
                       ),
                       if (MyApp.USER_TYPE_VALUE != 'Parent')

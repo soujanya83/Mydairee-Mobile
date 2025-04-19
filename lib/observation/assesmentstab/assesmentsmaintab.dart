@@ -79,8 +79,14 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
                 unselectedLabelColor: Colors.grey,
                 tabs: [
                   if (widget.viewData['montessori'] == '1')
-                    Tab(
-                      text: 'Montessori',
+                    InkWell(
+                      onTap: () {
+                        print('=======Montessori=======');
+                        print(widget.assesData['Montessori'].toString());
+                      },
+                      child: Tab(
+                        text: 'Montessori',
+                      ),
                     ),
                   if (widget.viewData['eylf'] == '1')
                     Tab(

@@ -150,8 +150,7 @@ class ObservationsAPIHandler {
     //var viewAssesmentsDataURL = _viewAssesmentsDataURL + val;
     var viewAssesmentsDataURL = _viewAssesmentsDataURL;
     print(viewAssesmentsDataURL);
-    ServiceWithHeaderDataPost helper =
-        ServiceWithHeaderDataPost(viewAssesmentsDataURL, data);
+    ServiceWithHeaderDataPost helper =  ServiceWithHeaderDataPost(viewAssesmentsDataURL, data);
     var d = await helper.data();
     return d;
   }

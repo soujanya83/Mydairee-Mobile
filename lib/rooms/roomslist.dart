@@ -160,313 +160,393 @@ class _RoomsListState extends State<RoomsList> {
     _fetchData();
   }
 
+  void showDeleteConfirmationDialog(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text(
+            "Are you sure you want to delete?",
+            style: TextStyle(color: Colors.black),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.grey[700],
+              ),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+              ),
+              child: const Text("OK"),
+              onPressed: () async {
+                try {
+                  var _toSend = Constants.BASE_URL + 'room/deleteRoom';
+                  var objToSend = {
+                    "userid": MyApp.LOGIN_ID_VALUE,
+                    "rooms": statList,
+                    "centerid": centers[currentIndex].id
+                  };
+                  print(jsonEncode(objToSend));
+                  final response = await http.post(Uri.parse(_toSend),
+                      body: jsonEncode(objToSend),
+                      headers: {
+                        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                      });
+                  print(response.statusCode);
+                  print(response.body);
+                  if (response.statusCode == 200) {
+                    setState(() {
+                      statList.clear();
+                      _rooms = [];
+                      _fetchData();
+                    });
+                    MyApp.ShowToast("deleted", context);
+                  } else if (response.statusCode == 401) {
+                    MyApp.ShowToast(
+                        jsonDecode(response.body)['Message'].toString(),
+                        context);
+                    // MyApp.Show401Dialog(context);
+                  } // call delete function
+                } catch (e, s) {
+                  print('+++++++++++++++++++');
+                  print(e);
+                  print(s);
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: floating(context),
         drawer: GetDrawer(),
         appBar: Header.appBar(),
-        body: SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                      Row(
-                        children: [
-                          Text(
-                            'Rooms',
-                            style: Constants.header1,
-                          ),
-                          Expanded(
-                            child: Container(),
-                          ),
-                          if (permissionDel)
-                            GestureDetector(
-                                onTap: () async {
-                                  if (statList.length > 0) {
-                                    print(statList);
-                                    var _toSend =
-                                        Constants.BASE_URL + 'room/deleteRoom';
-                                    var objToSend = {
-                                      "userid": MyApp.LOGIN_ID_VALUE,
-                                      "rooms": statList,
-                                    };
-                                    print(jsonEncode(objToSend));
-                                    final response = await http.post(
-                                        Uri.parse(_toSend),
-                                        body: jsonEncode(objToSend),
-                                        headers: {
-                                          'X-DEVICE-ID':
-                                              await MyApp.getDeviceIdentity(),
-                                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                        });
-                                    print(response.statusCode);
-                                    print(response.body);
-                                    if (response.statusCode == 200) {
-                                      setState(() {
-                                        statList.clear();
-                                        _rooms = [];
-                                        _fetchData();
-                                      });
-                                      MyApp.ShowToast("deleted", context);
-                                    } else if (response.statusCode == 401) {
-                                      // MyApp.ShowToast(jsonDecode(response.body)['Message'].toString(), context);
-                                      // MyApp.Show401Dialog(context);
+        body: !roomsFetched
+            ? SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      color: Constants.kBlack,
+                    ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                          Row(
+                            children: [
+                              Text(
+                                'Rooms',
+                                style: Constants.header1,
+                              ),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              if (permissionDel)
+                                GestureDetector(
+                                    onTap: () async {
+                                      if (statList.length > 0) {
+                                        print(statList);
+                                        showDeleteConfirmationDialog(context);
+                                      } else {
+                                        MyApp.ShowToast(
+                                            "select rooms", context);
+                                      }
+                                    },
+                                    child: Icon(
+                                      AntDesign.delete,
+                                      color: Constants.kMain,
+                                    )),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              if (permissionAdd)
+                                GestureDetector(
+                                  onTap: () {
+                                    if (_users != null && _users.length > 0) {
+                                      print(_users);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddRoom(
+                                                  centerid:
+                                                      centers[currentIndex]
+                                                          .id)));
                                     }
-                                  } else {
-                                    MyApp.ShowToast("select rooms", context);
-                                  }
-                                },
-                                child: Icon(
-                                  AntDesign.delete,
-                                  color: Constants.kMain,
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Constants.kButton,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12, 8, 12, 8),
+                                        child: Text(
+                                          ' +  Add',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                        ),
+                                      )),
                                 )
-                                ),
-                          SizedBox(
-                            width: 8,
+                            ],
                           ),
-                          if (permissionAdd)
-                            GestureDetector(
-                              onTap: () {
-                                if (_users != null && _users.length > 0) {
-                                  print(_users);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AddRoom(
-                                              centerid:
-                                                  centers[currentIndex].id)));
-                                }
-                              },
+                          Row(
+                            children: [
+                              Text('Programming>'),
+                              Text(
+                                'Rooms',
+                                style: TextStyle(color: Constants.kMain),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          if (centersFetched)
+                            DropdownButtonHideUnderline(
                               child: Container(
+                                height: 30,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Constants.greyColor),
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8))),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, right: 8),
+                                  child: Center(
+                                    child: DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: centers[currentIndex].id,
+                                      items: centers.map((CentersModel value) {
+                                        return new DropdownMenuItem<String>(
+                                          value: value.id,
+                                          child: new Text(value.centerName),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        for (int i = 0;
+                                            i < centers.length;
+                                            i++) {
+                                          if (centers[i].id == value) {
+                                            setState(() {
+                                              currentIndex = i;
+                                              _rooms = [];
+                                              _fetchData();
+                                            });
+                                            break;
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (permission)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 3),
+                              child: Center(
+                                child: Container(
                                   decoration: BoxDecoration(
-                                      color: Constants.kButton,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(
+                                      color: Constants.greyColor,
+                                      width: 1,
+                                      style: BorderStyle.solid,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  height: 30.0,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.97,
                                   child: Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                    child: Text(
-                                      ' +  Add',
+                                        EdgeInsets.symmetric(horizontal: 15.0),
+                                    child: TextFormField(
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 12),
+                                        fontSize: 12.0,
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        icon: Icon(Icons.search),
+                                        hintText:
+                                            'Search by room name or child name',
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey, fontSize: 12),
+                                        border: InputBorder.none,
+                                      ),
+                                      onChanged: (text) {
+                                        searchString = text;
+                                        print(searchString);
+                                        setState(() {});
+                                      },
                                     ),
-                                  )),
-                            )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text('Programming>'),
-                          Text(
-                            'Rooms',
-                            style: TextStyle(color: Constants.kMain),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      if (centersFetched)
-                        DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 30,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Constants.greyColor),
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              child: Center(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: centers[currentIndex].id,
-                                  items: centers.map((CentersModel value) {
-                                    return new DropdownMenuItem<String>(
-                                      value: value.id,
-                                      child: new Text(value.centerName),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    for (int i = 0; i < centers.length; i++) {
-                                      if (centers[i].id == value) {
-                                        setState(() {
-                                          currentIndex = i;
-                                          _rooms = [];
-                                          _fetchData();
-                                        });
-                                        break;
-                                      }
-                                    }
-                                  },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      if (permission)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 3),
-                          child: Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                border: Border.all(
-                                  color: Constants.greyColor,
-                                  width: 1,
-                                  style: BorderStyle.solid,
-                                ),
-                                color: Colors.white,
-                              ),
-                              height: 30.0,
-                              width: MediaQuery.of(context).size.width * 0.97,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15.0),
-                                child: TextFormField(
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.black,
-                                  ),
-                                  decoration: InputDecoration(
-                                    icon: Icon(Icons.search),
-                                    hintText:
-                                        'Search by room name or child name',
-                                    hintStyle: TextStyle(
-                                        color: Colors.grey, fontSize: 12),
-                                    border: InputBorder.none,
-                                  ),
-                                  onChanged: (text) {
-                                    searchString = text;
-                                    print(searchString);
-                                    setState(() {});
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (permission)
-                        DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 30,
-                            width: 120,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Constants.greyColor),
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              child: Center(
-                                  child: DropdownButton<String>(
-                                isExpanded: true,
-                                value: _chosenValue,
-                                items: <String>['Select', 'Active', 'Inactive']
-                                    .map((String value) {
-                                  return new DropdownMenuItem<String>(
-                                    value: value,
-                                    child: new Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) async {
-                                  setState(() {
-                                    _chosenValue = value!;
-                                  });
-                                  if (_chosenValue == 'Select') {
-                                    MyApp.ShowToast("choose status", context);
-                                  } else if (statList.length > 0) {
-                                    print(statList);
-                                    var _toSend = Constants.BASE_URL +
-                                        'room/changeStatus';
-                                    var objToSend = {
-                                      "userid": MyApp.LOGIN_ID_VALUE,
-                                      "rooms": statList,
-                                      "filter_status": _chosenValue,
-                                    };
-
-                                    print(jsonEncode(objToSend));
-                                    final response = await http.post(
-                                        Uri.parse(_toSend),
-                                        body: jsonEncode(objToSend),
-                                        headers: {
-                                          'X-DEVICE-ID':
-                                              await MyApp.getDeviceIdentity(),
-                                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                        });
-                                    print(response.body);
-                                    if (response.statusCode == 200) {
+                          if (permission)
+                            DropdownButtonHideUnderline(
+                              child: Container(
+                                height: 30,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Constants.greyColor),
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8))),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, right: 8),
+                                  child: Center(
+                                      child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    value: _chosenValue,
+                                    items: <String>[
+                                      'Select',
+                                      'Active',
+                                      'Inactive'
+                                    ].map((String value) {
+                                      return new DropdownMenuItem<String>(
+                                        value: value,
+                                        child: new Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? value) async {
                                       setState(() {
-                                        statList.clear();
-                                        _rooms = [];
-                                        _fetchData();
+                                        _chosenValue = value!;
                                       });
-                                      MyApp.ShowToast("updated", context);
-                                    } else if (response.statusCode == 401) {
-                                      MyApp.Show401Dialog(context);
-                                    }
-                                  } else {
-                                    MyApp.ShowToast("select rooms", context);
-                                  }
-                                },
-                              )),
+                                      if (_chosenValue == 'Select') {
+                                        MyApp.ShowToast(
+                                            "choose status", context);
+                                      } else if (statList.length > 0) {
+                                        print(statList);
+                                        var _toSend = Constants.BASE_URL +
+                                            'room/changeStatus';
+                                        var objToSend = {
+                                          "userid": MyApp.LOGIN_ID_VALUE,
+                                          "rooms": statList,
+                                          "filter_status": _chosenValue,
+                                        };
+
+                                        print(jsonEncode(objToSend));
+                                        final response = await http.post(
+                                            Uri.parse(_toSend),
+                                            body: jsonEncode(objToSend),
+                                            headers: {
+                                              'X-DEVICE-ID': await MyApp
+                                                  .getDeviceIdentity(),
+                                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                            });
+                                        print(response.body);
+                                        if (response.statusCode == 200) {
+                                          setState(() {
+                                            statList.clear();
+                                            _rooms = [];
+                                            _fetchData();
+                                          });
+                                          MyApp.ShowToast("updated", context);
+                                        } else if (response.statusCode == 401) {
+                                          MyApp.Show401Dialog(context);
+                                        }
+                                      } else {
+                                        MyApp.ShowToast(
+                                            "select rooms", context);
+                                      }
+                                    },
+                                  )),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      if (!roomsFetched && permission)
-                        Container(
-                            height: MediaQuery.of(context).size.height * 0.7,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Center(child: Text('Loading...'))],
-                            )),
-                      if (!permission)
-                        Container(
-                            height: MediaQuery.of(context).size.height * 0.7,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: Text(
-                                      "You don't have permission for this center"),
-                                )
-                              ],
-                            )),
-                      if (_rooms != null && _rooms.length != 0)
-                        Container(
-                          height:
-                              _rooms.length != 0 ? _rooms.length * 150.0 : 0,
-                          child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: _rooms.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return searchString == ''
-                                    ? roomCard(_rooms[index], index)
-                                    : _rooms[index]
-                                            .room
-                                            .name
-                                            .toLowerCase()
-                                            .contains(
-                                                searchString.toLowerCase())
+                          if (!roomsFetched && permission)
+                            Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [Center(child: Text('Loading...'))],
+                                )),
+                          if (!permission)
+                            Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                          "You don't have permission for this center"),
+                                    )
+                                  ],
+                                )),
+                          if (_rooms != null && _rooms.length != 0)
+                            Container(
+                              height: _rooms.length != 0
+                                  ? _rooms.length * 150.0
+                                  : 0,
+                              child: ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: _rooms.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return searchString == ''
                                         ? roomCard(_rooms[index], index)
-                                        : Container();
-                              }),
-                        ),
-                      if (_rooms != null && _rooms.length == 0)
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [Center(child: Text('No Rooms..'))],
-                          ),
-                        )
-                    ])))));
+                                        : _rooms[index]
+                                                .room
+                                                .name
+                                                .toLowerCase()
+                                                .contains(
+                                                    searchString.toLowerCase())
+                                            ? roomCard(_rooms[index], index)
+                                            : Container();
+                                  }),
+                            ),
+                          if (_rooms != null && _rooms.length == 0)
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [Center(child: Text('No Rooms..'))],
+                              ),
+                            )
+                        ])))));
   }
 
   Widget roomCard(RoomsModel r, int index) {
@@ -542,7 +622,7 @@ class _RoomsListState extends State<RoomsList> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text(r.room.capacity != null ? r.room.capacity : '')
+                    Text(r.child.isNotEmpty ? r.child.length.toString() : '')
                   ],
                 ),
                 SizedBox(
@@ -568,13 +648,9 @@ class _RoomsListState extends State<RoomsList> {
             ),
           ),
           decoration: new BoxDecoration(
-              gradient: new LinearGradient(stops: [
-                0.02,
-                0.02
-              ], colors: [
-                 _safeHexColor(r.room.color),
-                Colors.white
-              ]),
+              gradient: new LinearGradient(
+                  stops: [0.02, 0.02],
+                  colors: [_safeHexColor(r.room.color), Colors.white]),
               borderRadius: new BorderRadius.all(const Radius.circular(6.0)))),
     );
   }

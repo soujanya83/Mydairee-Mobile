@@ -90,6 +90,7 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      print(centers[currentIndex].id);
                       var _objToSend = {
                         "centerid": centers[currentIndex].id,
                         "userid": MyApp.LOGIN_ID_VALUE
@@ -143,7 +144,7 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                                 setState(() {
                                   currentIndex = i;
                                   // qipsFetched = false;
-                                  // _fetchData();
+                                  _fetchData();
                                 });
                                 break;
                               }

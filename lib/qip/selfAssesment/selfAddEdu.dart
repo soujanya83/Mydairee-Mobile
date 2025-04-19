@@ -49,87 +49,106 @@ class _SelfAddEducatorsState extends State<SelfAddEducators> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header.appBar(),
-      body: SingleChildScrollView(
-          child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: staff.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                          trailing: Checkbox(
-                            value: staff[index].selected == 'checked',
-                            onChanged: (val) {
-                              if (val == null) return;
-                              if (val) {
-                                staff[index].selected = 'checked';
-                              } else {
-                                staff[index].selected = '';
-                              }
-                              setState(() {});
-                            },
-                          ),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(staff[index]
-                                        .imageUrl !=
-                                    ""
-                                ? Constants.ImageBaseUrl + staff[index].imageUrl
-                                : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
-                          ),
-                          title: Text(staff[index].name),
-                          subtitle: Text(staff[index].gender)),
-                    );
-                  }),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      body: staff.isEmpty
+          ? SizedBox(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.red)),
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(
-                        'Close',
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  SizedBox(
-                    width: 10,
+                  CircularProgressIndicator(
+                    color: Constants.kBlack,
                   ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        List ids = [];
-
-                        for (int i = 0; i < staff.length; i++) {
-                          if (staff[i].selected == 'checked') {
-                            ids.add(staff[i].userid);
-                          }
-                        }
-
-                        var _objToSend = {
-                          "self_id": widget.selfId,
-                          "staffids": jsonEncode(ids),
-                          "userid": MyApp.LOGIN_ID_VALUE
-                        };
-                        QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
-                        var data = await qipAPIHandler.addSelfAssesStaff();
-                        var status = data['Status'];
-                        if (status == 'SUCCESS') {
-                          MyApp.ShowToast('Upadated Successfully', context);
-                          RestartWidget.restartApp(context);
-                        }
-                      },
-                      child: Text('Save')),
                 ],
-              )
-            ],
-          ),
-        ),
-      )),
+              ),
+            )
+          : SingleChildScrollView(
+              child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: staff.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                                trailing: Checkbox(
+                                  value: staff[index].selected == 'checked',
+                                  onChanged: (val) {
+                                    if (val == null) return;
+                                    if (val) {
+                                      staff[index].selected = 'checked';
+                                    } else {
+                                      staff[index].selected = '';
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(staff[index]
+                                              .imageUrl !=
+                                          ""
+                                      ? Constants.ImageBaseUrl +
+                                          staff[index].imageUrl
+                                      : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
+                                ),
+                                title: Text(staff[index].name),
+                                subtitle: Text(staff[index].gender)),
+                          );
+                        }),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.red)),
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(
+                              'Close',
+                              style: TextStyle(color: Colors.white),
+                            )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        ElevatedButton(
+                            onPressed: () async {
+                              List ids = [];
+
+                              for (int i = 0; i < staff.length; i++) {
+                                if (staff[i].selected == 'checked') {
+                                  ids.add(staff[i].userid);
+                                }
+                              }
+
+                              var _objToSend = {
+                                "self_id": widget.selfId,
+                                "staffids": jsonEncode(ids),
+                                "userid": MyApp.LOGIN_ID_VALUE
+                              };
+                              QipAPIHandler qipAPIHandler =
+                                  QipAPIHandler(_objToSend);
+                              var data =
+                                  await qipAPIHandler.addSelfAssesStaff();
+                              var status = data['Status'];
+                              if (status == 'SUCCESS') {
+                                MyApp.ShowToast(
+                                    'Upadated Successfully', context);
+                                Navigator.pop(context);
+                                // RestartWidget.restartApp(context);
+                              }
+                            },
+                            child: Text('Save')),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            )),
     );
   }
 }
