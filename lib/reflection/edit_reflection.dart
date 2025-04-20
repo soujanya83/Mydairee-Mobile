@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:mime/mime.dart';
+import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/api/reflectionapi.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
@@ -18,7 +21,9 @@ import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
 import 'package:mykronicle_mobile/models/getUserReflections.dart';
+import 'package:mykronicle_mobile/models/roomsmodel.dart';
 import 'package:mykronicle_mobile/models/usermodel.dart';
+import 'package:mykronicle_mobile/observation/addobservation.dart';
 import 'package:mykronicle_mobile/observation/childdetails.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/cropImage.dart';
@@ -36,20 +41,31 @@ class EditReflection extends StatefulWidget {
   _EditReflectionState createState() => _EditReflectionState();
 }
 
+class ReflectionMedia {
+  ReflectionMedia({
+    required this.imageUrl,
+    required this.imageType,
+  });
+  final String imageUrl;
+  final String imageType;
+}
+
 class _EditReflectionState extends State<EditReflection> {
   List<File> files = [];
+
+  List<ReflectionMedia> reflectionMedia = [];
   TextEditingController? title;
   String titleErr = '';
-  GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  // GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
   HtmlEditorController editorController = HtmlEditorController();
 
   List<Map<String, dynamic>> mentionUser = [];
   List<Map<String, dynamic>> mentionMont = [];
   bool mChildFetched = false;
   bool mMontFetched = false;
-  GlobalKey<FlutterMentionsState> ref = GlobalKey<FlutterMentionsState>();
+  // GlobalKey<FlutterMentionsState> ref = GlobalKey<FlutterMentionsState>();
   GlobalKey<ScaffoldState> key = GlobalKey();
-
+  TextEditingController refController = TextEditingController();
   // Select child
   List<ChildModel> _allChildrens = [];
   List<ChildModel> selectedChildrens = [];
@@ -60,6 +76,7 @@ class _EditReflectionState extends State<EditReflection> {
   List<UserModel> users = [];
   List<UserModel> selectedEdu = [];
   Map<String, bool> eduValues = {};
+  Map<String, bool> roomValues = {};
   bool usersFetched = false;
   bool all = false;
 
@@ -80,13 +97,95 @@ class _EditReflectionState extends State<EditReflection> {
     _fetchUserDate();
 
     title = new TextEditingController();
-    keyEditor = new GlobalKey();
+    // keyEditor = new GlobalKey();
   }
 
   @override
   void dispose() {
     title?.dispose();
     super.dispose();
+  }
+
+  List<RoomsModel> _rooms = [];
+  static List<MultiSelectItem<RoomsModel>> roomItems = [];
+  static List<RoomsModel> selectedRooms = [];
+  String selectedRoomsString = '';
+  bool isSelectedRoomFetched = false;
+
+  Future<void> fetchRoomsOnly() async {
+    try {
+      RoomAPIHandler handler = RoomAPIHandler({
+        "userid": MyApp.LOGIN_ID_VALUE,
+        "centerid": widget.centerid, // ✅ Use correct center id
+      });
+
+      var data = await handler.getList();
+
+      if (data != null && !data.containsKey('error')) {
+        var res = data['rooms'];
+        _rooms = [];
+
+        if (res != null && res is List) {
+          for (int i = 0; i < res.length; i++) {
+            List<ChildModel> childs = [];
+
+            if (res[i]['childs'] != null && res[i]['childs'] is List) {
+              for (int j = 0; j < res[i]['childs'].length; j++) {
+                childs.add(ChildModel.fromJson(res[i]['childs'][j]));
+              }
+            }
+
+            RoomsDescModel roomDesc = RoomsDescModel.fromJson(res[i]);
+            _rooms.add(RoomsModel(child: childs, room: roomDesc));
+          }
+
+          ///// assign selected rooms
+          try {
+            print('taped');
+            selectedRooms.clear();
+            List<String> selectedRoomsList = selectedRoomsString.split(',');
+            print(selectedRoomsList);
+            for (int i = 0; i < _rooms.length; i++) {
+              for (int j = 0; j < selectedRoomsList.length; j++) {
+                print('comarision for $i');
+                print('${_rooms[i].room.id} === ${selectedRoomsList[j]}');
+                if (_rooms[i].room.id == selectedRoomsList[j]) {
+                  selectedRooms.add(_rooms[i]);
+                  roomValues[_rooms[i].room.id] = true;
+                } else {
+                  roomValues[_rooms[i].room.id] = false;
+                }
+              }
+            }
+
+            if (mounted) {
+              setState(() {
+                isSelectedRoomFetched = true;
+              });
+            }
+          } catch (e, s) {
+            print('==============');
+            print(e);
+            // print(s.toString);
+          }
+
+          if (mounted) {
+            setState(() {
+              roomItems = _rooms
+                  .map((room) => MultiSelectItem(room, room.room.name))
+                  .toList();
+            });
+          }
+        } else {
+          print("Rooms list is null or not a List");
+        }
+      } else {
+        print("Error in API: $data");
+      }
+    } catch (e, s) {
+      print("Exception in fetchRoomsOnly: $e");
+      print(s);
+    }
   }
 
   Future<void> _fetchData() async {
@@ -191,11 +290,26 @@ class _EditReflectionState extends State<EditReflection> {
     var data = await handler.geteditDetails();
 
     var alldata = data['Reflections'];
+    try {
+      reflectionMedia = List.generate(
+          alldata['refMedia'].length,
+          (i) => ReflectionMedia(
+              imageUrl: alldata['refMedia'][i]['mediaUrl'].toString(),
+              imageType: alldata['refMedia'][i]['mediaType'].toString()));
+    } catch (e) {}
 
     title?.text = alldata['title'];
 
     var child = alldata['childs'];
     status = alldata['status'];
+    selectedRoomsString = alldata['roomids'];
+    try {
+      fetchRoomsOnly();
+    } catch (e, s) {
+      print('error in initialize image');
+      print(e);
+      print(s);
+    }
 
     try {
       assert(child is List);
@@ -229,7 +343,8 @@ class _EditReflectionState extends State<EditReflection> {
     print(check);
     print(title?.text);
     print("object 123456");
-    ref.currentState?.controller?.text = check;
+    refController.text = check;
+    // ref.currentState?.controller?.text = check;
   }
 
   Widget getEndDrawer(BuildContext context) {
@@ -275,6 +390,63 @@ class _EditReflectionState extends State<EditReflection> {
                     setState(() {});
                   }),
             );
+          })
+    ])));
+  }
+
+  Widget getRoomDrawer(BuildContext context) {
+    return Drawer(
+        child: Container(
+            child: ListView(children: <Widget>[
+      SizedBox(
+        height: 5,
+      ),
+      ListTile(
+        title: Text(
+          'Select Rooms',
+          style: Constants.header2,
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      ListView.builder(
+          shrinkWrap: true,
+          itemCount: _rooms.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Builder(builder: (context) {
+              String? name;
+              bool? value;
+              try {
+                name = _rooms[index].room.name;
+                value = roomValues[_rooms[index].room.id];
+              } catch (e) {
+                value = false;
+              }
+              // return SizedBox();
+              return ListTile(
+                title: Text(name ?? ''),
+                trailing: Checkbox(
+                    value: value,
+                    onChanged: (value) {
+                      print(value);
+                      if (value == true) {
+                        if (!selectedRooms.contains(_rooms[index])) {
+                          selectedRooms.add(_rooms[index]);
+                        }
+                      } else {
+                        if (selectedRooms.contains(_rooms[index])) {
+                          selectedRooms.remove(_rooms[index]);
+                        }
+                      }
+                      roomValues[_rooms[index].room.id] = value!;
+                      setState(() {});
+                    }),
+              );
+            });
           })
     ])));
   }
@@ -449,9 +621,11 @@ class _EditReflectionState extends State<EditReflection> {
 
     return Scaffold(
         key: key,
-        endDrawer: endmenu == 'Educator'
-            ? getEndDrawer(context)
-            : getStartDrawer(context),
+        endDrawer: endmenu == 'Room'
+            ? getRoomDrawer(context)
+            : endmenu == 'Educator'
+                ? getEndDrawer(context)
+                : getStartDrawer(context),
         // drawer: ,
         appBar: Header.appBar(),
         body: SingleChildScrollView(
@@ -483,7 +657,10 @@ class _EditReflectionState extends State<EditReflection> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                        child: Text('Children'),
+                        child: Text(
+                          'Children',
+                          style: Constants.header2,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -590,6 +767,7 @@ class _EditReflectionState extends State<EditReflection> {
                               ],
                             )),
                       ),
+
                       SizedBox(
                         height: 10,
                       ),
@@ -612,6 +790,100 @@ class _EditReflectionState extends State<EditReflection> {
                                     : Container();
                               }))
                           : Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Room',
+                        style: Constants.header2,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            endmenu = 'Room';
+                          });
+                          key.currentState?.openEndDrawer();
+                        },
+                        child: Container(
+                            width: 160,
+                            height: 38,
+                            decoration: BoxDecoration(
+                                color: Constants.kButton,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: Row(
+                              children: <Widget>[
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      endmenu = 'Room';
+                                    });
+                                    key.currentState?.openEndDrawer();
+                                  },
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    color: Colors.blue[100],
+                                  ),
+                                ),
+                                Text(
+                                  'Select Room',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            )),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      selectedRooms.length > 0
+                          ? Wrap(
+                              spacing: 8.0,
+                              runSpacing: 4.0,
+                              children: List<Widget>.generate(
+                                  selectedRooms.length, (int index) {
+                                return selectedRooms[index].room.id != null
+                                    ? Chip(
+                                        label: Text(
+                                            selectedRooms[index].room.name),
+                                        onDeleted: () {
+                                          setState(() {
+                                            roomValues[selectedRooms[index]
+                                                .room
+                                                .id] = false;
+                                            selectedRooms.removeAt(index);
+                                          });
+                                        })
+                                    : Container();
+                              }))
+                          : Container(),
+                      // MultiSelectDialogField(
+                      //   initialValue: selectedRooms,
+                      //   items: roomItems,
+                      //   title: Text(
+                      //     'Select Classroom',
+                      //   ),
+                      //   selectedColor: Constants.kButton,
+                      //   backgroundColor: Colors.white,
+                      //   decoration: BoxDecoration(color: Colors.transparent),
+                      //   buttonText: Text("Classroom"),
+                      //   onConfirm: (results) {
+                      //     selectedRooms = results.cast<RoomsModel>();
+                      //   },
+                      //   // buttonIcon: Icon(
+                      //   //   Icons.note_rounded,
+                      //   //   color: Colors.white,
+                      //   // ),
+                      //   chipDisplay: MultiSelectChipDisplay(
+                      //     onTap: (value) {
+                      //       setState(() {
+                      //         selectedRooms.remove(value);
+                      //       });
+                      //     },
+                      //   ),
+                      // ),
                       Text('Title'),
                       SizedBox(
                         height: 5,
@@ -646,60 +918,66 @@ class _EditReflectionState extends State<EditReflection> {
                       SizedBox(
                         height: 5,
                       ),
-                      if (mMontFetched && mChildFetched)
-                        Container(
-                          // height: 40,
-                          padding: const EdgeInsets.all(3.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: Colors.blueAccent)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: FlutterMentions(
-                              key: ref,
-                              suggestionPosition: SuggestionPosition.Top,
-                              maxLines: 5,
-                              minLines: 3,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                              onMentionAdd: (Map<String, dynamic> _map) {},
-                              mentions: [
-                                Mention(
-                                    trigger: '@',
-                                    style: TextStyle(
-                                      color: Colors.amber,
-                                    ),
-                                    data: mentionUser,
-                                    disableMarkup: true,
-                                    matchAll: false,
-                                    suggestionBuilder: (data) {
-                                      return Container(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Column(
-                                              children: <Widget>[
-                                                Text(data['name']),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                Mention(
-                                  trigger: '#',
-                                  disableMarkup: true,
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                  ),
-                                  data: mentionMont,
-                                  matchAll: true,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                      customMultilineTextField(
+                        context: context,
+                        controller: refController,
+                        maxLines: 5,
+                        minLines: 3,
+                      ),
+                      // if (mMontFetched && mChildFetched)
+                      //   Container(
+                      //     // height: 40,
+                      //     padding: const EdgeInsets.all(3.0),
+                      //     decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(4),
+                      //         border: Border.all(color: Colors.blueAccent)),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.all(3.0),
+                      //       child: FlutterMentions(
+                      //         key: ref,
+                      //         suggestionPosition: SuggestionPosition.Top,
+                      //         maxLines: 5,
+                      //         minLines: 3,
+                      //         decoration: InputDecoration(
+                      //           border: InputBorder.none,
+                      //         ),
+                      //         onMentionAdd: (Map<String, dynamic> _map) {},
+                      //         mentions: [
+                      //           Mention(
+                      //               trigger: '@',
+                      //               style: TextStyle(
+                      //                 color: Colors.amber,
+                      //               ),
+                      //               data: mentionUser,
+                      //               disableMarkup: true,
+                      //               matchAll: false,
+                      //               suggestionBuilder: (data) {
+                      //                 return Container(
+                      //                   padding: EdgeInsets.all(10.0),
+                      //                   child: Row(
+                      //                     children: <Widget>[
+                      //                       Column(
+                      //                         children: <Widget>[
+                      //                           Text(data['name']),
+                      //                         ],
+                      //                       )
+                      //                     ],
+                      //                   ),
+                      //                 );
+                      //               }),
+                      //           Mention(
+                      //             trigger: '#',
+                      //             disableMarkup: true,
+                      //             style: TextStyle(
+                      //               color: Colors.blue,
+                      //             ),
+                      //             data: mentionMont,
+                      //             matchAll: true,
+                      //           )
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
                       SizedBox(
                         height: 10,
                       ),
@@ -711,7 +989,6 @@ class _EditReflectionState extends State<EditReflection> {
                           onTap: () async {
                             FilePickerResult? result =
                                 await FilePicker.platform.pickFiles();
-
                             if (result != null) {
                               File file = File(result.files.single.path ?? '');
                               var fileSizeInBytes = file.length();
@@ -753,6 +1030,82 @@ class _EditReflectionState extends State<EditReflection> {
                           child: rectBorderWidget(size, context)),
 
                       SizedBox(
+                        height: 10,
+                      ),
+                      reflectionMedia.length > 0
+                          ? Wrap(
+                              spacing: 8.0, // gap between adjacent chips
+                              runSpacing: 4.0, //
+                              // direction: Axis.vertical,
+                              // alignment: WrapAlignment.center,
+                              // spacing:8.0,
+                              // runAlignment:WrapAlignment.center,
+                              // runSpacing: 8.0,
+                              // crossAxisAlignment: WrapCrossAlignment.center,
+                              // textDirection: TextDirection.rtl,
+                              // verticalDirection: VerticalDirection.up,
+                              children: List<Widget>.generate(reflectionMedia.length,
+                                  (int index) { 
+                                if (reflectionMedia[0].imageType == 'Image'|| reflectionMedia[0].imageType == 'image') {
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                          width: 100,
+                                          height: 100,
+                                          decoration: new BoxDecoration(
+                                            //  borderRadius: BorderRadius.circular(15.0),
+                                            shape: BoxShape.rectangle,
+                                            image: new DecorationImage(
+                                              image:
+                                                  new NetworkImage(Constants.ImageBaseUrl+ reflectionMedia[index].imageUrl),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )),
+                                      // Positioned(
+                                      //     right: 0,
+                                      //     top: 0,
+                                      //     child: IconButton(
+                                      //       icon: Icon(Icons.clear),
+                                      //       onPressed: () {
+                                      //         showDeleteDialog(context, () {
+                                      //           files.removeAt(index);
+                                      //           setState(() {});
+                                      //           Navigator.pop(context);
+                                      //         });
+                                      //       },
+                                      //     ))
+                                    ],
+                                  );
+                                } else {
+                                  return SizedBox();
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        child: Card(
+                                            child:
+                                                Icon(Icons.video_collection)),
+                                      ),
+                                      Positioned(
+                                          right: 0,
+                                          top: 0,
+                                          child: IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () {
+                                              showDeleteDialog(context, () {
+                                                files.removeAt(index);
+                                                setState(() {});
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                          ))
+                                    ],
+                                  );
+                                }
+                              }),
+                            )
+                          : Container(), SizedBox(
                         height: 10,
                       ),
                       files.length > 0
@@ -1186,9 +1539,8 @@ class _EditReflectionState extends State<EditReflection> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                String? refription =
-                                    ref.currentState?.controller?.markupText;
-                                if (refription == null) return;
+                                String? refription = refController.text;
+                                if (refription.isEmpty) return;
                                 for (int i = 0; i < mentionUser.length; i++) {
                                   if (refription!
                                       .contains(mentionUser[i]['name'])) {
@@ -1243,6 +1595,15 @@ class _EditReflectionState extends State<EditReflection> {
                                           await MyApp.getDeviceIdentity(),
                                       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                     });
+                                    String rooms = '';
+                                    for (int i = 0;
+                                        i < selectedRooms.length;
+                                        i++) {
+                                      if (i == (selectedRooms.length - 1)) {
+                                        rooms += selectedRooms[i].room.id;
+                                      } else
+                                        rooms += selectedRooms[i].room.id + ',';
+                                    }
 
                                     // ✅ Add form fields
                                     request.fields.addAll({
@@ -1255,6 +1616,7 @@ class _EditReflectionState extends State<EditReflection> {
                                       'status': status,
                                       'reflectionid': widget.reflectionid
                                           .toString(), // if updating
+                                      "room": rooms,
                                     });
                                     print('+++++++++++++++++++');
                                     print({
@@ -1268,7 +1630,7 @@ class _EditReflectionState extends State<EditReflection> {
                                       'reflectionid': widget.reflectionid
                                           .toString(), // if updating
                                     });
-                                    print(files[0].path);
+                                    // print(files[0].path);
                                     // return;
 
                                     // ✅ Add files to request
@@ -1293,14 +1655,16 @@ class _EditReflectionState extends State<EditReflection> {
                                     final responseString =
                                         await response.stream.bytesToString();
                                     print('responseString');
-                                    print(responseString);
-                                    final responseJson =
-                                        jsonDecode(responseString);
+                                    // print(responseString);
+                                    // final responseJson =
+                                    //     jsonDecode(responseString);
 
-                                    print("Response: $responseJson");
+                                    // print("Response: $responseJson");
 
-                                    if (response.statusCode == 200 &&
-                                        responseJson['Status'] == 'SUCCESS') {
+                                    if (response.statusCode == 200) {
+                                      MyApp.ShowToast(
+                                          "Reflection Updated Successfully!",
+                                          context);
                                       // Navigator.pop(context, 'kill');
                                     } else {
                                       MyApp.ShowToast("error", context);

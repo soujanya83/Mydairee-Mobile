@@ -106,6 +106,7 @@ class ServiceWithHeaderDataPost {
       });
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
     print('authtoken' + MyApp.AUTH_TOKEN_VALUE);
+    print('status code '+ response.statusCode.toString());
     print('dataaa' + response.body.toString());
     var status = jsonDecode(response.body);
     if (status['Status'] == 'SUCCESS' || status['Status'] == 'Success') {

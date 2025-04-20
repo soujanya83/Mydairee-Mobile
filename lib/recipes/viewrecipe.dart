@@ -91,13 +91,13 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     ),
                     ListView.builder(
                         shrinkWrap: true,
-                        itemCount: _recipe?.ingredients.length,
+                        itemCount: _recipe?.ingredients?.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Row(
                             children: [
-                              Text(_recipe?.ingredients[index]['qty']??''),
+                              Text(_recipe?.ingredients?[index]['qty']??''),
                               SizedBox(width: 10),
-                              Text(_recipe?.ingredients[index]['name'])
+                              Text(_recipe?.ingredients?[index]['name'])
                             ],
                           );
                         }),

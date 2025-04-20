@@ -9,6 +9,7 @@ import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/models/recipemodel.dart';
+import 'package:mykronicle_mobile/recipes/addrecipe.dart';
 import 'package:mykronicle_mobile/recipes/viewrecipe.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
@@ -33,6 +34,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
   List<RecipeModel> _lunch = [];
   List<RecipeModel> _breakfast = [];
   List<RecipeModel> _snacks = [];
+  List<RecipeModel> _mornTea = [];
+  List<RecipeModel> _afternTea = [];
   String? choose;
 
   var menuData;
@@ -78,6 +81,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
         _lunch = [];
         _breakfast = [];
         _snacks = [];
+        _mornTea = [];
+        _afternTea = [];
 
         try {
           assert(res is List);
@@ -89,6 +94,12 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
             } else if (res[i]['type'] == 'SNACKS') {
               print('this' + res[i].toString());
               _snacks.add(RecipeModel.fromJson(res[i]));
+            }else if(res[i]['type'] == 'MORNING_TEA'){
+                  print('this' + res[i].toString());
+              _mornTea.add(RecipeModel.fromJson(res[i]));
+            }else if(res[i]['type'] == 'AFTERNOON_TEA'){
+ print('this' + res[i].toString());
+              _afternTea.add(RecipeModel.fromJson(res[i]));
             }
           }
           recipedataFetched = true;
@@ -719,18 +730,20 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                             if (addRecipePermission)
                                               GestureDetector(
                                                 onTap: () {
+                                                   
                                                   selected = [];
                                                   for (var i = 0;
-                                                      i < _snacks.length;
+                                                      i < _mornTea.length;
                                                       i++) {
                                                     selected.add(false);
                                                   }
+                                                 
                                                   key.currentState!
                                                       .openEndDrawer();
                                                   choose = 'MORNING_TEA';
-                                                  setState(() {});
-                                                  // Navigator.push(context,MaterialPageRoute(
-                                                  //   builder: (context) =>Addrecipe(type: 'SNACK',)));
+                                                  setState(() {}); return;
+                                                  Navigator.push(context,MaterialPageRoute(
+                                                    builder: (context) =>Addrecipe(type: 'MORNING_TEA',id: menuData['Menu'][j][3]['id'], centerid: centers[currentIndex].id,)));
                                                 },
                                                 child: Container(
                                                     decoration: BoxDecoration(

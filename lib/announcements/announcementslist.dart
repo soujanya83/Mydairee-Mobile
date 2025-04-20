@@ -320,7 +320,21 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(date.toString()),
+                                                  Row(
+                                                    children: [
+                                                      Builder(
+                                                        builder: (context) {
+                                                          Timer(Duration(seconds: 3), (){
+                                                            print( _announcements[index]
+                                                            .eventDate.toString());
+                                                          });
+                                                      
+                                                          return Text(_announcements[index]
+                                                            .eventDate.toString());
+                                                        }
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ],
                                               ),
                                               Expanded(

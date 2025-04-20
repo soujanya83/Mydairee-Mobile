@@ -83,21 +83,21 @@ class _AddrecipeState extends State<Addrecipe> {
 
         name.text = _recipe?.itemName??'';
         recipe.text = _recipe?.recipe??'';
-        for (int i = 0; i < (_recipe?.ingredients.length??0); i++) {
+        for (int i = 0; i < (_recipe?.ingredients?.length??0); i++) {
           _selectedIngredients
-              .add(IngredientModel.fromJson(_recipe?.ingredients[i]));
+              .add(IngredientModel.fromJson(_recipe?.ingredients?[i]));
           for (int k = 0; k < _allIngredients.length; k++) {
             if (_allIngredients[k].id ==
-                _recipe?.ingredients[i]['ingredientId']) {
+                _recipe?.ingredients?[i]['ingredientId']) {
               _allIngredients.remove(_allIngredients[k]);
               break;
             }
           }
           //  _allIngredients.remove(_allIngredients[i]);
           _quant
-              .add(TextEditingController(text: _recipe?.ingredients[i]['qty']));
+              .add(TextEditingController(text: _recipe?.ingredients?[i]['qty']));
           _calories.add(
-              TextEditingController(text: _recipe?.ingredients[i]['calories']));
+              TextEditingController(text: _recipe?.ingredients?[i]['calories']));
         }
         for (int i = 0; i < (_recipe?.media.length??0); i++) {
           media.add(RecipeMediaModel.fromJson(_recipe?.media[i]));

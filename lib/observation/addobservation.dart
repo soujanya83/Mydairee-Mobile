@@ -89,8 +89,11 @@ class AddObservationState extends State<AddObservation>
   List<ObsMediaModel> media = [];
   String obsid = '';
   Map<String, bool> childValues = {};
+  Map<String, bool> roomValues = {};
 
   Map<String, bool> boolValues = {};
+
+  String endmenu = '';
 
   Map viewData = {};
   static Map assesData = {};
@@ -187,6 +190,7 @@ class AddObservationState extends State<AddObservation>
 
   static List<MultiSelectItem<RoomsModel>> roomItems = [];
   static List<RoomsModel> selectedRooms = [];
+  String selectedRoomsString = '';
   bool isSelectedRoomFetched = false;
 
   Future<void> fetchRoomsOnly() async {
@@ -214,6 +218,7 @@ class AddObservationState extends State<AddObservation>
 
             RoomsDescModel roomDesc = RoomsDescModel.fromJson(res[i]);
             _rooms.add(RoomsModel(child: childs, room: roomDesc));
+             roomValues[_rooms[i].room.id] = false;
           }
 
           ///// assign selected rooms
@@ -225,12 +230,13 @@ class AddObservationState extends State<AddObservation>
                 widget.totaldata['observation']['room'].toString().split(',');
             print(selectedRoomsList);
             for (int i = 0; i < _rooms.length; i++) {
+              roomValues[_rooms[i].room.id] = false;
               for (int j = 0; j < selectedRoomsList.length; j++) {
                 print('comarision for $i');
                 print('${_rooms[i].room.id} === ${selectedRoomsList[j]}');
                 if (_rooms[i].room.id == selectedRoomsList[j]) {
                   selectedRooms.add(_rooms[i]);
-                  break;
+                  roomValues[_rooms[i].room.id] = true;
                 }
               }
             }
@@ -1005,6 +1011,63 @@ class AddObservationState extends State<AddObservation>
     ])));
   }
 
+  Widget getRoomDrawer(BuildContext context) {
+    return Drawer(
+        child: Container(
+            child: ListView(children: <Widget>[
+      SizedBox(
+        height: 5,
+      ),
+      ListTile(
+        title: Text(
+          'Select Rooms',
+          style: Constants.header2,
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      ListView.builder(
+          shrinkWrap: true,
+          itemCount: _rooms.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Builder(builder: (context) {
+              String? name;
+              bool? value;
+              try {
+                name = _rooms[index].room.name;
+                value = roomValues[_rooms[index].room.id];
+              } catch (e) {
+                value = false;
+              }
+              // return SizedBox();
+              return ListTile(
+                title: Text(name ?? ''),
+                trailing: Checkbox(
+                    value: value,
+                    onChanged: (value) {
+                      print(value);
+                      if (value == true) {
+                        if (!selectedRooms.contains(_rooms[index])) {
+                          selectedRooms.add(_rooms[index]);
+                        }
+                      } else {
+                        if (selectedRooms.contains(_rooms[index])) {
+                          selectedRooms.remove(_rooms[index]);
+                        }
+                      }
+                      roomValues[_rooms[index].room.id] = value!;
+                      setState(() {});
+                    }),
+              );
+            });
+          })
+    ])));
+  }
+
   GlobalKey<ScaffoldState> key = GlobalKey();
   double h = 0;
   int uploadObs = 0;
@@ -1024,7 +1087,8 @@ class AddObservationState extends State<AddObservation>
 
     return Scaffold(
       key: key,
-      endDrawer: getEndDrawer(context),
+      endDrawer:
+          endmenu == 'Room' ? getRoomDrawer(context) : getEndDrawer(context),
       drawer: GetDrawer(),
       appBar: Header.appBar(),
       body: _controller == null
@@ -1112,7 +1176,7 @@ class AddObservationState extends State<AddObservation>
                                     child: Padding(
                                       padding:
                                           const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                                      child: Text('Children'),
+                                      child: Text('Children',style:Constants.header2,),
                                     ),
                                   ),
                                   GestureDetector(
@@ -1122,7 +1186,11 @@ class AddObservationState extends State<AddObservation>
                                       //   print(selectedChildrens[i].id);
                                       // }
                                       //           return;
-                                      key.currentState?.openEndDrawer();
+                                        setState(() {
+                                                  endmenu = 'Children';
+                                                });
+                                                key.currentState
+                                                    ?.openEndDrawer();
                                     },
                                     child: Container(
                                         width: 160,
@@ -1135,8 +1203,9 @@ class AddObservationState extends State<AddObservation>
                                           children: <Widget>[
                                             IconButton(
                                               onPressed: () {
-                                                print(widget
-                                                    .selecChildrens.length);
+                                                 setState(() {
+                                                  endmenu = 'Children';
+                                                });
                                                 key.currentState
                                                     ?.openEndDrawer();
                                               },
@@ -1211,7 +1280,7 @@ class AddObservationState extends State<AddObservation>
                                   //   style: TextStyle(color: Colors.black),
                                   // ),
                                   SizedBox(
-                                    height: 10,
+                                    height: 20,
                                   ),
                                   // InkWell(
                                   //     onTap: () {
@@ -1219,36 +1288,82 @@ class AddObservationState extends State<AddObservation>
                                   //     },
                                   //     child: Text(roomItems.length.toString() +
                                   //         'hgdfhgdhbghfhg')),
-                                  if ((widget.type == 'edit' &&
-                                          isSelectedRoomFetched) ||
-                                      widget.type != 'edit')
-                                    MultiSelectDialogField(
-                                      initialValue: selectedRooms,
-                                      items: roomItems,
-                                      title: Text(
-                                        'Select Classroom',
-                                      ),
-                                      selectedColor: Constants.kButton,
-                                      backgroundColor: Colors.white,
-                                      decoration: BoxDecoration(
-                                          color: Colors.transparent),
-                                      buttonText: Text("Classroom"),
-                                      onConfirm: (results) {
-                                        selectedRooms =
-                                            results.cast<RoomsModel>();
-                                      },
-                                      // buttonIcon: Icon(
-                                      //   Icons.note_rounded,
-                                      //   color: Colors.white,
-                                      // ),
-                                      chipDisplay: MultiSelectChipDisplay(
-                                        onTap: (value) {
-                                          setState(() {
-                                            selectedRooms.remove(value);
-                                          });
-                                        },
-                                      ),
-                                    ),
+                                  Text(
+                                    'Room',
+                                    style: Constants.header2,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        endmenu = 'Room';
+                                      });
+                                      key.currentState?.openEndDrawer();
+                                    },
+                                    child: Container(
+                                        width: 160,
+                                        height: 38,
+                                        decoration: BoxDecoration(
+                                            color: Constants.kButton,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8))),
+                                        child: Row(
+                                          children: <Widget>[
+                                            IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  endmenu = 'Room';
+                                                });
+                                                key.currentState
+                                                    ?.openEndDrawer();
+                                              },
+                                              icon: Icon(
+                                                Icons.add_circle,
+                                                color: Colors.blue[100],
+                                              ),
+                                            ),
+                                            Text(
+                                              'Select Room',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  selectedRooms.length > 0
+                                      ? Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: List<Widget>.generate(
+                                              selectedRooms.length,
+                                              (int index) {
+                                            return selectedRooms[index]
+                                                        .room
+                                                        .id !=
+                                                    null
+                                                ? Chip(
+                                                    label: Text(
+                                                        selectedRooms[index]
+                                                            .room
+                                                            .name),
+                                                    onDeleted: () {
+                                                      setState(() {
+                                                        roomValues[
+                                                            selectedRooms[index]
+                                                                .room
+                                                                .id] = false;
+                                                        selectedRooms
+                                                            .removeAt(index);
+                                                      });
+                                                    })
+                                                : Container();
+                                          }))
+                                      : Container(),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -1625,7 +1740,6 @@ class AddObservationState extends State<AddObservation>
                                         FilePickerResult? result =
                                             await FilePicker.platform
                                                 .pickFiles();
-
                                         if (result != null) {
                                           File? file = File(
                                               result.files.single.path ?? '');
@@ -1646,7 +1760,6 @@ class AddObservationState extends State<AddObservation>
                                             MyApp.ShowToast(
                                                 'file size greater than 2 mb so image is being compressed',
                                                 context);
-
                                             final filePath = file.absolute.path;
                                             final lastIndex =
                                                 filePath.lastIndexOf(

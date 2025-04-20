@@ -5,6 +5,7 @@ import 'package:mykronicle_mobile/api/announcementsapi.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
+import 'package:mykronicle_mobile/observation/addobservation.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
@@ -24,8 +25,9 @@ class NewAnnouncements extends StatefulWidget {
 
 class _NewAnnouncementsState extends State<NewAnnouncements> {
   TextEditingController title = TextEditingController();
-  GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
-  HtmlEditorController editorController = HtmlEditorController();
+  // GlobalKey<State<StatefulWidget>> keyEditor = GlobalKey();
+  // HtmlEditorController editorController = HtmlEditorController();
+  static TextEditingController desController = TextEditingController();
   String _date = '';
   String date = '';
   bool childrensFetched = false;
@@ -38,7 +40,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
 
   @override
   void initState() {
-    keyEditor = GlobalKey();
+    // keyEditor = GlobalKey();
     title = new TextEditingController();
     _fetchData();
     super.initState();
@@ -91,7 +93,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
             print(textData);
             setState(() {
               textData = dataDetail['text'];
-              editorController.setText(textData);
+              desController.text = textData;
             });
           });
         }
@@ -292,35 +294,37 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                     SizedBox(
                       height: 5,
                     ),
-                    Container(
-                      height: 50,
-                      padding: EdgeInsets.only(left: 16.0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(3),
-                          border: Border.all(color: Colors.grey)),
-                      child: TextField(
-                        controller: title,
-                        autofocus: false,
-                        obscureText: false,
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(0),
-                            border: InputBorder.none),
-                      ),
+                    customTextField(context: context, controller: title),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    // Container(
+                    //   height: MediaQuery.of(context).size.height * 0.4,
+                    //   child: textData != ''
+                    //       ? HtmlEditor(
+                    //           key: keyEditor,
+                    //           controller: editorController,
+                    //         )
+                    //       : HtmlEditor(
+                    //           key: keyEditor,
+                    //           controller: editorController,
+                    //         ),
+                    // ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'Description',
+                      style: Constants.header2,
                     ),
                     SizedBox(
                       height: 5,
                     ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      child: textData != ''
-                          ? HtmlEditor(
-                              key: keyEditor,
-                              controller: editorController,
-                            )
-                          : HtmlEditor(
-                              key: keyEditor,
-                              controller: editorController,
-                            ),
+                    customMultilineTextField(
+                      context: context,
+                      controller: desController,
+                      maxLines: 5,
+                      minLines: 3,
                     ),
                     SizedBox(height: 5),
                     Text(
@@ -383,7 +387,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              final txt = await editorController.getText();
+                              final txt = await desController.text;
                               String s = txt;
 
                               List<String> ids = [];
@@ -437,6 +441,8 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                                   "userid": MyApp.LOGIN_ID_VALUE,
                                   'centerid': widget.centerid
                                 };
+                                print('+========++');
+                                print(objToSend);
                                 await MyApp.getDeviceIdentity()
                                     .then((value) => print(value));
                                 print(jsonEncode(objToSend));

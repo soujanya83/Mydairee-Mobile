@@ -10,12 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:mime/mime.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
+import 'package:mykronicle_mobile/models/roomsmodel.dart';
 import 'package:mykronicle_mobile/models/usermodel.dart';
 import 'package:mykronicle_mobile/observation/addobservation.dart';
 import 'package:mykronicle_mobile/observation/childdetails.dart';
@@ -76,6 +78,7 @@ class _AddReflectionState extends State<AddReflection> {
   List<UserModel> users = [];
   List<UserModel> selectedEdu = [];
   Map<String, bool> eduValues = {};
+  Map<String, bool> roomValues = {};
   bool usersFetched = false;
   bool all = false;
 
@@ -92,7 +95,13 @@ class _AddReflectionState extends State<AddReflection> {
     _fetchData1();
     _fetchData();
     _load();
-
+    try {
+      fetchRoomsOnly();
+    } catch (e, s) {
+      print('error in initialize image');
+      print(e);
+      print(s);
+    }
     title = new TextEditingController();
     keyEditor = new GlobalKey();
   }
@@ -101,6 +110,88 @@ class _AddReflectionState extends State<AddReflection> {
   void dispose() {
     title.dispose();
     super.dispose();
+  }
+
+  List<RoomsModel> _rooms = [];
+  static List<MultiSelectItem<RoomsModel>> roomItems = [];
+  static List<RoomsModel> selectedRooms = [];
+  String selectedRoomsString = '';
+  bool isSelectedRoomFetched = false;
+
+  Future<void> fetchRoomsOnly() async {
+    try {
+      RoomAPIHandler handler = RoomAPIHandler({
+        "userid": MyApp.LOGIN_ID_VALUE,
+        "centerid": widget.centerid, // ✅ Use correct center id
+      });
+
+      var data = await handler.getList();
+
+      if (data != null && !data.containsKey('error')) {
+        var res = data['rooms'];
+        _rooms = [];
+
+        if (res != null && res is List) {
+          for (int i = 0; i < res.length; i++) {
+            List<ChildModel> childs = [];
+
+            if (res[i]['childs'] != null && res[i]['childs'] is List) {
+              for (int j = 0; j < res[i]['childs'].length; j++) {
+                childs.add(ChildModel.fromJson(res[i]['childs'][j]));
+              }
+            }
+
+            RoomsDescModel roomDesc = RoomsDescModel.fromJson(res[i]);
+            _rooms.add(RoomsModel(child: childs, room: roomDesc));
+          }
+
+          ///// assign selected rooms
+          try {
+            print('taped');
+            selectedRooms.clear();
+            List<String> selectedRoomsList = selectedRoomsString.split(',');
+            print(selectedRoomsList);
+            for (int i = 0; i < _rooms.length; i++) {
+              for (int j = 0; j < selectedRoomsList.length; j++) {
+                print('comarision for $i');
+                print('${_rooms[i].room.id} === ${selectedRoomsList[j]}');
+                if (_rooms[i].room.id == selectedRoomsList[j]) {
+                  selectedRooms.add(_rooms[i]);
+                  roomValues[_rooms[i].room.id] = true;
+                } else {
+                  roomValues[_rooms[i].room.id] = false;
+                }
+              }
+            }
+
+            if (mounted) {
+              setState(() {
+                isSelectedRoomFetched = true;
+              });
+            }
+          } catch (e, s) {
+            print('==============');
+            print(e);
+            // print(s.toString);
+          }
+
+          if (mounted) {
+            setState(() {
+              roomItems = _rooms
+                  .map((room) => MultiSelectItem(room, room.room.name))
+                  .toList();
+            });
+          }
+        } else {
+          print("Rooms list is null or not a List");
+        }
+      } else {
+        print("Error in API: $data");
+      }
+    } catch (e, s) {
+      print("Exception in fetchRoomsOnly: $e");
+      print(s);
+    }
   }
 
   Future<void> _fetchData() async {
@@ -465,15 +556,74 @@ class _AddReflectionState extends State<AddReflection> {
     ])));
   }
 
+  Widget getRoomDrawer(BuildContext context) {
+    return Drawer(
+        child: Container(
+            child: ListView(children: <Widget>[
+      SizedBox(
+        height: 5,
+      ),
+      ListTile(
+        title: Text(
+          'Select Rooms',
+          style: Constants.header2,
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      ListView.builder(
+          shrinkWrap: true,
+          itemCount: _rooms.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Builder(builder: (context) {
+              String? name;
+              bool? value;
+              try {
+                name = _rooms[index].room.name;
+                value = roomValues[_rooms[index].room.id];
+              } catch (e) {
+                value = false;
+              }
+              // return SizedBox();
+              return ListTile(
+                title: Text(name ?? ''),
+                trailing: Checkbox(
+                    value: value,
+                    onChanged: (value) {
+                      print(value);
+                      if (value == true) {
+                        if (!selectedRooms.contains(_rooms[index])) {
+                          selectedRooms.add(_rooms[index]);
+                        }
+                      } else {
+                        if (selectedRooms.contains(_rooms[index])) {
+                          selectedRooms.remove(_rooms[index]);
+                        }
+                      }
+                      roomValues[_rooms[index].room.id] = value!;
+                      setState(() {});
+                    }),
+              );
+            });
+          })
+    ])));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
         key: key,
-        endDrawer: endmenu == 'Children'
-            ? getStartDrawer(context)
-            : getEndDrawer(context),
+        endDrawer: endmenu == 'Room'
+            ? getRoomDrawer(context)
+            : endmenu == 'Children'
+                ? getStartDrawer(context)
+                : getEndDrawer(context),
         // drawer: getStartDrawer(context),
         appBar: Header.appBar(),
         body: SingleChildScrollView(
@@ -662,6 +812,75 @@ class _AddReflectionState extends State<AddReflection> {
                                             eduValues[selectedEdu[index]
                                                 .userid] = false;
                                             selectedEdu.removeAt(index);
+                                          });
+                                        })
+                                    : Container();
+                              }))
+                          : Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Room',
+                        style: Constants.header2,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            endmenu = 'Room';
+                          });
+                          key.currentState?.openEndDrawer();
+                        },
+                        child: Container(
+                            width: 160,
+                            height: 38,
+                            decoration: BoxDecoration(
+                                color: Constants.kButton,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: Row(
+                              children: <Widget>[
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      endmenu = 'Room';
+                                    });
+                                    key.currentState?.openEndDrawer();
+                                  },
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    color: Colors.blue[100],
+                                  ),
+                                ),
+                                Text(
+                                  'Select Room',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            )),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      selectedRooms.length > 0
+                          ? Wrap(
+                              spacing: 8.0,
+                              runSpacing: 4.0,
+                              children: List<Widget>.generate(
+                                  selectedRooms.length, (int index) {
+                                return selectedRooms[index].room.id != null
+                                    ? Chip(
+                                        label: Text(
+                                            selectedRooms[index].room.name),
+                                        onDeleted: () {
+                                          setState(() {
+                                            roomValues[selectedRooms[index]
+                                                .room
+                                                .id] = false;
+                                            selectedRooms.removeAt(index);
                                           });
                                         })
                                     : Container();
@@ -1308,17 +1527,26 @@ class _AddReflectionState extends State<AddReflection> {
                                           await MyApp.getDeviceIdentity(),
                                       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                     });
-
+                                    String rooms = '';
+                                    for (int i = 0;
+                                        i < selectedRooms.length;
+                                        i++) {
+                                      if (i == (selectedRooms.length - 1)) {
+                                        rooms += selectedRooms[i].room.id;
+                                      } else
+                                        rooms += selectedRooms[i].room.id + ',';
+                                    }
                                     // ✅ Add form fields
                                     request.fields.addAll({
-                                      'eylf':'eylf',
+                                      'eylf': 'eylf',
                                       'title': title.text ?? '',
-                                      'about': refription ?? '',
+                                      'about': refription ??  '',
                                       'userid': MyApp.LOGIN_ID_VALUE.toString(),
                                       'centerid': widget.centerid.toString(),
                                       'childs': jsonEncode(child),
                                       'educators': jsonEncode(edu),
                                       'status': status,
+                                      "room": rooms,
                                     });
                                     print('+++++++++++++++++++');
                                     print({
@@ -1362,7 +1590,9 @@ class _AddReflectionState extends State<AddReflection> {
                                     // print("Response: $responseJson");
 
                                     if (response.statusCode == 200) {
-                                      MyApp.ShowToast("Reflection created successfully!", context);
+                                      MyApp.ShowToast(
+                                          "Reflection created successfully!",
+                                          context);
                                       Navigator.pop(context, 'kill');
                                     } else {
                                       MyApp.ShowToast("error", context);
