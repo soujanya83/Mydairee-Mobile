@@ -44,6 +44,8 @@ void main() async {
     );
   }, (error, stackTrace) {
     debugPrint('Async Error: $error');
+    print('stacktrace');
+    print(stackTrace);
   });
 }
 

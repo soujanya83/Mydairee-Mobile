@@ -197,6 +197,9 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                             }),
                       )
                     : Container(),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,

@@ -224,7 +224,7 @@ class _EylfTabsState extends State<EylfTabs>
                         height: widget
                                 .data[val]['activity'][index]['subActivity']
                                 .length *
-                            60.0,
+                            64.0,
                         width: MediaQuery.of(context).size.width,
                         child: ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
@@ -234,7 +234,7 @@ class _EylfTabsState extends State<EylfTabs>
                           itemBuilder: (BuildContext context, int i) {
                             return ListTile(
                               title: Text(widget.data[val]['activity'][index]
-                                  ['subActivity'][i]['title']),
+                                  ['subActivity'][i]['title'],maxLines: 2,),
                               leading: Checkbox(
                                 onChanged: (value) {
                                   AddObservationState.checkValue[val][index]

@@ -32,20 +32,20 @@ class QuestionHelper extends StatefulWidget {
 
   const QuestionHelper(
       {Key? key,
-       this.funcCallback,
-       this.choiceCallback,
-       this.deleteMediaCallback,
-       this.questionCallback,
-       this.mandatoryCallback,
-       this.imageCallBack,
-       this.videoCallBack,
-       this.options1ListCallBack,
-       this.options2ListCallBack,
-       this.options3ListCallBack,
-       this.options4ListCallBack,
-       this.choose,
-       this.helper,
-       this.id})
+      this.funcCallback,
+      this.choiceCallback,
+      this.deleteMediaCallback,
+      this.questionCallback,
+      this.mandatoryCallback,
+      this.imageCallBack,
+      this.videoCallBack,
+      this.options1ListCallBack,
+      this.options2ListCallBack,
+      this.options3ListCallBack,
+      this.options4ListCallBack,
+      this.choose,
+      this.helper,
+      this.id})
       : super(key: key);
 
   @override
@@ -77,34 +77,39 @@ class _QuestionHelperState extends State<QuestionHelper> {
 
 // This funcion will helps you to pick a Video File
   _pickVideo() async {
-    PickedFile? pickedFile = (await picker.pickImage(source: ImageSource.gallery)) != null
-    ? PickedFile((await picker.pickImage(source: ImageSource.gallery))!.path)
-    : null; 
-    if(pickedFile==null)return;
-    _video = File(pickedFile.path??"");
+    PickedFile? pickedFile =
+        (await picker.pickImage(source: ImageSource.gallery)) != null
+            ? PickedFile(
+                (await picker.pickImage(source: ImageSource.gallery))!.path)
+            : null;
+    if (pickedFile == null) return;
+    _video = File(pickedFile.path ?? "");
     if (_video != null) {
       widget.videoCallBack!(_video!);
     }
     setState(() {});
   }
 
-Future<File> compressAndGetFile(File file, String targetPath) async {
-  XFile? result = await FlutterImageCompress.compressAndGetFile(
-    file.absolute.path, targetPath,
-    minWidth: 900, minHeight: 900, quality: 40,
-  );
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 900,
+      minHeight: 900,
+      quality: 40,
+    );
 
-  if (result == null) {
-    throw Exception("Compression failed: Unable to get compressed file.");
+    if (result == null) {
+      throw Exception("Compression failed: Unable to get compressed file.");
+    }
+
+    File compressedFile = File(result.path); // Convert XFile to File
+
+    print("Original size: ${file.lengthSync()} bytes");
+    print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+    return compressedFile;
   }
-
-  File compressedFile = File(result.path); // Convert XFile to File
-
-  print("Original size: ${file.lengthSync()} bytes");
-  print("Compressed size: ${compressedFile.lengthSync()} bytes");
-
-  return compressedFile;
-}
 
   Future _loadFromGallery(var context) async {
     print('heee');
@@ -114,7 +119,7 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
     // setState(() {
     //   _image = File(_galleryImage.path);
     // });
-    if(_galleryImage==null)return;
+    if (_galleryImage == null) return;
     File file = File(_galleryImage.path);
     var fileSizeInBytes = file.length();
     var fileSizeInKB = await fileSizeInBytes / 1024;
@@ -148,17 +153,16 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
   @override
   void initState() {
     print(widget.choose);
-
     if (widget.choose == 'copy') {
-      _choosenValue = widget.helper?.choosenValue??'';
-      mandatory = widget.helper?.mandatory??false;
-      question.text = widget.helper?.question??'';
+      _choosenValue = widget.helper?.choosenValue ?? '';
+      mandatory = widget.helper?.mandatory ?? false;
+      question.text = widget.helper?.question ?? '';
       _image = widget.helper?.image;
       _video = widget.helper?.video;
-      options1 = widget.helper?.options1??[];
-      options2 = widget.helper?.options2??[];
-      options3 = widget.helper?.options3??[];
-      options4 = widget.helper?.options4??[];
+      options1 = widget.helper?.options1 ?? [];
+      options2 = widget.helper?.options2 ?? [];
+      options3 = widget.helper?.options3 ?? [];
+      options4 = widget.helper?.options4 ?? [];
       if (widget.helper?.choosenValue == 'Multiple Choice') {
         for (var i = 0; i < options1.length; i++) {
           if (i == 0) {
@@ -249,7 +253,7 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
                               child: new Text(value),
                             );
                           }).toList(),
-                           onChanged: (String? value)  {
+                          onChanged: (String? value) {
                             setState(() {
                               _choosenValue = value!;
                               widget.choiceCallback!(value);
@@ -278,7 +282,8 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
                 InkWell(
                     child: Icon(EvilIcons.image),
                     onTap: () {
-                      if (widget.helper?.imgUrl == null) {
+                      if (widget.helper?.imgUrl == null ||
+                          ((widget.helper?.imgUrl.isEmpty) ?? true)) {
                         _loadFromGallery(context);
                       }
                     }),
@@ -334,11 +339,12 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
                 ),
               ],
             ),
-            widget.helper?.imgUrl != null
+            (widget.helper?.imgUrl != null &&
+                    (widget.helper?.imgUrl.isNotEmpty ?? false))
                 ? Stack(
                     children: [
                       Image.network(
-                        Constants.ImageBaseUrl + (widget.helper?.imgUrl??''),
+                        Constants.ImageBaseUrl + (widget.helper?.imgUrl ?? ''),
                         height: 150,
                         width: MediaQuery.of(context).size.width,
                         fit: BoxFit.fill,
@@ -359,11 +365,12 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
                     ],
                   )
                 : Container(),
-            widget.helper?.vidUrl != null
+            widget.helper?.vidUrl != null && ((widget.helper?.vidUrl.isNotEmpty)??false)
                 ? Stack(
                     children: [
                       VideoItem(
-                        url: Constants.ImageBaseUrl +( widget.helper?.vidUrl??""),
+                        url: Constants.ImageBaseUrl +
+                            (widget.helper?.vidUrl ?? ""),
                       ),
                       Positioned(
                           right: 0,
@@ -384,17 +391,18 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
             widget.helper?.image != null
                 ? Stack(
                     children: [
-                      widget.helper?.image!=null?
-                      Container(
-                          height: 150,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: new BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            image: new DecorationImage(
-                              image: new FileImage(widget.helper!.image!),
-                              fit: BoxFit.fill,
-                            ),
-                          )):SizedBox(),
+                      widget.helper?.image != null
+                          ? Container(
+                              height: 150,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                  image: new FileImage(widget.helper!.image!),
+                                  fit: BoxFit.fill,
+                                ),
+                              ))
+                          : SizedBox(),
                       Positioned(
                           right: 0,
                           top: 0,
@@ -414,12 +422,12 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
             widget.helper?.video != null
                 ? Stack(
                     children: [
-                      if( widget.helper?.video!=null)
-                      VideoItemLocal(
-                        height: 150,
-                        width: MediaQuery.of(context).size.width,
-                        file: widget.helper!.video!,
-                      ),
+                      if (widget.helper?.video != null)
+                        VideoItemLocal(
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          file: widget.helper!.video!,
+                        ),
                       Positioned(
                           right: 0,
                           top: 0,

@@ -240,7 +240,6 @@ class AddObservationState extends State<AddObservation>
                 }
               }
             }
-
             if (mounted) {
               setState(() {
                 isSelectedRoomFetched = true;

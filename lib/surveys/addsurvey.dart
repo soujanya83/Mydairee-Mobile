@@ -19,8 +19,9 @@ import 'package:path/path.dart';
 class AddSurvey extends StatefulWidget {
   final String type;
   final String id;
+  final String centerId;
 
-  AddSurvey({required this.type, required this.id});
+  AddSurvey({required this.type, required this.id, required this.centerId});
 
   @override
   _AddSurveyState createState() => _AddSurveyState();
@@ -30,7 +31,7 @@ class _AddSurveyState extends State<AddSurvey> {
   TextEditingController? title, desc;
 
   bool childrensFetched = false;
-  List<ChildModel> _allChildrens=[];
+  List<ChildModel> _allChildrens = [];
   List<ChildModel> _selectedChildrens = [];
   List<QuestionHelper> _questions = [];
   Map<String, bool> childValues = {};
@@ -75,7 +76,7 @@ class _AddSurveyState extends State<AddSurvey> {
         options4: [], imgUrl: '', vidUrl: '', image: null,
       ),
       options1ListCallBack: (list) {
-        if(_questions[v].helper==null)return;
+        if (_questions[v].helper == null) return;
         _questions[v].helper!.options1 = list as List<String>;
         _questions[v].helper!.options2 = [];
         _questions[v].helper!.options3 = [];
@@ -83,7 +84,7 @@ class _AddSurveyState extends State<AddSurvey> {
         setState(() {});
       },
       options2ListCallBack: (list) {
-        if(_questions[v].helper==null)return;
+        if (_questions[v].helper == null) return;
         _questions[v].helper!.options1 = [];
         _questions[v].helper!.options2 = list as List<String>;
         _questions[v].helper!.options3 = [];
@@ -147,11 +148,11 @@ class _AddSurveyState extends State<AddSurvey> {
     _questions.add(QuestionHelper(
       choose: 'copy',
       helper: QuestionHelperModel(
-        choosenValue: _questions[q].helper?.choosenValue??'',
-      mandatory: _questions[q].helper?.mandatory??false,
+        choosenValue: _questions[q].helper?.choosenValue ?? '',
+        mandatory: _questions[q].helper?.mandatory ?? false,
         image: _questions[q].helper?.image,
         video: _questions[q].helper?.video,
-        question: _questions[q].helper?.question??'',
+        question: _questions[q].helper?.question ?? '',
         options1: _questions[q].helper?.options1,
         options2: _questions[q].helper?.options2,
         options3: _questions[q].helper?.options3,
@@ -319,8 +320,8 @@ class _AddSurveyState extends State<AddSurvey> {
               options2: op2,
               options3: op3,
               options4: op4,
-              imgUrl: img,
-              vidUrl: video,
+              imgUrl: img??'',
+              vidUrl: video??'',
             ),
             deleteMediaCallback: (value) {
               String url;
@@ -392,15 +393,15 @@ class _AddSurveyState extends State<AddSurvey> {
               setState(() {});
             },
             mandatoryCallback: (value) {
-              _questions[v].helper?.mandatory = value!;
+              _questions[v].helper?.mandatory = value;
               setState(() {});
             },
             questionCallback: (value) {
-              _questions[v].helper?.question = value!;
+              _questions[v].helper?.question = value;
               setState(() {});
             },
             choiceCallback: (value) {
-              _questions[v].helper?.choosenValue = value!;
+              _questions[v].helper?.choosenValue = value;
               setState(() {});
             },
             funcCallback: (value) async {
@@ -416,8 +417,8 @@ class _AddSurveyState extends State<AddSurvey> {
                 setState(() {});
               } else if (value == 'delete') {
                 if (v != 0) {
-                  SurveyAPIHandler handler =
-                      SurveyAPIHandler({"url": 'QUESTION/' + (_questions[v].id??'')});
+                  SurveyAPIHandler handler = SurveyAPIHandler(
+                      {"url": 'QUESTION/' + (_questions[v].id ?? '')});
 
                   var d = await handler.deleteQueItem();
                   if (!d.containsKey('error')) {
@@ -635,7 +636,6 @@ class _AddSurveyState extends State<AddSurvey> {
                     SizedBox(
                       height: 5,
                     ),
-
                     TextField(
                         maxLines: 4,
                         controller: desc,
@@ -730,6 +730,7 @@ class _AddSurveyState extends State<AddSurvey> {
                                 "userid": MyApp.LOGIN_ID_VALUE,
                                 "createdAt": DateTime.now(),
                                 "createdBY": MyApp.LOGIN_ID_VALUE,
+                                "centerid": widget.centerId
                               };
 
                               for (int i = 0; i < _questions.length; i++) {
@@ -750,7 +751,9 @@ class _AddSurveyState extends State<AddSurvey> {
                                           filename: basename(vid.path));
                                 }
                                 mp['mandatory' + (i + 1).toString()] =
-                                    (_questions[i].helper?.mandatory??false) ? 1 : 0;
+                                    (_questions[i].helper?.mandatory ?? false)
+                                        ? 1
+                                        : 0;
                                 mp['qstn' + (i + 1).toString()] =
                                     _questions[i].helper?.question;
                                 mp['qtype' + (i + 1).toString()] =
@@ -762,18 +765,24 @@ class _AddSurveyState extends State<AddSurvey> {
                                 mp['dopt' + (i + 1).toString()] =
                                     jsonEncode(_questions[i].helper?.options3);
                                 mp['lilower' + (i + 1).toString()] =
-                                   ( _questions[i].helper?.options4?.length??0) > 1
-                                        ? (_questions[i].helper?.options4?[0]??"")
+                                    (_questions[i].helper?.options4?.length ??
+                                                0) >
+                                            1
+                                        ? (_questions[i].helper?.options4?[0] ??
+                                            "")
                                         : '';
                                 mp['lihigher' + (i + 1).toString()] =
-                                    (_questions[i].helper?.options4?.length??0) > 1
-                                        ? (_questions[i].helper?.options4?[1]??'')
+                                    (_questions[i].helper?.options4?.length ??
+                                                0) >
+                                            1
+                                        ? (_questions[i].helper?.options4?[1] ??
+                                            '')
                                         : '';
                                 if (_questions[i].id != null) {
                                   mp['qstnId_' +
                                       (i + 1).toString() +
                                       '_' +
-                                     ( _questions[i].id??'')] = '';
+                                      (_questions[i].id ?? '')] = '';
                                 }
                               }
 

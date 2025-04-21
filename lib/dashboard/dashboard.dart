@@ -374,11 +374,11 @@ class _DashboardState extends State<Dashboard> {
 
               //observation count not added
 
-              Container(
-                width: MediaQuery.of(context).size.width * 0.92,
-                height: 300,
-                child: WebViewWidget(controller: _webViewController),
-              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width * 0.92,
+              //   height: 300,
+              //   child: WebViewWidget(controller: _webViewController),
+              // ),
               Container(
                 height: 20,
               ),
