@@ -20,10 +20,11 @@ import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:path/path.dart';
 
 class Addrecipe extends StatefulWidget {
-  final String type;
-  final String id;
+  final String? type;
+  final String reciepieType;
+  final String? id;
   final String centerid;
-  Addrecipe({required this.type, required this.id, required this.centerid});
+  Addrecipe({  this.type,  this.id, required this.centerid, required this.reciepieType});
   @override
   _AddrecipeState createState() => _AddrecipeState();
 }
@@ -71,9 +72,9 @@ class _AddrecipeState extends State<Addrecipe> {
       print(e);
     }
 
-    if (widget.type == 'edit') {
+    if (widget.type == 'edit' && widget.id != null) {
       print('edit');
-      RecipeAPIHandler han = RecipeAPIHandler({'rid': widget.id});
+      RecipeAPIHandler han = RecipeAPIHandler({'rid': widget.id!});
       var d = await han.getRecipeDetails();
       if (!d.containsKey('error')) {
         print(d);
@@ -149,7 +150,7 @@ class _AddrecipeState extends State<Addrecipe> {
                         height: 5,
                       ),
                       Container(
-                        height: 40,
+                        // height: 40,
                         child: TextField(
                             controller: name,
                             decoration: new InputDecoration(
@@ -645,19 +646,26 @@ class _AddrecipeState extends State<Addrecipe> {
                                     "calories": _calories[i].text
                                   });
                                 }
+                                print('=+____________________+++++');
                                 print(sel);
 
                                 Map<String, dynamic> mp;
 
                                 mp = {
                                   "itemName": name.text,
-                                  "type": widget.type,
+                                  "type": widget.reciepieType,
                                   "recipe": recipe.text.toString(),
                                   "ingredients": jsonEncode(sel),
                                   "userid": MyApp.LOGIN_ID_VALUE,
-                                  'centerid': widget.centerid
+                                  'centerid': widget.centerid,
                                 };
-
+                                if(widget.type != null && widget.type=='edit')
+                                {
+                                    mp['id']=widget.id;
+                                }
+                                print(mp.toString());
+                                // return;
+                                // return;
                                 List videos = [];
                                 List img = [];
 
@@ -708,6 +716,7 @@ class _AddrecipeState extends State<Addrecipe> {
                                   var v = jsonDecode(value.toString());
 
                                   if (v['Status'] == 'SUCCESS') {
+                                    MyApp.ShowToast("Successfull!", context);
                                     Navigator.pop(context, 'kill');
                                   } else {
                                     MyApp.ShowToast("error", context);

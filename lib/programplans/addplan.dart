@@ -29,11 +29,11 @@ class AddPlan extends StatefulWidget {
 }
 
 class _AddPlanState extends State<AddPlan> {
-  String _date1='';
-  String date1='';
+  String _date1 = '';
+  String date1 = '';
 
-  String _date2='';
-  String date2='';
+  String _date2 = '';
+  String date2 = '';
 
   int roomIndex = 0;
 
@@ -53,13 +53,13 @@ class _AddPlanState extends State<AddPlan> {
   // var unescape = HtmlUnescape();
 
   bool observationsFetched = false;
-  List<ObservationModel> _allObservations=[];
+  List<ObservationModel> _allObservations = [];
 
   bool qipsFetched = false;
-  List<QipListModel> _allQips=[];
+  List<QipListModel> _allQips = [];
 
   bool refsFetched = false;
-  List<ReflectionModel> _allReflections=[];
+  List<ReflectionModel> _allReflections = [];
 
   @override
   void initState() {
@@ -253,21 +253,21 @@ class _AddPlanState extends State<AddPlan> {
                               trailing: Icon(Icons.calendar_today)),
                         ),
                       ),
-                      if (roomData != null && roomData.length > 0)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Room',
-                              style: Constants.header2,
-                            ),
-                            SizedBox(
-                              height: 4,
-                            ),
-   // hereedvb
+                      // if (roomData != null && roomData.length > 0)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            'Room',
+                            style: Constants.header2,
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          if (roomData.length > 0)
                             DropdownButtonHideUnderline(
                               child: Container(
                                 height: 50,
@@ -287,7 +287,7 @@ class _AddPlanState extends State<AddPlan> {
                                       items: roomData.map((RoomData value) {
                                         return new DropdownMenuItem<String>(
                                           value: value.id,
-                                          child: new Text(value.title??''),
+                                          child: new Text(value.title ?? ''),
                                         );
                                       }).toList(),
                                       onChanged: (value) {
@@ -307,799 +307,497 @@ class _AddPlanState extends State<AddPlan> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: ElevatedButton(
-                                  child: Text('Select Educators'),
-                                  onPressed: () {
-                                    getDialog(context).then((val) {
-                                      setState(() {});
-                                    });
-                                  }),
-                            ),
-                            selectedUsers.length > 0
-                                ? Wrap(
-                                    spacing: 8.0, // gap between adjacent chips
-                                    runSpacing: 4.0, // gap between lines
-                                    children: List<Widget>.generate(
-                                        selectedUsers.length, (int index) {
-                                      return selectedUsers[index] != null
-                                          ? Chip(
-                                              label: Text(
-                                                  selectedUsers[index].name??''),
-                                              onDeleted: () {
-                                                setState(() {
-                                                  selectedUsers.removeAt(index);
-                                                });
-                                              })
-                                          : Container();
-                                    }))
-                                : Container(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      if (observationsFetched &&
-                                          _allObservations.length > 0) {
-                                        showGeneralDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          pageBuilder:
-                                              (BuildContext buildContext,
-                                                  Animation<double> animation,
-                                                  Animation<double>
-                                                      secondaryAnimation) {
-                                            return StatefulBuilder(
-                                                builder: (context, setState) {
-                                              Size size =
-                                                  MediaQuery.of(context).size;
-                                              return Scaffold(
-                                                appBar: AppBar(
-                                                  centerTitle: true,
-                                                  title:
-                                                      Text("Link Observation"),
-                                                ),
-                                                body: SingleChildScrollView(
-                                                  child: Container(
-                                                    child: Column(
-                                                      children: [
-                                                        ListView.builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                                NeverScrollableScrollPhysics(),
-                                                            itemCount:
-                                                                _allObservations
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              return Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        3.0),
-                                                                child: Card(
-                                                                  child:
-                                                                      Container(
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
-                                                                              size.width,
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Container(
-                                                                                  width: size.width * 0.8,
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-                                                                                    child: Text(
-                                                                                      _allObservations[index].title,
-                                                                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                                                                    ),
-                                                                                  )),
-                                                                              Checkbox(
-                                                                                  value: _allObservations[index].boolCheck,
-                                                                                  onChanged: (val) {
-                                                                                    _allObservations[index].boolCheck = val!;
-                                                                                    setState(() {});
-                                                                                  })
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        _allObservations[index].observationsMedia == 'null' ||
-                                                                                _allObservations[index].observationsMedia == ''
-                                                                            ? Text('')
-                                                                            : _allObservations[index].observationsMediaType == 'Image'
-                                                                                ? Image.network(
-                                                                                    Constants.ImageBaseUrl + _allObservations[index].observationsMedia,
-                                                                                    height: 150,
-                                                                                    width: MediaQuery.of(context).size.width,
-                                                                                    fit: BoxFit.fill,
-                                                                                  )
-                                                                                : VideoItem(url: Constants.ImageBaseUrl + _allObservations[index].observationsMedia),
-                                                                        Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.all(8),
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Row(
-                                                                                children: [
-                                                                                  Text(
-                                                                                    'Author: ',
-                                                                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                                                                  ),
-                                                                                  Text(_allObservations[index].userName)
-                                                                                ],
-                                                                              ),
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    'Date: ',
-                                                                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                                                                  ),
-                                                                                  Text(_allObservations[index].dateAdded)
-                                                                                ],
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              ElevatedButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: Text(
-                                                                      'Save'))
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                          },
-                                        );
-                                      }
-                                    },
-                                    child: Text('Link Observation')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      if (refsFetched &&
-                                          _allReflections.length > 0) {
-                                        showGeneralDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          pageBuilder:
-                                              (BuildContext buildContext,
-                                                  Animation<double> animation,
-                                                  Animation<double>
-                                                      secondaryAnimation) {
-                                            return StatefulBuilder(
-                                                builder: (context, setState) {
-                                              Size size =
-                                                  MediaQuery.of(context).size;
-                                              return Scaffold(
-                                                appBar: AppBar(
-                                                  centerTitle: true,
-                                                  title:
-                                                      Text("Link Reflection"),
-                                                ),
-                                                body: SingleChildScrollView(
-                                                  child: Container(
-                                                    child: Column(
-                                                      children: [
-                                                        ListView.builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                                NeverScrollableScrollPhysics(),
-                                                            itemCount:
-                                                                _allReflections
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              return Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        3.0),
-                                                                child: Card(
-                                                                  child:
-                                                                      Container(
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
-                                                                              size.width,
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Container(
-                                                                                  width: size.width * 0.8,
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.fromLTRB(12, 8, 8, 4),
-                                                                                    child: Text(
-                                                                                      _allReflections[index].title,
-                                                                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                                                                    ),
-                                                                                  )),
-                                                                              Checkbox(
-                                                                                  value: _allReflections[index].boolCheck,
-                                                                                  onChanged: (val) {
-                                                                                    _allReflections[index].boolCheck = val!;
-                                                                                    setState(() {});
-                                                                                  })
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.fromLTRB(
-                                                                              8,
-                                                                              0,
-                                                                              8,
-                                                                              8),
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Row(
-                                                                                children: [
-                                                                                  Text(
-                                                                                    'Created By: ',
-                                                                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                                                                  ),
-                                                                                  Text(_allReflections[index].createdBy)
-                                                                                ],
-                                                                              ),
-                                                                              SizedBox(
-                                                                                height: 12,
-                                                                              ),
-                                                                              Text(
-                                                                                _allReflections[index].about,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.fromLTRB(
-                                                                              8,
-                                                                              0,
-                                                                              8,
-                                                                              12),
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Text(
-                                                                                'Status: ',
-                                                                                style: TextStyle(fontWeight: FontWeight.w600),
-                                                                              ),
-                                                                              Text(_allReflections[index].status)
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              ElevatedButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: Text(
-                                                                      'Save'))
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                          },
-                                        );
-                                      }
-                                    },
-                                    child: Text('Link Reflection')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      if (qipsFetched && _allQips.length > 0) {
-                                        showGeneralDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          pageBuilder:
-                                              (BuildContext buildContext,
-                                                  Animation<double> animation,
-                                                  Animation<double>
-                                                      secondaryAnimation) {
-                                            return StatefulBuilder(
-                                                builder: (context, setState) {
-                                              Size size =
-                                                  MediaQuery.of(context).size;
-                                              return Scaffold(
-                                                appBar: AppBar(
-                                                  centerTitle: true,
-                                                  title: Text("Link Qips"),
-                                                ),
-                                                body: SingleChildScrollView(
-                                                  child: Container(
-                                                    child: Column(
-                                                      children: [
-                                                        ListView.builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                                NeverScrollableScrollPhysics(),
-                                                            itemCount:
-                                                                _allQips.length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              return Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        3.0),
-                                                                child: Card(
-                                                                  child:
-                                                                      Container(
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
-                                                                              size.width,
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Container(
-                                                                                  width: size.width * 0.8,
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.fromLTRB(12, 8, 8, 4),
-                                                                                    child: Text(
-                                                                                      _allQips[index].qipName,
-                                                                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                                                                    ),
-                                                                                  )),
-                                                                              Checkbox(
-                                                                                  value: _allQips[index].boolCheck,
-                                                                                  onChanged: (val) {
-                                                                                    _allQips[index].boolCheck = val!;
-                                                                                    setState(() {});
-                                                                                  })
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.fromLTRB(
-                                                                              8,
-                                                                              0,
-                                                                              8,
-                                                                              8),
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Row(
-                                                                                children: [
-                                                                                  Text(
-                                                                                    'Created By: ',
-                                                                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                                                                  ),
-                                                                                  Text(_allQips[index].createdBy)
-                                                                                ],
-                                                                              ),
-                                                                              SizedBox(
-                                                                                height: 12,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.fromLTRB(
-                                                                              8,
-                                                                              0,
-                                                                              8,
-                                                                              12),
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Text(
-                                                                                'Date: ',
-                                                                                style: TextStyle(fontWeight: FontWeight.w600),
-                                                                              ),
-                                                                              Text(_allQips[index].createdAt)
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              ElevatedButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: Text(
-                                                                      'Save'))
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                          },
-                                        );
-                                      }
-                                    },
-                                    child: Text('Link Qip')),
-                              ],
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 4.0, right: 4.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  if (widget.type == 'edit')
-                                    ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Constants.greyColor)),
-                                        onPressed: () {
-                                          List headText = [];
-
-                                          for (int i = 0;
-                                              i < headController.length;
-                                              i++) {
-                                            headText
-                                                .add(headController[i].text);
-                                          }
-                                          showGeneralDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            pageBuilder:
-                                                (BuildContext buildContext,
-                                                    Animation<double> animation,
-                                                    Animation<double>
-                                                        secondaryAnimation) {
-                                              return StatefulBuilder(
-                                                  builder: (context, setState) {
-                                                return Scaffold(
-                                                  appBar: AppBar(
-                                                    centerTitle: true,
-                                                    title: Text("Priority"),
-                                                  ),
-                                                  body: SingleChildScrollView(
-                                                    child: Container(
-                                                      child: Column(
-                                                        children: [
-                                                          ReorderableListView(
-                                                              shrinkWrap: true,
-                                                              children: [
-                                                                for (final item
-                                                                    in headText)
-                                                                  Card(
-                                                                    key: ValueKey(
-                                                                        item),
-                                                                    child:
-                                                                        ListTile(
-                                                                      title: Text(
-                                                                          item),
-                                                                      trailing:
-                                                                          Icon(Icons
-                                                                              .filter),
-                                                                    ),
-                                                                  )
-                                                              ],
-                                                              onReorder:
-                                                                  (oldindex,
-                                                                      newindex) {
-                                                                setState(() {
-                                                                  if (newindex >
-                                                                      oldindex) {
-                                                                    newindex -=
-                                                                        1;
-                                                                  }
-                                                                  final items =
-                                                                      headText.removeAt(
-                                                                          oldindex);
-                                                                  headText.insert(
-                                                                      newindex,
-                                                                      items);
-                                                                });
-                                                              }),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                ElevatedButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      saveData(
-                                                                          headText,
-                                                                          true);
-                                                                    },
-                                                                    child: Text(
-                                                                        'Save'))
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: ElevatedButton(
+                                child: Text('Select Educators'),
+                                onPressed: () {
+                                  getDialog(context).then((val) {
+                                    setState(() {});
+                                  });
+                                }),
+                          ),
+                          selectedUsers.length > 0
+                              ? Wrap(
+                                  spacing: 8.0, // gap between adjacent chips
+                                  runSpacing: 4.0, // gap between lines
+                                  children: List<Widget>.generate(
+                                      selectedUsers.length, (int index) {
+                                    return selectedUsers[index] != null
+                                        ? Chip(
+                                            label: Text(
+                                                selectedUsers[index].name ??
+                                                    ''),
+                                            onDeleted: () {
+                                              setState(() {
+                                                selectedUsers.removeAt(index);
                                               });
-                                            },
-                                          );
+                                            })
+                                        : Container();
+                                  }))
+                              : Container(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    if (observationsFetched &&
+                                        _allObservations.length > 0) {
+                                      showGeneralDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        pageBuilder: (BuildContext buildContext,
+                                            Animation<double> animation,
+                                            Animation<double>
+                                                secondaryAnimation) {
+                                          return StatefulBuilder(
+                                              builder: (context, setState) {
+                                            Size size =
+                                                MediaQuery.of(context).size;
+                                            return Scaffold(
+                                              appBar: AppBar(
+                                                centerTitle: true,
+                                                title: Text("Link Observation"),
+                                              ),
+                                              body: SingleChildScrollView(
+                                                child: Container(
+                                                  child: Column(
+                                                    children: [
+                                                      ListView.builder(
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemCount:
+                                                              _allObservations
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(3.0),
+                                                              child: Card(
+                                                                child:
+                                                                    Container(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Container(
+                                                                        width: size
+                                                                            .width,
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Container(
+                                                                                width: size.width * 0.8,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+                                                                                  child: Text(
+                                                                                    _allObservations[index].title,
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                )),
+                                                                            Checkbox(
+                                                                                value: _allObservations[index].boolCheck,
+                                                                                onChanged: (val) {
+                                                                                  _allObservations[index].boolCheck = val!;
+                                                                                  setState(() {});
+                                                                                })
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      _allObservations[index].observationsMedia == 'null' ||
+                                                                              _allObservations[index].observationsMedia ==
+                                                                                  ''
+                                                                          ? Text(
+                                                                              '')
+                                                                          : _allObservations[index].observationsMediaType == 'Image'
+                                                                              ? Image.network(
+                                                                                  Constants.ImageBaseUrl + _allObservations[index].observationsMedia,
+                                                                                  height: 150,
+                                                                                  width: MediaQuery.of(context).size.width,
+                                                                                  fit: BoxFit.fill,
+                                                                                )
+                                                                              : VideoItem(url: Constants.ImageBaseUrl + _allObservations[index].observationsMedia),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            8),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  'Author: ',
+                                                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                                Text(_allObservations[index].userName)
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                Text(
+                                                                                  'Date: ',
+                                                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                                Text(_allObservations[index].dateAdded)
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            ElevatedButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: Text(
+                                                                    'Save'))
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          });
                                         },
-                                        child: Text(
-                                          'Priority',
-                                          style: TextStyle(color: Colors.black),
-                                        )),
+                                      );
+                                    }
+                                  },
+                                  child: Text('Link Observation')),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    if (refsFetched &&
+                                        _allReflections.length > 0) {
+                                      showGeneralDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        pageBuilder: (BuildContext buildContext,
+                                            Animation<double> animation,
+                                            Animation<double>
+                                                secondaryAnimation) {
+                                          return StatefulBuilder(
+                                              builder: (context, setState) {
+                                            Size size =
+                                                MediaQuery.of(context).size;
+                                            return Scaffold(
+                                              appBar: AppBar(
+                                                centerTitle: true,
+                                                title: Text("Link Reflection"),
+                                              ),
+                                              body: SingleChildScrollView(
+                                                child: Container(
+                                                  child: Column(
+                                                    children: [
+                                                      ListView.builder(
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemCount:
+                                                              _allReflections
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(3.0),
+                                                              child: Card(
+                                                                child:
+                                                                    Container(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Container(
+                                                                        width: size
+                                                                            .width,
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Container(
+                                                                                width: size.width * 0.8,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.fromLTRB(12, 8, 8, 4),
+                                                                                  child: Text(
+                                                                                    _allReflections[index].title,
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                )),
+                                                                            Checkbox(
+                                                                                value: _allReflections[index].boolCheck,
+                                                                                onChanged: (val) {
+                                                                                  _allReflections[index].boolCheck = val!;
+                                                                                  setState(() {});
+                                                                                })
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .fromLTRB(
+                                                                            8,
+                                                                            0,
+                                                                            8,
+                                                                            8),
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  'Created By: ',
+                                                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                                Text(_allReflections[index].createdBy)
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 12,
+                                                                            ),
+                                                                            Text(
+                                                                              _allReflections[index].about,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .fromLTRB(
+                                                                            8,
+                                                                            0,
+                                                                            8,
+                                                                            12),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              'Status: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                                                            ),
+                                                                            Text(_allReflections[index].status)
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            ElevatedButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: Text(
+                                                                    'Save'))
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          });
+                                        },
+                                      );
+                                    }
+                                  },
+                                  child: Text('Link Reflection')),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    if (qipsFetched && _allQips.length > 0) {
+                                      showGeneralDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        pageBuilder: (BuildContext buildContext,
+                                            Animation<double> animation,
+                                            Animation<double>
+                                                secondaryAnimation) {
+                                          return StatefulBuilder(
+                                              builder: (context, setState) {
+                                            Size size =
+                                                MediaQuery.of(context).size;
+                                            return Scaffold(
+                                              appBar: AppBar(
+                                                centerTitle: true,
+                                                title: Text("Link Qips"),
+                                              ),
+                                              body: SingleChildScrollView(
+                                                child: Container(
+                                                  child: Column(
+                                                    children: [
+                                                      ListView.builder(
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemCount:
+                                                              _allQips.length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(3.0),
+                                                              child: Card(
+                                                                child:
+                                                                    Container(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Container(
+                                                                        width: size
+                                                                            .width,
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Container(
+                                                                                width: size.width * 0.8,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.fromLTRB(12, 8, 8, 4),
+                                                                                  child: Text(
+                                                                                    _allQips[index].qipName,
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                )),
+                                                                            Checkbox(
+                                                                                value: _allQips[index].boolCheck,
+                                                                                onChanged: (val) {
+                                                                                  _allQips[index].boolCheck = val!;
+                                                                                  setState(() {});
+                                                                                })
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .fromLTRB(
+                                                                            8,
+                                                                            0,
+                                                                            8,
+                                                                            8),
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  'Created By: ',
+                                                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                                Text(_allQips[index].createdBy)
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 12,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .fromLTRB(
+                                                                            8,
+                                                                            0,
+                                                                            8,
+                                                                            12),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              'Date: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                                                            ),
+                                                                            Text(_allQips[index].createdAt)
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            ElevatedButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: Text(
+                                                                    'Save'))
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          });
+                                        },
+                                      );
+                                    }
+                                  },
+                                  child: Text('Link Qip')),
+                            ],
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 4.0, right: 4.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (widget.type == 'edit')
                                   ElevatedButton(
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
                                                   Constants.greyColor)),
                                       onPressed: () {
-                                        headController
-                                            .add(TextEditingController());
-                                        currentColor.add(Color(0xff9320cc));
-                                        pickerColor.add(Color(0xff9320cc));
-                                        // editorController.editorController.add(GlobalKey());
-                                        headComment.add('');
-
-                                        setState(() {});
-                                      },
-                                      child: Text(
-                                        '+ Add Heading',
-                                        style: TextStyle(color: Colors.black),
-                                      ))
-                                ],
-                              ),
-                            ),
-                            ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: headController.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                      child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Heading',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          height: 3,
-                                        ),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                              border: OutlineInputBorder()),
-                                          controller: headController[index],
-                                        ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
-                                        Text(
-                                          'Heading Color',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          height: 3,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  titlePadding:
-                                                      const EdgeInsets.all(0.0),
-                                                  contentPadding:
-                                                      const EdgeInsets.all(0.0),
-                                                  content:
-                                                      SingleChildScrollView(
-                                                    child: ColorPicker(
-                                                      pickerColor:
-                                                          currentColor[index],
-                                                      onColorChanged:
-                                                          (Color color) {
-                                                        setState(() =>
-                                                            pickerColor[index] =
-                                                                color);
-                                                      },
-                                                      colorPickerWidth: 300.0,
-                                                      pickerAreaHeightPercent:
-                                                          0.7,
-                                                      enableAlpha: true,
-                                                      displayThumbColor: true,
-                                                      showLabel: true,
-                                                      paletteType:
-                                                          PaletteType.hsv,
-                                                      pickerAreaBorderRadius:
-                                                          const BorderRadius
-                                                              .only(
-                                                        topLeft: const Radius
-                                                            .circular(2.0),
-                                                        topRight: const Radius
-                                                            .circular(2.0),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  actions: <Widget>[
-                                                    ElevatedButton(
-                                                      child:
-                                                          const Text('Choose'),
-                                                      onPressed: () {
-                                                        setState(() =>
-                                                            currentColor =
-                                                                pickerColor);
-                                                        print(currentColor);
-                                                        print('#' +
-                                                            currentColor
-                                                                .toString()
-                                                                .substring(
-                                                                    10,
-                                                                    currentColor
-                                                                            .toString()
-                                                                            .length -
-                                                                        1));
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: Container(
-                                            height: 50,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            padding:
-                                                EdgeInsets.only(left: 16.0),
-                                            decoration: BoxDecoration(
-                                                color: currentColor[index],
-                                                borderRadius:
-                                                    BorderRadius.circular(3),
-                                                border: Border.all(
-                                                    color: Colors.grey)),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-                                        Html(
-                                            data: parseFragment(headComment[index]).text),
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-                                        HtmlEditor(
-                                          controller: editorController, 
-                                          key: keyEditor,
-                                          // height: MediaQuery.of(context)
-                                          //         .size
-                                          //         .height *
-                                          //     0.35,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            ElevatedButton(
-                                                onPressed: () async {
-                                                  final txt1 =
-                                                      await editorController.getText();
-                                                  String s = txt1;
-
-                                                  if (headComment[index] ==
-                                                      '') {
-                                                    headComment[index] = s;
-                                                  } else {
-                                                    headComment[index] =
-                                                        headComment[index] +
-                                                            '<br><br> $s';
-                                                  }
-                                                  editorController
-                                                      .setText('');
-                                                  setState(() {});
-                                                },
-                                                child: Text('Add'))
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ));
-                                }),
-                            if (headController.length > 0)
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: ElevatedButton(
-                                    onPressed: () async {
-                                      if (_date1 == null) {
-                                        MyApp.ShowToast(
-                                            'Enter start date', context);
-                                      } else if (_date2 == null) {
-                                        MyApp.ShowToast(
-                                            'Enter end date', context);
-                                      } else {
                                         List headText = [];
 
                                         for (int i = 0;
@@ -1107,13 +805,301 @@ class _AddPlanState extends State<AddPlan> {
                                             i++) {
                                           headText.add(headController[i].text);
                                         }
-                                        saveData(headText, false);
-                                      }
+                                        showGeneralDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          pageBuilder:
+                                              (BuildContext buildContext,
+                                                  Animation<double> animation,
+                                                  Animation<double>
+                                                      secondaryAnimation) {
+                                            return StatefulBuilder(
+                                                builder: (context, setState) {
+                                              return Scaffold(
+                                                appBar: AppBar(
+                                                  centerTitle: true,
+                                                  title: Text("Priority"),
+                                                ),
+                                                body: SingleChildScrollView(
+                                                  child: Container(
+                                                    child: Column(
+                                                      children: [
+                                                        ReorderableListView(
+                                                            shrinkWrap: true,
+                                                            children: [
+                                                              for (final item
+                                                                  in headText)
+                                                                Card(
+                                                                  key: ValueKey(
+                                                                      item),
+                                                                  child:
+                                                                      ListTile(
+                                                                    title: Text(
+                                                                        item),
+                                                                    trailing:
+                                                                        Icon(Icons
+                                                                            .filter),
+                                                                  ),
+                                                                )
+                                                            ],
+                                                            onReorder:
+                                                                (oldindex,
+                                                                    newindex) {
+                                                              setState(() {
+                                                                if (newindex >
+                                                                    oldindex) {
+                                                                  newindex -= 1;
+                                                                }
+                                                                final items =
+                                                                    headText.removeAt(
+                                                                        oldindex);
+                                                                headText.insert(
+                                                                    newindex,
+                                                                    items);
+                                                              });
+                                                            }),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    saveData(
+                                                                        headText,
+                                                                        true);
+                                                                  },
+                                                                  child: Text(
+                                                                      'Save'))
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            });
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        'Priority',
+                                        style: TextStyle(color: Colors.black),
+                                      )),
+                                ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Constants.greyColor)),
+                                    onPressed: () {
+                                      headController
+                                          .add(TextEditingController());
+                                      currentColor.add(Color(0xff9320cc));
+                                      pickerColor.add(Color(0xff9320cc));
+                                      // editorController.editorController.add(GlobalKey());
+                                      headComment.add('');
+
+                                      setState(() {});
                                     },
-                                    child: Text('Submit')),
-                              )
-                          ],
-                        )
+                                    child: Text(
+                                      '+ Add Heading',
+                                      style: TextStyle(color: Colors.black),
+                                    ))
+                              ],
+                            ),
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: headController.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                    child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Heading',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: 3,
+                                      ),
+                                      TextField(
+                                        decoration: InputDecoration(
+                                            border: OutlineInputBorder()),
+                                        controller: headController[index],
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      Text(
+                                        'Heading Color',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: 3,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                titlePadding:
+                                                    const EdgeInsets.all(0.0),
+                                                contentPadding:
+                                                    const EdgeInsets.all(0.0),
+                                                content: SingleChildScrollView(
+                                                  child: ColorPicker(
+                                                    pickerColor:
+                                                        currentColor[index],
+                                                    onColorChanged:
+                                                        (Color color) {
+                                                      setState(() =>
+                                                          pickerColor[index] =
+                                                              color);
+                                                    },
+                                                    colorPickerWidth: 300.0,
+                                                    pickerAreaHeightPercent:
+                                                        0.7,
+                                                    enableAlpha: true,
+                                                    displayThumbColor: true,
+                                                    showLabel: true,
+                                                    paletteType:
+                                                        PaletteType.hsv,
+                                                    pickerAreaBorderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          const Radius.circular(
+                                                              2.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              2.0),
+                                                    ),
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  ElevatedButton(
+                                                    child: const Text('Choose'),
+                                                    onPressed: () {
+                                                      setState(() =>
+                                                          currentColor =
+                                                              pickerColor);
+                                                      print(currentColor);
+                                                      print('#' +
+                                                          currentColor
+                                                              .toString()
+                                                              .substring(
+                                                                  10,
+                                                                  currentColor
+                                                                          .toString()
+                                                                          .length -
+                                                                      1));
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 50,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(left: 16.0),
+                                          decoration: BoxDecoration(
+                                              color: currentColor[index],
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                              border: Border.all(
+                                                  color: Colors.grey)),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      Html(
+                                          data:
+                                              parseFragment(headComment[index])
+                                                  .text),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      HtmlEditor(
+                                        controller: editorController,
+                                        key: keyEditor,
+                                        // height: MediaQuery.of(context)
+                                        //         .size
+                                        //         .height *
+                                        //     0.35,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () async {
+                                                final txt1 =
+                                                    await editorController
+                                                        .getText();
+                                                String s = txt1;
+
+                                                if (headComment[index] == '') {
+                                                  headComment[index] = s;
+                                                } else {
+                                                  headComment[index] =
+                                                      headComment[index] +
+                                                          '<br><br> $s';
+                                                }
+                                                editorController.setText('');
+                                                setState(() {});
+                                              },
+                                              child: Text('Add'))
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                              }),
+                          if (headController.length > 0)
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: ElevatedButton(
+                                  onPressed: () async {
+                                    if (_date1 == null) {
+                                      MyApp.ShowToast(
+                                          'Enter start date', context);
+                                    } else if (_date2 == null) {
+                                      MyApp.ShowToast(
+                                          'Enter end date', context);
+                                    } else {
+                                      List headText = [];
+
+                                      for (int i = 0;
+                                          i < headController.length;
+                                          i++) {
+                                        headText.add(headController[i].text);
+                                      }
+                                      saveData(headText, false);
+                                    }
+                                  },
+                                  child: Text('Submit')),
+                            )
+                        ],
+                      )
                     ])))));
   }
 
@@ -1184,8 +1170,8 @@ class _AddPlanState extends State<AddPlan> {
     var _toSend = Constants.BASE_URL + 'Programplanlist/saveprogramplandetails';
 
     print(jsonEncode(_objToSend));
-    final response =
-        await http.post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
+    final response = await http
+        .post(Uri.parse(_toSend), body: jsonEncode(_objToSend), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -1207,66 +1193,70 @@ class _AddPlanState extends State<AddPlan> {
   }
 
   _selectStartDate(BuildContext context) async {
-  DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(1930),
-    lastDate: DateTime(2050),
-    builder: (BuildContext context, Widget? child) { // ✅ child should be nullable (Widget?)
-      return Theme(
-        data: ThemeData.light().copyWith(
-          primaryColor: Theme.of(context).primaryColor,
-          colorScheme: ColorScheme.light(primary: Theme.of(context).primaryColor),
-          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-        ),
-        child: child ?? SizedBox(), // ✅ Use null check (child!)
-      );
-    },
-  );
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1930),
+      lastDate: DateTime(2050),
+      builder: (BuildContext context, Widget? child) {
+        // ✅ child should be nullable (Widget?)
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Theme.of(context).primaryColor,
+            colorScheme:
+                ColorScheme.light(primary: Theme.of(context).primaryColor),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child ?? SizedBox(), // ✅ Use null check (child!)
+        );
+      },
+    );
 
-  if (picked != null) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String formatted = formatter.format(picked);
+    if (picked != null) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(picked);
 
-    final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
-    final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
-    final DateTime date1 = inputFormat.parse(formatted);
-    final String date = outputFormat.format(date1);
+      final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
+      final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
+      final DateTime date1 = inputFormat.parse(formatted);
+      final String date = outputFormat.format(date1);
 
-    print("Formatted Date: $formatted");
+      print("Formatted Date: $formatted");
+    }
   }
-}
 
   _selectEndDate(BuildContext context) async {
-  DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(1930),
-    lastDate: DateTime(2050),
-    builder: (BuildContext context, Widget? child) { // ✅ child should be nullable (Widget?)
-      return Theme(
-        data: ThemeData.light().copyWith(
-          primaryColor: Theme.of(context).primaryColor,
-          colorScheme: ColorScheme.light(primary: Theme.of(context).primaryColor),
-          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-        ),
-        child: child ?? SizedBox(), // ✅ Use null check (child!)
-      );
-    },
-  );
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1930),
+      lastDate: DateTime(2050),
+      builder: (BuildContext context, Widget? child) {
+        // ✅ child should be nullable (Widget?)
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Theme.of(context).primaryColor,
+            colorScheme:
+                ColorScheme.light(primary: Theme.of(context).primaryColor),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child ?? SizedBox(), // ✅ Use null check (child!)
+        );
+      },
+    );
 
-  if (picked != null) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String formatted = formatter.format(picked);
+    if (picked != null) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(picked);
 
-    final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
-    final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
-    final DateTime date1 = inputFormat.parse(formatted);
-    final String date = outputFormat.format(date1);
+      final DateFormat inputFormat = DateFormat("yyyy-MM-dd");
+      final DateFormat outputFormat = DateFormat('dd-MM-yyyy');
+      final DateTime date1 = inputFormat.parse(formatted);
+      final String date = outputFormat.format(date1);
 
-    print("Formatted Date: $formatted");
+      print("Formatted Date: $formatted");
+    }
   }
-}
 
   getDialog(BuildContext context) {
     return showDialog(
@@ -1309,7 +1299,7 @@ class _AddPlanState extends State<AddPlan> {
                                   }
                                   setState(() {});
                                 },
-                                title: Text(userData[index].name??''),
+                                title: Text(userData[index].name ?? ''),
                               );
                             }),
                       ),
