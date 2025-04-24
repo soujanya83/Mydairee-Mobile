@@ -108,11 +108,10 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
                     children: <Widget>[
                       if (widget.viewData['montessori'] == '1')
                         MontessoriTabs(
-                          count:
-                              widget.assesData['Montessori']['Subjects'].length,
+                          count: widget.assesData['Montessori']['Subjects'].length,
                           data: widget.assesData['Montessori']['Subjects'],
                           totaldata: obs.data,
-                          changeTab: (v) {
+                          changeTab:(v){
                             _controller?.index = 1;
                           },
                         ),

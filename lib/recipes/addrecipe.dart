@@ -18,13 +18,20 @@ import 'package:mykronicle_mobile/utils/deleteDialog.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:path/path.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart'; // for contentType
+import 'package:mime/mime.dart'; // for lookupMimeType
+import 'package:path/path.dart'; // for basename
 
 class Addrecipe extends StatefulWidget {
   final String? type;
   final String reciepieType;
   final String? id;
   final String centerid;
-  Addrecipe({  this.type,  this.id, required this.centerid, required this.reciepieType});
+  Addrecipe(
+      {this.type, this.id, required this.centerid, required this.reciepieType});
   @override
   _AddrecipeState createState() => _AddrecipeState();
 }
@@ -38,7 +45,8 @@ class _AddrecipeState extends State<Addrecipe> {
   List<TextEditingController> _calories = [];
 // Map<String ,bool> ingredientsValues={};
   List<RecipeMediaModel> media = [];
-  TextEditingController name = TextEditingController(), recipe= TextEditingController();
+  TextEditingController name = TextEditingController(),
+      recipe = TextEditingController();
   bool ingFetched = false;
   RecipeModel? _recipe;
   bool dataFetched = false;
@@ -82,9 +90,9 @@ class _AddrecipeState extends State<Addrecipe> {
 
         _recipe = RecipeModel.fromJson(res);
 
-        name.text = _recipe?.itemName??'';
-        recipe.text = _recipe?.recipe??'';
-        for (int i = 0; i < (_recipe?.ingredients?.length??0); i++) {
+        name.text = _recipe?.itemName ?? '';
+        recipe.text = _recipe?.recipe ?? '';
+        for (int i = 0; i < (_recipe?.ingredients?.length ?? 0); i++) {
           _selectedIngredients
               .add(IngredientModel.fromJson(_recipe?.ingredients?[i]));
           for (int k = 0; k < _allIngredients.length; k++) {
@@ -95,12 +103,12 @@ class _AddrecipeState extends State<Addrecipe> {
             }
           }
           //  _allIngredients.remove(_allIngredients[i]);
-          _quant
-              .add(TextEditingController(text: _recipe?.ingredients?[i]['qty']));
-          _calories.add(
-              TextEditingController(text: _recipe?.ingredients?[i]['calories']));
+          _quant.add(
+              TextEditingController(text: _recipe?.ingredients?[i]['qty']));
+          _calories.add(TextEditingController(
+              text: _recipe?.ingredients?[i]['calories']));
         }
-        for (int i = 0; i < (_recipe?.media.length??0); i++) {
+        for (int i = 0; i < (_recipe?.media.length ?? 0); i++) {
           media.add(RecipeMediaModel.fromJson(_recipe?.media[i]));
         }
         dataFetched = true;
@@ -378,7 +386,7 @@ class _AddrecipeState extends State<Addrecipe> {
                                 await FilePicker.platform.pickFiles();
 
                             if (result != null) {
-                              File file = File(result.files.single.path??'');
+                              File file = File(result.files.single.path ?? '');
                               var fileSizeInBytes = file.length();
                               var fileSizeInKB = await fileSizeInBytes / 1024;
                               var fileSizeInMB = fileSizeInKB / 1024;
@@ -647,8 +655,7 @@ class _AddrecipeState extends State<Addrecipe> {
                                   });
                                 }
                                 print('=+____________________+++++');
-                                print(sel);
-
+                                print(sel); 
                                 Map<String, dynamic> mp;
 
                                 mp = {
@@ -659,13 +666,13 @@ class _AddrecipeState extends State<Addrecipe> {
                                   "userid": MyApp.LOGIN_ID_VALUE,
                                   'centerid': widget.centerid,
                                 };
-                                if(widget.type != null && widget.type=='edit')
-                                {
-                                    mp['id']=widget.id;
+                                if (widget.type != null &&
+                                    widget.type == 'edit') {
+                                  mp['id'] = widget.id;
                                 }
+                                print('==========map==============');
                                 print(mp.toString());
-                                // return;
-                                // return;
+
                                 List videos = [];
                                 List img = [];
 
@@ -676,52 +683,94 @@ class _AddrecipeState extends State<Addrecipe> {
                                       lookupMimeType(files[i].path);
                                   var fileType = mimeStr?.split('/');
                                   if (fileType?[0].toString() == 'image') {
-                                    img.add(await MultipartFile.fromFile(
-                                        file.path,
-                                        filename: basename(file.path)));
+                                    img.add(file);
                                   } else if (fileType?[0].toString() ==
                                       'video') {
-                                    videos.add(await MultipartFile.fromFile(
-                                        file.path,
-                                        filename: basename(file.path)));
+                                    videos.add(file);
                                   }
                                 }
 
-                                for (int i = 0; i < img.length; i++) {
-                                  String m = 'image' + i.toString();
-                                  mp[m] = img[i];
-                                }
 
-                                for (int i = 0; i < videos.length; i++) {
-                                  String m = 'video' + i.toString();
-                                  mp[m] = videos[i];
-                                }
+                                try {
+                                  var uri = Uri.parse(Constants.BASE_URL +
+                                      ((widget.type != null &&
+                                              widget.type == 'edit')
+                                          ? "Recipes/updateRecipe"
+                                          : "Recipes/addRecipe"));
 
-                                FormData formData = FormData.fromMap(mp);
-                                print(Constants.BASE_URL + "Recipes/addRecipe");
-                                print(formData.fields.toString());
-                                Dio dio = new Dio();
+                                  var request =
+                                      http.MultipartRequest('POST', uri);
 
-                                Response? response = await dio
-                                    .post(
-                                        Constants.BASE_URL +
-                                            "Recipes/addRecipe",
-                                        data: formData,
-                                        options: Options(headers: {
-                                          'X-DEVICE-ID':
-                                              await MyApp.getDeviceIdentity(),
-                                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                        }))
-                                    .then((value) {
-                                  var v = jsonDecode(value.toString());
+                                  // Add headers
+                                  request.headers['X-DEVICE-ID'] =
+                                      await MyApp.getDeviceIdentity();
+                                  request.headers['X-TOKEN'] =
+                                      MyApp.AUTH_TOKEN_VALUE;
 
-                                  if (v['Status'] == 'SUCCESS') {
-                                    MyApp.ShowToast("Successfull!", context);
+                                  // Add fields
+                                  mp.forEach((key, value) {
+                                    if (value is String || value is int) {
+                                      request.fields[key] = value.toString();
+                                    }
+                                  });
+
+                                  // Add image files
+                                  for (int i = 0; i < img.length; i++) {
+                                    File file = img[i];
+                                    String fieldName = 'image$i';
+                                    request.files
+                                        .add(await http.MultipartFile.fromPath(
+                                      fieldName,
+                                      file.path,
+                                      filename: basename(file.path),
+                                      contentType: MediaType.parse(
+                                          lookupMimeType(file.path) ??
+                                              'image/jpeg'),
+                                    ));
+                                  }
+
+                                  // Add video files
+                                  for (int i = 0; i < videos.length; i++) {
+                                    File file = videos[i];
+                                    String fieldName = 'video$i';
+                                    request.files
+                                        .add(await http.MultipartFile.fromPath(
+                                      fieldName,
+                                      file.path,
+                                      filename: basename(file.path),
+                                      contentType: MediaType.parse(
+                                          lookupMimeType(file.path) ??
+                                              'video/mp4'),
+                                    ));
+                                  }
+
+                                  var streamedResponse = await request.send();
+                                  var response = await http.Response.fromStream(
+                                      streamedResponse);
+                                  print(
+                                      '++++++++++++++++++++body+++++++++++++++++++++');
+
+                                  if (response.statusCode == 200) {
+                                    if (widget.type != null &&
+                                        widget.type == 'edit') {
+                                      MyApp.ShowToast(
+                                          "Recipe updated successfully",
+                                          context);
+                                    } else { 
+                                      MyApp.ShowToast(
+                                          "Recipe added successfully", context);
+                                    }
                                     Navigator.pop(context, 'kill');
                                   } else {
-                                    MyApp.ShowToast("error", context);
+                                    MyApp.ShowToast(
+                                        "Server Error: ${response.statusCode}",
+                                        context);
                                   }
-                                }).catchError((error) => print(error));
+                                } catch(e, s){
+                                  print('===================');
+                                  print(e);
+                                  print(s);
+                                }
                               }
                             },
                             child: Container(
@@ -748,25 +797,26 @@ class _AddrecipeState extends State<Addrecipe> {
                     ])))));
   }
 
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 900,
+      minHeight: 900,
+      quality: 40,
+    );
 
-Future<File> compressAndGetFile(File file, String targetPath) async {
-  XFile? result = await FlutterImageCompress.compressAndGetFile(
-    file.absolute.path, targetPath,
-    minWidth: 900, minHeight: 900, quality: 40,
-  );
+    if (result == null) {
+      throw Exception("Compression failed: Unable to get compressed file.");
+    }
 
-  if (result == null) {
-    throw Exception("Compression failed: Unable to get compressed file.");
+    File compressedFile = File(result.path); // Convert XFile to File
+
+    print("Original size: ${file.lengthSync()} bytes");
+    print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+    return compressedFile;
   }
-
-  File compressedFile = File(result.path); // Convert XFile to File
-
-  print("Original size: ${file.lengthSync()} bytes");
-  print("Compressed size: ${compressedFile.lengthSync()} bytes");
-
-  return compressedFile;
-}
-
 
   Widget rectBorderWidget(Size size, var context) {
     return DottedBorder(
@@ -786,7 +836,7 @@ Future<File> compressAndGetFile(File file, String targetPath) async {
                       await FilePicker.platform.pickFiles();
 
                   if (result != null) {
-                    File file = File(result.files.single.path??"");
+                    File file = File(result.files.single.path ?? "");
                     var fileSizeInBytes = file.length();
                     var fileSizeInKB = await fileSizeInBytes / 1024;
                     var fileSizeInMB = fileSizeInKB / 1024;

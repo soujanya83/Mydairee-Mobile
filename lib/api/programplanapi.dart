@@ -53,7 +53,7 @@ class ProgramPlanApiHandler {
     return d;
   }
 
-  Future<dynamic> planDetails() async {
+  Future<dynamic> planDetails( ) async {
     ServiceWithHeaderDataPost helper =
         ServiceWithHeaderDataPost(planDetailsUrl, this.data);
     var d = await helper.data();

@@ -53,9 +53,9 @@ class ObservationsAPIHandler {
   Future<dynamic> getList(centerid) async {
     var listObservationsURL =
         _listObservationsURL + MyApp.LOGIN_ID_VALUE + '/$centerid';
-      print(listObservationsURL);
-      print("++++++listObservationsURL+++++");
-      print(MyApp.AUTH_TOKEN_VALUE);
+    print(listObservationsURL);
+    print("++++++listObservationsURL+++++");
+    print(MyApp.AUTH_TOKEN_VALUE);
     ServiceWithHeader helper = ServiceWithHeader(listObservationsURL);
     var d = await helper.data();
     return d;
@@ -101,14 +101,17 @@ class ObservationsAPIHandler {
   }
 
   Future<dynamic> getObservationDetails() async {
-    var viewObservationURL =
-        _viewObservationURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['id']??""}' + '/';
+    var viewObservationURL = _viewObservationURL +
+        MyApp.LOGIN_ID_VALUE +
+        '/' +
+        '${data['id'] ?? ""}' +
+        '/';
     ServiceWithHeader helper = ServiceWithHeader(viewObservationURL);
     var d = await helper.data();
     return d;
   }
 
-  Future<dynamic> getObservationDataDetails()async{
+  Future<dynamic> getObservationDataDetails() async {
     ServiceWithHeaderDataPost helper =
         ServiceWithHeaderDataPost(_viewObservationDataURL, data);
     var d = await helper.data();
@@ -118,7 +121,7 @@ class ObservationsAPIHandler {
   Future<dynamic> getLinksList() async {
     var viewLinksDataURL = _viewLinksDataURL + MyApp.LOGIN_ID_VALUE + '/';
     if (data['id'] != '') {
-      viewLinksDataURL = viewLinksDataURL + '${data['id']??""}' + '/';
+      viewLinksDataURL = viewLinksDataURL + '${data['id'] ?? ""}' + '/';
     }
     ServiceWithHeader helper = ServiceWithHeader(viewLinksDataURL);
     var d = await helper.data();
@@ -150,7 +153,8 @@ class ObservationsAPIHandler {
     //var viewAssesmentsDataURL = _viewAssesmentsDataURL + val;
     var viewAssesmentsDataURL = _viewAssesmentsDataURL;
     print(viewAssesmentsDataURL);
-    ServiceWithHeaderDataPost helper =  ServiceWithHeaderDataPost(viewAssesmentsDataURL, data);
+    ServiceWithHeaderDataPost helper =
+        ServiceWithHeaderDataPost(viewAssesmentsDataURL, data);
     var d = await helper.data();
     return d;
   }
@@ -173,8 +177,10 @@ class ObservationsAPIHandler {
   }
 
   Future<dynamic> deleteMedia() async {
-    var deleteMediaURL =
-        _deleteMediaURL + MyApp.LOGIN_ID_VALUE + '/' + '${data['mediaid']??""}';
+    var deleteMediaURL = _deleteMediaURL +
+        MyApp.LOGIN_ID_VALUE +
+        '/' +
+        '${data['mediaid'] ?? ""}';
     ServiceWithHeader helper = ServiceWithHeader(deleteMediaURL);
     var d = await helper.data();
     print(d);

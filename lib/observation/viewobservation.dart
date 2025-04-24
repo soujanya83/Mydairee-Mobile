@@ -182,7 +182,7 @@ class _ViewObservationState extends State<ViewObservation> {
           List<EylfActivityModel> activityModel = [];
           for (int b = 0;
               b < displaydata1['outcomes'][a]['Activity'].length;
-              b++) {
+              b++){
             EylfActivityModel act = EylfActivityModel.fromJson(
                 displaydata1['outcomes'][a]['Activity'][b]);
             List<EylfSubActivityModel> subActivityModel = [];

@@ -5,6 +5,7 @@ import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/programplans/addplan.dart';
+import 'package:mykronicle_mobile/programplans/createplan.dart';
 import 'package:mykronicle_mobile/programplans/viewplan.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
@@ -16,7 +17,7 @@ class PlansList extends StatefulWidget {
 }
 
 class _PlansListState extends State<PlansList> {
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
   var planList;
@@ -55,7 +56,7 @@ class _PlansListState extends State<PlansList> {
 
   void _fetchData() async {
     var _objToSend = {
-      "usertype": MyApp.USER_TYPE_VALUE,
+      // "usertype": MyApp.USER_TYPE_VALUE,
       "userid": MyApp.LOGIN_ID_VALUE,
       "centerid": centers[currentIndex].id
     };
@@ -87,34 +88,35 @@ class _PlansListState extends State<PlansList> {
                           Expanded(
                             child: Container(),
                           ),
-                         if(MyApp.USER_TYPE_VALUE!='Parent' ) 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddPlan(
-                                          'add',
-                                          centers[currentIndex].id,
-                                          ''))).then((value) {
-                                _fetchData();
-                              });
-                            },
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    color: Constants.kButton,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                  child: Text(
-                                    'Add Plan',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 12),
-                                  ),
-                                )),
-                          )
+                          if (MyApp.USER_TYPE_VALUE != 'Parent')
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddPlan(
+                                            'add',
+                                            centers[currentIndex].id,
+                                            '',
+                                            null))).then((value) {
+                                  _fetchData();
+                                });
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Constants.kButton,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                    child: Text(
+                                      'Add Plan',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ),
+                                  )),
+                            )
                         ],
                       ),
                       centersFetched
@@ -125,8 +127,8 @@ class _PlansListState extends State<PlansList> {
                                   height: 40,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Constants.greyColor),
+                                      border: Border.all(
+                                          color: Constants.greyColor),
                                       color: Colors.white,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(8))),
@@ -186,23 +188,27 @@ class _PlansListState extends State<PlansList> {
                                         ),
                                         Row(
                                           children: [
-                                           if(MyApp.USER_TYPE_VALUE=='Superadmin') 
-                                            IconButton(
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => AddPlan(
-                                                              'edit',
-                                                              centers[currentIndex]
-                                                                  .id,
-                                                              planList[index][
-                                                                  'id']))).then(
-                                                      (value) {
-                                                    _fetchData();
-                                                  });
-                                                },
-                                                icon: Icon(Icons.edit)),
+                                            if (MyApp.USER_TYPE_VALUE ==
+                                                'Superadmin')
+                                              IconButton(
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                AddPlan(
+                                                                    'edit',
+                                                                    centers[currentIndex]
+                                                                        .id,
+                                                                    planList[
+                                                                            index]
+                                                                        ['id'],
+                                                                    null))).then(
+                                                        (value) {
+                                                      _fetchData();
+                                                    });
+                                                  },
+                                                  icon: Icon(Icons.edit)),
                                             IconButton(
                                                 onPressed: () {
                                                   Navigator.push(
@@ -217,33 +223,34 @@ class _PlansListState extends State<PlansList> {
                                                                       ['id'])));
                                                 },
                                                 icon: Icon(AntDesign.eyeo)),
-                                           if(MyApp.USER_TYPE_VALUE!='Parent') 
-                                            IconButton(
-                                                onPressed: () async {
-                                                  Map<String, String>
-                                                      _objToSend = {
-                                                    "usertype":
-                                                        MyApp.USER_TYPE_VALUE,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE,
-                                                    "centerid":
-                                                        centers[currentIndex]
-                                                            .id,
-                                                    "delete_id": planList[index]
-                                                            ['id']
-                                                        .toString(),
-                                                  };
-                                                  print(_objToSend);
-                                                  ProgramPlanApiHandler
-                                                      programPlanApiHandler =
-                                                      ProgramPlanApiHandler(
-                                                          _objToSend);
-                                                  await programPlanApiHandler
-                                                      .deletePlan()
-                                                      .then((value) =>
-                                                          _fetchData());
-                                                },
-                                                icon: Icon(AntDesign.delete)),
+                                            if (MyApp.USER_TYPE_VALUE !=
+                                                'Parent')
+                                              IconButton(
+                                                  onPressed: () async {
+                                                    Map<String, String>
+                                                        _objToSend = {
+                                                      "usertype":
+                                                          MyApp.USER_TYPE_VALUE,
+                                                      "userid":
+                                                          MyApp.LOGIN_ID_VALUE,
+                                                      "centerid":
+                                                          centers[currentIndex]
+                                                              .id,
+                                                      "delete_id":
+                                                          planList[index]['id']
+                                                              .toString(),
+                                                    };
+                                                    print(_objToSend);
+                                                    ProgramPlanApiHandler
+                                                        programPlanApiHandler =
+                                                        ProgramPlanApiHandler(
+                                                            _objToSend);
+                                                    await programPlanApiHandler
+                                                        .deletePlan()
+                                                        .then((value) =>
+                                                            _fetchData());
+                                                  },
+                                                  icon: Icon(AntDesign.delete)),
                                           ],
                                         )
                                       ],
