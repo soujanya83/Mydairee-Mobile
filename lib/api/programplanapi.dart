@@ -2,7 +2,7 @@ import 'package:mykronicle_mobile/api/networking.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 
-var getProgramPlanListUrl = Constants.BASE_URL + 'Programplanlist/show_details';
+var getProgramPlanListUrl = Constants.BASE_URL + 'Programplanlist/programPlanList';
 
 var deletePlanUrl = Constants.BASE_URL + 'Programplanlist/delete';
 

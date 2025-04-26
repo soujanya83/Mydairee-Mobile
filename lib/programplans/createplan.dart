@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
@@ -14,7 +16,7 @@ import 'package:mykronicle_mobile/services/constants.dart';
 class AddPlan extends StatefulWidget {
   final String type;
   final String centerid;
-  final String planId;
+  final String? planId;
   final Map? totaldata;
 
   AddPlan(
@@ -80,7 +82,8 @@ class _AddPlanState extends State<AddPlan> {
   final TextEditingController childrenVoicesController =
       TextEditingController();
   final TextEditingController familiesInputController = TextEditingController();
-  final TextEditingController groupExperienceController = TextEditingController();
+  final TextEditingController groupExperienceController =
+      TextEditingController();
   final TextEditingController spontaneousExperienceController =
       TextEditingController();
   final TextEditingController mindfulnessExperienceController =
@@ -1604,6 +1607,93 @@ class _AddPlanState extends State<AddPlan> {
                 context: context,
                 controller: mindfulnessExperienceController),
             height10,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Required fields check
+                    if (selectedRoom == null) {
+                      MyApp.ShowToast('Please select a Room.',context);
+                      return null;
+                    }
+                    if (selectedMonth == null) {
+                      MyApp.ShowToast('Please select a Month.',context);
+                      return null;
+                    }
+                    if (selectedEdu.isEmpty) {
+                      MyApp.ShowToast('Please select at least one Educator.',context);
+                      return null;
+                    }
+                    if (selectedChildrens.isEmpty) {
+                      MyApp.ShowToast('Please select at least one Child.',context);
+                      return null;
+                    } 
+                    // Navigator.pop(context);
+                   
+                    Map<String, dynamic> mp = {
+                      if (widget.planId != null)
+                        'plan_id': widget.planId, // ❌ Optional (for update)
+                      'room': selectedRoom?.id ?? '', // ✅ Required
+                      'months': selectedMonth ?? '', // ✅ Required
+                      'years': selectedYear ?? '', // ❌ Optional
+                      'centerid': widget.centerid, // ❌ Optional
+                      'user_id': MyApp.LOGIN_ID_VALUE, // ✅ Required
+                      'users': selectedEducators
+                          .map((e) => e.id.toString())
+                          .toList(), // ✅ Required
+                      'children': selectedChildrens
+                          .map((c) => c.id.toString())
+                          .toList(), // ✅ Required
+                      'focus_area': focusAreasController.text, // ❌ Optional
+                      'practical_life': practicalLifeController.text, // ❌ Optional
+                      'practical_life_experiences':
+                          practicalLifeController.text, // ❌ Optional
+                      'sensorial': sensorialController.text, // ❌ Optional
+                      'sensorial_experiences':
+                          sensorialController.text, // ❌ Optional
+                      'math': mathController.text, // ❌ Optional
+                      'math_experiences': mathController.text, // ❌ Optional
+                      'language': languageController.text, // ❌ Optional
+                      'language_experiences': languageController.text, // ❌ Optional
+                      'culture': cultureController.text, // ❌ Optional
+                      'culture_experiences': cultureController.text, // ❌ Optional
+                      'art_craft': '', // ❌ Optional
+                      'art_craft_experiences': '', // ❌ Optional
+                      'eylf': eylfController.text, // ❌ Optional
+                      'outdoor_experiences':
+                          outdoorExperiencesController.text, // ❌ Optional
+                      'inquiry_topic': inquiryTopicController.text, // ❌ Optional
+                      'sustainability_topic':
+                          sustainabilityTopicController.text, // ❌ Optional
+                      'special_events': specialEventsController.text, // ❌ Optional
+                      'children_voices':
+                          childrenVoicesController.text, // ❌ Optional
+                      'families_input': familiesInputController.text, // ❌ Optional
+                      'group_experience':
+                          groupExperienceController.text, // ❌ Optional
+                      'spontaneous_experience':
+                          spontaneousExperienceController.text, // ❌ Optional
+                      'mindfulness_experiences':
+                          mindfulnessExperienceController.text, // ❌ Optional
+                    };
+                    print('==================');
+                    prettyPrintJson(mp);
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: Constants.kButton,
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        child: Text(
+                          'SAVE',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      )),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -1883,4 +1973,11 @@ Widget customMultilineTextField({
       ),
     ),
   );
+}
+
+
+void prettyPrintJson(Object jsonObject) {
+  final encoder = JsonEncoder.withIndent('  ');
+  final jsonString = encoder.convert(jsonObject);
+  debugPrint(jsonString); // debugPrint बड़ी length handle कर लेता है
 }

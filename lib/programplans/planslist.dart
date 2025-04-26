@@ -62,7 +62,11 @@ class _PlansListState extends State<PlansList> {
     };
     ProgramPlanApiHandler planApiHandler = ProgramPlanApiHandler(_objToSend);
     var data = await planApiHandler.getProgramPlanList();
-    planList = data['get_program_details'];
+    print('+++++++++++++mfkdmkfmdkfmkdfmkf++++++++');
+    print(data);
+    planList = data['data'];
+    print('==========data========');
+    print(data);
     //  progHead=data['get_details']['']
     setState(() {});
   }
@@ -168,97 +172,253 @@ class _PlansListState extends State<PlansList> {
                           : Container(),
                       if (planList != null)
                         ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: planList.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8.0, bottom: 8),
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          planList[index]['startdate'],
-                                          style: TextStyle(fontSize: 20),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: planList.length,
+                          itemBuilder: (context, index) {
+                            final plan = planList[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Month and Year
+                                      Text(
+                                        "${_getMonthName(plan['months'])} ${plan['years']}",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
                                         ),
+                                      ),
+                                      SizedBox(height: 10),
+
+                                      // Room Name
+                                      Row(
+                                        children: [
+                                          Icon(Icons.meeting_room_outlined,
+                                              size: 18, color: Colors.black),
+                                          SizedBox(width: 6),
+                                          Text(
+                                            plan['room_name'] ?? '-',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8),
+
+                                      // Created By
+                                      Row(
+                                        children: [
+                                          Icon(Icons.person_outline,
+                                              size: 18, color: Colors.black),
+                                          SizedBox(width: 6),
+                                          Text(
+                                            "Created by ${plan['creator_name'] ?? '-'}",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8),
+
+                                      // Inquiry Topic
+                                      if ((plan['inquiry_topic'] ?? '')
+                                          .isNotEmpty) ...[
                                         Row(
                                           children: [
-                                            if (MyApp.USER_TYPE_VALUE ==
-                                                'Superadmin')
-                                              IconButton(
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                AddPlan(
-                                                                    'edit',
-                                                                    centers[currentIndex]
-                                                                        .id,
-                                                                    planList[
-                                                                            index]
-                                                                        ['id'],
-                                                                    null))).then(
-                                                        (value) {
-                                                      _fetchData();
-                                                    });
-                                                  },
-                                                  icon: Icon(Icons.edit)),
-                                            IconButton(
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ViewPlan(
-                                                                  centers[currentIndex]
-                                                                      .id,
-                                                                  planList[
-                                                                          index]
-                                                                      ['id'])));
-                                                },
-                                                icon: Icon(AntDesign.eyeo)),
-                                            if (MyApp.USER_TYPE_VALUE !=
-                                                'Parent')
-                                              IconButton(
-                                                  onPressed: () async {
-                                                    Map<String, String>
-                                                        _objToSend = {
-                                                      "usertype":
-                                                          MyApp.USER_TYPE_VALUE,
-                                                      "userid":
-                                                          MyApp.LOGIN_ID_VALUE,
-                                                      "centerid":
-                                                          centers[currentIndex]
-                                                              .id,
-                                                      "delete_id":
-                                                          planList[index]['id']
-                                                              .toString(),
-                                                    };
-                                                    print(_objToSend);
-                                                    ProgramPlanApiHandler
-                                                        programPlanApiHandler =
-                                                        ProgramPlanApiHandler(
-                                                            _objToSend);
-                                                    await programPlanApiHandler
-                                                        .deletePlan()
-                                                        .then((value) =>
-                                                            _fetchData());
-                                                  },
-                                                  icon: Icon(AntDesign.delete)),
+                                            Icon(Icons.lightbulb_outline,
+                                                size: 18, color: Colors.black),
+                                            SizedBox(width: 6),
+                                            Flexible(
+                                              child: Text(
+                                                "Inquiry Topic: ${plan['inquiry_topic']}",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
                                           ],
-                                        )
+                                        ),
+                                        SizedBox(height: 8),
                                       ],
-                                    ),
+
+                                      // Special Events
+                                      if ((plan['special_events'] ?? '')
+                                          .isNotEmpty) ...[
+                                        Row(
+                                          children: [
+                                            Icon(Icons.event_outlined,
+                                                size: 18, color: Colors.black),
+                                            SizedBox(width: 6),
+                                            Flexible(
+                                              child: Text(
+                                                "Special Events: ${plan['special_events']}",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 8),
+                                      ],
+
+                                      Divider(
+                                          color: Colors.grey.shade300,
+                                          height: 30),
+
+                                      // Dates
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Created: ${_formatDate(plan['created_at'])}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black),
+                                          ),
+                                          Text(
+                                            "Updated: ${_formatDate(plan['updated_at'])}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 12),
+
+                                      // Action Buttons
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          if (MyApp.USER_TYPE_VALUE ==
+                                              'Superadmin')
+                                            IconButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddPlan(
+                                                      'edit',
+                                                      centers[currentIndex].id,
+                                                      plan['id'],
+                                                      null,
+                                                    ),
+                                                  ),
+                                                ).then((value) {
+                                                  _fetchData();
+                                                });
+                                              },
+                                              icon: Icon(Icons.edit,
+                                                  color: Colors.black),
+                                            ),
+                                          IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ViewPlan(
+                                                    centers[currentIndex].id,
+                                                    plan['id'],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            icon: Icon(Icons.visibility,
+                                                color: Colors.black),
+                                          ),
+                                          if (MyApp.USER_TYPE_VALUE != 'Parent')
+                                            IconButton(
+                                              onPressed: () async {
+                                                Map<String, String> _objToSend =
+                                                    {
+                                                  "usertype":
+                                                      MyApp.USER_TYPE_VALUE,
+                                                  "userid":
+                                                      MyApp.LOGIN_ID_VALUE,
+                                                  "centerid":
+                                                      centers[currentIndex].id,
+                                                  "delete_id":
+                                                      plan['id'].toString(),
+                                                };
+                                                ProgramPlanApiHandler
+                                                    programPlanApiHandler =
+                                                    ProgramPlanApiHandler(
+                                                        _objToSend);
+                                                await programPlanApiHandler
+                                                    .deletePlan()
+                                                    .then((value) =>
+                                                        _fetchData());
+                                              },
+                                              icon: Icon(Icons.delete,
+                                                  color: Colors.black),
+                                            ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              );
-                            })
+                              ),
+                            );
+                          },
+                        )
                     ])))));
+  }
+}
+
+String _getMonthName(String? monthNumber) {
+  if (monthNumber == null) return '-';
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  int index = int.tryParse(monthNumber) ?? 0;
+  if (index >= 1 && index <= 12) {
+    return months[index - 1];
+  }
+  return '-';
+}
+
+String _formatDate(String? dateTimeString) {
+  if (dateTimeString == null) return '-';
+  try {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
+  } catch (e) {
+    return '-';
   }
 }
