@@ -83,12 +83,10 @@ class _HeadChecksState extends State<HeadChecks> {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers![currentIndex].id
     };
-
     if (roomsFetched) {
       data['roomid'] = rooms![currentRoomIndex].id;
       data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     }
-
     print(data);
     DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
     var dt = await hlr.getHeadChecksData();
@@ -108,9 +106,16 @@ class _HeadChecksState extends State<HeadChecks> {
         print(e);
       }
     }
+    hour.clear();
+    comments.clear();
+    min.clear();
+    signature.clear();
+    headCount.clear();
 
-    if (dt['headChecks'] != null && dt['headChecks'].length > 0) {
-      for (int i = 0; i < dt['headChecks'].length; i++) {
+    print('+++++here+1++');
+    if (dt['headChecks'] != null && dt['headChecks'].length > 0){
+      print('+++++here+2++');
+      for (int i = 0; i < dt['headChecks'].length; i++){
         var time = dt['headChecks'][i]['time'].toString().split(":");
 
         hour.add(time[0]);
@@ -124,9 +129,10 @@ class _HeadChecksState extends State<HeadChecks> {
             .add(TextEditingController(text: dt['headChecks'][i]['headcount']));
       }
     } else {
+      print('+++++here+3++');
+      ////
       hour.add("1h");
       min.add("0m");
-
       comments.add(TextEditingController());
       signature.add(TextEditingController());
       headCount.add(TextEditingController());
@@ -137,7 +143,7 @@ class _HeadChecksState extends State<HeadChecks> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: floating(context),
+      // floatingActionButton: floating(context),
       drawer: GetDrawer(),
       appBar: Header.appBar(),
       body: SingleChildScrollView(
@@ -195,13 +201,13 @@ class _HeadChecksState extends State<HeadChecks> {
               SizedBox(
                 height: 10,
               ),
-              Row(
+              Column(
                 children: [
                   centersFetched
                       ? DropdownButtonHideUnderline(
                           child: Container(
                             height: 40,
-                            width: MediaQuery.of(context).size.width * 0.45,
+                            width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
@@ -237,14 +243,14 @@ class _HeadChecksState extends State<HeadChecks> {
                           ),
                         )
                       : Container(),
-                  Expanded(
-                    child: Container(),
+                  SizedBox(
+                    height: 20,
                   ),
                   roomsFetched
                       ? DropdownButtonHideUnderline(
                           child: Container(
                             height: 40,
-                            width: MediaQuery.of(context).size.width * 0.45,
+                            width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
@@ -347,7 +353,8 @@ class _HeadChecksState extends State<HeadChecks> {
                                                     width: 80,
                                                     decoration: BoxDecoration(
                                                         border: Border.all(
-                                                            color: Constants.greyColor),
+                                                            color: Constants
+                                                                .greyColor),
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.all(
@@ -373,8 +380,11 @@ class _HeadChecksState extends State<HeadChecks> {
                                                             );
                                                           }).toList(),
                                                           onChanged:
-                                                              (String? value) {if(value==null)return;
-                                                            hour[index] = value!;
+                                                              (String? value) {
+                                                            if (value == null)
+                                                              return;
+                                                            hour[index] =
+                                                                value!;
                                                             setState(() {});
                                                           },
                                                         ),
@@ -393,7 +403,8 @@ class _HeadChecksState extends State<HeadChecks> {
                                                     width: 80,
                                                     decoration: BoxDecoration(
                                                         border: Border.all(
-                                                            color: Constants.greyColor),
+                                                            color: Constants
+                                                                .greyColor),
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.all(
@@ -419,7 +430,9 @@ class _HeadChecksState extends State<HeadChecks> {
                                                             );
                                                           }).toList(),
                                                           onChanged:
-                                                              (String? value) {if(value==null)return;
+                                                              (String? value) {
+                                                            if (value == null)
+                                                              return;
                                                             min[index] = value!;
                                                             setState(() {});
                                                           },
@@ -439,12 +452,14 @@ class _HeadChecksState extends State<HeadChecks> {
                                         height: 5,
                                       ),
                                       Container(
-                                        height: 30,
+                                        height: 40,
                                         child: TextField(
                                             maxLines: 1,
                                             keyboardType: TextInputType.number,
                                             controller: headCount[index],
                                             decoration: new InputDecoration(
+                                              contentPadding: EdgeInsets.only(
+                                                  left: 10, bottom: 10),
                                               enabledBorder:
                                                   const OutlineInputBorder(
                                                 borderSide: const BorderSide(
@@ -467,11 +482,13 @@ class _HeadChecksState extends State<HeadChecks> {
                                         height: 5,
                                       ),
                                       Container(
-                                        height: 30,
+                                        height: 40,
                                         child: TextField(
                                             maxLines: 1,
                                             controller: signature[index],
                                             decoration: new InputDecoration(
+                                              contentPadding: EdgeInsets.only(
+                                                  left: 10, bottom: 10),
                                               enabledBorder:
                                                   const OutlineInputBorder(
                                                 borderSide: const BorderSide(

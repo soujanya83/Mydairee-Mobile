@@ -34,9 +34,12 @@ class _SignaturePageState extends State<SignaturePage> {
   Widget build(BuildContext context) => Scaffold(
         body: Column(
           children: <Widget>[
-            Signature(
-              controller: controller,
-              backgroundColor: Colors.black,
+            SizedBox(
+              height: MediaQuery.of(context).size.height*.8,
+              child: Signature(
+                controller: controller,
+                backgroundColor: Colors.black,
+              ),
             ),
             buildButtons(context),
             buildSwapOrientation(),

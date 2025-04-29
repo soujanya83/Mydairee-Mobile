@@ -160,7 +160,6 @@ class _GetDrawerState extends State<GetDrawer>{
               ],
             ),
           ),
-
           if (MyApp.USER_TYPE_VALUE != 'Parent')
             Divider(
               color: Colors.white.withOpacity(0.8),

@@ -65,10 +65,13 @@ class ServiceWithHeaderPost {
 
   Future data() async {
     print('post api called for...without body');
-    final response = await http.post(Uri.parse(url), headers: {
-      'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-    },);
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+      },
+    );
     print(url);
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
     print(MyApp.AUTH_TOKEN_VALUE);
@@ -103,21 +106,37 @@ class ServiceWithHeaderDataPost {
     );
     print(url);
     print({
-        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-      });
+      'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+    });
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
     print('authtoken' + MyApp.AUTH_TOKEN_VALUE);
-    print('status code '+ response.statusCode.toString());
+    print('status code ' + response.statusCode.toString());
     print('dataaa' + response.body.toString());
-    var status = jsonDecode(response.body);
-    if (status['Status'] == 'SUCCESS' || status['Status'] == 'Success' || status['Status'] == true ||  status['status'] == true ||  status['status'] == 'success') {
-      String data = response.body;
-      return jsonDecode(data);
+    String cleanedJson = cleanJson(response.body);
+    var status = jsonDecode(cleanedJson);
+    if (status['Status'] == 'SUCCESS' ||
+        status['Status'] == 'Success' ||
+        status['Status'] == true ||
+        status['status'] == true ||
+        status['status'] == 'success') {
+      // String data = response.body;
+      return jsonDecode(cleanedJson);
     } else {
       return {
         "error": status['Message'],
       };
+    }
+  }
+
+  String cleanJson(String responseBody) {
+    int startIndex = responseBody.indexOf('{');
+    int endIndex = responseBody.lastIndexOf('}');
+
+    if (startIndex != -1 && endIndex != -1) {
+      return responseBody.substring(startIndex, endIndex + 1);
+    } else {
+      throw FormatException('Invalid JSON format');
     }
   }
 }

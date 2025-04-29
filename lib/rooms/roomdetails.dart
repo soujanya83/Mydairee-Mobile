@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart'; 
-import 'package:flutter_vector_icons/flutter_vector_icons.dart'; 
+import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
@@ -355,6 +355,8 @@ class _RoomDetailsState extends State<RoomDetails> {
     print(d);
   }
 
+  
+
   Future<void> _fetchFilterData() async {
     var _toSend = Constants.BASE_URL +
         'room/getRoomDetails/' +
@@ -368,8 +370,8 @@ class _RoomDetailsState extends State<RoomDetails> {
       "filter_gender": gender,
     };
     print(jsonEncode(objToSend));
-    final response =
-        await http.post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
+    final response = await http
+        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
@@ -438,8 +440,9 @@ class _RoomDetailsState extends State<RoomDetails> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => AddChildren(
-                                                  id: roomDesc?.id??'',
-                                                  type: 'add', childid: '',
+                                                  id: roomDesc?.id ?? '',
+                                                  type: 'add',
+                                                  childid: '',
                                                 )));
                                   },
                                   child: Container(
@@ -480,7 +483,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                     Navigator.pop(context);
                                   },
                                 ),
-                                Text(roomDesc?.name??''),
+                                Text(roomDesc?.name ?? ''),
                                 Expanded(
                                   child: Container(),
                                 ),
@@ -559,7 +562,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                                   objToSend));
                                                               final response =
                                                                   await http.post(
-                                                                      Uri.parse(_toSend),
+                                                                      Uri.parse(
+                                                                          _toSend),
                                                                       body: jsonEncode(
                                                                           objToSend),
                                                                       headers: {
@@ -619,7 +623,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                         "rooms": [widget.id],
                                       };
                                       print(jsonEncode(objToSend));
-                                      final response = await http.post(Uri.parse(_toSend),
+                                      final response = await http.post(
+                                          Uri.parse(_toSend),
                                           body: jsonEncode(objToSend),
                                           headers: {
                                             'X-DEVICE-ID':
@@ -660,7 +665,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                       Text('Room Capacity',
                                           style:
                                               Constants.containerHeadingStyle),
-                                      Text(roomDesc?.capacity??'',
+                                      Text(roomDesc?.capacity ?? '',
                                           style: Constants
                                               .containerNumberHeadingStyle)
                                     ],
@@ -691,7 +696,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             children: [
                                               Text('M'),
                                               Text(roomDesc?.occupancy['Mon']
-                                                  .toString()??'')
+                                                      .toString() ??
+                                                  '')
                                             ],
                                           ),
                                           SizedBox(
@@ -701,7 +707,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             children: [
                                               Text('T'),
                                               Text(roomDesc?.occupancy['Tue']
-                                                  .toString()??'')
+                                                      .toString() ??
+                                                  '')
                                             ],
                                           ),
                                           SizedBox(
@@ -711,7 +718,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             children: [
                                               Text('W'),
                                               Text(roomDesc?.occupancy['Wed']
-                                                  .toString()??'')
+                                                      .toString() ??
+                                                  '')
                                             ],
                                           ),
                                           SizedBox(
@@ -721,7 +729,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             children: [
                                               Text('T'),
                                               Text(roomDesc?.occupancy['Thu']
-                                                  .toString()??'')
+                                                      .toString() ??
+                                                  '')
                                             ],
                                           ),
                                           SizedBox(
@@ -731,7 +740,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             children: [
                                               Text('F'),
                                               Text(roomDesc?.occupancy['Fri']
-                                                  .toString()??'')
+                                                      .toString() ??
+                                                  '')
                                             ],
                                           ),
                                         ],
@@ -761,7 +771,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                           style:
                                               Constants.containerHeadingStyle),
                                       Text(
-                                          (int.parse(roomDesc?.capacity??'0') -
+                                          (int.parse(roomDesc?.capacity ??
+                                                      '0') -
                                                   _allChildrens.length)
                                               .toString(),
                                           style: Constants
@@ -814,7 +825,7 @@ class _RoomDetailsState extends State<RoomDetails> {
   Widget childCards(int i) {
     var inputFormat = DateFormat("yyyy-MM-dd");
 
-    DateTime date1 = inputFormat.parse(_allChildrens[i].dob??'');
+    DateTime date1 = inputFormat.parse(_allChildrens[i].dob ?? '');
 
     return Card(
       child: Padding(
@@ -853,8 +864,9 @@ class _RoomDetailsState extends State<RoomDetails> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               ChildBasicDetails(
-                                                roomid: roomDesc?.id??'',
-                                                childid: _allChildrens[i].id, centerid: '',
+                                                roomid: roomDesc?.id ?? '',
+                                                childid: _allChildrens[i].id,
+                                                centerid: '',
                                               ))).then((value) {
                                     if (value != null) {
                                       roomDetailFetched = false;
@@ -868,7 +880,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 ? Checkbox(
                                     value: checkValues[i],
                                     onChanged: (val) {
-                                      if(val==null)return;
+                                      if (val == null) return;
                                       checkValues[i] = val;
                                       if (val == true) {
                                         ids.add(_allChildrens[i].id);
@@ -905,8 +917,11 @@ class _RoomDetailsState extends State<RoomDetails> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.5,
                             child: _allChildrens[i].recentobs != null
-                                ? tagRemove(_allChildrens[i].recentobs?['title'],
-                                    'heading', '', context)
+                                ? tagRemove(
+                                    _allChildrens[i].recentobs?['title'],
+                                    'heading',
+                                    '',
+                                    context)
                                 : Text('No Recent Obs'),
                           ),
                         ],

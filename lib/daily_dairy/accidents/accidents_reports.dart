@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
+import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/daily_dairy/accidents/add_accidents.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -16,14 +17,14 @@ class AccidentsReports extends StatefulWidget {
 }
 
 class _AccidentsReportsState extends State<AccidentsReports> {
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<RoomsDescModel> rooms=[];
+  List<RoomsDescModel> rooms = [];
   bool roomsFetched = false;
   int currentRoomIndex = 0;
-  List<AccidentsModel> _accident=[];
+  List<AccidentsModel> _accident = [];
   bool accidentFetched = false;
   int accidentIndedx = 0;
   var details;
@@ -31,7 +32,6 @@ class _AccidentsReportsState extends State<AccidentsReports> {
   @override
   void initState() {
     _fetchCenters();
-
     super.initState();
   }
 
@@ -57,65 +57,90 @@ class _AccidentsReportsState extends State<AccidentsReports> {
       MyApp.Show401Dialog(context);
     }
 
-    _fetchData();
+    _fetchRooms();
   }
+
+  Future<void> _fetchRooms() async {
+    currentRoomIndex = 0;
+    RoomAPIHandler handler = RoomAPIHandler(
+        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
+    var data = await handler.getList();
+    print('HEE' + data['permission'].toString());
+    var res = data['rooms'];
+    rooms = [];
+    try {
+      assert(res is List);
+      for (int i = 0; i < res.length; i++) {
+        RoomsDescModel roomDescModel = RoomsDescModel.fromJson(res[i]);
+        rooms.add(roomDescModel);
+      }
+      roomsFetched = true;
+      if (this.mounted) setState(() {});
+
+      _fetchData();
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+  }
+
+  // Future<void> _fetchData() async {
+  //   Map<String, String> data = {
+  //     'userid': MyApp.LOGIN_ID_VALUE,
+  //     'centerid': centers[currentIndex].id
+  //   };
+
+  //   if (roomsFetched && rooms.isNotEmpty) {
+  //     data['roomid'] = rooms[currentRoomIndex].id;
+  //     // data['date'] = DateFormat("yyyy-MM-dd").format(date);
+  //   }
+
+  //   print(data);
+  //   DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
+  //   var dt = await hlr.getData();
+  //   if (!dt.containsKey('error')) {
+  //     // print(dt);
+  //     // details = dt;
+  //     var res = dt['rooms'];
+  //     rooms = [];
+  //     try {
+  //       assert(res is List);
+  //       for (int i = 0; i < res.length; i++) {
+  //         rooms.add(RoomsDescModel.fromJson(res[i]));
+  //       }
+  //       roomsFetched = true;
+  //       if (this.mounted) setState(() {});
+  //     } catch (e) {
+  //       print(e);
+  //     }
+  //     // var child = dt['childs'];
+  //     // _allChildrens = [];
+  //     // try {
+  //     //   assert(child is List);
+  //     //   for (int i = 0; i < child.length; i++) {
+  //     //     _allChildrens.add(ChildModel.fromJson(child[i]));
+  //     //     childValues[_allChildrens[i].id] = false;
+  //     //   }
+  //     //   childrensFetched = true;
+  //     // } catch (e) {
+  //     //   print(e);
+  //     // }
+
+  //     // showType = dt['columns'];
+  //   } else {
+  //     MyApp.Show401Dialog(context);
+  //   }
+  //   _fetchDataui();
+  // }
 
   Future<void> _fetchData() async {
-    Map<String, String> data = {
-      'userid': MyApp.LOGIN_ID_VALUE,
-      'centerid': centers[currentIndex].id
-    };
-
-    if (roomsFetched) {
-      data['roomid'] = rooms[currentRoomIndex].id;
-      // data['date'] = DateFormat("yyyy-MM-dd").format(date);
-    }
-
-    print(data);
-    DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
-    var dt = await hlr.getData();
-    if (!dt.containsKey('error')) {
-      // print(dt);
-      // details = dt;
-      var res = dt['rooms'];
-      rooms = [];
-      try {
-        assert(res is List);
-        for (int i = 0; i < res.length; i++) {
-          rooms.add(RoomsDescModel.fromJson(res[i]));
-        }
-        roomsFetched = true;
-        if (this.mounted) setState(() {});
-      } catch (e) {
-        print(e);
-      }
-      // var child = dt['childs'];
-      // _allChildrens = [];
-      // try {
-      //   assert(child is List);
-      //   for (int i = 0; i < child.length; i++) {
-      //     _allChildrens.add(ChildModel.fromJson(child[i]));
-      //     childValues[_allChildrens[i].id] = false;
-      //   }
-      //   childrensFetched = true;
-      // } catch (e) {
-      //   print(e);
-      // }
-
-      // showType = dt['columns'];
-
-    } else {
-      MyApp.Show401Dialog(context);
-    }
-    _fetchDataui();
-  }
-
-  Future<void> _fetchDataui() async {
     Map<String, String> data1 = {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers[currentIndex].id,
-      'roomid': rooms[currentRoomIndex].id
     };
+    if (rooms.isNotEmpty) {
+      data1.addAll({'roomid': rooms[currentRoomIndex].id});
+    }
     DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data1);
     var adt = await hlr.getAccidentsData();
     if (!adt.containsKey('error')) {
@@ -169,43 +194,48 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                   Expanded(
                     child: Container(),
                   ),
-                 if(MyApp.USER_TYPE_VALUE!='Parent') 
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddAccidents(
-                                    centerid: centers[currentIndex].id,
-                                    roomid: rooms[currentRoomIndex].id,
-                                    type: 'add', accid: '',
-                                  ))).then((value) {
-                        _fetchData();
-                      });
-                    },
-                    child: Container(
-                        decoration: BoxDecoration(
-                            color: Constants.kButton,
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                          child: Text(
-                            'Add Accident',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        )),
-                  )
+                  if (MyApp.USER_TYPE_VALUE != 'Parent')
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddAccidents(
+                                      centerid: centers[currentIndex].id,
+                                      roomid: rooms[currentRoomIndex].id,
+                                      type: 'add',
+                                      accid: '',
+                                    ))).then((value) {
+                          _fetchData();
+                        });
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8))),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                            child: Text(
+                              'Add Accident',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
+                            ),
+                          )),
+                    )
                 ],
               ),
-              SizedBox(height: 10,),
-              Row(
+              SizedBox(
+                height: 10,
+              ),
+              Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   centersFetched
                       ? DropdownButtonHideUnderline(
                           child: Container(
                             height: 40,
-                            width: MediaQuery.of(context).size.width * 0.45,
+                            width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
@@ -228,7 +258,7 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                                       if (centers[i].id == value) {
                                         setState(() {
                                           currentIndex = i;
-                                          _fetchData();
+                                          _fetchRooms();
                                         });
                                         break;
                                       }
@@ -240,11 +270,14 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                           ),
                         )
                       : Container(),
+                  SizedBox(
+                    height: 20,
+                  ),
                   roomsFetched
                       ? DropdownButtonHideUnderline(
                           child: Container(
                             height: 40,
-                            width: MediaQuery.of(context).size.width * 0.45,
+                            width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,
@@ -255,7 +288,13 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                               child: Center(
                                 child: DropdownButton<String>(
                                   isExpanded: true,
-                                  value: rooms[currentRoomIndex].id,
+                                  value: rooms.isNotEmpty &&
+                                          List.generate(rooms.length, (i) {
+                                            return rooms[i].id;
+                                          }).contains(
+                                              rooms[currentRoomIndex].id)
+                                      ? rooms[currentRoomIndex].id
+                                      : null,
                                   items: rooms.map((RoomsDescModel value) {
                                     return new DropdownMenuItem<String>(
                                       value: value.id,
@@ -282,37 +321,45 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                 ],
               ),
               SizedBox(
-                height:10,
+                height: 10,
               ),
               details != null
                   ? Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            color: HexColor(details['roomcolor']),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 8, 5, 5),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "S No" + "    " + "Name",
-                                    style: Constants.sideHeadingStyle,
-                                  ),
-                                  Expanded(child: Container()),
-                                  Text(
-                                    "Download",
-                                    style: Constants.sideHeadingStyle,
-                                  ),
-                                  Expanded(child: Container()),
-                                  Text(
-                                    "Status",
-                                    style: Constants.sideHeadingStyle,
-                                  ),
-                                ],
+                          Builder(builder: (context) {
+                            Color? hexColor;
+                            try {
+                              hexColor = HexColor(details['roomcolor']);
+                            } catch (e) {
+                              print(e.toString());
+                            }
+                            return Container(
+                              color: hexColor,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(15, 8, 5, 5),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "S No" + "    " + "Name",
+                                      style: Constants.sideHeadingStyle,
+                                    ),
+                                    Expanded(child: Container()),
+                                    Text(
+                                      "Download",
+                                      style: Constants.sideHeadingStyle,
+                                    ),
+                                    Expanded(child: Container()),
+                                    Text(
+                                      "Status",
+                                      style: Constants.sideHeadingStyle,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(15, 8, 5, 5),
                             child: accidentFetched
@@ -331,18 +378,27 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             GestureDetector(
-                                              onTap: (){
-                                                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddAccidents(
-                                   centerid: centers[currentIndex].id,
-                                    roomid: rooms[currentRoomIndex].id,
-                                    accid: _accident[index].id,
-                                    type: 'edit',
-                                  ))).then((value) {
-                        _fetchData();
-                      });
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                                AddAccidents(
+                                                                  centerid:
+                                                                      centers[currentIndex]
+                                                                          .id,
+                                                                  roomid: rooms[
+                                                                          currentRoomIndex]
+                                                                      .id,
+                                                                  accid: _accident[
+                                                                          index]
+                                                                      .id,
+                                                                  type: 'edit',
+                                                                ))).then(
+                                                    (value) {
+                                                  _fetchData();
+                                                });
                                               },
                                               child: Container(
                                                 child: Row(
@@ -354,12 +410,14 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                                                               .childName,
                                                       style: Constants.header2,
                                                     ),
-                                                    Expanded(child: Container()),
+                                                    Expanded(
+                                                        child: Container()),
                                                     Text(
                                                       "Pay",
                                                       style: Constants.header3,
                                                     ),
-                                                    Expanded(child: Container()),
+                                                    Expanded(
+                                                        child: Container()),
                                                     Text(
                                                       "Signed",
                                                       style: Constants.header3,

@@ -26,7 +26,7 @@ class AddAccidents extends StatefulWidget {
       {required this.centerid,
       required this.roomid,
       required this.accid,
-     required this.type});
+      required this.type});
   @override
   _AddAccidentsState createState() => _AddAccidentsState();
 }
@@ -132,22 +132,44 @@ class _AddAccidentsState extends State<AddAccidents> {
   bool gContacted2 = false, gMsg2 = false;
 
   // internal notifications
-  TextEditingController? nName, nSupervisorName, eAgency, eAuthority, paName, aNotes;
-String nNameError = '', nSupervisorNameError = '', inchargesignatureError = '', supervisorsignatureError = '';
-String eAgencyError = '', eAuthorityError = '', paNameError = '', aNotesError = '';
-String? nHour1, nMin1, nHour2, nMin2, eHour1, eMin1, eHour2, eMin2, paHour, paMin;
-DateTime? nDate1, nDate2, eDate1, eDate2, paDate;
-Uint8List? incharge_signature, supervisor_signature;
-bool childrensFetched = false;
-List<ChildModel> _allChildrens = [];
+  TextEditingController? nName,
+      nSupervisorName,
+      eAgency,
+      eAuthority,
+      paName,
+      aNotes;
+  String nNameError = '',
+      nSupervisorNameError = '',
+      inchargesignatureError = '',
+      supervisorsignatureError = '';
+  String eAgencyError = '',
+      eAuthorityError = '',
+      paNameError = '',
+      aNotesError = '';
+  String? nHour1,
+      nMin1,
+      nHour2,
+      nMin2,
+      eHour1,
+      eMin1,
+      eHour2,
+      eMin2,
+      paHour,
+      paMin;
+  DateTime? nDate1, nDate2, eDate1, eDate2, paDate;
+  Uint8List? incharge_signature, supervisor_signature;
+  bool childrensFetched = false;
+  List<ChildModel> _allChildrens = [];
 
   int currentIndex = 0;
   var accInfo;
 
   Future<void> _fetchData() async {
     Map<String, String> data = {
+      'superadmin': '1',
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': widget.centerid,
+      'roomid': widget.roomid,
     };
 
     print(data);
@@ -175,124 +197,124 @@ List<ChildModel> _allChildrens = [];
           "userid": MyApp.LOGIN_ID_VALUE
         };
         print(dataX);
+
         DailyDairyAPIHandler hlr = DailyDairyAPIHandler(dataX);
         var dt = await hlr.getAccidentsInfo();
-        if (!dt.containsKey('error')) {
-          print('accid' + dt!['AccidentInfo']![0].toString());
-          accInfo = dt['AccidentInfo']?[0];
-          name?.text = accInfo['person_name'];
-          positionRole?.text = accInfo['person_role'];
-          recordDate = DateTime.parse(accInfo['date']);
-          print('thissss' + accInfo['time'].toString());
-          // for hour and min check whether data exists or not if exists then do split
 
-          if (accInfo['time'] != null && accInfo['time'] != '') {
-            pHour = accInfo['time'].toString().split(':')?[0];
-            pMin = accInfo['time'].toString().split(':')[1];
+        if (!dt.containsKey('error')) {
+          accInfo = dt['AccidentInfo'];
+
+          name?.text = accInfo['person_name'] ?? '';
+          positionRole?.text = accInfo['person_role'] ?? '';
+          recordDate = DateTime.tryParse(accInfo['date'] ?? '');
+
+          if ((accInfo['time'] ?? '').contains(':')) {
+            var split = accInfo['time'].split(':');
+            pHour = split[0];
+            pMin = split[1];
           }
 
           for (int i = 0; i < _allChildrens.length; i++) {
             if (_allChildrens[i].id == accInfo['childid']) {
-              setState(() {
-                currentIndex = i;
-              });
+              currentIndex = i;
               break;
             }
           }
-          cDob = DateTime.parse(accInfo['child_dob']);
-          cAge?.text = accInfo['child_age'];
-          _gender = accInfo['child_gender'];
-          //incident
-          cIncidentDate = DateTime.parse(accInfo['incident_date']);
-          if (accInfo['incident_time'] != null &&
-              accInfo['incident_time'] != '') {
-            cHour = accInfo['incident_time'].toString().split(':')?[0];
-            cMin = accInfo['incident_time'].toString().split(':')[1];
-          }
-          cloc?.text = accInfo['incident_location'];
-          cIDate = DateTime.parse(accInfo['witness_date']);
-          witnessname?.text = accInfo['witness_name'];
-          cactivity?.text = accInfo['gen_actyvt'];
-          ccause?.text = accInfo['cause'];
-          ccsurrondings?.text = accInfo['illness_symptoms'];
-          ccunaccount?.text = accInfo['missing_unaccounted'];
-          cclocked?.text = accInfo['taken_removed'];
 
-          adetail?.text = accInfo['action_taken'];
-          _aEmergency = accInfo['emrg_serv_attend'];
-          ayesdetails?.text = accInfo['med_attention'];
-          if (accInfo['med_attention_details'] != null &&
-              accInfo['med_attention_details'] != '') {
-            _aAttention = accInfo['med_attention_details'];
+          cDob = DateTime.tryParse(accInfo['child_dob'] ?? '');
+          cAge?.text = accInfo['child_age'] ?? '';
+          _gender = accInfo['child_gender'] ?? 'Male';
+
+          cIncidentDate = DateTime.tryParse(accInfo['incident_date'] ?? '');
+          if ((accInfo['incident_time'] ?? '').contains(':')) {
+            var split = accInfo['incident_time'].split(':');
+            cHour = split[0];
+            cMin = split[1];
           }
 
-          afuture1?.text = accInfo['prevention_step_1'];
-          afuture2?.text = accInfo['prevention_step_2'];
-          afuture3?.text = accInfo['prevention_step_3'];
-          gName1?.text = accInfo['parent1_name'];
-          gContact1?.text = accInfo['contact1_method'];
-          if (accInfo['contact1_time'] != null &&
-              accInfo['contact1_time'] != '') {
-            gHour1 = accInfo['contact1_time'].toString().split(':')?[0];
-            gMin1 = accInfo['contact1_time'].toString().split(':')?[0];
+          cloc?.text = accInfo['incident_location'] ?? '';
+          cIDate = DateTime.tryParse(accInfo['witness_date'] ?? '');
+          witnessname?.text = accInfo['witness_name'] ?? '';
+          cactivity?.text = accInfo['gen_actyvt'] ?? '';
+          ccause?.text = accInfo['cause'] ?? '';
+          ccsurrondings?.text = accInfo['illness_symptoms'] ?? '';
+          ccunaccount?.text = accInfo['missing_unaccounted'] ?? '';
+          cclocked?.text = accInfo['taken_removed'] ?? '';
+
+          adetail?.text = accInfo['action_taken'] ?? '';
+          _aEmergency = accInfo['emrg_serv_attend'] ?? 'Yes';
+          ayesdetails?.text = accInfo['med_attention'] ?? '';
+          _aAttention = accInfo['med_attention_details'] ?? 'Yes';
+
+          afuture1?.text = accInfo['prevention_step_1'] ?? '';
+          afuture2?.text = accInfo['prevention_step_2'] ?? '';
+          afuture3?.text = accInfo['prevention_step_3'] ?? '';
+
+          gName1?.text = accInfo['parent1_name'] ?? '';
+          gContact1?.text = accInfo['contact1_method'] ?? '';
+          if ((accInfo['contact1_time'] ?? '').contains(':')) {
+            var split = accInfo['contact1_time'].split(':');
+            gHour1 = split[0];
+            gMin1 = split[1];
           }
-          gDate1 = DateTime.parse(accInfo['contact1_date']);
-          gContacted1 = accInfo['contact1_date'] == 'Yes';
+          gDate1 = DateTime.tryParse(accInfo['contact1_date'] ?? '');
+          gContacted1 = accInfo['contact1'] == 'Yes';
           gMsg1 = accInfo['contact1_msg'] == 'Yes';
 
-          gName2?.text = accInfo['parent2_name'];
-          gContact2?.text = accInfo['contact2_method'];
-          if (accInfo['contact2_time'] != null &&
-              accInfo['contact2_time'] != '') {
-            gHour2 = accInfo['contact2_time'].toString().split(':')?[0];
-            gMin2 = accInfo['contact2_time'].toString().split(':')?[0];
+          gName2?.text = accInfo['parent2_name'] ?? '';
+          gContact2?.text = accInfo['contact2_method'] ?? '';
+          if ((accInfo['contact2_time'] ?? '').contains(':')) {
+            var split = accInfo['contact2_time'].split(':');
+            gHour2 = split[0];
+            gMin2 = split[1];
           }
-          gDate2 = DateTime.parse(accInfo['contact2_date']);
-          gContacted2 = accInfo['contact2_date'] == 'Yes';
+          gDate2 = DateTime.tryParse(accInfo['contact2_date'] ?? '');
+          gContacted2 = accInfo['contact2'] == 'Yes';
           gMsg2 = accInfo['contact2_msg'] == 'Yes';
 
-          nName?.text = accInfo['responsible_person_name'];
-          if (accInfo['rp_internal_notif_time'] != null &&
-              accInfo['rp_internal_notif_time'] != '') {
-            nHour1 = accInfo['rp_internal_notif_time'].toString().split(':')?[0];
-            nMin1 = accInfo['rp_internal_notif_time'].toString().split(':')?[0];
+          nName?.text = accInfo['responsible_person_name'] ?? '';
+          if ((accInfo['rp_internal_notif_time'] ?? '').contains(':')) {
+            var split = accInfo['rp_internal_notif_time'].split(':');
+            nHour1 = split[0];
+            nMin1 = split[1];
           }
-          nDate1 = DateTime.parse(accInfo['rp_internal_notif_date']);
-          nSupervisorName?.text = accInfo['nominated_supervisor_name'];
-          if (accInfo['nominated_supervisor_time'] != null &&
-              accInfo['nominated_supervisor_time'] != '') {
-            nHour2 =
-                accInfo['nominated_supervisor_time'].toString().split(':')?[0];
-            nMin2 =
-                accInfo['nominated_supervisor_time'].toString().split(':')?[0];
+          nDate1 = DateTime.tryParse(accInfo['rp_internal_notif_date'] ?? '');
+          nSupervisorName?.text = accInfo['nominated_supervisor_name'] ?? '';
+          if ((accInfo['nominated_supervisor_time'] ?? '').contains(':')) {
+            var split = accInfo['nominated_supervisor_time'].split(':');
+            nHour2 = split[0];
+            nMin2 = split[1];
           }
-          nDate2 = DateTime.parse(accInfo['nominated_supervisor_date']);
+          nDate2 =
+              DateTime.tryParse(accInfo['nominated_supervisor_date'] ?? '');
 
-          eAgency?.text = accInfo['ext_notif_other_agency'];
-          if (accInfo['enor_time'] != null && accInfo['enor_time'] != '') {
-            eHour1 = accInfo['enor_time'].toString().split(':')?[0];
-            eMin1 = accInfo['enor_time'].toString().split(':')?[0];
+          eAgency?.text = accInfo['ext_notif_other_agency'] ?? '';
+          if ((accInfo['enor_time'] ?? '').contains(':')) {
+            var split = accInfo['enor_time'].split(':');
+            eHour1 = split[0];
+            eMin1 = split[1];
           }
-          eDate1 = DateTime.parse(accInfo['enor_date']);
+          eDate1 = DateTime.tryParse(accInfo['enor_date'] ?? '');
 
-          eAuthority?.text = accInfo['ext_notif_regulatory_auth'];
-          if (accInfo['enra_time'] != null && accInfo['enra_time'] != '') {
-            eHour2 = accInfo['enra_time'].toString().split(':')?[0];
-            eMin2 = accInfo['enra_time'].toString().split(':')?[0];
+          eAuthority?.text = accInfo['ext_notif_regulatory_auth'] ?? '';
+          if ((accInfo['enra_time'] ?? '').contains(':')) {
+            var split = accInfo['enra_time'].split(':');
+            eHour2 = split[0];
+            eMin2 = split[1];
           }
-          eDate2 = DateTime.parse(accInfo['enra_date']);
+          eDate2 = DateTime.tryParse(accInfo['enra_date'] ?? '');
 
-          paName?.text = accInfo['ack_parent_name'];
-
-          if (accInfo['ack_time'] != null && accInfo['ack_time'] != '') {
-            paHour = accInfo['ack_time'].toString().split(':')?[0];
-            paMin = accInfo['ack_time'].toString().split(':')?[0];
+          paName?.text = accInfo['ack_parent_name'] ?? '';
+          if ((accInfo['ack_time'] ?? '').contains(':')) {
+            var split = accInfo['ack_time'].split(':');
+            paHour = split[0];
+            paMin = split[1];
           }
+          paDate = DateTime.tryParse(accInfo['ack_date'] ?? '');
+          aNotes?.text = accInfo['add_notes'] ?? '';
 
-          paDate = DateTime.parse(accInfo['ack_date']);
-          aNotes?.text = accInfo['add_notes'];
+          setState(() {});
         }
-        setState(() {});
       }
     } else {
       MyApp.Show401Dialog(context);
@@ -401,9 +423,15 @@ List<ChildModel> _allChildrens = [];
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Add Accidents',
-                style: Constants.header1,
+              InkWell(
+                onTap: () {
+                  print('======================');
+                  _fetchData();
+                },
+                child: Text(
+                  'Add Accidents',
+                  style: Constants.header1,
+                ),
               ),
               SizedBox(
                 height: 10,
@@ -569,7 +597,7 @@ List<ChildModel> _allChildrens = [];
               ),
               person_signature == null
                   ? Text(
-                      personsignatureError??'',
+                      personsignatureError ?? '',
                       style: TextStyle(color: Colors.red),
                     )
                   : Container(),
@@ -602,7 +630,8 @@ List<ChildModel> _allChildrens = [];
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            recordDate = await _selectDate(context, recordDate!);
+                            recordDate =
+                                await _selectDate(context, recordDate!);
                             setState(() {});
                           },
                           child: Icon(
@@ -623,77 +652,82 @@ List<ChildModel> _allChildrens = [];
               SizedBox(
                 height: 5,
               ),
-              // Row(
-              //   children: [
-              //     hours != null && pHour != null
-              //         ? DropdownButtonHideUnderline(
-              //             child: Container(
-              //               height: 40,
-              //               width: 80,
-              //               decoration: BoxDecoration(
-              //                   border: Border.all(color: Constants.greyColor),
-              //                   color: Colors.white,
-              //                   borderRadius:
-              //                       BorderRadius.all(Radius.circular(8))),
-              //               child: Padding(
-              //                 padding: const EdgeInsets.only(left: 8, right: 8),
-              //                 child: Center(
-              //                   child: DropdownButton<String>(
-              //                     //  isExpanded: true,
-              //                     value: pHour,
-              //                     items: hours?.map((String value) {
-              //                       return new DropdownMenuItem<String>(
-              //                         value: value,
-              //                         child: new Text(value + "h"),
-              //                       );
-              //                     }).toList(),
-              //                     onChanged: (String? value) {
-              //                       pHour = value!;
-              //                       setState(() {});
-              //                     },
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           )
-              //         : Container(),
-              //     Container(
-              //       width: 20,
-              //     ),
-              //     minutes != null && pMin != null
-              //         ? DropdownButtonHideUnderline(
-              //             child: Container(
-              //               height: 40,
-              //               width: 80,
-              //               decoration: BoxDecoration(
-              //                   border: Border.all(color: Constants.greyColor),
-              //                   color: Colors.white,
-              //                   borderRadius:
-              //                       BorderRadius.all(Radius.circular(8))),
-              //               child: Padding(
-              //                 padding: const EdgeInsets.only(left: 8, right: 8),
-              //                 child: Center(
-              //                   child: DropdownButton<String>(
-              //                     //  isExpanded: true,
-              //                     value: pMin,
-              //                     items: minutes?.map((String value) {
-              //                       return new DropdownMenuItem<String>(
-              //                         value: value,
-              //                         child: new Text(value + "m"),
-              //                       );
-              //                     }).toList(),
-              //                     onChanged: (String? value) {
-              //                       pMin = value!;
-              //                       setState(() {});
-              //                     },
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           )
-              //         : Container(),
-              //   ],
-              // ),
+              Row(
+                children: [
+                  hours != null && pHour != null
+                      ? DropdownButtonHideUnderline(
+                          child: Container(
+                            height: 40,
+                            width: 80,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Constants.greyColor),
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              child: Center(
+                                child: DropdownButton<String>(
+                                  //  isExpanded: true,
+                                  value: hours != null && hours!.contains(pHour)
+                                      ? pHour
+                                      : null,
+                                  items: hours?.map((String value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value,
+                                      child: new Text(value + "h"),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? value) {
+                                    pHour = value!;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                  Container(
+                    width: 20,
+                  ),
+                  minutes != null && pMin != null
+                      ? DropdownButtonHideUnderline(
+                          child: Container(
+                            height: 40,
+                            width: 80,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Constants.greyColor),
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              child: Center(
+                                child: DropdownButton<String>(
+                                  //  isExpanded: true,
+                                  value:
+                                      minutes != null && minutes!.contains(pMin)
+                                          ? pMin
+                                          : null,
+                                  items: minutes?.map((String value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value,
+                                      child: new Text(value + "m"),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? value) {
+                                    pMin = value!;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
 
               SizedBox(
                 height: 15,
@@ -727,7 +761,10 @@ List<ChildModel> _allChildrens = [];
                           child: Center(
                             child: DropdownButton<String>(
                               isExpanded: true,
-                              value: _allChildrens[currentIndex].id,
+                              value: _allChildrens
+                                      .contains(_allChildrens[currentIndex])
+                                  ? _allChildrens[currentIndex].id
+                                  : null,
                               items: _allChildrens.map((ChildModel value) {
                                 return new DropdownMenuItem<String>(
                                   value: value.id,
@@ -860,22 +897,29 @@ List<ChildModel> _allChildrens = [];
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: Center(
                       child: DropdownButton<String>(
-  isExpanded: true,
-  value: _gender,
-  items: <String>['Male', 'Female', 'Others'] // ✅ Removed unnecessary `?`
-      .map((String value) {
-    return DropdownMenuItem<String>(
-      value: value,
-      child: Text(value),
-    );
-  }).toList(),
-  onChanged: (String? value) {
-    if (value == null) return;
-    setState(() {
-      _gender = value!;
-    });
-  },
-),
+                        isExpanded: true,
+                        value: <String>['Male', 'Female', 'Others']
+                                .contains(_gender)
+                            ? _gender
+                            : null,
+                        items: <String>[
+                          'Male',
+                          'Female',
+                          'Others'
+                        ] // ✅ Removed unnecessary `?`
+                            .map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          if (value == null) return;
+                          setState(() {
+                            _gender = value!;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -956,7 +1000,9 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: cHour,
+                                  value: hours != null && hours!.contains(cHour)
+                                      ? cHour
+                                      : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -964,7 +1010,7 @@ List<ChildModel> _allChildrens = [];
                                     );
                                   }).toList(),
                                   onChanged: (String? value) {
-                                    if(value==null)return;
+                                    if (value == null) return;
                                     cHour = value!;
                                     setState(() {});
                                   },
@@ -992,7 +1038,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: cMin,
+                                  value:
+                                      minutes != null && minutes!.contains(cMin)
+                                          ? cMin
+                                          : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -1000,7 +1049,7 @@ List<ChildModel> _allChildrens = [];
                                     );
                                   }).toList(),
                                   onChanged: (String? value) {
-                                    if(value==null)return;
+                                    if (value == null) return;
                                     cMin = value!;
                                     setState(() {});
                                   },
@@ -1119,7 +1168,7 @@ List<ChildModel> _allChildrens = [];
               ),
               child_signature == null
                   ? Text(
-                      childsignatureError??'',
+                      childsignatureError ?? '',
                       style: TextStyle(color: Colors.red),
                     )
                   : Container(),
@@ -1749,7 +1798,9 @@ List<ChildModel> _allChildrens = [];
                     child: Center(
                       child: DropdownButton<String>(
                         isExpanded: true,
-                        value: _aEmergency,
+                        value: <String>['Yes', 'No'].contains(_aEmergency)
+                            ? _aEmergency
+                            : null,
                         items: <String>['Yes', 'No'].map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
@@ -1828,7 +1879,9 @@ List<ChildModel> _allChildrens = [];
                     child: Center(
                       child: DropdownButton<String>(
                         isExpanded: true,
-                        value: _aAttention,
+                        value: <String>['Yes', 'No'].contains(_aAttention)
+                            ? _aAttention
+                            : null,
                         items: <String>['Yes', 'No'].map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
@@ -1836,7 +1889,7 @@ List<ChildModel> _allChildrens = [];
                           );
                         }).toList(),
                         onChanged: (String? value) {
-                          if(value==null)return;
+                          if (value == null) return;
                           setState(() {
                             _aAttention = value!;
                           });
@@ -2017,11 +2070,14 @@ List<ChildModel> _allChildrens = [];
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              padding: EdgeInsets.only(left: 8, right: 8),
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: gHour1,
+                                  value:
+                                      (hours != null && hours!.contains(gHour1))
+                                          ? gHour1
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2056,7 +2112,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: gMin1,
+                                  value: minutes != null &&
+                                          minutes!.contains(gMin1)
+                                      ? gMin1
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2147,7 +2206,7 @@ List<ChildModel> _allChildrens = [];
                   trailing: Checkbox(
                     value: gMsg1,
                     onChanged: (val) {
-                      if(val==null)return;
+                      if (val == null) return;
                       gMsg1 = val;
                       setState(() {});
                     },
@@ -2252,7 +2311,7 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: gHour2,
+                                  value: hours!=null && hours!.contains(gHour2)? gHour2:null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2287,7 +2346,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: gMin2,
+                                  value: minutes != null &&
+                                          minutes!.contains(gMin2)
+                                      ? gMin2
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2531,7 +2593,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: nHour1,
+                                  value:
+                                      hours != null && hours!.contains(nHour1)
+                                          ? nHour1
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2566,7 +2631,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: nMin1,
+                                  value: minutes != null &&
+                                          minutes!.contains(nMin1)
+                                      ? nMin1
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2764,7 +2832,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: nHour2,
+                                  value:
+                                      hours != null && hours!.contains(nHour2)
+                                          ? nHour2
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2799,7 +2870,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: nMin2,
+                                  value: minutes != null &&
+                                          minutes!.contains(nMin2)
+                                      ? nMin2
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2928,7 +3002,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: eHour1,
+                                  value:
+                                      hours != null && hours!.contains(eHour1)
+                                          ? eHour1
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -2963,7 +3040,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: eMin1,
+                                  value: minutes != null &&
+                                          minutes!.contains(eMin1)
+                                      ? eMin1
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3084,7 +3164,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: eHour2,
+                                  value:
+                                      hours != null && hours!.contains(eHour2)
+                                          ? eHour2
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3119,7 +3202,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: eMin2,
+                                  value: minutes != null &&
+                                          minutes!.contains(eMin2)
+                                      ? eMin2
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3245,7 +3331,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: paHour,
+                                  value:
+                                      hours != null && hours!.contains(paHour)
+                                          ? paHour
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3280,7 +3369,10 @@ List<ChildModel> _allChildrens = [];
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: paMin,
+                                  value: minutes != null &&
+                                          minutes!.contains(paMin)
+                                      ? paMin
+                                      : null,
                                   items: minutes?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3880,12 +3972,12 @@ List<ChildModel> _allChildrens = [];
 
                           String gDate1final =
                               DateFormat('yyyy-MM-dd').format(gDate1!);
-                          String gTinme1final = gHour1??'' + ":" + "${gMin1??''}";
+                          String gTinme1final =
+                              gHour1 ?? '' + ":" + "${gMin1 ?? ''}";
 
                           String gDate2final =
                               DateFormat('yyyy-MM-dd').format(gDate2!);
                           String gTinme2final = gHour2! + ":" + gMin2!;
-
                           String incharge_sig_base =
                               header + base64Encode(incharge_signature!);
 
@@ -3911,7 +4003,7 @@ List<ChildModel> _allChildrens = [];
                               DateFormat('yyyy-MM-dd').format(paDate!);
                           String paTime = paHour! + ":" + paMin!;
 
-                          String addmarkfinal = header + addmark!;
+                          String addmarkfinal = header + (addmark ?? '');
 
                           String _toSend =
                               Constants.BASE_URL + 'accident/saveAccident';
@@ -3939,7 +4031,7 @@ List<ChildModel> _allChildrens = [];
                             "illness_symptoms": ccsurrondings?.text.toString(),
                             "missing_unaccounted": ccunaccount?.text.toString(),
                             "taken_removed": cclocked?.text.toString(),
-                            "injury_image": addmarkfinal,
+                            // "injury_image": addmarkfinal,
                             "abrasion": abrasion == false ? 0 : 1,
                             "electric_shock": electic == false ? 0 : 1,
                             "allergic_reaction": allergy == false ? 0 : 1,
@@ -4020,9 +4112,9 @@ List<ChildModel> _allChildrens = [];
                             print('created');
                             // Navigator.of(context).popUntil(
                             //     (route) => route.isFirst);
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
                           } else if (response.statusCode == 401) {
-                            //  MyApp.Show401Dialog(context);
+                            MyApp.Show401Dialog(context);
                           }
                           setState(() {});
                         }
