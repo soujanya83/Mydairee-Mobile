@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/programplanapi.dart';
@@ -54,21 +55,34 @@ class _PlansListState extends State<PlansList> {
     _fetchData();
   }
 
+  bool _loading = true;
   void _fetchData() async {
-    var _objToSend = {
-      // "usertype": MyApp.USER_TYPE_VALUE,
-      "userid": MyApp.LOGIN_ID_VALUE,
-      "centerid": centers[currentIndex].id
-    };
-    ProgramPlanApiHandler planApiHandler = ProgramPlanApiHandler(_objToSend);
-    var data = await planApiHandler.getProgramPlanList();
-    print('+++++++++++++mfkdmkfmdkfmkdfmkf++++++++');
-    print(data);
-    planList = data['data'];
-    print('==========data========');
-    print(data);
-    //  progHead=data['get_details']['']
-    setState(() {});
+    try {
+      if (this.mounted)
+        setState(() {
+          _loading = true;
+        });
+      var _objToSend = {
+        // "usertype": MyApp.USER_TYPE_VALUE,
+        "userid": MyApp.LOGIN_ID_VALUE,
+        "centerid": centers[currentIndex].id
+      };
+      ProgramPlanApiHandler planApiHandler = ProgramPlanApiHandler(_objToSend);
+      var data = await planApiHandler.getProgramPlanList();
+      print('+++++++++++++mfkdmkfmdkfmkdfmkf++++++++');
+      print(data);
+      planList = data['data'];
+      print('==========data========');
+      print(data);
+      //  progHead=data['get_details']['']
+      setState(() {
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -102,6 +116,7 @@ class _PlansListState extends State<PlansList> {
                                             'add',
                                             centers[currentIndex].id,
                                             '',
+                                            null,
                                             null))).then((value) {
                                   _fetchData();
                                 });
@@ -170,8 +185,31 @@ class _PlansListState extends State<PlansList> {
                               ),
                             )
                           : Container(),
-                      if (planList != null)
-                        ListView.builder(
+                      Builder(builder: (context) {
+                        if (_loading)
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height * .7,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  color: Constants.kButton,
+                                ),
+                              ],
+                            ),
+                          );
+                        if (planList == null || planList!.isEmpty)
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height * .7,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('No Program Plan Found'),
+                              ],
+                            ),
+                          );
+
+                        return ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: planList.length,
@@ -193,7 +231,7 @@ class _PlansListState extends State<PlansList> {
                                   ],
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.only(top: 20,left: 10,right: 10),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -201,11 +239,8 @@ class _PlansListState extends State<PlansList> {
                                       // Month and Year
                                       Text(
                                         "${_getMonthName(plan['months'])} ${plan['years']}",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
+                                        //  'Created By -' +   plan['creator_name'],
+                                        style: Constants.header4
                                       ),
                                       SizedBox(height: 10),
 
@@ -216,10 +251,8 @@ class _PlansListState extends State<PlansList> {
                                               size: 18, color: Colors.black),
                                           SizedBox(width: 6),
                                           Text(
-                                            plan['room_name'] ?? '-',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black),
+                                            plan['room_name'] ?? '',
+                                            style: Constants.header7,
                                           ),
                                         ],
                                       ),
@@ -232,10 +265,8 @@ class _PlansListState extends State<PlansList> {
                                               size: 18, color: Colors.black),
                                           SizedBox(width: 6),
                                           Text(
-                                            "Created by ${plan['creator_name'] ?? '-'}",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black),
+                                            "Created by ${plan['creator_name'] ?? ''}",
+                                           style: Constants.header7,
                                           ),
                                         ],
                                       ),
@@ -252,9 +283,7 @@ class _PlansListState extends State<PlansList> {
                                             Flexible(
                                               child: Text(
                                                 "Inquiry Topic: ${plan['inquiry_topic']}",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black),
+                                                style: Constants.header7
                                               ),
                                             ),
                                           ],
@@ -273,9 +302,7 @@ class _PlansListState extends State<PlansList> {
                                             Flexible(
                                               child: Text(
                                                 "Special Events: ${plan['special_events']}",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black),
+                                                  style: Constants.header7
                                               ),
                                             ),
                                           ],
@@ -307,12 +334,11 @@ class _PlansListState extends State<PlansList> {
                                         ],
                                       ),
                                       SizedBox(height: 12),
-
                                       // Action Buttons
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
-                                        children: [
+                                        children: [ 
                                           if (MyApp.USER_TYPE_VALUE ==
                                               'Superadmin')
                                             IconButton(
@@ -322,11 +348,12 @@ class _PlansListState extends State<PlansList> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         AddPlan(
-                                                      'edit',
-                                                      centers[currentIndex].id,
-                                                      plan['id'],
-                                                      null,
-                                                    ),
+                                                            'edit',
+                                                            centers[currentIndex]
+                                                                .id,
+                                                            plan['id'],
+                                                            null,
+                                                            plan),
                                                   ),
                                                 ).then((value) {
                                                   _fetchData();
@@ -335,44 +362,97 @@ class _PlansListState extends State<PlansList> {
                                               icon: Icon(Icons.edit,
                                                   color: Colors.black),
                                             ),
-                                          IconButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ViewPlan(
-                                                    centers[currentIndex].id,
-                                                    plan['id'],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            icon: Icon(Icons.visibility,
-                                                color: Colors.black),
-                                          ),
+                                          // IconButton(
+                                          //   onPressed: () {
+                                          //     Navigator.push(
+                                          //       context,
+                                          //       MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             ViewPlan(
+                                          //           centers[currentIndex].id,
+                                          //           plan['id'],
+                                          //         ),
+                                          //       ),
+                                          //     );
+                                          //   },
+                                          //   icon: Icon(Icons.visibility,
+                                          //       color: Colors.black),
+                                          // ),
                                           if (MyApp.USER_TYPE_VALUE != 'Parent')
                                             IconButton(
                                               onPressed: () async {
-                                                Map<String, String> _objToSend =
-                                                    {
-                                                  "usertype":
-                                                      MyApp.USER_TYPE_VALUE,
-                                                  "userid":
-                                                      MyApp.LOGIN_ID_VALUE,
-                                                  "centerid":
-                                                      centers[currentIndex].id,
-                                                  "delete_id":
-                                                      plan['id'].toString(),
-                                                };
-                                                ProgramPlanApiHandler
-                                                    programPlanApiHandler =
-                                                    ProgramPlanApiHandler(
-                                                        _objToSend);
-                                                await programPlanApiHandler
-                                                    .deletePlan()
-                                                    .then((value) =>
-                                                        _fetchData());
+                                                return showDialog<void>(
+                                                  context: context,
+                                                  barrierDismissible:
+                                                      false, // User must tap button
+                                                  builder: (BuildContext
+                                                      dialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          'Confirm Delete'),
+                                                      content: Text(
+                                                          'Are you sure you want to delete this program plan?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child: Text('Cancel'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    dialogContext)
+                                                                .pop(); // Dismiss dialog
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: Text('Delete'),
+                                                          onPressed: () async {
+                                                            Navigator.of(
+                                                                    dialogContext)
+                                                                .pop(); // Close the dialog first
+
+                                                            Map<String, String>
+                                                                _objToSend = {
+                                                              "user_id": MyApp
+                                                                  .LOGIN_ID_VALUE,
+                                                              "program_id": plan[
+                                                                      'id']
+                                                                  .toString(),
+                                                            };
+
+                                                            ProgramPlanApiHandler
+                                                                programPlanApiHandler =
+                                                                ProgramPlanApiHandler(
+                                                                    _objToSend);
+
+                                                            var response =
+                                                                await programPlanApiHandler
+                                                                    .deletePlan();
+                                                            print(
+                                                                '========response================');
+                                                            print(response);
+
+                                                            if (response['Status'] == 'SUCCESS' ||
+                                                                response[
+                                                                        'Status'] ==
+                                                                    'Success' ||
+                                                                response[
+                                                                        'Status'] ==
+                                                                    true ||
+                                                                response[
+                                                                        'status'] ==
+                                                                    true ||
+                                                                response[
+                                                                        'status'] ==
+                                                                    'success') {
+                                                              MyApp.ShowToast(
+                                                                  'Program plan deleted successfully',
+                                                                  context);
+                                                              _fetchData();
+                                                            }
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
                                               },
                                               icon: Icon(Icons.delete,
                                                   color: Colors.black),
@@ -385,7 +465,8 @@ class _PlansListState extends State<PlansList> {
                               ),
                             );
                           },
-                        )
+                        );
+                      })
                     ])))));
   }
 }
@@ -410,7 +491,7 @@ String _getMonthName(String? monthNumber) {
   if (index >= 1 && index <= 12) {
     return months[index - 1];
   }
-  return '-';
+  return '';
 }
 
 String _formatDate(String? dateTimeString) {

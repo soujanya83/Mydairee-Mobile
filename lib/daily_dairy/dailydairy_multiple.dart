@@ -708,7 +708,6 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                     "userid": MyApp.LOGIN_ID_VALUE,
                                     "sunscreen": data
                                   };
-
                                   print(jsonEncode(objToSend));
                                   final response = await http.post(
                                       Uri.parse(_toSend),

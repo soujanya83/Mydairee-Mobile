@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/api/observationapi.dart';
+import 'package:mykronicle_mobile/api/programplanapi.dart';
 import 'package:mykronicle_mobile/api/roomsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
@@ -18,12 +21,13 @@ class AddPlan extends StatefulWidget {
   final String centerid;
   final String? planId;
   final Map? totaldata;
-
+  final Map<String, dynamic>? jsonData;
   AddPlan(
     this.type,
     this.centerid,
     this.planId,
     this.totaldata,
+    this.jsonData,
   );
 
   @override
@@ -35,8 +39,7 @@ class _AddPlanState extends State<AddPlan> {
   String? selectedMonth;
   String? selectedYear;
   RoomsDescModel? selectedRoom;
-  List<UserModel> selectedEducators = [];
-  List<ChildModel> selectedChildren = [];
+  List<UserModel> selectedEducators = []; 
   bool expandeylf = false;
   List<EylfOutcomeModel> eylfData = [];
 
@@ -91,6 +94,8 @@ class _AddPlanState extends State<AddPlan> {
 
   final TextEditingController eylfController = TextEditingController();
 
+  bool loading = false;
+
   @override
   void dispose() {
     focusAreasController.dispose();
@@ -105,12 +110,73 @@ class _AddPlanState extends State<AddPlan> {
     super.dispose();
   }
 
+  void initializeControllersFromJson(Map<String, dynamic> jsonData) {
+    try {
+      focusAreasController.text = jsonData['focus_area'] ?? '';
+      outdoorExperiencesController.text = jsonData['outdoor_experiences'] ?? '';
+      inquiryTopicController.text = jsonData['inquiry_topic'] ?? '';
+      sustainabilityTopicController.text =
+          jsonData['sustainability_topic'] ?? '';
+      specialEventsController.text = jsonData['special_events'] ?? '';
+      childrenVoicesController.text = jsonData['children_voices'] ?? '';
+      familiesInputController.text = jsonData['families_input'] ?? '';
+      groupExperienceController.text = jsonData['group_experience'] ?? '';
+      spontaneousExperienceController.text =
+          jsonData['spontaneous_experience'] ?? '';
+      mindfulnessExperienceController.text =
+          jsonData['mindfulness_experiences'] ?? '';
+      eylfController.text = jsonData['eylf'] ?? '';
+      practicalLifeController.text = jsonData['practical_life'] ?? '';
+      sensorialController.text = jsonData['sensorial'] ?? '';
+      mathController.text = jsonData['math'] ?? '';
+      languageController.text = jsonData['language'] ?? '';
+      cultureController.text = jsonData['culture'] ?? '';
+      ////month
+      if (months
+          .map((e) => e.toLowerCase())
+          .toList()
+          .contains(widget.jsonData!['months'].toString().toLowerCase())) {
+        selectedMonth = widget.jsonData!['months'] ?? '';
+        setState(() {});
+      } else {
+        int i = 0;
+        try {
+          i = int.parse(widget.jsonData!['months'].toString());
+          selectedMonth = months[i - 1];
+          setState(() {});
+        } catch (e) {}
+      }
+      // year
+      if (years
+          .map((e) => e.toLowerCase())
+          .toList()
+          .contains(jsonData['years'].toString())) {
+        selectedYear = jsonData['years'] ?? '';
+      }
+    } catch (e) {
+      print('Error initializing controllers: $e');
+    }
+    setState(() {});
+  }
+
+  assingRoom() {
+    print('++++++++++assingRoom+++++++++++++++');
+    for (int i = 0; i < _rooms.length; i++) {
+      if (widget.jsonData!['room_id'] == _rooms[i].room.id) {
+        selectedRoom = _rooms[i].room; //
+        break;
+      }
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchData();
     assignAssessmentData();
+    if (widget.jsonData != null) {
+      initializeControllersFromJson(widget.jsonData!);
+    }
   }
 
   List<RoomsModel> _rooms = [];
@@ -177,9 +243,13 @@ class _AddPlanState extends State<AddPlan> {
       print("Exception in fetchRoomsOnly: $e");
       print(s);
     }
+    if (widget.jsonData != null) assingRoom();
   }
 
   changeRoomWithEducatorAndChild(int index) {
+    selectedChildrens = [];
+    selectedEdu = [];
+    print('+++++++run changeRoomWithEducatorAndChild+++++++++');
     if (res != null && res is List) {
       users = [];
       eduValues = {};
@@ -315,26 +385,37 @@ class _AddPlanState extends State<AddPlan> {
     for (int parentIndex = 0;
         parentIndex < (practicalLifeData?.activity.length ?? 0);
         parentIndex++) {
+      String activity = practicalLifeData?.activity[parentIndex].title ?? '';
+      bool isDone = false;
       print(
           '====================*******i*****=$parentIndex============================');
       for (int childIndex = 0;
           childIndex <
-              (practicalLifeData?.activity[parentIndex].subActivity?.length ??
+              (practicalLifeData?.activity[parentIndex].subActivity.length ??
                   0);
           childIndex++) {
         print(
             '====================##########j##########=$childIndex===($parentIndex)=========================');
         print(
             '======value=${practicalLifeData?.activity[parentIndex].subActivity[childIndex].choosen ?? false}==========');
+
         if (practicalLifeData
                 ?.activity[parentIndex].subActivity[childIndex].choosen ??
             false) {
-          practicalLifeController.text +=
-              (("${practicalLifeData?.activity[parentIndex].title} -") +
-                      (practicalLifeData?.activity[parentIndex]
-                              .subActivity[childIndex].title ??
-                          '')) +
-                  '\n';
+          if (!isDone) {
+            practicalLifeController.text += '**$activity** - \n';
+            isDone = true;
+          }
+
+          String subActivity = practicalLifeData
+                  ?.activity[parentIndex].subActivity[childIndex].title ??
+              '';
+
+          practicalLifeController.text += '**• **$subActivity.\n';
+          // practicalLifeController.text +=
+          //     (("${practicalLifeData?.activity[parentIndex].title} -") +
+          //             (practicalLifeData?.activity[parentIndex].subActivity[childIndex].title ??'')) +
+          //         '\n';
         }
       }
     }
@@ -342,13 +423,26 @@ class _AddPlanState extends State<AddPlan> {
 
   void assignSensorialInController() {
     sensorialController.text = '';
-
-    if (sensorialData == null || sensorialData!.activity.isEmpty) return;
-
-    for (var activity in sensorialData!.activity) {
-      for (var sub in activity.subActivity ?? []) {
-        if (sub.choosen) {
-          sensorialController.text += '${activity.title} - ${sub.title}\n';
+    for (int parentIndex = 0;
+        parentIndex < (sensorialData?.activity.length ?? 0);
+        parentIndex++) {
+      String activity = sensorialData?.activity[parentIndex].title ?? '';
+      bool isDone = false;
+      for (int childIndex = 0;
+          childIndex <
+              (sensorialData?.activity[parentIndex].subActivity.length ?? 0);
+          childIndex++) {
+        if (sensorialData
+                ?.activity[parentIndex].subActivity[childIndex].choosen ??
+            false) {
+          if (!isDone) {
+            sensorialController.text += '**$activity** - \n';
+            isDone = true;
+          }
+          String subActivity = sensorialData
+                  ?.activity[parentIndex].subActivity[childIndex].title ??
+              '';
+          sensorialController.text += '**• **$subActivity.\n';
         }
       }
     }
@@ -356,13 +450,25 @@ class _AddPlanState extends State<AddPlan> {
 
   void assignMathInController() {
     mathController.text = '';
-
-    if (mathData == null || mathData!.activity.isEmpty) return;
-
-    for (var activity in mathData!.activity) {
-      for (var sub in activity.subActivity ?? []) {
-        if (sub.choosen) {
-          mathController.text += '${activity.title} - ${sub.title}\n';
+    for (int parentIndex = 0;
+        parentIndex < (mathData?.activity.length ?? 0);
+        parentIndex++) {
+      String activity = mathData?.activity[parentIndex].title ?? '';
+      bool isDone = false;
+      for (int childIndex = 0;
+          childIndex <
+              (mathData?.activity[parentIndex].subActivity.length ?? 0);
+          childIndex++) {
+        if (mathData?.activity[parentIndex].subActivity[childIndex].choosen ??
+            false) {
+          if (!isDone) {
+            mathController.text += '**$activity** - \n';
+            isDone = true;
+          }
+          String subActivity =
+              mathData?.activity[parentIndex].subActivity[childIndex].title ??
+                  '';
+          mathController.text += '**• **$subActivity.\n';
         }
       }
     }
@@ -370,13 +476,26 @@ class _AddPlanState extends State<AddPlan> {
 
   void assignLanguageInController() {
     languageController.text = '';
-
-    if (languageData == null || languageData!.activity.isEmpty) return;
-
-    for (var activity in languageData!.activity) {
-      for (var sub in activity.subActivity ?? []) {
-        if (sub.choosen) {
-          languageController.text += '${activity.title} - ${sub.title}\n';
+    for (int parentIndex = 0;
+        parentIndex < (languageData?.activity.length ?? 0);
+        parentIndex++) {
+      String activity = languageData?.activity[parentIndex].title ?? '';
+      bool isDone = false;
+      for (int childIndex = 0;
+          childIndex <
+              (languageData?.activity[parentIndex].subActivity.length ?? 0);
+          childIndex++) {
+        if (languageData
+                ?.activity[parentIndex].subActivity[childIndex].choosen ??
+            false) {
+          if (!isDone) {
+            languageController.text += '**$activity** - \n';
+            isDone = true;
+          }
+          String subActivity = languageData
+                  ?.activity[parentIndex].subActivity[childIndex].title ??
+              '';
+          languageController.text += '**• **$subActivity.\n';
         }
       }
     }
@@ -384,13 +503,26 @@ class _AddPlanState extends State<AddPlan> {
 
   void assignCultureInController() {
     cultureController.text = '';
-
-    if (cultureData == null || cultureData!.activity.isEmpty) return;
-
-    for (var activity in cultureData!.activity) {
-      for (var sub in activity.subActivity ?? []) {
-        if (sub.choosen) {
-          cultureController.text += '${activity.title} - ${sub.title}\n';
+    for (int parentIndex = 0;
+        parentIndex < (cultureData?.activity.length ?? 0);
+        parentIndex++) {
+      String activity = cultureData?.activity[parentIndex].title ?? '';
+      bool isDone = false;
+      for (int childIndex = 0;
+          childIndex <
+              (cultureData?.activity[parentIndex].subActivity.length ?? 0);
+          childIndex++) {
+        if (cultureData
+                ?.activity[parentIndex].subActivity[childIndex].choosen ??
+            false) {
+          if (!isDone) {
+            cultureController.text += '**$activity** - \n';
+            isDone = true;
+          }
+          String subActivity = cultureData
+                  ?.activity[parentIndex].subActivity[childIndex].title ??
+              '';
+          cultureController.text += '**• **$subActivity.\n';
         }
       }
     }
@@ -959,7 +1091,7 @@ class _AddPlanState extends State<AddPlan> {
                 for (var i = 0; i < childValues.length; i++) {
                   String key = childValues.keys.elementAt(i);
                   childValues[key] = value!;
-                  if (value == true) {
+                  if (value == true) { 
                     if (!selectedChildrens.contains(childs[i])) {
                       selectedChildrens.add(childs[i]);
                     }
@@ -1090,17 +1222,20 @@ class _AddPlanState extends State<AddPlan> {
           ? getStartDrawer(context)
           : getEndDrawer(context),
       appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
           actions: [
             SizedBox(
               width: 40,
             )
           ],
+          
           title: InkWell(
               onTap: () {
                 assignAssessmentData();
               },
-              child: Text('Add Plan'))),
+              child: widget.type == 'edit'
+                  ? Text('Edit Plan')
+                  : Text('Add Plan'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -1122,9 +1257,14 @@ class _AddPlanState extends State<AddPlan> {
             _buildDropdown(years, selectedYear, (value) {
               setState(() => selectedYear = value);
             }),
-            Text(
-              'Rooms',
-              style: Constants.header2,
+            InkWell(
+              onTap: () {
+                assingRoom();
+              },
+              child: Text(
+                'Rooms',
+                style: Constants.header2,
+              ),
             ),
             height5,
             _buildRoomDropdown(),
@@ -1607,91 +1747,187 @@ class _AddPlanState extends State<AddPlan> {
                 context: context,
                 controller: mindfulnessExperienceController),
             height10,
+            SizedBox(
+              height: 20,
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     // Required fields check
                     if (selectedRoom == null) {
-                      MyApp.ShowToast('Please select a Room.',context);
+                      MyApp.ShowToast('Please select a Room.', context);
                       return null;
                     }
                     if (selectedMonth == null) {
-                      MyApp.ShowToast('Please select a Month.',context);
+                      MyApp.ShowToast('Please select a Month.', context);
                       return null;
                     }
                     if (selectedEdu.isEmpty) {
-                      MyApp.ShowToast('Please select at least one Educator.',context);
+                      MyApp.ShowToast(
+                          'Please select at least one Educator.', context);
                       return null;
                     }
                     if (selectedChildrens.isEmpty) {
-                      MyApp.ShowToast('Please select at least one Child.',context);
+                      MyApp.ShowToast(
+                          'Please select at least one Child.', context);
                       return null;
-                    } 
+                    }
                     // Navigator.pop(context);
-                   
+                    List edu = [];
+                    for (int i = 0; i < selectedEdu.length; i++) {
+                      edu.add(selectedEdu[i].userid.toString());
+                    }
+
+                    List child = [];
+                    for (int i = 0; i < selectedChildrens.length; i++) {
+                      child.add(selectedChildrens[i].id.toString());
+                    }
+                    print('=============');
+                    print(child);
+                    print(edu);
+                    // if (loading) return;
+                    setState(() {
+                      loading = true;
+                    });
                     Map<String, dynamic> mp = {
-                      if (widget.planId != null)
-                        'plan_id': widget.planId, // ❌ Optional (for update)
-                      'room': selectedRoom?.id ?? '', // ✅ Required
-                      'months': selectedMonth ?? '', // ✅ Required
-                      'years': selectedYear ?? '', // ❌ Optional
-                      'centerid': widget.centerid, // ❌ Optional
-                      'user_id': MyApp.LOGIN_ID_VALUE, // ✅ Required
-                      'users': selectedEducators
-                          .map((e) => e.id.toString())
-                          .toList(), // ✅ Required
-                      'children': selectedChildrens
-                          .map((c) => c.id.toString())
-                          .toList(), // ✅ Required
-                      'focus_area': focusAreasController.text, // ❌ Optional
-                      'practical_life': practicalLifeController.text, // ❌ Optional
+                      if (widget.planId != null && widget.planId!.isNotEmpty)
+                        'plan_id': widget.planId, //  Optional (for update)
+                      'room': selectedRoom?.id ?? '', //  Required
+                      'months': '${months.indexOf(selectedMonth??'')+1}', // Required
+                      'years': selectedYear ?? '', //  Optional
+                      'centerid': widget.centerid, //  Optional
+                      'user_id': MyApp.LOGIN_ID_VALUE, //  Required
+                      'users': jsonEncode(edu), //  Required
+                      'children': jsonEncode(child), //  Required
+                      'focus_area': focusAreasController.text, //  Optional
+                      'practical_life':
+                          practicalLifeController.text, //  Optional
                       'practical_life_experiences':
-                          practicalLifeController.text, // ❌ Optional
-                      'sensorial': sensorialController.text, // ❌ Optional
+                          practicalLifeController.text, //  Optional
+                      'sensorial': sensorialController.text, //  Optional
                       'sensorial_experiences':
-                          sensorialController.text, // ❌ Optional
-                      'math': mathController.text, // ❌ Optional
-                      'math_experiences': mathController.text, // ❌ Optional
-                      'language': languageController.text, // ❌ Optional
-                      'language_experiences': languageController.text, // ❌ Optional
-                      'culture': cultureController.text, // ❌ Optional
-                      'culture_experiences': cultureController.text, // ❌ Optional
-                      'art_craft': '', // ❌ Optional
-                      'art_craft_experiences': '', // ❌ Optional
-                      'eylf': eylfController.text, // ❌ Optional
+                          sensorialController.text, //  Optional
+                      'math': mathController.text, //  Optional
+                      'math_experiences': mathController.text, //  Optional
+                      'language': languageController.text, //  Optional
+                      'language_experiences':
+                          languageController.text, //  Optional
+                      'culture': cultureController.text, //  Optional
+                      'culture_experiences':
+                          cultureController.text, //  Optional
+                      'art_craft': '', //  Optional
+                      'art_craft_experiences': '', //  Optional
+                      'eylf': eylfController.text, //  Optional
                       'outdoor_experiences':
-                          outdoorExperiencesController.text, // ❌ Optional
-                      'inquiry_topic': inquiryTopicController.text, // ❌ Optional
+                          outdoorExperiencesController.text, //  Optional
+                      'inquiry_topic': inquiryTopicController.text, //  Optional
                       'sustainability_topic':
-                          sustainabilityTopicController.text, // ❌ Optional
-                      'special_events': specialEventsController.text, // ❌ Optional
+                          sustainabilityTopicController.text, //  Optional
+                      'special_events':
+                          specialEventsController.text, //  Optional
                       'children_voices':
-                          childrenVoicesController.text, // ❌ Optional
-                      'families_input': familiesInputController.text, // ❌ Optional
+                          childrenVoicesController.text, //  Optional
+                      'families_input':
+                          familiesInputController.text, //  Optional
                       'group_experience':
-                          groupExperienceController.text, // ❌ Optional
+                          groupExperienceController.text, //  Optional
                       'spontaneous_experience':
-                          spontaneousExperienceController.text, // ❌ Optional
+                          spontaneousExperienceController.text, //  Optional
                       'mindfulness_experiences':
-                          mindfulnessExperienceController.text, // ❌ Optional
+                          mindfulnessExperienceController.text, //  Optional
                     };
-                    print('==================');
+                    print('==========');
                     prettyPrintJson(mp);
+                    try {
+                      FormData formData = FormData.fromMap(mp);
+
+                      print(
+                          '================== FormData Fields ==================');
+                      print(formData.fields.toString());
+
+                      Dio dio = Dio();
+
+                      String url = Constants.BASE_URL +
+                          "Programplanlist/saveProgramPlan_post";
+
+                      print('URL: $url');
+                      print('Device ID: ${await MyApp.getDeviceIdentity()}');
+                      print('Auth Token: ${MyApp.AUTH_TOKEN_VALUE}');
+                      print({
+                        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                      });
+
+                      Response response = await dio.post(
+                        url,
+                        data: formData,
+                        options: Options(
+                          headers: {
+                            'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                          },
+                        ),
+                      );
+                      print('========= Response =========');
+                      print(response.toString());
+
+                      // var res = jsonDecode(response.toString());
+
+                      if (response.statusCode ==
+                          200) //if (res['Status'] == 'SUCCESS')
+                      {
+                        MyApp.ShowToast(
+                            "Program Plan Saved Successfully!", context);
+                        print('Program Plan ID: ${res['id']}');
+                        Navigator.pop(context);
+                      } else {
+                        MyApp.ShowToast(
+                            res['Message'] ?? "Something went wrong", context);
+                      }
+                    } catch (error, stacktrace) {
+                      print('========= Error Occurred =========');
+                      print(error);
+                      print(stacktrace);
+                      MyApp.ShowToast("Network error occurred", context);
+                      if (this.mounted)
+                        setState(() {
+                          loading = false;
+                        });
+                    }
+                    if (this.mounted)
+                      setState(() {
+                        loading = false;
+                      });
                   },
                   child: Container(
+                      width: MediaQuery.of(context).size.width * .9,
                       decoration: BoxDecoration(
                           color: Constants.kButton,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: Text(
-                          'SAVE',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                          child: loading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    'SAVE',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ),
                         ),
                       )),
                 ),
+                SizedBox(
+                  height: 20,
+                )
               ],
             ),
           ],
@@ -1975,9 +2211,51 @@ Widget customMultilineTextField({
   );
 }
 
-
 void prettyPrintJson(Object jsonObject) {
   final encoder = JsonEncoder.withIndent('  ');
   final jsonString = encoder.convert(jsonObject);
   debugPrint(jsonString); // debugPrint बड़ी length handle कर लेता है
+}
+
+class ActivityFormatter {
+  String _currentActivity = '';
+  String _result = '';
+
+  String formatActivityData(String activity, String subactivity) {
+    // Check if activity changed
+    if (activity != _currentActivity) {
+      if (_currentActivity.isNotEmpty) {
+        _result += '\n'; // Extra line break when activity changes
+      }
+      _currentActivity = activity;
+      _result += '**$activity** - \n';
+    }
+
+    // Add subactivity with bullet
+    _result += '**• **$subactivity\n';
+
+    return _result;
+  }
+
+  String getFormattedText() {
+    return _result;
+  }
+}
+
+String formatActivityData(String activity, String subactivity) {
+  String _currentActivity = '';
+  String _result = '';
+  // Check if activity changed
+  if (activity != _currentActivity) {
+    if (_currentActivity.isNotEmpty) {
+      _result += '\n'; // Extra line break when activity changes
+    }
+    _currentActivity = activity;
+    _result += '**$activity** - \n';
+  }
+
+  // Add subactivity with bullet
+  _result += '**• **$subactivity\n';
+
+  return _result;
 }

@@ -78,7 +78,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     toilet = new TextEditingController();
     signature = new TextEditingController();
 
-    hours = List<String>.generate(12, (counter) => "${counter + 1}h");
+    hours = List<String>.generate(24, (counter) => "${counter + 1}h");
     minutes = List<String>.generate(60, (counter) => "${counter}m");
 
     _fetchCenters();
@@ -238,7 +238,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     return Scaffold(
         drawer: GetDrawer(),
         appBar: Header.appBar(),
-        floatingActionButton: floating(context),
+        // floatingActionButton: floating(context),
         body: roomsFetched
             ? Stack(
                 children: [
@@ -301,7 +301,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Row(
+                                Column(
                                   children: [
                                     centersFetched
                                         ? DropdownButtonHideUnderline(
@@ -310,7 +310,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.45,
+                                                  0.9,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
                                                       color:
@@ -361,9 +361,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                             ),
                                           )
                                         : Container(),
-                                    Expanded(
-                                      child: Container(),
-                                    ),
+                                    // Expanded(
+                                    //   child: Container(),
+                                    // ),
+                                    SizedBox(height: 10),
                                     roomsFetched
                                         ? DropdownButtonHideUnderline(
                                             child: Container(
@@ -371,7 +372,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.45,
+                                                  0.9,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
                                                       color:
@@ -506,25 +507,32 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               physics:
                                                   NeverScrollableScrollPhysics(),
                                               children: [
-                                                if (showType['breakfast?'] ==
+                                                if (showType['breakfast'] ==
                                                     '1')
                                                   ListTile(
-                                                    subtitle: _allChildrens[
+                                                    subtitle:( _allChildrens[
                                                                     selectedIndex ??
                                                                         0]
                                                                 .breakfast !=
-                                                            null
+                                                            null) &&  _allChildrens[
+                                                                    selectedIndex ??
+                                                                        0]
+                                                                .breakfast!.isNotEmpty
                                                         ? Text(_allChildrens[
                                                                     selectedIndex ??
                                                                         0]
                                                                 .breakfast?[
-                                                            'startTime'])
+                                                            'startTime']??'')
                                                         : Container(),
                                                     title: Text('Breakfast'),
-                                                    trailing: _allChildrens[
-                                                                    selectedIndex]
+                                                    trailing: ( _allChildrens[
+                                                                    selectedIndex ??
+                                                                        0]
                                                                 .breakfast !=
-                                                            null
+                                                            null) &&  _allChildrens[
+                                                                    selectedIndex ??
+                                                                        0]
+                                                                .breakfast!.isNotEmpty
                                                         ? GestureDetector(
                                                             onTap: () {
                                                               var time = _allChildrens[
@@ -562,8 +570,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   }
                                                                 }
                                                               });
-                                                              hour = time![0];
-                                                              min = time[1];
+                                                              try {
+                                                                hour = time![0];
+                                                                min = time[1];
+                                                              } catch (e) {
+                                                                print(e
+                                                                    .toString());
+                                                              }
                                                               quant?.text =
                                                                   _allChildrens[
                                                                           selectedIndex]
@@ -666,10 +679,14 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 if (showType['morningtea'] ==
                                                     '1')
                                                   ListTile(
-                                                    subtitle: _allChildrens[
+                                                    subtitle: ((_allChildrens[
+                                                                        selectedIndex]
+                                                                    .morningtea !=
+                                                                null) &&
+                                                            (_allChildrens[
                                                                     selectedIndex]
-                                                                .morningtea !=
-                                                            null
+                                                                .morningtea
+                                                                .isNotEmpty))
                                                         ? Text(_allChildrens[
                                                                 selectedIndex]
                                                             .morningtea[
@@ -681,9 +698,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
                                                         ? SizedBox()
-                                                        : _allChildrens[selectedIndex]
-                                                                    .morningtea !=
-                                                                null
+                                                        : ((_allChildrens[selectedIndex]
+                                                                        .morningtea !=
+                                                                    null) &&
+                                                                (_allChildrens[
+                                                                        selectedIndex]
+                                                                    .morningtea
+                                                                    .isNotEmpty))
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   var time = _allChildrens[selectedIndex]
@@ -693,7 +714,6 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       .split(
                                                                           ":");
                                                                   print(time);
-
                                                                   type =
                                                                       'MorningTea';
                                                                   _getItems(
@@ -733,7 +753,6 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                               selectedIndex]
                                                                           .morningtea[
                                                                       'comments'];
-
                                                                   showPop =
                                                                       true;
                                                                   setState(
@@ -820,9 +839,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 if (showType['lunch'] == '1')
                                                   ListTile(
                                                     subtitle: _allChildrens[
-                                                                    selectedIndex]
-                                                                .lunch !=
-                                                            null
+                                                                selectedIndex]
+                                                            .lunch
+                                                            .isNotEmpty
                                                         ? Text(_allChildrens[
                                                                 selectedIndex]
                                                             .lunch['startTime']
@@ -833,9 +852,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
                                                         ? SizedBox()
-                                                        : _allChildrens[selectedIndex]
-                                                                    .lunch !=
-                                                                null
+                                                        : _allChildrens[
+                                                                    selectedIndex]
+                                                                .lunch
+                                                                .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   var time = _allChildrens[
@@ -870,9 +890,15 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       }
                                                                     }
                                                                   });
-                                                                  hour =
-                                                                      time[0];
-                                                                  min = time[1];
+                                                                  try {
+                                                                    hour =
+                                                                        time[0];
+                                                                    min =
+                                                                        time[1];
+                                                                  } catch (e) {
+                                                                    print(e
+                                                                        .toString());
+                                                                  }
                                                                   quant?.text =
                                                                       _allChildrens[selectedIndex]
                                                                               .lunch[
@@ -974,14 +1000,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   ListTile(
                                                     title: Text('Sleep'),
                                                     subtitle: _allChildrens[
-                                                                        selectedIndex]
-                                                                    .sleep !=
-                                                                null &&
-                                                            _allChildrens[
-                                                                        selectedIndex]
-                                                                    .sleep
-                                                                    .length >
-                                                                0
+                                                                selectedIndex]
+                                                            .sleep
+                                                            .isNotEmpty
                                                         ? Text(_allChildrens[
                                                                         selectedIndex]
                                                                     .sleep[0]
@@ -996,14 +1017,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
                                                         ? SizedBox()
-                                                        : _allChildrens[selectedIndex]
-                                                                        .sleep !=
-                                                                    null &&
-                                                                _allChildrens[
-                                                                            selectedIndex]
-                                                                        .sleep
-                                                                        .length >
-                                                                    0
+                                                        : _allChildrens[
+                                                                    selectedIndex]
+                                                                .sleep
+                                                                .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   Navigator.push(
@@ -1108,9 +1125,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                     '1')
                                                   ListTile(
                                                     subtitle: _allChildrens[
-                                                                    selectedIndex]
-                                                                .afternoontea !=
-                                                            null
+                                                                selectedIndex]
+                                                            .afternoontea
+                                                            .isNotEmpty
                                                         ? Text(_allChildrens[
                                                                 selectedIndex]
                                                             .afternoontea[
@@ -1123,9 +1140,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
                                                         ? SizedBox()
-                                                        : _allChildrens[selectedIndex]
-                                                                    .afternoontea !=
-                                                                null
+                                                        : _allChildrens[
+                                                                    selectedIndex]
+                                                                .afternoontea
+                                                                .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   var time = _allChildrens[selectedIndex]
@@ -1262,9 +1280,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                     '1')
                                                   ListTile(
                                                     subtitle: _allChildrens[
-                                                                    selectedIndex]
-                                                                .snacks !=
-                                                            null
+                                                                selectedIndex]
+                                                            .snacks
+                                                            .isNotEmpty
                                                         ? Text(_allChildrens[
                                                                 selectedIndex]
                                                             .snacks['startTime']
@@ -1275,9 +1293,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
                                                         ? SizedBox()
-                                                        : _allChildrens[selectedIndex]
-                                                                    .snacks !=
-                                                                null
+                                                        : _allChildrens[
+                                                                    selectedIndex]
+                                                                .snacks
+                                                                .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   var time = _allChildrens[
@@ -1417,20 +1436,15 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   ListTile(
                                                     title: Text('SunScreen'),
                                                     subtitle: _allChildrens[
-                                                                        selectedIndex]
-                                                                    .sunscreen !=
-                                                                null &&
-                                                            _allChildrens[
-                                                                        selectedIndex]
-                                                                    .sunscreen
-                                                                    .length >
-                                                                0
+                                                                selectedIndex]
+                                                            .sunscreen
+                                                            .isNotEmpty
                                                         ? _allChildrens[
                                                                     selectedIndex]
-                                                                .toileting
+                                                                .sunscreen
                                                                 .isEmpty
                                                             ? Text(
-                                                                'No toileting data')
+                                                                'No Suncreen data')
                                                             : Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
@@ -1454,14 +1468,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
                                                         ? SizedBox()
-                                                        : _allChildrens[selectedIndex]
-                                                                        .sunscreen !=
-                                                                    null &&
-                                                                _allChildrens[
-                                                                            selectedIndex]
-                                                                        .sunscreen
-                                                                        .length >
-                                                                    0
+                                                        : _allChildrens[
+                                                                    selectedIndex]
+                                                                .sunscreen
+                                                                .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   Navigator.push(
@@ -1567,9 +1577,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                   ListTile(
                                                     title: Text('Toileting'),
                                                     subtitle: _allChildrens[
+                                                                        selectedIndex]
+                                                                    .toileting !=
+                                                                null &&
+                                                            _allChildrens[
                                                                     selectedIndex]
-                                                                .toileting !=
-                                                            null
+                                                                .toileting
+                                                                .isNotEmpty
                                                         ? Builder(
                                                             builder: (context) {
                                                             if (_allChildrens[
@@ -1613,8 +1627,12 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             'Parent'
                                                         ? SizedBox()
                                                         : _allChildrens[selectedIndex]
-                                                                    .toileting !=
-                                                                null
+                                                                        .toileting !=
+                                                                    null &&
+                                                                _allChildrens[
+                                                                        selectedIndex]
+                                                                    .toileting
+                                                                    .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
                                                                   var time = _allChildrens[selectedIndex]
@@ -1651,7 +1669,6 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                               selectedIndex]
                                                                           .toileting[
                                                                       'signature'];
-
                                                                   comments
                                                                       ?.text = _allChildrens[
                                                                               selectedIndex]
@@ -1879,7 +1896,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   details,
                                                                   showType)))
                                                   .then((value) {
-                                                if (value != null) {
+                                                if (value != null){
                                                   details = null;
                                                   childrensFetched = false;
                                                   //  viewAdd = false;
@@ -2020,36 +2037,47 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                         left: 8,
                                                                         right:
                                                                             8),
-                                                                    child:
-                                                                        Center(
-                                                                      child: DropdownButton<
-                                                                          String>(
-                                                                        //  isExpanded: true,
-                                                                        value:
-                                                                            hour,
-                                                                        items: hours.map((String
-                                                                            value) {
-                                                                          return new DropdownMenuItem<
-                                                                              String>(
-                                                                            value:
-                                                                                value,
-                                                                            child:
-                                                                                new Text(value),
-                                                                          );
-                                                                        }).toList(),
-                                                                        onChanged:
-                                                                            (String?
-                                                                                value) {
-                                                                          if (value ==
-                                                                              null)
-                                                                            return;
+                                                                    // child: Builder(
+                                                                    //   builder: (context) {
+                                                                    //     print(hours.toString());
+                                                                    //     return Text(hours.toString());
+                                                                    //   }
+                                                                    // ),
+                                                                    child: Builder(
+                                                                        builder:
+                                                                            (context) {
+                                                                      try {
+                                                                        if (!hours
+                                                                            .contains(hour)) {
                                                                           hour =
-                                                                              value!;
-                                                                          setState(
-                                                                              () {});
-                                                                        },
-                                                                      ),
-                                                                    ),
+                                                                              hours[0];
+                                                                        }
+                                                                        return Center(
+                                                                          child:
+                                                                              DropdownButton<String>(
+                                                                            //  isExpanded: true,
+                                                                            value:
+                                                                                hour,
+                                                                            items:
+                                                                                hours.map((String value) {
+                                                                              return new DropdownMenuItem<String>(
+                                                                                value: value,
+                                                                                child: new Text(value),
+                                                                              );
+                                                                            }).toList(),
+                                                                            onChanged:
+                                                                                (String? value) {
+                                                                              if (value == null)
+                                                                                return;
+                                                                              hour = value!;
+                                                                              setState(() {});
+                                                                            },
+                                                                          ),
+                                                                        );
+                                                                      } catch (e) {
+                                                                        return SizedBox();
+                                                                      }
+                                                                    }),
                                                                   ),
                                                                 ),
                                                               )
@@ -2195,12 +2223,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                       height: 5,
                                                     ),
                                                     Container(
-                                                      height: 30,
+                                                      height: 40,
                                                       child: TextField(
                                                           maxLines: 1,
                                                           controller: quant,
                                                           decoration:
                                                               new InputDecoration(
+                                                            contentPadding:
+                                                                EdgeInsets.only(
+                                                                    bottom: 10,
+                                                                    left: 10),
                                                             enabledBorder:
                                                                 const OutlineInputBorder(
                                                               borderSide:
@@ -2230,12 +2262,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                       height: 5,
                                                     ),
                                                     Container(
-                                                      height: 30,
+                                                      height: 40,
                                                       child: TextField(
                                                           maxLines: 1,
                                                           controller: cal,
                                                           decoration:
                                                               new InputDecoration(
+                                                            contentPadding:
+                                                                EdgeInsets.only(
+                                                                    bottom: 10,
+                                                                    left: 10),
                                                             enabledBorder:
                                                                 const OutlineInputBorder(
                                                               borderSide:
@@ -3407,12 +3443,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 height: 5,
                                               ),
                                               Container(
-                                                height: 30,
+                                                height: 40,
                                                 child: TextField(
                                                     maxLines: 1,
                                                     controller: nappy,
                                                     decoration:
                                                         new InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              bottom: 10,
+                                                              left: 10),
                                                       enabledBorder:
                                                           const OutlineInputBorder(
                                                         borderSide:
@@ -3440,12 +3480,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 height: 5,
                                               ),
                                               Container(
-                                                height: 30,
+                                                height: 40,
                                                 child: TextField(
                                                     maxLines: 1,
                                                     controller: potty,
                                                     decoration:
                                                         new InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              bottom: 10,
+                                                              left: 10),
                                                       enabledBorder:
                                                           const OutlineInputBorder(
                                                         borderSide:
@@ -3473,12 +3517,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 height: 5,
                                               ),
                                               Container(
-                                                height: 30,
+                                                height: 40,
                                                 child: TextField(
                                                     maxLines: 1,
                                                     controller: signature,
                                                     decoration:
                                                         new InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              bottom: 10,
+                                                              left: 10),
                                                       enabledBorder:
                                                           const OutlineInputBorder(
                                                         borderSide:
@@ -3506,12 +3554,16 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 height: 5,
                                               ),
                                               Container(
-                                                height: 30,
+                                                height: 40,
                                                 child: TextField(
                                                     maxLines: 1,
                                                     controller: toilet,
                                                     decoration:
                                                         new InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              bottom: 10,
+                                                              left: 10),
                                                       enabledBorder:
                                                           const OutlineInputBorder(
                                                         borderSide:

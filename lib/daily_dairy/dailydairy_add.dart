@@ -26,7 +26,7 @@ class DailyDairyAdd extends StatefulWidget {
 
 class _DailyDairyAddState extends State<DailyDairyAdd> {
   bool showPop = false;
-  late String type;
+  String type = '';
 
   String hour = '1h';
   String min = '0m';
@@ -588,7 +588,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 type = 'Snacks';
                                                 _getItems('SNACKS');
                                                 showPop = true;
-                                                setState(() {});
+                                                setState((){});
                                               },
                                               child: Container(
                                                   width: 60,
@@ -978,6 +978,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                   comments.text.toString(),
                                               "createdAt":
                                                   DateTime.now().toString(),
+
                                               "type": type.toUpperCase(),
                                               "childids": widget.child
                                             };
@@ -1682,7 +1683,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                     MyApp.AUTH_TOKEN_VALUE,
                                               });
                                           print(response.body);
-                                          if (response.statusCode == 200) {
+                                          if (response.statusCode == 200){
                                             MyApp.ShowToast("updated", context);
                                             Navigator.pop(context, 'kill');
                                           } else if (response.statusCode ==
@@ -1926,11 +1927,12 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                   height: 5,
                                 ),
                                 Container(
-                                  height: 30,
+                                  height: 40,
                                   child: TextField(
                                       maxLines: 1,
                                       controller: quant,
                                       decoration: new InputDecoration(
+                                        contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                         enabledBorder: const OutlineInputBorder(
                                           borderSide: const BorderSide(
                                               color: Colors.black26,
@@ -1956,6 +1958,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                       maxLines: 1,
                                       controller: cal,
                                       decoration: new InputDecoration(
+                                        contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                         enabledBorder: const OutlineInputBorder(
                                           borderSide: const BorderSide(
                                               color: Colors.black26,
@@ -2008,8 +2011,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           var objToSend = {
                                             "userid": MyApp.LOGIN_ID_VALUE,
                                             "startTime": hour + ":" + min,
-                                            "item": recipes[currentItemIndex]
-                                                .itemName,
+                                            "item":recipes.isNotEmpty? recipes[currentItemIndex]
+                                                .itemName:'',
                                             "qty": quant.text.toString(),
                                             "comments":
                                                 comments.text.toString(),

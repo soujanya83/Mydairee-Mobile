@@ -111,7 +111,7 @@ class ServiceWithHeaderDataPost {
     print('status code '+ response.statusCode.toString());
     print('dataaa' + response.body.toString());
     var status = jsonDecode(response.body);
-    if (status['Status'] == 'SUCCESS' || status['Status'] == 'Success' || status['Status'] == true ||  status['status'] == true  ) {
+    if (status['Status'] == 'SUCCESS' || status['Status'] == 'Success' || status['Status'] == true ||  status['status'] == true ||  status['status'] == 'success') {
       String data = response.body;
       return jsonDecode(data);
     } else {

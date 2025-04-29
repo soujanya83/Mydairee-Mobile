@@ -1583,11 +1583,9 @@ class _EditReflectionState extends State<EditReflection> {
                                   }
 
                                   try {
-                                    var uri = Uri.parse(
-                                        "${Constants.BASE_URL}Reflections/updateReflection/");
+                                    var uri = Uri.parse("${Constants.BASE_URL}Reflections/updateReflection/");
 
-                                    var request =
-                                        http.MultipartRequest('POST', uri);
+                                    var request =  http.MultipartRequest('POST', uri);
 
                                     // ✅ Add headers
                                     request.headers.addAll({

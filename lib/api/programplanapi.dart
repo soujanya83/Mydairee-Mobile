@@ -4,7 +4,7 @@ import 'package:mykronicle_mobile/services/constants.dart';
 
 var getProgramPlanListUrl = Constants.BASE_URL + 'Programplanlist/programPlanList';
 
-var deletePlanUrl = Constants.BASE_URL + 'Programplanlist/delete';
+var deletePlanUrl = Constants.BASE_URL + 'Programplanlist/deleteProgramPlan_post';
 
 var planDetailsUrl = Constants.BASE_URL + 'Programplanlist/get_details_list';
 
