@@ -244,13 +244,13 @@ class _HeadChecksState extends State<HeadChecks> {
                         )
                       : Container(),
                   SizedBox(
-                    height: 20,
+                    height: 20,  
                   ),
                   roomsFetched
                       ? DropdownButtonHideUnderline(
                           child: Container(
                             height: 40,
-                            width: MediaQuery.of(context).size.width * 0.9,
+                            width: MediaQuery.of(context).size.width * 0.9, 
                             decoration: BoxDecoration(
                                 border: Border.all(color: Constants.greyColor),
                                 color: Colors.white,

@@ -471,8 +471,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                     ),
                   ),
                 ),
-              ),
-
+              ), 
               SizedBox(
                 height: 10,
               ),

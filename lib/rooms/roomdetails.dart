@@ -467,7 +467,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                               children: [
                                 Text('Programming>'),
                                 Text(
-                                  'Rooms',
+                                  ' Rooms',
                                   style: TextStyle(color: Constants.kMain),
                                 )
                               ],

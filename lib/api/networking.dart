@@ -104,7 +104,9 @@ class ServiceWithHeaderDataPost {
       },
       body: jsonEncode(b),
     );
+    print('after post api...........');
     print(url);
+    print(b);
     print({
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
@@ -119,7 +121,7 @@ class ServiceWithHeaderDataPost {
         status['Status'] == 'Success' ||
         status['Status'] == true ||
         status['status'] == true ||
-        status['status'] == 'success') {
+        status['status'] == 'success' || status['success'] == true ||  status['Success'] == true  ) {
       // String data = response.body;
       return jsonDecode(cleanedJson);
     } else {

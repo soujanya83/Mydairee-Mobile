@@ -94,6 +94,7 @@ class Constants {
 
   static final String HEADCHECKS_TAG = "HEADCHECKS";
   static final String ACCIDENT_TAG = "ACCIDENT";
+  static final String SLEEPCHECKLIST_TAG = "SLEEP CHECK LIST";
 
   static final String PROGRESS_TAG = "PROGRESS NOTES";
 

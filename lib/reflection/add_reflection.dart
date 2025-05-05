@@ -1517,7 +1517,6 @@ class _AddReflectionState extends State<AddReflection> {
                                       Constants.BASE_URL +
                                           "Reflections/createReflection/",
                                     );
-
                                     var request =
                                         http.MultipartRequest('POST', uri);
 

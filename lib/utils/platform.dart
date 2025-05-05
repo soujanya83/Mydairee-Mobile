@@ -4,6 +4,7 @@ import 'package:mykronicle_mobile/announcements/announcementslist.dart';
 import 'package:mykronicle_mobile/daily_dairy/accidents/accidents_reports.dart';
 import 'package:mykronicle_mobile/daily_dairy/dailydairy_main.dart';
 import 'package:mykronicle_mobile/daily_dairy/headchecks.dart';
+import 'package:mykronicle_mobile/daily_dairy/sleep_check_list/sleep_check_list.dart';
 import 'package:mykronicle_mobile/dashboard/dashboard.dart';
 import 'package:mykronicle_mobile/login/usertype.dart';
 import 'package:mykronicle_mobile/main.dart';
@@ -35,7 +36,7 @@ class Platform extends StatefulWidget {
   PlatformState createState() => PlatformState();
 }
 
-class PlatformState extends State<Platform>{
+class PlatformState extends State<Platform> {
   PAGE_INDEX currentPage = PAGE_INDEX.DASHBOARD;
 
   @override
@@ -49,7 +50,7 @@ class GetDrawer extends StatefulWidget {
   _GetDrawerState createState() => _GetDrawerState();
 }
 
-class _GetDrawerState extends State<GetDrawer>{
+class _GetDrawerState extends State<GetDrawer> {
   bool show = false;
   bool showDailyDairy = false;
   bool showMontessori = false;
@@ -121,7 +122,7 @@ class _GetDrawerState extends State<GetDrawer>{
                 SimpleLineIcons.book_open,
                 color: Colors.white,
               ),
-              onTap:(){
+              onTap: () {
                 if (showQip == false) {
                   showQip = true;
                   setState(() {});
@@ -179,32 +180,32 @@ class _GetDrawerState extends State<GetDrawer>{
                     .push(MaterialPageRoute(builder: (context) => RoomsList()));
               },
             ),
-           if (MyApp.USER_TYPE_VALUE != 'Parent')
-          Divider(
-            color: Colors.white.withOpacity(0.8),
-          ),
-         if (MyApp.USER_TYPE_VALUE != 'Parent')
-          ListTile(
-            leading: Icon(
-              FontAwesome.newspaper_o,
-              color: Colors.white,
+          if (MyApp.USER_TYPE_VALUE != 'Parent')
+            Divider(
+              color: Colors.white.withOpacity(0.8),
             ),
-            title: Text(
-              Constants.PROGRAMPLANS_TAG,
-              style: Constants.sideHeadingStyle,
+          if (MyApp.USER_TYPE_VALUE != 'Parent')
+            ListTile(
+              leading: Icon(
+                FontAwesome.newspaper_o,
+                color: Colors.white,
+              ),
+              title: Text(
+                Constants.PROGRAMPLANS_TAG,
+                style: Constants.sideHeadingStyle,
+              ),
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => PlansList()));
+                // if (showProgPlan == false) {
+                //   showProgPlan = true;
+                //   setState(() {});
+                // } else {
+                //   showProgPlan = false;
+                //   setState(() {});
+                // }
+              },
             ),
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => PlansList()));
-              // if (showProgPlan == false) {
-              //   showProgPlan = true;
-              //   setState(() {});
-              // } else {
-              //   showProgPlan = false;
-              //   setState(() {});
-              // }
-            },
-          ),
           // Visibility(
           //   visible: showProgPlan,
           //   child: Column(
@@ -231,25 +232,25 @@ class _GetDrawerState extends State<GetDrawer>{
           //     ],
           //   ),
           // ),
- if (MyApp.USER_TYPE_VALUE != 'Parent')
-          Divider(
-            color: Colors.white.withOpacity(0.8),
-          ),
- if (MyApp.USER_TYPE_VALUE != 'Parent')
-          ListTile(
-            leading: Icon(
-              Ionicons.md_image,
-              color: Colors.white,
+          if (MyApp.USER_TYPE_VALUE != 'Parent')
+            Divider(
+              color: Colors.white.withOpacity(0.8),
             ),
-            title: Text(
-              Constants.MEDIA_TAG,
-              style: Constants.sideHeadingStyle,
+          if (MyApp.USER_TYPE_VALUE != 'Parent')
+            ListTile(
+              leading: Icon(
+                Ionicons.md_image,
+                color: Colors.white,
+              ),
+              title: Text(
+                Constants.MEDIA_TAG,
+                style: Constants.sideHeadingStyle,
+              ),
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => MediaMenu()));
+              },
             ),
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => MediaMenu()));
-            },
-          ),
 
           //
 
@@ -344,20 +345,20 @@ class _GetDrawerState extends State<GetDrawer>{
                         MaterialPageRoute(builder: (context) => MenuList()));
                   },
                 ),
-                 if (MyApp.USER_TYPE_VALUE != 'Parent')
-                Divider(color: Colors.transparent),
-                 if (MyApp.USER_TYPE_VALUE != 'Parent')
-                ListTile(
-                  title: Text(
-                    Constants.RECIPES_TAG,
-                    style: Constants.sideHeadingStyle,
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
+                  Divider(color: Colors.transparent),
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
+                  ListTile(
+                    title: Text(
+                      Constants.RECIPES_TAG,
+                      style: Constants.sideHeadingStyle,
+                    ),
+                    //   leading: Icon(Icons.food_bank_outlined,color: Colors.white,),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => RecipeList()));
+                    },
                   ),
-                  //   leading: Icon(Icons.food_bank_outlined,color: Colors.white,),
-                  onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => RecipeList()));
-                  },
-                ),
               ],
             ),
           ),
@@ -421,16 +422,28 @@ class _GetDrawerState extends State<GetDrawer>{
                   },
                 ),
                 Divider(color: Colors.transparent),
-               if(MyApp.USER_TYPE_VALUE!='Parent')
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
+                  ListTile(
+                    title: Text(
+                      Constants.HEADCHECKS_TAG,
+                      style: Constants.sideHeadingStyle,
+                    ),
+                    //   leading: Icon(Icons.food_bank_outlined,color: Colors.white,),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => HeadChecks()));
+                    },
+                  ),
+                Divider(color: Colors.transparent),
                 ListTile(
                   title: Text(
-                    Constants.HEADCHECKS_TAG,
+                    Constants.SLEEPCHECKLIST_TAG,
                     style: Constants.sideHeadingStyle,
                   ),
                   //   leading: Icon(Icons.food_bank_outlined,color: Colors.white,),
                   onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => HeadChecks()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SleepCheckList()));
                   },
                 ),
                 Divider(color: Colors.transparent),
@@ -448,10 +461,11 @@ class _GetDrawerState extends State<GetDrawer>{
               ],
             ),
           ),
- if (MyApp.USER_TYPE_VALUE != 'Parent')
-          Divider(
-            color: Colors.white.withOpacity(0.8),
-          ),
+          if (MyApp.USER_TYPE_VALUE != 'Parent')
+            Divider(
+              // ignore: deprecated_member_use
+              color: Colors.white.withOpacity(0.8),
+            ),
 //  if (MyApp.USER_TYPE_VALUE != 'Parent')
           ListTile(
             leading: Icon(
@@ -526,18 +540,17 @@ class _GetDrawerState extends State<GetDrawer>{
                   },
                 ),
                 Divider(color: Colors.transparent),
-                  if (MyApp.USER_TYPE_VALUE !=
-                                                    'Parent')
-                ListTile(
-                  title: Text(
-                    Constants.LESSONPLAN_TAG,
-                    style: Constants.sideHeadingStyle,
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
+                  ListTile(
+                    title: Text(
+                      Constants.LESSONPLAN_TAG,
+                      style: Constants.sideHeadingStyle,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LessonPlan()));
+                    },
                   ),
-                  onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => LessonPlan()));
-                  },
-                ),
               ],
             ),
           ),

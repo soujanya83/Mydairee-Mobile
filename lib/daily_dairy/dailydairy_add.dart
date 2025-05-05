@@ -6,8 +6,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/recipemodel.dart';
-import 'package:mykronicle_mobile/services/constants.dart';
-import 'package:mykronicle_mobile/utils/deleteDialog.dart';
+import 'package:mykronicle_mobile/services/constants.dart'; 
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/hexconversion.dart';
 import 'package:http/http.dart' as http;
@@ -382,7 +381,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                       )
                                     ],
                                   ),
-                                ),
+                                ) ,
                               if (widget.showPermissions['sleep'] == '1')
                                 Container(
                                   height: 50,
@@ -404,7 +403,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                             Expanded(
                                               child: Center(
                                                 child: Text(
-                                                  'SLEEP',
+                                                  'SLEEP', 
                                                   style: TextStyle(
                                                       //      color: Colors.white,
                                                       fontWeight:
@@ -438,10 +437,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                           BorderRadius.all(
                                                               Radius.circular(
                                                                   8))),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
+                                                  child: Padding(padding:const EdgeInsets.all(10.0),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -777,8 +773,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                                   Colors.white),
                                                         ),
                                                       ],
-                                                    ),
-                                                  )),
+                                                  ),
+                                              )),
                                             ),
                                           ),
                                         ),
@@ -970,7 +966,6 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                           onTap: () async {
                                             var _toSend = Constants.BASE_URL +
                                                 'dailyDiary/addSunscreenRecord';
-
                                             var objToSend = {
                                               "userid": MyApp.LOGIN_ID_VALUE,
                                               "startTime": hour + ":" + min,
