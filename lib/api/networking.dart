@@ -45,11 +45,11 @@ class ServiceWithHeader {
     print(MyApp.AUTH_TOKEN_VALUE);
     print(response.body);
     print(response.statusCode);
-    var status = jsonDecode(response.body);
+    String cleanedJson = cleanJson(response.body);
+    var status = jsonDecode(cleanedJson);
     print('heee' + status['Status'].toString());
     if (status['Status'] == 'SUCCESS') {
-      String data = response.body;
-      return jsonDecode(data);
+      return jsonDecode(cleanedJson);
     } else {
       return {
         "error": status['Message'],
@@ -121,7 +121,9 @@ class ServiceWithHeaderDataPost {
         status['Status'] == 'Success' ||
         status['Status'] == true ||
         status['status'] == true ||
-        status['status'] == 'success' || status['success'] == true ||  status['Success'] == true  ) {
+        status['status'] == 'success' ||
+        status['success'] == true ||
+        status['Success'] == true) {
       // String data = response.body;
       return jsonDecode(cleanedJson);
     } else {
@@ -130,15 +132,15 @@ class ServiceWithHeaderDataPost {
       };
     }
   }
+}
 
-  String cleanJson(String responseBody) {
-    int startIndex = responseBody.indexOf('{');
-    int endIndex = responseBody.lastIndexOf('}');
+String cleanJson(String responseBody) {
+  int startIndex = responseBody.indexOf('{');
+  int endIndex = responseBody.lastIndexOf('}');
 
-    if (startIndex != -1 && endIndex != -1) {
-      return responseBody.substring(startIndex, endIndex + 1);
-    } else {
-      throw FormatException('Invalid JSON format');
-    }
+  if (startIndex != -1 && endIndex != -1) {
+    return responseBody.substring(startIndex, endIndex + 1);
+  } else {
+    throw FormatException('Invalid JSON format');
   }
 }

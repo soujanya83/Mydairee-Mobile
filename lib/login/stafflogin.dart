@@ -6,7 +6,7 @@ import 'package:mykronicle_mobile/login/forgotpassword.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
-import 'package:otp_text_field/otp_field.dart';
+import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show utf8;
 
@@ -45,11 +45,11 @@ class _StaffLoginState extends State<StaffLogin> {
         "devicetype": "MOBILE",
         "userType": 'Staff'
       };
-
+      print(loginBody);
       LoginAPIHandler login = LoginAPIHandler(loginBody);
       var result = await login.login();
 
-      if (result!=null && !result.containsKey('error')) {
+      if (result != null && !result.containsKey('error')) {
         print(result);
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
@@ -72,8 +72,7 @@ class _StaffLoginState extends State<StaffLogin> {
       } else {
         isSignInDisabled = false;
         loggingIn = false;
-        if(result!=null)
-        errorText = result['error'];
+        if (result != null) errorText = result['error'];
         setState(() {});
         print('issue');
       }
@@ -100,65 +99,85 @@ class _StaffLoginState extends State<StaffLogin> {
         controller: nameController,
         style: TextStyle(color: Constants.kGrey),
         decoration: InputDecoration(
-            labelText: "Employee Code",
-            hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
-            contentPadding: EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-            labelStyle: new TextStyle(color: Constants.kGrey),
-            suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.minimize,
-                  color: Colors.transparent,
-                ),
-                onPressed: null)),
+          labelText: "Employee Code",
+          hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 3.0),
+          labelStyle: new TextStyle(color: Constants.kGrey),
+          suffixIcon: IconButton(
+              icon: Icon(
+                Icons.minimize,
+                color: Colors.transparent,
+              ),
+              onPressed: null),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.5,
+            ),
+          ),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(4),
+            ),
+          ),
+        ),
       ),
     );
 
     final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 40),
       child: ButtonTheme(
         height: 42.0,
         child: ElevatedButton(
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Constants.kButton,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-    ),
-  ),
-  onPressed: isSignInDisabled
-      ? null
-      : () {
-          if (pin == null || pin.isEmpty) {
-            pinErr = 'Enter Pin';
-            setState(() {});
-          } else {
-            pinErr = '';
-            setState(() {});
-          }
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Constants.kButton,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          onPressed: isSignInDisabled
+              ? null
+              : () {
+                  if (pin == null || pin.isEmpty) {
+                    pinErr = 'Enter Pin';
+                    setState(() {});
+                  } else {
+                    pinErr = '';
+                    setState(() {});
+                  }
 
-          if (nameController.text.isEmpty) {
-            empCodeErr = 'Enter Employee Code';
-            setState(() {});
-          } else {
-            empCodeErr = '';
-            setState(() {});
-          }
+                  if (nameController.text.isEmpty) {
+                    empCodeErr = 'Enter Employee Code';
+                    setState(() {});
+                  } else {
+                    empCodeErr = '';
+                    setState(() {});
+                  }
 
-          if (nameController.text.isNotEmpty && pin != null && pin.isNotEmpty) {
-            setState(() {
-              isSignInDisabled = true;
-            });
-            loginNow();
-          }
-        },
-  child: Text(
-    "Login",
-    style: TextStyle(
-      fontSize: 20.0,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    ),
-  ),
-),
+                  if (nameController.text.isNotEmpty &&
+                      pin != null &&
+                      pin.isNotEmpty) {
+                    setState(() {
+                      isSignInDisabled = true;
+                    });
+                    loginNow();
+                  }
+                },
+          child: Text(
+            "Login",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
 
@@ -185,7 +204,10 @@ class _StaffLoginState extends State<StaffLogin> {
                 height: 120.0, child: Image.asset(Constants.APP_LOGO))),
         label,
         SizedBox(height: 32.0),
-        employeeCode,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: employeeCode,
+        ),
         empCodeErr != ''
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -195,26 +217,58 @@ class _StaffLoginState extends State<StaffLogin> {
                 ),
               )
             : SizedBox(),
-        SizedBox(height: 8.0),
+        SizedBox(height: 20.0),
         Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+          padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
           child: Text(
             'PIN',
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        OTPTextField(
+        Pinput(
           length: 4,
-          //width: MediaQuery.of(context).size.width,
-          fieldWidth: 50,
-          style: TextStyle(fontSize: 17),
-          keyboardType: TextInputType.number,
-          textFieldAlignment: MainAxisAlignment.spaceAround,
-          //fieldStyle: FieldStyle.underline,
-          onCompleted: (p) {
-            print("Completed: " + p);
+          defaultPinTheme: PinTheme(
+            
+            width: 50,
+            height: 50,
+            textStyle: const TextStyle(
+              fontSize: 17,
+              color: Colors.black,
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Constants.kButton),
+              borderRadius: BorderRadius.circular(12), // Rounded borders
+            ),
+          ),
+          focusedPinTheme: PinTheme(
+            width: 50,
+            height: 50,
+            textStyle: const TextStyle(
+              fontSize: 17,
+              color: Colors.black,
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Constants.kButton, width: 2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          submittedPinTheme: PinTheme(
+            width: 50,
+            height: 50,
+            textStyle: const TextStyle(
+              fontSize: 17,
+              color: Colors.black,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              border: Border.all(color: Constants.kButton),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onCompleted: (pin) {
+            print("Completed: $pin");
             setState(() {
-              pin = p;
+              this.pin = pin;
             });
           },
         ),
@@ -231,17 +285,20 @@ class _StaffLoginState extends State<StaffLogin> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ForgotPassword()));
-                },
-                child: Text(
-                  'Forgot Password ?',
-                  style: TextStyle(color: Colors.blue),
-                )),
+            Padding(
+              padding: const EdgeInsets.only(right: 40),
+              child: InkWell(
+                  onTap:(){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForgotPassword()));
+                  },
+                  child: Text(
+                    'Forgot Password ?',
+                    style: TextStyle(color: Colors.blue),
+                  )),
+            ),
           ],
         ),
         SizedBox(height: 24.0),
@@ -255,6 +312,10 @@ class _StaffLoginState extends State<StaffLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Colors.white,
+        ),
         body: Stack(
           children: <Widget>[
             Center(

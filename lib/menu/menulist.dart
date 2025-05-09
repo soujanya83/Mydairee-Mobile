@@ -55,6 +55,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchData() async {
+     loading = true;
+      if (this.mounted) setState(() {});
     RecipeAPIHandler handler =
         RecipeAPIHandler({"centerid": centers[currentIndex].id});
     var data = await handler.getList();
@@ -1092,7 +1094,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                       minFontSize:
                                                                           8,
                                                                       maxLines:
-                                                                          2,
+                                                                          1,
                                                                       overflow:
                                                                           TextOverflow
                                                                               .ellipsis,
@@ -1112,14 +1114,23 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                         ),
                                                                         onTap:
                                                                             () async {
-                                                                          MenuAPIHandler
+                                                                              print('return');
+                                                                              try{
+  MenuAPIHandler
                                                                               handler =
                                                                               MenuAPIHandler({
                                                                             "userid":
                                                                                 MyApp.LOGIN_ID_VALUE,
                                                                             "id":
+                                                                                menuData['Menu'][j][3][index]['recipeDetails']['id'],
+                                                                          });
+                                                                          print({
+                                                                            "userid":
+                                                                                MyApp.LOGIN_ID_VALUE,
+                                                                            "id":
                                                                                 menuData['Menu'][j][3][index]['id'],
                                                                           });
+                                                                          
                                                                           var data =
                                                                               await handler.deleteListItem();
                                                                           print(
@@ -1131,6 +1142,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                             _fetchData();
                                                                             setState(() {});
                                                                           }
+                                                                              }catch(e){
+                                                                                print(e.toString());
+                                                                              }
+                                                                        
                                                                         },
                                                                       ),
                                                                     SizedBox(
@@ -1146,8 +1161,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                         size:
                                                                             16,
                                                                       ),
-                                                                      onTap:
-                                                                          () {
+                                                                      onTap: () {
                                                                         Navigator.push(
                                                                             context,
                                                                             MaterialPageRoute(
@@ -1333,6 +1347,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                   ),
                                                                   onTap:
                                                                       () async {
+                                                                        print('ontap breakfast delete');
                                                                     MenuAPIHandler
                                                                         handler =
                                                                         MenuAPIHandler({
@@ -1342,8 +1357,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                       "id": menuData['Menu'][j][0]
                                                                               [
                                                                               index]
-                                                                          [
-                                                                          'id'],
+                                                                          ['recipeDetails']['id'],
                                                                     });
                                                                     var data =
                                                                         await handler
@@ -1560,8 +1574,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                       "id": menuData['Menu'][j][1]
                                                                               [
                                                                               index]
-                                                                          [
-                                                                          'id'],
+                                                                          ['recipeDetails']['id'],
                                                                     });
                                                                     var data =
                                                                         await handler
@@ -1767,7 +1780,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                             "userid":
                                                                                 MyApp.LOGIN_ID_VALUE,
                                                                             "id":
-                                                                                menuData['Menu'][j][4][index]['id'],
+                                                                                menuData['Menu'][j][4][index]['recipeDetails']['id']
                                                                           });
                                                                           var data =
                                                                               await handler.deleteListItem();
@@ -1973,7 +1986,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                                             "userid":
                                                                                 MyApp.LOGIN_ID_VALUE,
                                                                             "id":
-                                                                                menuData['Menu'][j][2][index]['id'],
+                                                                                menuData['Menu'][j][2][index]['recipeDetails']['id'],
                                                                           });
                                                                           var data =
                                                                               await handler.deleteListItem();

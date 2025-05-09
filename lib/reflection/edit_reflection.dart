@@ -1044,9 +1044,10 @@ class _EditReflectionState extends State<EditReflection> {
                               // crossAxisAlignment: WrapCrossAlignment.center,
                               // textDirection: TextDirection.rtl,
                               // verticalDirection: VerticalDirection.up,
-                              children: List<Widget>.generate(reflectionMedia.length,
-                                  (int index) { 
-                                if (reflectionMedia[0].imageType == 'Image'|| reflectionMedia[0].imageType == 'image') {
+                              children: List<Widget>.generate(
+                                  reflectionMedia.length, (int index) {
+                                if (reflectionMedia[0].imageType == 'Image' ||
+                                    reflectionMedia[0].imageType == 'image') {
                                   return Stack(
                                     children: [
                                       Container(
@@ -1056,8 +1057,10 @@ class _EditReflectionState extends State<EditReflection> {
                                             //  borderRadius: BorderRadius.circular(15.0),
                                             shape: BoxShape.rectangle,
                                             image: new DecorationImage(
-                                              image:
-                                                  new NetworkImage(Constants.ImageBaseUrl+ reflectionMedia[index].imageUrl),
+                                              image: new NetworkImage(
+                                                  Constants.ImageBaseUrl +
+                                                      reflectionMedia[index]
+                                                          .imageUrl),
                                               fit: BoxFit.cover,
                                             ),
                                           )),
@@ -1105,7 +1108,8 @@ class _EditReflectionState extends State<EditReflection> {
                                 }
                               }),
                             )
-                          : Container(), SizedBox(
+                          : Container(),
+                      SizedBox(
                         height: 10,
                       ),
                       files.length > 0
@@ -1583,9 +1587,11 @@ class _EditReflectionState extends State<EditReflection> {
                                   }
 
                                   try {
-                                    var uri = Uri.parse("${Constants.BASE_URL}Reflections/updateReflection/");
+                                    var uri = Uri.parse(
+                                        "${Constants.BASE_URL}Reflections/updateReflection/");
 
-                                    var request =  http.MultipartRequest('POST', uri);
+                                    var request =
+                                        http.MultipartRequest('POST', uri);
 
                                     // ✅ Add headers
                                     request.headers.addAll({
@@ -1663,7 +1669,7 @@ class _EditReflectionState extends State<EditReflection> {
                                       MyApp.ShowToast(
                                           "Reflection Updated Successfully!",
                                           context);
-                                      // Navigator.pop(context, 'kill');
+                                      Navigator.pop(context);
                                     } else {
                                       MyApp.ShowToast("error", context);
                                     }

@@ -66,7 +66,8 @@ class ObservationModel {
       milestonecount: json['milestonecount'] ?? "0",
       checked: json['checked'] ?? "",
       boolCheck: (json['checked'] ?? "").toString().isNotEmpty,
-      observationsMedia: json['observationsMedia'] ?? "null",
+      observationsMedia:
+          json['observationsMedia'] ?? json['media'] ?? '',
       observationsMediaType: json['observationsMediaType'] ?? "null",
     );
   }

@@ -666,6 +666,7 @@ class _AddrecipeState extends State<Addrecipe> {
                                   "userid": MyApp.LOGIN_ID_VALUE,
                                   'centerid': widget.centerid,
                                 };
+                                print(mp.toString());
                                 if (widget.type != null &&
                                     widget.type == 'edit') {
                                   mp['id'] = widget.id;

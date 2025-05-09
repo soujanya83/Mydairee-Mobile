@@ -37,7 +37,7 @@ class SlipChecksChildModel {
           .toList();
     }
 
-    return SlipChecksChildModel(
+    return SlipChecksChildModel( 
       id: json['id'],
       name: json['name'],
       lastname: json['lastname'],
@@ -62,7 +62,7 @@ class SlipChecksChildModel {
       'dob': dob,
       'startDate': startDate,
       'room': room,
-      'imageUrl': imageUrl,
+      'imageUrl': imageUrl, 
       'gender': gender,
       'status': status,
       'daysAttending': daysAttending,
@@ -84,7 +84,7 @@ class SleepCheckModel {
   String breathing;
   String bodyTemperature;
   String notes;
-  String createdBy;
+  String createdBy; 
   String createdAt;
 
   // New variables to track previous values

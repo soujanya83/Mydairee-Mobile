@@ -13,7 +13,7 @@ class Constants {
   static final String NAME = "Name";
   static final String USER_TYPE = "UserType";
   static final String UID = "UID";
-
+  
   static final String LOGOUT = "LOGOUT";
 
   static final String ImageBaseUrl = Constants.BASE_URL + "assets/media/";
@@ -96,7 +96,7 @@ class Constants {
   static final String ACCIDENT_TAG = "ACCIDENT";
   static final String SLEEPCHECKLIST_TAG = "SLEEP CHECK LIST";
 
-  static final String PROGRESS_TAG = "PROGRESS NOTES";
+  static final String PROGRESS_TAG = "PROGRESS NOTES"; 
 
   //text styles
   static final sideHeadingStyle =

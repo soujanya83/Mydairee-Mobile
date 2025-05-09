@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/announcements/announcementslist.dart';
 import 'package:mykronicle_mobile/api/dashboardapi.dart';
@@ -8,16 +6,13 @@ import 'package:mykronicle_mobile/observation/childdetails.dart';
 import 'package:mykronicle_mobile/observation/observationmain.dart';
 import 'package:mykronicle_mobile/rooms/roomslist.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
-import 'package:mykronicle_mobile/settings/settingslist.dart';
 import 'package:mykronicle_mobile/settings/usersettings.dart';
-import 'package:mykronicle_mobile/utils/day_tile_builder.dart';
 import 'package:mykronicle_mobile/utils/floatingButton.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class Dashboard extends StatefulWidget {
   static String Tag = Constants.DASHBOARD_TAG;
@@ -60,92 +55,97 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _fetchData() async {
+    print('get getCalendarDetails');
     DateFormat inputFormat = DateFormat("yyyy-MM-dd");
     print("loggg" + MyApp.LOGIN_ID_VALUE);
     DashboardAPIHandler handler = DashboardAPIHandler({});
+    //  var dateDetails = await handler.getCalendarDetails();
     var data = await handler.getCalendarDetails();
+    print('getCalendarDetails == getCalendarDetails');
+    print(data);
     if (!data.containsKey('error')) {
-      var ann = data['Announcements'];
-      print(ann);
-      for (var i = 0; i < ann.length; i++) {
-        dates.add(inputFormat.parse(ann[i]['eventDate']));
+      dateDetails = data;
+      // var ann = data['Announcements'];
+      // print(ann);
+      // for (var i = 0; i < ann.length; i++) {
+      //   dates.add(inputFormat.parse(ann[i]['eventDate']));
 
-        if (dateDetails.containsKey(inputFormat.parse(ann[i]['eventDate']))) {
-          List n = dateDetails[inputFormat.parse(ann[i]['eventDate'])];
-          n.add({"event": 'announcement', "extra": ann[i]['title']});
-          dateDetails[inputFormat.parse(ann[i]['eventDate'])] = n;
-        } else {
-          List m = [];
-          m.add({"event": 'announcement', "extra": ann[i]['title']});
-          dateDetails[inputFormat.parse(ann[i]['eventDate'])] = m;
-        }
-      }
-      var staff = data['StaffBirthdays'];
-      print(staff);
-      for (var i = 0; i < staff.length; i++) {
-        dates.add(inputFormat.parse(
-            now.year.toString() + staff[i]['dob'].toString().substring(4)));
-        if (dateDetails.containsKey(inputFormat.parse(
-            now.year.toString() + staff[i]['dob'].toString().substring(4)))) {
-          List n = dateDetails[inputFormat.parse(
-              now.year.toString() + staff[i]['dob'].toString().substring(4))];
-          n.add({
-            "event": 'StaffBirthdays',
-            "extra": staff[i]['name'] + '(Staff Birthday)'
-          });
-          dateDetails[inputFormat.parse(now.year.toString() +
-              staff[i]['dob'].toString().substring(4))] = n;
-        } else {
-          List m = [];
-          m.add({
-            "event": 'StaffBirthdays',
-            "extra": staff[i]['name'] + '(Staff Birthday)'
-          });
-          dateDetails[inputFormat.parse(now.year.toString() +
-              staff[i]['dob'].toString().substring(4))] = m;
-        }
-      }
-      var pub = data['PublicHolidays'];
-      print(pub);
-      for (var i = 0; i < pub.length; i++) {
-        dates.add(inputFormat.parse(pub[i]['date']));
+      //   if (dateDetails.containsKey(inputFormat.parse(ann[i]['eventDate']))) {
+      //     List n = dateDetails[inputFormat.parse(ann[i]['eventDate'])];
+      //     n.add({"event": 'announcement', "extra": ann[i]['title']});
+      //     dateDetails[inputFormat.parse(ann[i]['eventDate'])] = n;
+      //   } else {
+      //     List m = [];
+      //     m.add({"event": 'announcement', "extra": ann[i]['title']});
+      //     dateDetails[inputFormat.parse(ann[i]['eventDate'])] = m;
+      //   }
+      // }
+      // var staff = data['StaffBirthdays'];
+      // print(staff);
+      // for (var i = 0; i < staff.length; i++) {
+      //   dates.add(inputFormat.parse(
+      //       now.year.toString() + staff[i]['dob'].toString().substring(4)));
+      //   if (dateDetails.containsKey(inputFormat.parse(
+      //       now.year.toString() + staff[i]['dob'].toString().substring(4)))) {
+      //     List n = dateDetails[inputFormat.parse(
+      //         now.year.toString() + staff[i]['dob'].toString().substring(4))];
+      //     n.add({
+      //       "event": 'StaffBirthdays',
+      //       "extra": staff[i]['name'] + '(Staff Birthday)'
+      //     });
+      //     dateDetails[inputFormat.parse(now.year.toString() +
+      //         staff[i]['dob'].toString().substring(4))] = n;
+      //   } else {
+      //     List m = [];
+      //     m.add({
+      //       "event": 'StaffBirthdays',
+      //       "extra": staff[i]['name'] + '(Staff Birthday)'
+      //     });
+      //     dateDetails[inputFormat.parse(now.year.toString() +
+      //         staff[i]['dob'].toString().substring(4))] = m;
+      //   }
+      // }
+      // var pub = data['PublicHolidays'];
+      // print(pub);
+      // for (var i = 0; i < pub.length; i++) {
+      //   dates.add(inputFormat.parse(pub[i]['date']));
 
-        if (dateDetails.containsKey(inputFormat.parse(pub[i]['date']))) {
-          List n = dateDetails[inputFormat.parse(pub[i]['date'])];
-          n.add({"event": 'PublicHolidays', "extra": pub[i]['occasion']});
-          dateDetails[inputFormat.parse(pub[i]['date'])] = n;
-        } else {
-          List m = [];
-          m.add({"event": 'PublicHolidays', "extra": pub[i]['occasion']});
-          dateDetails[inputFormat.parse(pub[i]['date'])] = m;
-        }
-      }
-      var child = data['ChildBirthdays'];
-      for (var i = 0; i < child.length; i++) {
-        dates.add(inputFormat.parse(
-            now.year.toString() + child[i]['dob'].toString().substring(4)));
+      //   if (dateDetails.containsKey(inputFormat.parse(pub[i]['date']))) {
+      //     List n = dateDetails[inputFormat.parse(pub[i]['date'])];
+      //     n.add({"event": 'PublicHolidays', "extra": pub[i]['occasion']});
+      //     dateDetails[inputFormat.parse(pub[i]['date'])] = n;
+      //   } else {
+      //     List m = [];
+      //     m.add({"event": 'PublicHolidays', "extra": pub[i]['occasion']});
+      //     dateDetails[inputFormat.parse(pub[i]['date'])] = m;
+      //   }
+      // }
+      // var child = data['ChildBirthdays'];
+      // for (var i = 0; i < child.length; i++) {
+      //   dates.add(inputFormat.parse(
+      //       now.year.toString() + child[i]['dob'].toString().substring(4)));
 
-        if (dateDetails.containsKey(inputFormat.parse(
-            now.year.toString() + child[i]['dob'].toString().substring(4)))) {
-          List n = dateDetails[inputFormat.parse(
-              now.year.toString() + child[i]['dob'].toString().substring(4))];
-          n.add({
-            "event": 'ChildBirthdays',
-            "extra": child[i]['name'] + '(Child Birthday)'
-          });
-          dateDetails[inputFormat.parse(now.year.toString() +
-              child[i]['dob'].toString().substring(4))] = n;
-        } else {
-          List m = [];
-          m.add({
-            "event": 'ChildBirthdays',
-            "extra": child[i]['name'] + '(Child Birthday)'
-          });
-          dateDetails[inputFormat.parse(now.year.toString() +
-              child[i]['dob'].toString().substring(4))] = m;
-        }
-      }
-      if (this.mounted) setState(() {});
+      //   if (dateDetails.containsKey(inputFormat.parse(
+      //       now.year.toString() + child[i]['dob'].toString().substring(4)))) {
+      //     List n = dateDetails[inputFormat.parse(
+      //         now.year.toString() + child[i]['dob'].toString().substring(4))];
+      //     n.add({
+      //       "event": 'ChildBirthdays',
+      //       "extra": child[i]['name'] + '(Child Birthday)'
+      //     });
+      //     dateDetails[inputFormat.parse(now.year.toString() +
+      //         child[i]['dob'].toString().substring(4))] = n;
+      //   } else {
+      //     List m = [];
+      //     m.add({
+      //       "event": 'ChildBirthdays',
+      //       "extra": child[i]['name'] + '(Child Birthday)'
+      //     });
+      //     dateDetails[inputFormat.parse(now.year.toString() +
+      //         child[i]['dob'].toString().substring(4))] = m;
+      //   }
+      // }
+      // if (this.mounted) setState(() {});
       //print(_allQips[0].name);
     } else {
       MyApp.Show401Dialog(context);
@@ -383,117 +383,242 @@ class _DashboardState extends State<Dashboard> {
                 height: 20,
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.68,
-                width: MediaQuery.of(context).size.width,
-                child: Card(
+  height: MediaQuery.of(context).size.height * 0.68,
+  width: MediaQuery.of(context).size.width,
+  child: Card(
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                onPressed: () {
+                  setState(() {
+                    if (month == 1) {
+                      month = 12;
+                      currentMon = (months.isNotEmpty ? months[month - 1] : "");
+                      year = ((int.tryParse(year) ?? 0) - 1).toString();
+                    } else {
+                      month = month - 1;
+                      currentMon = (months.length >= month ? months[month - 1] : "");
+                    }
+                  });
+                },
+              ),
+              Expanded(
+                child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(Icons.arrow_back_ios),
-                              onPressed: () {
-                                setState(() {
-                                  if (month == 1) {
-                                    month = 12;
-                                    currentMon = months[month - 1];
-                                    year = (int.parse(year) - 1).toString();
-                                  } else {
-                                    month = month - 1;
-                                    currentMon = months[month - 1];
-                                  }
-                                });
-                              },
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    currentMon + " " + year,
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.arrow_forward_ios),
-                              onPressed: () {
-                                setState(() {
-                                  if (month + 1 == 13) {
-                                    year = (int.parse(year) + 1).toString();
-                                    month = 1;
-                                    currentMon = months[month - 1];
-                                  } else {
-                                    month = month + 1;
-                                    currentMon = months[month - 1];
-                                  }
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                       
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: TableCalendar(
-                            firstDay: DateTime.utc(2000, 1, 1),
-                            lastDay: DateTime.utc(2100, 12, 31),
-                            focusedDay: DateTime(int.parse(year), month, 1),
-                            selectedDayPredicate: (day) => dates.contains(day),
-                            calendarFormat: CalendarFormat.month,
-                            availableGestures: AvailableGestures.all,
-                            onDaySelected: (selectedDay, focusedDay) {
-                              if (dateDetails.containsKey(selectedDay)) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(DateFormat.yMMMMd('en_US')
-                                          .format(selectedDay)),
-                                      content: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.75,
-                                        child: ListView.builder(
-                                          itemCount: dateDetails[selectedDay]
-                                                  ?.length ??
-                                              0,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return ListTile(
-                                              title: Text(dateDetails[
-                                                      selectedDay]![index]
-                                                  ['extra']!),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('OK'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      '${currentMon ?? ""} ${year ?? ""}',
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
               ),
+              IconButton(
+                icon: Icon(Icons.arrow_forward_ios),
+                onPressed: () {
+                  setState(() {
+                    if (month + 1 == 13) {
+                      year = ((int.tryParse(year) ?? 0) + 1).toString();
+                      month = 1;
+                      currentMon = (months.isNotEmpty ? months[month - 1] : "");
+                    } else {
+                      month = month + 1;
+                      currentMon = (months.length >= month ? months[month - 1] : "");
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TableCalendar(
+              firstDay: DateTime.utc(2000, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
+              focusedDay: DateTime.now(),
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, date, events) {
+                  final dateString = DateFormat('yyyy-MM-dd').format(date);
+                  bool hasEvent = false;
+                  String? eventType;
+
+                  if ((dateDetails['PublicHolidays'] ?? []).isNotEmpty) {
+                    for (var holiday in dateDetails['PublicHolidays']) {
+                      if ((holiday['date'] ?? "") == dateString) {
+                        hasEvent = true;
+                        eventType = 'holiday';
+                        break;
+                      }
+                    }
+                  }
+
+                  if (!hasEvent && (dateDetails['ChildBirthdays'] ?? []).isNotEmpty) {
+                    for (var birthday in dateDetails['ChildBirthdays']) {
+                      final dob = (birthday['dob'] ?? "").toString().split(' ')[0];
+                      if (dob == dateString) {
+                        hasEvent = true;
+                        eventType = 'birthday';
+                        break;
+                      }
+                    }
+                  }
+
+                  if (hasEvent) {
+                    return Positioned(
+                      bottom: 1,
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: eventType == 'holiday' ? Colors.red : Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+              ),
+              selectedDayPredicate: (day) {
+                final dateString = DateFormat('yyyy-MM-dd').format(day);
+
+                if ((dateDetails['PublicHolidays'] ?? []).isNotEmpty) {
+                  for (var holiday in dateDetails['PublicHolidays']) {
+                    if ((holiday['date'] ?? "") == dateString) return true;
+                  }
+                }
+
+                if ((dateDetails['ChildBirthdays'] ?? []).isNotEmpty) {
+                  for (var birthday in dateDetails['ChildBirthdays']) {
+                    final dob = (birthday['dob'] ?? "").toString().split(' ')[0];
+                    if (dob == dateString) return true;
+                  }
+                }
+
+                return false;
+              },
+              calendarFormat: CalendarFormat.month,
+              availableGestures: AvailableGestures.all,
+              onDaySelected: (selectedDay, focusedDay) {
+                final dateString = DateFormat('yyyy-MM-dd').format(selectedDay);
+                final events = <Map<String, dynamic>>[];
+
+                if ((dateDetails['PublicHolidays'] ?? []).isNotEmpty) {
+                  for (var holiday in dateDetails['PublicHolidays']) {
+                    if ((holiday['date'] ?? "") == dateString) {
+                      events.add({
+                        'type': 'Public Holiday',
+                        'title': holiday['occasion'] ?? "",
+                        'extra': (holiday['state'] ?? "").isNotEmpty
+                            ? '${holiday['occasion'] ?? ""} (${holiday['state']})'
+                            : holiday['occasion'] ?? "",
+                      });
+                    }
+                  }
+                }
+
+                if ((dateDetails['ChildBirthdays'] ?? []).isNotEmpty) {
+                  for (var birthday in dateDetails['ChildBirthdays']) {
+                    final dob = (birthday['dob'] ?? "").toString().split(' ')[0];
+                    if (dob == dateString) {
+                      events.add({
+                        'type': 'Birthday',
+                        'title': '${birthday['name'] ?? ""} ${birthday['lastname'] ?? ""}',
+                        'extra': '${birthday['name'] ?? ""}\'s Birthday',
+                      });
+                    }
+                  }
+                }
+
+                if (events.isNotEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Event Details',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Constants.kBlack,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Event: ',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: events[0]['title'] ?? "",
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.black.withOpacity(.7),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Date: ${DateFormat('MMMM d, y').format(selectedDay)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              SizedBox(height: 24),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    'Close',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+),
+
             ],
           ),
         ),

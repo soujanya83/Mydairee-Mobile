@@ -7,9 +7,7 @@ import 'package:file_picker/file_picker.dart';
 //import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:mime/mime.dart';
-import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
@@ -218,7 +216,7 @@ class AddObservationState extends State<AddObservation>
 
             RoomsDescModel roomDesc = RoomsDescModel.fromJson(res[i]);
             _rooms.add(RoomsModel(child: childs, room: roomDesc));
-             roomValues[_rooms[i].room.id] = false;
+            roomValues[_rooms[i].room.id] = false;
           }
 
           ///// assign selected rooms
@@ -739,10 +737,7 @@ class AddObservationState extends State<AddObservation>
               keyboardType: TextInputType.text,
               //validator: validatePassword,
               decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                  ),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey),
                   labelStyle: new TextStyle(color: Colors.grey),
                   enabledBorder: UnderlineInputBorder(
                       borderSide: new BorderSide(color: Colors.grey)),
@@ -1175,7 +1170,10 @@ class AddObservationState extends State<AddObservation>
                                     child: Padding(
                                       padding:
                                           const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                                      child: Text('Children',style:Constants.header2,),
+                                      child: Text(
+                                        'Children',
+                                        style: Constants.header2,
+                                      ),
                                     ),
                                   ),
                                   GestureDetector(
@@ -1185,11 +1183,10 @@ class AddObservationState extends State<AddObservation>
                                       //   print(selectedChildrens[i].id);
                                       // }
                                       //           return;
-                                        setState(() {
-                                                  endmenu = 'Children';
-                                                });
-                                                key.currentState
-                                                    ?.openEndDrawer();
+                                      setState(() {
+                                        endmenu = 'Children';
+                                      });
+                                      key.currentState?.openEndDrawer();
                                     },
                                     child: Container(
                                         width: 160,
@@ -1202,7 +1199,7 @@ class AddObservationState extends State<AddObservation>
                                           children: <Widget>[
                                             IconButton(
                                               onPressed: () {
-                                                 setState(() {
+                                                setState(() {
                                                   endmenu = 'Children';
                                                 });
                                                 key.currentState
@@ -1738,7 +1735,17 @@ class AddObservationState extends State<AddObservation>
                                       onTap: () async {
                                         FilePickerResult? result =
                                             await FilePicker.platform
-                                                .pickFiles();
+                                                .pickFiles(
+                                          type: FileType
+                                              .image, // This already restricts to images
+                                          allowMultiple:
+                                              false, // Set to true for multiple selection
+                                        ).catchError((error) {
+                                          debugPrint(
+                                              "File picking error: $error");
+                                          return null;
+                                        });
+
                                         if (result != null) {
                                           File? file = File(
                                               result.files.single.path ?? '');
@@ -4694,6 +4701,3 @@ Widget customMultilineTextField(
     ),
   );
 }
-
-
-

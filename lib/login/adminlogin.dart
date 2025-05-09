@@ -47,7 +47,7 @@ class _AdminLoginState extends State<AdminLogin> {
     if (_formKey.currentState?.validate() ?? false) {
       // No error in validation
       _formKey.currentState?.save();
-      setState((){
+      setState(() {
         loggingIn = true;
       });
       String deviceid = await MyApp.getDeviceIdentity();
@@ -74,11 +74,12 @@ class _AdminLoginState extends State<AdminLogin> {
           print(e);
         }
         print('after the login is done');
-        if (result!=null && !result.containsKey('error')) {
+        if (result != null && !result.containsKey('error')) {
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString(Constants.LOGIN_ID, result['userid']);
-          sharedPreferences.setString(Constants.AUTH_TOKEN, result['AuthToken']);
+          sharedPreferences.setString(
+              Constants.AUTH_TOKEN, result['AuthToken']);
           sharedPreferences.setString(Constants.IMG_URL, result['imageUrl']);
           sharedPreferences.setString(Constants.NAME, result['name']);
           sharedPreferences.setString(Constants.EMAIL, loginEmail);
@@ -105,8 +106,7 @@ class _AdminLoginState extends State<AdminLogin> {
           print('error');
           isSignInDisabled = false;
           loggingIn = false;
-          if(result!=null)
-          errorText = result['error'];
+          if (result != null) errorText = result['error'];
           setState(() {});
           print('issue');
         }
@@ -138,9 +138,21 @@ class _AdminLoginState extends State<AdminLogin> {
         controller: nameController,
         style: TextStyle(color: Constants.kGrey),
         decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Constants.kButton,
+                width: 1.0,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Constants.kButton,
+                width: 1.5,
+              ),
+            ),
             labelText: "Username",
             hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
-            contentPadding: EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
+            contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 3.0),
             labelStyle: new TextStyle(color: Constants.kGrey),
             suffixIcon: IconButton(
                 icon: Icon(
@@ -169,7 +181,7 @@ class _AdminLoginState extends State<AdminLogin> {
         decoration: InputDecoration(
           labelText: "Password",
           hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
-          contentPadding: EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 3.0),
           labelStyle: new TextStyle(color: Constants.kGrey),
           suffixIcon: IconButton(
             icon: Icon(
@@ -181,6 +193,18 @@ class _AdminLoginState extends State<AdminLogin> {
                 obscureText = !obscureText;
               });
             },
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.5,
+            ),
           ),
         ),
         validator: _validatePassword,
@@ -245,7 +269,7 @@ class _AdminLoginState extends State<AdminLogin> {
         label,
         SizedBox(height: 32.0),
         name,
-        SizedBox(height: 8.0),
+        SizedBox(height: 20.0),
         password,
         SizedBox(height: 8.0),
         Row(
@@ -274,6 +298,10 @@ class _AdminLoginState extends State<AdminLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Colors.white,
+        ),
         backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[

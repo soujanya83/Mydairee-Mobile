@@ -66,7 +66,7 @@ class _ParentLoginState extends State<ParentLogin> {
         LoginAPIHandler login = LoginAPIHandler(loginBody);
         var result = await login.login();
 
-        if (result!=null && !result.containsKey('error')) {
+        if (result != null && !result.containsKey('error')) {
           print(result);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
@@ -76,7 +76,8 @@ class _ParentLoginState extends State<ParentLogin> {
           sharedPreferences.setString(Constants.IMG_URL, result['imageUrl']);
           sharedPreferences.setString(Constants.NAME, result['name']);
           sharedPreferences.setString(Constants.EMAIL, loginEmail);
-          sharedPreferences.setString(Constants.PASSWORD_HASH, digest1.toString());
+          sharedPreferences.setString(
+              Constants.PASSWORD_HASH, digest1.toString());
           String role = "Parent";
           sharedPreferences.setString(Constants.USER_TYPE, role);
           MyApp.LOGIN_ID_VALUE = result['userid'];
@@ -90,8 +91,7 @@ class _ParentLoginState extends State<ParentLogin> {
         } else {
           isSignInDisabled = false;
           loggingIn = false;
-          if(result!=null)
-          errorText = result['error'];
+          if (result != null) errorText = result['error'];
           setState(() {});
           print('issue');
         }
@@ -123,23 +123,41 @@ class _ParentLoginState extends State<ParentLogin> {
         controller: nameController,
         style: TextStyle(color: Constants.kGrey),
         decoration: InputDecoration(
-            labelText: "Username",
-            hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
-            contentPadding: EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-            labelStyle: new TextStyle(color: Constants.kGrey),
-            suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.minimize,
-                  color: Colors.transparent,
-                ),
-                onPressed: null)),
+          labelText: "Username",
+          // ignore: deprecated_member_use
+          hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 3.0),
+          labelStyle: new TextStyle(color: Constants.kGrey),
+          suffixIcon: IconButton(
+              icon: Icon(
+                Icons.minimize,
+                color: Colors.transparent,
+              ),
+              onPressed: null),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.5,
+            ),
+          ),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(4),
+            ),
+          ),
+        ),
         validator: _validateName,
         onSaved: (String? val) {
           //  loginEmail = val.trim();
         },
       ),
     );
-
     final password = Theme(
       data: new ThemeData(
         primaryColor: Colors.green,
@@ -151,8 +169,9 @@ class _ParentLoginState extends State<ParentLogin> {
         style: TextStyle(color: Constants.kGrey),
         decoration: InputDecoration(
           labelText: "Password",
+          // ignore: deprecated_member_use
           hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
-          contentPadding: EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 3.0),
           labelStyle: new TextStyle(color: Constants.kGrey),
           suffixIcon: IconButton(
             icon: Icon(
@@ -164,6 +183,23 @@ class _ParentLoginState extends State<ParentLogin> {
                 obscureText = !obscureText;
               });
             },
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Constants.kButton,
+              width: 1.5,
+            ),
+          ),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(4),
+            ),
           ),
         ),
         validator: _validatePassword,
@@ -212,8 +248,6 @@ class _ParentLoginState extends State<ParentLogin> {
     final label = new Center(
         child: new Text(
       "Parent Login",
-      style: new TextStyle(
-          fontSize: 24.0, fontWeight: FontWeight.bold, color: Constants.kLabel),
     ));
 
     final paddingValue = MediaQuery.of(context).size.width > 600 ? 105.0 : 18.0;
@@ -228,7 +262,7 @@ class _ParentLoginState extends State<ParentLogin> {
         label,
         SizedBox(height: 32.0),
         name,
-        SizedBox(height: 8.0),
+        SizedBox(height: 20.0),
         password,
         SizedBox(height: 8.0),
         Row(
@@ -257,6 +291,10 @@ class _ParentLoginState extends State<ParentLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Colors.white,
+        ),
         backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[

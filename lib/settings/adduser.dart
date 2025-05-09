@@ -16,7 +16,6 @@ import 'package:mykronicle_mobile/utils/cropImage.dart';
 import 'package:mykronicle_mobile/utils/deleteDialog.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:intl/intl.dart';
-import 'package:otp_text_field/otp_field.dart';
 import 'package:path/path.dart';
 
 import 'package:http_parser/http_parser.dart';

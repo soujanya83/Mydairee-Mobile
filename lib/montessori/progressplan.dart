@@ -375,10 +375,8 @@ class _ProgressPlanState extends State<ProgressPlan> {
 
   List<Widget> _buildCells(ProcessChildSubModel childSubModel, int p) {
     var nameType = childSubModel.childName + "_" + childSubModel.childId;
-
     var data = processData[nameType];
-    var aData =
-        processData[p.toString()]['processactivityid'].toString().split(',');
+    var aData = processData[p.toString()]['processactivityid'].toString().split(',');
     var pData = processData[p.toString()]['subid'].toString().split(',');
 
     return List.generate(

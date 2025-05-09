@@ -140,6 +140,7 @@ class _ViewPlanState extends State<ViewPlan> {
                                             MediaQuery.of(context).size.width,
                                         color: HexColor(
                                                 headers[index]['headingcolor'])
+                                            // ignore: deprecated_member_use
                                             .withOpacity(0.4),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),

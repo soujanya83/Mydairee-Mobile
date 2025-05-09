@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
-import 'package:mykronicle_mobile/media/mediaMenu.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
 import 'package:mykronicle_mobile/models/menuMediaModel.dart';

@@ -197,7 +197,8 @@ class _ReflectionListState extends State<ReflectionList> {
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: _reflection.length,
-                                  itemBuilder: (context, index) {
+                                  itemBuilder: (context, listIndex) {
+                                    int index = _reflection.length - listIndex-1;
                                     return Card(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),

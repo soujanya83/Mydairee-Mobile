@@ -56,7 +56,6 @@ class _ObservationMainState extends State<ObservationMain> {
   bool disabledLink = false;
 
   List childs = [];
-  List authors = [];
   List assessments = [];
   List observations = [];
   List added = [];
@@ -104,677 +103,850 @@ class _ObservationMainState extends State<ObservationMain> {
     'Staff': false,
   };
   Map<String, bool> addedValues = {
-    'All': false,
+    'None': false,
     'Today': false,
     'This Week': false,
     'This Month': false,
+    'Custom': false,
   };
+  DateTime? startDate;
+  DateTime? endDate;
+
+  // Declare variables at the class level (outside the build method)
+  bool drawer_obsStatusDraft = false;
+  bool drawer_obsStatusPublished = false;
+  List drawer_childs = [];
+  Map<String, bool> drawer_addedValues = {};
+  Map<String, bool> drawer_authorValues = {};
+  List drawer_observations = [];
+  DateTime? drawer_startDate;
+  DateTime? drawer_endDate;
+
+// Function to initialize drawer variables
+  initializeDrawerVariables() async {
+    drawer_obsStatusDraft = obsStatusDraft;
+    drawer_obsStatusPublished = obsStatusPublished;
+    drawer_childs = List.from(childs);
+    drawer_addedValues = Map.from(addedValues);
+    drawer_authorValues = Map.from(authorValues);
+    drawer_observations = List.from(observations);
+    drawer_startDate = startDate;
+    drawer_endDate = endDate;
+    if (this.mounted) setState(() {});
+  }
+
+  void printDebugValues() {
+    print('=== Debugging Filter Values ===');
+    print('Observation Status:');
+    print(
+        '  Original - Draft: $obsStatusDraft, Published: $obsStatusPublished');
+    print(
+        '  Drawer   - Draft: $drawer_obsStatusDraft, Published: $drawer_obsStatusPublished');
+    print('\nChild Selections:');
+    print('  Original: $childs');
+    print('  Drawer  : $drawer_childs');
+    print('\nAdded Values:');
+    print('  Original: $addedValues');
+    print('  Drawer  : $drawer_addedValues');
+    print('\nAuthor Values:');
+    print('  Original: $authorValues');
+    print('  Drawer  : $drawer_authorValues');
+    print('\nObservations:');
+    print('  Original: $observations');
+    print('  Drawer  : $drawer_observations');
+    print('\nDate Range:');
+    print(
+        '  Original - Start: ${startDate != null ? DateFormat('MM/dd/yyyy').format(startDate!) : 'null'}, '
+        'End: ${endDate != null ? DateFormat('MM/dd/yyyy').format(endDate!) : 'null'}');
+    print(
+        '  Drawer   - Start: ${drawer_startDate != null ? DateFormat('MM/dd/yyyy').format(drawer_startDate!) : 'null'}, '
+        'End: ${drawer_endDate != null ? DateFormat('MM/dd/yyyy').format(drawer_endDate!) : 'null'}');
+    print('==============================');
+  }
+
+  void printFunction() {
+    print(obsStatusDraft);
+    print(obsStatusPublished);
+    print(childs);
+    print(addedValues);
+    print(authorValues);
+    print(observations);
+  }
 
   Widget getEndDrawer(BuildContext context) {
     return Drawer(
-        child: Container(
-      child: ListView(
-        children: <Widget>[
-          SizedBox(
-            height: 5,
-          ),
-          ListTile(
-            title: Text(
-              'Apply Filters',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text(
-              'Observation Status',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showStatus
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showStatus = !showStatus;
-                setState(() {});
-              },
-            ),
-          ),
-
-          Visibility(
-              visible: showStatus,
-              child: Container(
-                  height: 100,
-                  child: ListView(
-                    physics: NeverScrollableScrollPhysics(),
-                    children: <Widget>[
-                      ListTile(
-                        trailing: Checkbox(
-                            value: obsStatusDraft,
-                            onChanged: (value) {
-                              if (value == true &&
-                                  obsStatusPublished == false) {
-                                obsStatusDraft = true;
-
-                                if (!observations.contains('Draft')) {
-                                  observations.add('Draft');
-                                }
-                              } else if (value == false) {
-                                obsStatusDraft = false;
-
-                                if (observations.contains('Draft')) {
-                                  observations.remove('Draft');
-                                }
-                              }
-
-                              _fetchFilteredData();
-                              observationsFetched = false;
-                              setState(() {});
-                            }),
-                        title: Text('Draft'),
-                      ),
-                      ListTile(
-                        trailing: Checkbox(
-                            value: obsStatusPublished,
-                            onChanged: (value) {
-                              if (value == true && obsStatusDraft == false) {
-                                obsStatusPublished = true;
-
-                                if (!observations.contains('Published')) {
-                                  observations.add('Published');
-                                }
-                              } else if (value == false) {
-                                obsStatusPublished = false;
-                                if (observations.contains('Published')) {
-                                  observations.remove('Published');
-                                }
-                              }
-                              setState(() {});
-                            }),
-                        title: Text('Published'),
-                      ),
-                    ],
-                  ))),
-
-          ListTile(
-            title: Text(
-              'Added',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showAdded
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showAdded = !showAdded;
-                setState(() {});
-              },
-            ),
-          ),
-          Visibility(
-            visible: showAdded,
-            child: Container(
-              height: 220,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: addedValues.keys.map((String key) {
-                  return new CheckboxListTile(
-                    title: new Text(key),
-                    value: addedValues[key],
-                    onChanged: (bool? value) {
-                      if (key == 'All') {
-                        addedValues['Today'] = value!;
-                        addedValues['This Week'] = value!;
-                        addedValues['This Month'] = value!;
-                        addedValues[key] = value!;
-                        if (value == true) {
-                          added.clear();
-                          added.add('All');
-                        } else {
-                          added.clear();
-                        }
-                      } else {
-                        if (value == true) {
-                          added.add(key);
-                        } else {
-                          added.remove(key);
-                        }
-                        addedValues[key] = value!;
-                      }
-
-                      _fetchFilteredData();
-                      observationsFetched = false;
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
+      child: Container(
+        child: ListView(
+          children: <Widget>[
+            SizedBox(height: 5),
+            ListTile(
+              title: Text(
+                'Apply Filters',
+                style: Constants.header2,
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: () {
+                  // printDebugValues();
+                  Navigator.pop(context);
+                },
               ),
             ),
-          ),
-//child
-          ListTile(
-            title: Text(
-              'Child',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showChildren
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showChildren = !showChildren;
-                setState(() {});
-              },
-            ),
-            onTap: () {},
-          ),
-// for ids use childvalues-1 in allchildren
-          Visibility(
-            visible: showChildren,
-            child: Container(
-              height: 220,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
+
+            // Observation Status Section
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+              ),
+              child: ExpansionTile(
+                title: Text('Observation Status', style: Constants.header2),
                 children: [
-                  CheckboxListTile(
-                    title: Text('All Children'),
-                    value: allChildren,
-                    onChanged: (value) {
-                      allChildren = value!;
-                      if (value == true) {
-                        for (int i = 0; i < _allChildrens.length; i++) {
-                          childValues[_allChildrens[i].id] = value!;
-                          childs.add(_allChildrens[i].id);
-                        }
-                        _fetchFilteredData();
-                        observationsFetched = false;
-                      } else {
-                        for (int i = 0; i < _allChildrens.length; i++) {
-                          childValues[_allChildrens[i].id] = value!;
-                        }
-                        childs.clear();
-                        _fetchFilteredData();
-                        observationsFetched = false;
-                      }
-
-                      setState(() {});
-                    },
-                  ),
                   Container(
-                    height: 200,
-                    child: ListView.builder(
-                        itemCount:
-                            _allChildrens != null ? _allChildrens.length : 0,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  _allChildrens[index].imageUrl != null
-                                      ? Constants.ImageBaseUrl +
-                                          _allChildrens[index].imageUrl
-                                      : ''),
-                            ),
-                            title: Text(_allChildrens[index].name),
-                            trailing: Checkbox(
-                                value: childValues[_allChildrens[index].id],
-                                onChanged: (value) {
-                                  if (value == true) {
-                                    if (!childs
-                                        .contains(_allChildrens[index].id)) {
-                                      childs.add(_allChildrens[index].id);
-                                    }
-                                  } else {
-                                    if (childs
-                                        .contains(_allChildrens[index].id)) {
-                                      childs.add(_allChildrens[index].id);
-                                    }
-                                  }
-                                  childValues[_allChildrens[index].id] = value!;
-
-                                  _fetchFilteredData();
-                                  observationsFetched = false;
-
-                                  setState(() {});
-                                }),
-                          );
-                        }),
+                    height: 100,
+                    child: ListView(
+                      physics: NeverScrollableScrollPhysics(),
+                      children: <Widget>[
+                        ListTile(
+                          trailing: Checkbox(
+                            value: drawer_obsStatusDraft,
+                            onChanged: (value) {
+                              if (value == true) {
+                                drawer_obsStatusPublished = false;
+                                drawer_obsStatusDraft = true;
+                                if (!drawer_observations.contains('Draft')) {
+                                  drawer_observations.add('Draft');
+                                }
+                                if (drawer_observations.contains('Published')) {
+                                  drawer_observations.remove('Published');
+                                }
+                              } else if (value == false) {
+                                drawer_obsStatusDraft = false;
+                                if (drawer_observations.contains('Draft')) {
+                                  drawer_observations.remove('Draft');
+                                }
+                              }
+                              setState(() {});
+                            },
+                          ),
+                          title: Text('Draft'),
+                        ),
+                        ListTile(
+                          trailing: Checkbox(
+                            value: drawer_obsStatusPublished,
+                            onChanged: (value) {
+                              if (value == true) {
+                                drawer_obsStatusDraft = false;
+                                if (drawer_observations.contains('Draft')) {
+                                  drawer_observations.remove('Draft');
+                                }
+                                drawer_obsStatusPublished = true;
+                                if (!drawer_observations
+                                    .contains('Published')) {
+                                  drawer_observations.add('Published');
+                                }
+                              } else if (value == false) {
+                                drawer_obsStatusPublished = false;
+                                if (drawer_observations.contains('Published')) {
+                                  drawer_observations.remove('Published');
+                                }
+                              }
+                              setState(() {});
+                            },
+                          ),
+                          title: Text('Published'),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-
-          ListTile(
-            title: Text(
-              'Author',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showAuthor
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showAuthor = !showAuthor;
-                setState(() {});
-              },
-            ),
-          ),
-          Visibility(
-            visible: showAuthor,
-            child: Container(
-              height: 160,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: authorValues.keys.map((String key) {
-                  return new CheckboxListTile(
-                    title: new Text(key),
-                    value: authorValues[key],
-                    onChanged: (bool? value) {
-                      if (key == 'Any') {
-                        authorValues['Me'] = value!;
-                        authorValues['Staff'] = value!;
-                        authorValues[key] = value!;
-                        if (value == true) {
-                          authors.clear();
-                          authors.add('Any');
-                        } else {
-                          authors.clear();
-                        }
-                      } else {
-                        if (value == true) {
-                          authors.add(key);
-                        } else {
-                          authors.remove(key);
-                        }
-                        authorValues[key] = value!;
-                      }
-
-                      _fetchFilteredData();
-                      observationsFetched = false;
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
+// Added Section
+            Builder(builder: (context) {
+              try {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                  ),
+                  child: ExpansionTile(
+                    title: Text('Added', style: Constants.header2),
+                    children: [
+                      Container(
+                        height: (drawer_addedValues['Custom'] == true)
+                            ? 400
+                            : 280, // Increased height to accommodate date pickers
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            CheckboxListTile(
+                              title: Text('None'),
+                              value: drawer_addedValues['None'],
+                              onChanged: (bool? value) {
+                                if (value == true) {
+                                  // Unselect all other options
+                                  drawer_addedValues.forEach((key, _) {
+                                    drawer_addedValues[key] = false;
+                                  });
+                                  drawer_addedValues['None'] = true;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                            CheckboxListTile(
+                              title: Text('Today'),
+                              value: drawer_addedValues['Today'],
+                              onChanged: (bool? value) {
+                                if (value == true) {
+                                  // Unselect all other options
+                                  drawer_addedValues.forEach((key, _) {
+                                    drawer_addedValues[key] = false;
+                                  });
+                                  drawer_addedValues['Today'] = true;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                            CheckboxListTile(
+                              title: Text('This Week'),
+                              value: drawer_addedValues['This Week'],
+                              onChanged: (bool? value) {
+                                if (value == true) {
+                                  // Unselect all other options
+                                  drawer_addedValues.forEach((key, _) {
+                                    drawer_addedValues[key] = false;
+                                  });
+                                  drawer_addedValues['This Week'] = true;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                            CheckboxListTile(
+                              title: Text('This Month'),
+                              value: drawer_addedValues['This Month'],
+                              onChanged: (bool? value) {
+                                if (value == true) {
+                                  // Unselect all other options
+                                  drawer_addedValues.forEach((key, _) {
+                                    drawer_addedValues[key] = false;
+                                  });
+                                  drawer_addedValues['This Month'] = true;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                            CheckboxListTile(
+                              title: Text('Custom Date'),
+                              value: drawer_addedValues['Custom'],
+                              onChanged: (bool? value) {
+                                if (value == true) {
+                                  // Unselect all other options
+                                  drawer_addedValues.forEach((key, _) {
+                                    drawer_addedValues[key] = false;
+                                  });
+                                  drawer_addedValues['Custom'] = true;
+                                } else {
+                                  drawer_addedValues['Custom'] = false;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                            // Date pickers (shown only when Custom is selected)
+                            if (drawer_addedValues['Custom'] == true) ...[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      title: Text('Start Date'),
+                                      trailing: TextButton(
+                                        child: Text(
+                                          drawer_startDate != null
+                                              ? DateFormat('MM/dd/yyyy')
+                                                  .format(drawer_startDate!)
+                                              : 'Select Date',
+                                        ),
+                                        onPressed: () async {
+                                          final picked = await showDatePicker(
+                                            context: context,
+                                            initialDate: drawer_startDate ??
+                                                DateTime.now(),
+                                            firstDate: DateTime(2000),
+                                            lastDate: DateTime(2100),
+                                          );
+                                          if (picked != null) {
+                                            setState(() {
+                                              drawer_startDate = picked;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      title: Text('End Date'),
+                                      trailing: TextButton(
+                                        child: Text(
+                                          drawer_endDate != null
+                                              ? DateFormat('MM/dd/yyyy')
+                                                  .format(drawer_endDate!)
+                                              : 'Select Date',
+                                        ),
+                                        onPressed: () async {
+                                          final picked = await showDatePicker(
+                                            context: context,
+                                            initialDate: drawer_endDate ??
+                                                DateTime.now(),
+                                            firstDate: DateTime(2000),
+                                            lastDate: DateTime(2100),
+                                          );
+                                          if (picked != null) {
+                                            setState(() {
+                                              drawer_endDate = picked;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } catch (e) {
+                return SizedBox();
+              }
+            }),
+            // Child Section
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+              ),
+              child: ExpansionTile(
+                title: Text('Child', style: Constants.header2),
+                children: [
+                  Container(
+                    height: 220,
+                    child: ListView(
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        CheckboxListTile(
+                          title: Text('All Children'),
+                          value: allChildren,
+                          onChanged: (value) {
+                            allChildren = value!;
+                            if (value == true) {
+                              drawer_childs.clear();
+                              for (int i = 0; i < _allChildrens.length; i++) {
+                                childValues[_allChildrens[i].id] = value!;
+                                drawer_childs.add(_allChildrens[i].id);
+                              }
+                            } else {
+                              for (int i = 0; i < _allChildrens.length; i++) {
+                                childValues[_allChildrens[i].id] = value;
+                              }
+                              drawer_childs.clear();
+                            }
+                            setState(() {});
+                          },
+                        ),
+                        Container(
+                          height: 200,
+                          child: ListView.builder(
+                            itemCount: _allChildrens != null
+                                ? _allChildrens.length
+                                : 0,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    _allChildrens[index].imageUrl != null
+                                        ? Constants.ImageBaseUrl +
+                                            _allChildrens[index].imageUrl
+                                        : '',
+                                  ),
+                                ),
+                                title: Text(_allChildrens[index].name),
+                                trailing: Checkbox(
+                                  value: childValues[_allChildrens[index].id],
+                                  onChanged: (value) {
+                                    if (!value!) {
+                                      allChildren = false;
+                                    }
+                                    if (value == true) {
+                                      if (!drawer_childs
+                                          .contains(_allChildrens[index].id)) {
+                                        drawer_childs
+                                            .add(_allChildrens[index].id);
+                                      }
+                                    } else {
+                                      if (drawer_childs
+                                          .contains(_allChildrens[index].id)) {
+                                        drawer_childs
+                                            .remove(_allChildrens[index].id);
+                                      }
+                                    }
+                                    childValues[_allChildrens[index].id] =
+                                        value;
+                                    setState(() {});
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
 
-          ListTile(
-            title: Text(
-              'Assessment',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showAssesments
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showAssesments = !showAssesments;
-                setState(() {});
-              },
-            ),
-          ),
-          Visibility(
-            visible: showAssesments,
-            child: Container(
-              height: assesmentsValues.length * 55.0,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: assesmentsValues.keys.map((String key) {
-                  return new CheckboxListTile(
-                    title: new Text(key),
-                    value: assesmentsValues[key],
-                    onChanged: (bool? value) {
-                      if (key == 'Does Not Have Any Assessment') {
-                        if (value == true) {
-                          assesmentsValues['Does Not Have Any Assessment'] =
-                              true;
-                          assesmentsValues['Has Montessori'] = false;
-                          assesmentsValues[
-                              'Has Early Years Learning Framework'] = false;
-                          assesmentsValues['Has Developmental Milestones'] =
-                              false;
-                          assesmentsValues['Does Not Have Montessori'] = false;
-                          assesmentsValues[
-                                  'Does Not Have Early Years Learning Framework'] =
-                              false;
-                          assesmentsValues[
-                              'Does Not Have Developmental Milestones'] = false;
-                          disabledAssesment = true;
-                          if (!assessments
-                              .contains('Does Not Have Any Assessment')) {
-                            assessments.add('Does Not Have Any Assessment');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          if (assessments
-                              .contains('Does Not Have Any Assessment')) {
-                            assessments.remove('Does Not Have Any Assessment');
-                          }
-                          assesmentsValues['Does Not Have Any Assessment'] =
-                              false;
-                          disabledAssesment = false;
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      } else if (key == 'Has Montessori' &&
-                          disabledAssesment == false &&
-                          assesmentsValues['Does Not Have Montessori'] ==
-                              false) {
-                        if (value == true) {
-                          assesmentsValues[key] = true;
-                          assesmentsValues['Does Not Have Montessori'] = false;
-                          if (!assessments.contains('Has Montessori')) {
-                            assessments.add('Has Montessori');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          assesmentsValues[key] = false;
-                          if (assessments.contains('Has Montessori')) {
-                            assessments.remove('Has Montessori');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      } else if (key == 'Does Not Have Montessori' &&
-                          disabledAssesment == false &&
-                          assesmentsValues['Has Montessori'] == false) {
-                        if (value == true) {
-                          assesmentsValues[key] = true;
-                          assesmentsValues['Has Montessori'] = false;
-                          if (!assessments
-                              .contains('Does Not Have Montessori')) {
-                            assessments.add('Does Not Have Montessori');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          assesmentsValues[key] = false;
-                          if (assessments
-                              .contains('Does Not Have Montessori')) {
-                            assessments.remove('Does Not Have Montessori');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      } else if (key == 'Has Early Years Learning Framework' &&
-                          disabledAssesment == false &&
-                          assesmentsValues[
-                                  'Does Not Have Early Years Learning Framework'] ==
-                              false) {
-                        if (value == true) {
-                          assesmentsValues[key] = true;
-                          assesmentsValues[
-                                  'Does Not Have Early Years Learning Framework'] =
-                              false;
-                          if (!assessments
-                              .contains('Has Early Years Learning Framework')) {
-                            assessments
-                                .add('Has Early Years Learning Framework');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          assesmentsValues[key] = false;
-                          if (assessments
-                              .contains('Has Early Years Learning Framework')) {
-                            assessments
-                                .remove('Has Early Years Learning Framework');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      } else if (key ==
-                              'Does Not Have Early Years Learning Framework' &&
-                          disabledAssesment == false &&
-                          assesmentsValues[
-                                  'Has Early Years Learning Framework'] ==
-                              false) {
-                        if (value == true) {
-                          assesmentsValues[key] = true;
-                          assesmentsValues[
-                              'Has Early Years Learning Framework'] = false;
-                          if (!assessments.contains(
-                              'Does Not Have Early Years Learning Framework')) {
-                            assessments.add(
-                                'Does Not Have Early Years Learning Framework');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          assesmentsValues[key] = false;
-                          if (assessments.contains(
-                              'Does Not Have Early Years Learning Framework')) {
-                            assessments.remove(
-                                'Does Not Have Early Years Learning Framework');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      } else if (key == 'Has Developmental Milestones' &&
-                          disabledAssesment == false &&
-                          assesmentsValues[
-                                  'Does Not Have Developmental Milestones'] ==
-                              false) {
-                        if (value == true) {
-                          assesmentsValues[key] = true;
-                          assesmentsValues[
-                              'Does Not Have Developmental Milestones'] = false;
-                          if (!assessments
-                              .contains('Has Developmental Milestones')) {
-                            assessments.add('Has Developmental Milestones');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          assesmentsValues[key] = false;
-                          if (assessments
-                              .contains('Has Developmental Milestones')) {
-                            assessments.remove('Has Developmental Milestones');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      } else if (key ==
-                              'Does Not Have Developmental Milestones' &&
-                          disabledAssesment == false &&
-                          assesmentsValues['Has Developmental Milestones'] ==
-                              false) {
-                        if (value == true) {
-                          assesmentsValues[key] = true;
-                          assesmentsValues['Has Developmental Milestones'] =
-                              false;
-                          if (!assessments.contains(
-                              'Does Not Have Developmental Milestones')) {
-                            assessments
-                                .add('Does Not Have Developmental Milestones');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        } else {
-                          assesmentsValues[key] = false;
-                          if (assessments.contains(
-                              'Does Not Have Developmental Milestones')) {
-                            assessments.remove(
-                                'Does Not Have Developmental Milestones');
-                          }
-                          observationsFetched = false;
-                          _fetchFilteredData();
-                        }
-                      }
-
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
+            // Author Section
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+              ),
+              child: ExpansionTile(
+                title: Text('Author', style: Constants.header2),
+                children: [
+                  Container(
+                    height: 160,
+                    child: ListView(
+                      physics: NeverScrollableScrollPhysics(),
+                      children: drawer_authorValues.keys.map((String key) {
+                        return CheckboxListTile(
+                          title: Text(key),
+                          value: drawer_authorValues[key],
+                          onChanged: (bool? value) {
+                            // drawer_authorValues.keys.map((String key) {
+                            //   drawer_authorValues[key] = false;
+                            // }).toList();
+                            drawer_authorValues[key] = value!;
+                            setState(() {});
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
 
-          ListTile(
-            title: Text(
-              'Media',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showMedia
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showMedia = !showMedia;
-                setState(() {});
-              },
-            ),
-          ),
-          Visibility(
-            visible: showMedia,
-            child: Container(
-              height: 160,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: mediaValues.keys.map((String key) {
-                  return new CheckboxListTile(
-                    title: new Text(key),
-                    value: mediaValues[key],
-                    onChanged: (bool? value) {
-                      if (key == 'Any') {
-                        mediaValues['Image'] = value!;
-                        mediaValues['Video'] = value!;
-                        mediaValues[key] = value!;
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                child: Text('Apply Filters'),
+                onPressed: () {
+                  // Update the main variables from drawer variables
+                  obsStatusDraft = drawer_obsStatusDraft;
+                  obsStatusPublished = drawer_obsStatusPublished;
+                  childs = List.from(drawer_childs);
+                  addedValues = Map.from(drawer_addedValues);
+                  authorValues = Map.from(drawer_authorValues);
+                  observations = List.from(drawer_observations);
+                  startDate = drawer_startDate;
+                  endDate = drawer_endDate;
 
-                        if (value == true) {
-                          media.clear();
-                          media.add('Any');
-                        } else {
-                          media.clear();
-                        }
-                      } else {
-                        if (value == true) {
-                          media.add(key);
-                        } else {
-                          media.remove(key);
-                        }
-                        mediaValues[key] = value!;
-                      }
+                  // Update added and authors lists
+                  // added.clear();
+                  // if (drawer_addedValues['All'] == true) {
+                  //   added.add('All');
+                  // } else {
+                  //   drawer_addedValues.forEach((key, value) {
+                  //     if (value == true && key != 'All') added.add(key);
+                  //   });
+                  // }
 
-                      _fetchFilteredData();
-                      observationsFetched = false;
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
+                  // authors.clear();
+                  // if (drawer_authorValues['Any'] == true) {
+                  //   authors.add('Any');
+                  // } else {
+                  //   drawer_authorValues.forEach((key, value) {
+                  //     if (value == true && key != 'Any') authors.add(key);
+                  //   });
+                  // }
+
+                  _fetchFilteredData();
+                  observationsFetched = false;
+                  Navigator.pop(context);
+                },
               ),
             ),
-          ),
-
-          ListTile(
-            title: Text(
-              'Comments',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showComments
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showComments = !showComments;
-                setState(() {});
-              },
-            ),
-          ),
-          Visibility(
-            visible: showComments,
-            child: Container(
-              height: commentsValues.length * 55.0,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: commentsValues.keys.map((String key) {
-                  return new CheckboxListTile(
-                    title: new Text(key),
-                    value: commentsValues[key],
-                    onChanged: (bool? value) {
-                      if (value == true && disabledComment == false) {
-                        commentsValues[key] = value!;
-                        disabledComment = true;
-                        comments.clear();
-                        comments.add(key);
-                        observationsFetched = false;
-                        _fetchFilteredData();
-                      } else if (disabledComment == true && value == false) {
-                        commentsValues[key] = value!;
-                        disabledComment = false;
-                        comments.clear();
-                        observationsFetched = false;
-                        _fetchFilteredData();
-                      }
-
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-
-          ListTile(
-            title: Text(
-              'Links',
-              style: Constants.header2,
-            ),
-            trailing: IconButton(
-              icon: Icon(showLinks
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down),
-              onPressed: () {
-                showLinks = !showLinks;
-                setState(() {});
-              },
-            ),
-          ),
-          Visibility(
-            visible: showLinks,
-            child: Container(
-              height: linksValues.length * 55.0,
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: linksValues.keys.map((String key) {
-                  return new CheckboxListTile(
-                    title: new Text(key),
-                    value: linksValues[key],
-                    onChanged: (bool? value) {
-                      if (value == true && disabledLink == false) {
-                        linksValues[key] = value!;
-                        disabledLink = true;
-                        links.clear();
-                        links.add(key);
-                        observationsFetched = false;
-                        _fetchFilteredData();
-                      } else if (disabledLink == true && value == false) {
-                        linksValues[key] = value!;
-                        disabledLink = false;
-                        observationsFetched = false;
-                        links.clear();
-                        _fetchFilteredData();
-                      }
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
-  }
+    );
+  } //     'Assessment',
+  //     style: Constants.header2,
+  //   ),
+  //   trailing: IconButton(
+  //     icon: Icon(showAssesments
+  //         ? Icons.keyboard_arrow_up
+  //         : Icons.keyboard_arrow_down),
+  //     onPressed: () {
+  //       showAssesments = !showAssesments;
+  //       setState(() {});
+  //     },
+  //   ),
+  // ),
+  // Visibility(
+  //   visible: showAssesments,
+  //   child: Container(
+  //     height: assesmentsValues.length * 55.0,
+  //     child: ListView(
+  //       physics: NeverScrollableScrollPhysics(),
+  //       children: assesmentsValues.keys.map((String key) {
+  //         return new CheckboxListTile(
+  //           title: new Text(key),
+  //           value: assesmentsValues[key],
+  //           onChanged: (bool? value) {
+  //             if (key == 'Does Not Have Any Assessment') {
+  //               if (value == true) {
+  //                 assesmentsValues['Does Not Have Any Assessment'] =
+  //                     true;
+  //                 assesmentsValues['Has Montessori'] = false;
+  //                 assesmentsValues[
+  //                     'Has Early Years Learning Framework'] = false;
+  //                 assesmentsValues['Has Developmental Milestones'] =
+  //                     false;
+  //                 assesmentsValues['Does Not Have Montessori'] = false;
+  //                 assesmentsValues[
+  //                         'Does Not Have Early Years Learning Framework'] =
+  //                     false;
+  //                 assesmentsValues[
+  //                     'Does Not Have Developmental Milestones'] = false;
+  //                 disabledAssesment = true;
+  //                 if (!assessments
+  //                     .contains('Does Not Have Any Assessment')) {
+  //                   assessments.add('Does Not Have Any Assessment');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 if (assessments
+  //                     .contains('Does Not Have Any Assessment')) {
+  //                   assessments.remove('Does Not Have Any Assessment');
+  //                 }
+  //                 assesmentsValues['Does Not Have Any Assessment'] =
+  //                     false;
+  //                 disabledAssesment = false;
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             } else if (key == 'Has Montessori' &&
+  //                 disabledAssesment == false &&
+  //                 assesmentsValues['Does Not Have Montessori'] ==
+  //                     false) {
+  //               if (value == true) {
+  //                 assesmentsValues[key] = true;
+  //                 assesmentsValues['Does Not Have Montessori'] = false;
+  //                 if (!assessments.contains('Has Montessori')) {
+  //                   assessments.add('Has Montessori');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 assesmentsValues[key] = false;
+  //                 if (assessments.contains('Has Montessori')) {
+  //                   assessments.remove('Has Montessori');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             } else if (key == 'Does Not Have Montessori' &&
+  //                 disabledAssesment == false &&
+  //                 assesmentsValues['Has Montessori'] == false) {
+  //               if (value == true) {
+  //                 assesmentsValues[key] = true;
+  //                 assesmentsValues['Has Montessori'] = false;
+  //                 if (!assessments
+  //                     .contains('Does Not Have Montessori')) {
+  //                   assessments.add('Does Not Have Montessori');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 assesmentsValues[key] = false;
+  //                 if (assessments
+  //                     .contains('Does Not Have Montessori')) {
+  //                   assessments.remove('Does Not Have Montessori');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             } else if (key == 'Has Early Years Learning Framework' &&
+  //                 disabledAssesment == false &&
+  //                 assesmentsValues[
+  //                         'Does Not Have Early Years Learning Framework'] ==
+  //                     false) {
+  //               if (value == true) {
+  //                 assesmentsValues[key] = true;
+  //                 assesmentsValues[
+  //                         'Does Not Have Early Years Learning Framework'] =
+  //                     false;
+  //                 if (!assessments
+  //                     .contains('Has Early Years Learning Framework')) {
+  //                   assessments
+  //                       .add('Has Early Years Learning Framework');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 assesmentsValues[key] = false;
+  //                 if (assessments
+  //                     .contains('Has Early Years Learning Framework')) {
+  //                   assessments
+  //                       .remove('Has Early Years Learning Framework');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             } else if (key ==
+  //                     'Does Not Have Early Years Learning Framework' &&
+  //                 disabledAssesment == false &&
+  //                 assesmentsValues[
+  //                         'Has Early Years Learning Framework'] ==
+  //                     false) {
+  //               if (value == true) {
+  //                 assesmentsValues[key] = true;
+  //                 assesmentsValues[
+  //                     'Has Early Years Learning Framework'] = false;
+  //                 if (!assessments.contains(
+  //                     'Does Not Have Early Years Learning Framework')) {
+  //                   assessments.add(
+  //                       'Does Not Have Early Years Learning Framework');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 assesmentsValues[key] = false;
+  //                 if (assessments.contains(
+  //                     'Does Not Have Early Years Learning Framework')) {
+  //                   assessments.remove(
+  //                       'Does Not Have Early Years Learning Framework');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             } else if (key == 'Has Developmental Milestones' &&
+  //                 disabledAssesment == false &&
+  //                 assesmentsValues[
+  //                         'Does Not Have Developmental Milestones'] ==
+  //                     false) {
+  //               if (value == true) {
+  //                 assesmentsValues[key] = true;
+  //                 assesmentsValues[
+  //                     'Does Not Have Developmental Milestones'] = false;
+  //                 if (!assessments
+  //                     .contains('Has Developmental Milestones')) {
+  //                   assessments.add('Has Developmental Milestones');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 assesmentsValues[key] = false;
+  //                 if (assessments
+  //                     .contains('Has Developmental Milestones')) {
+  //                   assessments.remove('Has Developmental Milestones');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             } else if (key ==
+  //                     'Does Not Have Developmental Milestones' &&
+  //                 disabledAssesment == false &&
+  //                 assesmentsValues['Has Developmental Milestones'] ==
+  //                     false) {
+  //               if (value == true) {
+  //                 assesmentsValues[key] = true;
+  //                 assesmentsValues['Has Developmental Milestones'] =
+  //                     false;
+  //                 if (!assessments.contains(
+  //                     'Does Not Have Developmental Milestones')) {
+  //                   assessments
+  //                       .add('Does Not Have Developmental Milestones');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               } else {
+  //                 assesmentsValues[key] = false;
+  //                 if (assessments.contains(
+  //                     'Does Not Have Developmental Milestones')) {
+  //                   assessments.remove(
+  //                       'Does Not Have Developmental Milestones');
+  //                 }
+  //                 observationsFetched = false;
+  //                 _fetchFilteredData();
+  //               }
+  //             }
+
+  //             setState(() {});
+  //           },
+  //         );
+  //       }).toList(),
+  //     ),
+  //   ),
+  // ),
+
+  // ListTile(
+  //   title: Text(
+  //     'Media',
+  //     style: Constants.header2,
+  //   ),
+  //   trailing: IconButton(
+  //     icon: Icon(showMedia
+  //         ? Icons.keyboard_arrow_up
+  //         : Icons.keyboard_arrow_down),
+  //     onPressed: () {
+  //       showMedia = !showMedia;
+  //       setState(() {});
+  //     },
+  //   ),
+  // ),
+  // Visibility(
+  //   visible: showMedia,
+  //   child: Container(
+  //     height: 160,
+  //     child: ListView(
+  //       physics: NeverScrollableScrollPhysics(),
+  //       children: mediaValues.keys.map((String key) {
+  //         return new CheckboxListTile(
+  //           title: new Text(key),
+  //           value: mediaValues[key],
+  //           onChanged: (bool? value) {
+  //             if (key == 'Any') {
+  //               mediaValues['Image'] = value!;
+  //               mediaValues['Video'] = value!;
+  //               mediaValues[key] = value!;
+
+  //               if (value == true) {
+  //                 media.clear();
+  //                 media.add('Any');
+  //               } else {
+  //                 media.clear();
+  //               }
+  //             } else {
+  //               if (value == true) {
+  //                 media.add(key);
+  //               } else {
+  //                 media.remove(key);
+  //               }
+  //               mediaValues[key] = value!;
+  //             }
+
+  //             _fetchFilteredData();
+  //             observationsFetched = false;
+  //             setState(() {});
+  //           },
+  //         );
+  //       }).toList(),
+  //     ),
+  //   ),
+  // ),
+
+  // ListTile(
+  //   title: Text(
+  //     'Comments',
+  //     style: Constants.header2,
+  //   ),
+  //   trailing: IconButton(
+  //     icon: Icon(showComments
+  //         ? Icons.keyboard_arrow_up
+  //         : Icons.keyboard_arrow_down),
+  //     onPressed: () {
+  //       showComments = !showComments;
+  //       setState(() {});
+  //     },
+  //   ),
+  // ),
+  // Visibility(
+  //   visible: showComments,
+  //   child: Container(
+  //     height: commentsValues.length * 55.0,
+  //     child: ListView(
+  //       physics: NeverScrollableScrollPhysics(),
+  //       children: commentsValues.keys.map((String key) {
+  //         return new CheckboxListTile(
+  //           title: new Text(key),
+  //           value: commentsValues[key],
+  //           onChanged: (bool? value) {
+  //             if (value == true && disabledComment == false) {
+  //               commentsValues[key] = value!;
+  //               disabledComment = true;
+  //               comments.clear();
+  //               comments.add(key);
+  //               observationsFetched = false;
+  //               _fetchFilteredData();
+  //             } else if (disabledComment == true && value == false) {
+  //               commentsValues[key] = value!;
+  //               disabledComment = false;
+  //               comments.clear();
+  //               observationsFetched = false;
+  //               _fetchFilteredData();
+  //             }
+
+  //             setState(() {});
+  //           },
+  //         );
+  //       }).toList(),
+  //     ),
+  //   ),
+  // ),
+
+  // ListTile(
+  //   title: Text(
+  //     'Links',
+  //     style: Constants.header2,
+  //   ),
+  //   trailing: IconButton(
+  //     icon: Icon(showLinks
+  //         ? Icons.keyboard_arrow_up
+  //         : Icons.keyboard_arrow_down),
+  //     onPressed: () {
+  //       showLinks = !showLinks;
+  //       setState(() {});
+  //     },
+  //   ),
+  // ),
+  // Visibility(
+  //   visible: showLinks,
+  //   child: Container(
+  //     height: linksValues.length * 55.0,
+  //     child: ListView(
+  //       physics: NeverScrollableScrollPhysics(),
+  //       children: linksValues.keys.map((String key) {
+  //         return new CheckboxListTile(
+  //           title: new Text(key),
+  //           value: linksValues[key],
+  //           onChanged: (bool? value){
+  //             if (value == true && disabledLink == false){
+  //               linksValues[key] = value!;
+  //               disabledLink = true;
+  //               links.clear();
+  //               links.add(key);
+  //               observationsFetched = false;
+  //               _fetchFilteredData();
+  //             } else if (disabledLink == true && value == false) {
+  //               linksValues[key] = value!;
+  //               disabledLink = false;
+  //               observationsFetched = false;
+  //               links.clear();
+  //               _fetchFilteredData();
+  //             }
+  //             setState(() {});
+  //           },
+  //         );
+  //       }).toList(),
+  //     ),
+  //   ),
+  // ),
 
   List<CentersModel> centers = [];
   bool centersFetched = false;
@@ -817,22 +989,82 @@ class _ObservationMainState extends State<ObservationMain> {
     _fetchData();
   }
 
+  Map<String, dynamic> buildFilterRequestMap() {
+    List<String> authors = [];
+
+    drawer_authorValues.forEach((key, value) {
+      if (value == true) {
+        authors.add(key);
+      }
+    });
+
+    List<String> added = [];
+
+    drawer_addedValues.forEach((key, value) {
+      if (value == true) {
+        if (key == 'Custom') {
+          // For custom date, we need to check if dates are selected
+          if (drawer_startDate != null && drawer_endDate != null) {
+            added.add(key);
+          }
+        } else {
+          added.add(key);
+        }
+      }
+    });
+    // Convert dates to proper format if they exist
+    final fromDate = drawer_startDate != null
+        ? DateFormat('yyyy-MM-dd').format(drawer_startDate!)
+        : null;
+    final toDate = drawer_endDate != null
+        ? DateFormat('yyyy-MM-dd').format(drawer_endDate!)
+        : null;
+    // Build the request map
+    final requestMap = <String, dynamic>{
+      "userid": MyApp.LOGIN_ID_VALUE,
+      'childs': drawer_childs.isNotEmpty ? drawer_childs : [],
+      'authors': authors.isNotEmpty ? authors : [],
+      'observations': drawer_observations.isNotEmpty ? drawer_observations : [],
+      'added': added.isNotEmpty ? added : [],
+      'centerid': centers[currentIndex].id
+    };
+
+    // Handle custom date case
+    if (drawer_addedValues['Custom'] == true &&
+        fromDate != null &&
+        toDate != null) {
+      requestMap['fromDate'] = fromDate;
+      requestMap['toDate'] = toDate;
+    } else {
+      requestMap['fromDate'] = null;
+      requestMap['toDate'] = null;
+    }
+
+    // Print for debugging (remove in production)
+    print('Sending filter request:');
+    print(requestMap);
+
+    return requestMap;
+  }
+
   Future<void> _fetchFilteredData() async {
     print('+++++enter in _fetchFilteredData+++++');
-    _allObservations.clear();
+    // _allObservations.clear();
 
-    var b = {
-      "userid": MyApp.LOGIN_ID_VALUE,
-      "childs": childs,
-      "authors": authors,
-      "assessments": assessments,
-      "observations": observations,
-      "added": added,
-      "media": media,
-      "comments": comments,
-      "links": links,
-    };
+    // var b = {
+    //   "userid": MyApp.LOGIN_ID_VALUE,
+    //   "childs": childs,
+    //   "authors": authors,
+    //   // "assessments": assessments,
+    //   "observations": observations,
+    //   "added": added,
+    //   // "media": media,
+    //   // "comments": comments,
+    //   // "links": links,
+    // };
+    var b = buildFilterRequestMap();
     print(jsonEncode(b));
+    // return;
     final response = await http.post(
       Uri.parse(Constants.BASE_URL +
           "observation/getListFilterObservations/" +
@@ -963,7 +1195,8 @@ class _ObservationMainState extends State<ObservationMain> {
                             ),
                             if (permission && MyApp.USER_TYPE_VALUE != 'Parent')
                               GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    await initializeDrawerVariables();
                                     key.currentState?.openEndDrawer();
                                   },
                                   child: Icon(
@@ -1076,7 +1309,7 @@ class _ObservationMainState extends State<ObservationMain> {
                               ),
                               color: Colors.white,
                             ),
-                            height: 33.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width,
                             child: TextFormField(
                               decoration: new InputDecoration(
@@ -1115,10 +1348,9 @@ class _ObservationMainState extends State<ObservationMain> {
                             permission)
                           Container(
                               child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text('No Observations..')],
-                          )),
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [Text('No Observations..')])),
                         if (observationsFetched &&
                             _allObservations.length > 0 &&
                             permission)
@@ -1298,11 +1530,18 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                       .observationsMedia ==
                                                                   ''
                                                           ? Text('')
-                                                          : _allObservations[
-                                                                          index]
-                                                                      .observationsMediaType ==
-                                                                  'Image'
-                                                              ? Image.network(
+                                                          : Builder(builder:
+                                                              (context) {
+                                                              try {
+                                                                return Image
+                                                                    .network(
+                                                                  errorBuilder:
+                                                                      (context,
+                                                                          error,
+                                                                          stackTrace) {
+                                                                    return Text(
+                                                                        '');
+                                                                  },
                                                                   Constants
                                                                           .ImageBaseUrl +
                                                                       _allObservations[
@@ -1315,13 +1554,42 @@ class _ObservationMainState extends State<ObservationMain> {
                                                                       .width,
                                                                   fit: BoxFit
                                                                       .fill,
-                                                                )
-                                                              : VideoItem(
-                                                                  url: Constants
-                                                                          .ImageBaseUrl +
-                                                                      _allObservations[
-                                                                              index]
-                                                                          .observationsMedia),
+                                                                );
+                                                              } catch (e) {
+                                                                return VideoItem(
+                                                                    url: Constants
+                                                                            .ImageBaseUrl +
+                                                                        _allObservations[index]
+                                                                            .observationsMedia);
+                                                              }
+                                                            }),
+                                                      // _allObservations[
+                                                      //                 index]
+                                                      //             .observationsMediaType !=
+                                                      //         'Video' ||  _allObservations[
+                                                      //                 index]
+                                                      //             .observationsMedia ==
+                                                      //         'null'
+                                                      //     ? Image.network(
+                                                      //         Constants
+                                                      //                 .ImageBaseUrl +
+                                                      //             _allObservations[
+                                                      //                     index]
+                                                      //                 .observationsMedia,
+                                                      //         height: 150,
+                                                      //         width: MediaQuery.of(
+                                                      //                 context)
+                                                      //             .size
+                                                      //             .width,
+                                                      //         fit: BoxFit
+                                                      //             .fill,
+                                                      //       )
+                                                      //     : VideoItem(
+                                                      //         url: Constants
+                                                      //                 .ImageBaseUrl +
+                                                      //             _allObservations[
+                                                      //                     index]
+                                                      //                 .observationsMedia),
                                                       SizedBox(
                                                         height: 10,
                                                       ),

@@ -73,13 +73,9 @@ class _RestartWidgetState extends State<RestartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyedSubtree(
-      key: key,
-      child: widget.child,
-    );
+    return KeyedSubtree(key: key,child: widget.child);
   }
 }
-
 class MyApp extends StatelessWidget {
   static String EMAIL_VALUE = '';
   static String PASSWORD_HASH_VALUE = '';
