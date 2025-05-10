@@ -135,7 +135,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
     if (!d.containsKey('error')) {
       if (data['permissions'] != null ||
           MyApp.USER_TYPE_VALUE == 'Superadmin' ||
-          MyApp.USER_TYPE_VALUE == 'Parent') {
+          MyApp.USER_TYPE_VALUE == 'Parent' ||  MyApp.USER_TYPE_VALUE == 'Staff') {
         print('hawala');
         print(d.keys);
         menuData = d;

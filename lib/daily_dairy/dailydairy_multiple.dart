@@ -565,7 +565,7 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                           null)
                                                                         return;
                                                                       hour[index] =
-                                                                          value!;
+                                                                          value;
                                                                       setState(
                                                                           () {});
                                                                     },
@@ -708,7 +708,9 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                     "userid": MyApp.LOGIN_ID_VALUE,
                                     "sunscreen": data
                                   };
+                                  print(_toSend);
                                   print(jsonEncode(objToSend));
+                                  // return;
                                   final response = await http.post(
                                       Uri.parse(_toSend),
                                       body: jsonEncode(objToSend),

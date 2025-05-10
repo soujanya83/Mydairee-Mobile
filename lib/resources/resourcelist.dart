@@ -31,14 +31,14 @@ class _ResourceListState extends State<ResourceList> {
 
   GlobalKey<ScaffoldState> key = GlobalKey();
   bool resourcesFetched = false;
-  List<ResourceModels> _allResources=[];
-  List<TagsModel> _trendTags=[];
+  List<ResourceModels> _allResources = [];
+  List<TagsModel> _trendTags = [];
 
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
-  List<AuthorModel> authors=[];
+  List<AuthorModel> authors = [];
   bool authorsFetched = false;
   int currentAuthor = 0;
 
@@ -62,7 +62,12 @@ class _ResourceListState extends State<ResourceList> {
     _fetchData();
   }
 
+  bool loading = true;
   Future<void> _fetchData() async {
+    if (this.mounted)
+      setState(() {
+        loading = true;
+      });
     Map<String, String> obj = {
       "userid": MyApp.LOGIN_ID_VALUE,
     };
@@ -110,6 +115,7 @@ class _ResourceListState extends State<ResourceList> {
     if (load == 0) {
       _fetchCenters();
       load = 1;
+      loading = false;
       setState(() {});
     }
   }
@@ -398,155 +404,161 @@ class _ResourceListState extends State<ResourceList> {
         appBar: Header.appBar(),
         body: SingleChildScrollView(
             child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: resourcesFetched
-                    ? Container(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                            Container(
-                              height: 28,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Resources',
-                                    style: Constants.header1,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Expanded(
-                                    child: Container(),
-                                  ),
-                                  GestureDetector(
-                                      onTap: () {
-                                        key.currentState?.openEndDrawer();
-                                      },
-                                      child: Icon(
-                                        AntDesign.filter,
-                                        color: Constants.kButton,
-                                      )),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Addresource())).then((value) {
-                                        if (value != null) {
-                                          resourcesFetched = false;
-                                          setState(() {});
-                                          _fetchData();
-                                        }
-                                      });
-                                    },
-                                    child: Container( 
-                                        decoration: BoxDecoration(
-                                            color: Constants.kButton,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8))),
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              12, 8, 12, 8),
-                                          child: Text(
-                                            '+ Add New',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12),
-                                          ),
-                                        )),
-                                  )
-                                ],
-                              ),
+          padding: const EdgeInsets.all(12.0),
+          child: !loading
+              ? Container(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                      Container(
+                        height: 28,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Resources',
+                              style: Constants.header1,
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            if (_allResources.length == 0)
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height - 130,
-                                child: Center(
-                                  child: Text('No Resources are found'),
-                                ),
-                              ),
-                            if (_trendTags.length != 0)
-                              Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    child: ListView.builder(
-                                        itemCount: _trendTags.length,
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                UtilsAPIHandler
-                                                    utilsAPIHandler =
-                                                    UtilsAPIHandler({
-                                                  "tags":
-                                                      "[${jsonEncode(_trendTags[index].tags)}]",
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                var data = await utilsAPIHandler
-                                                    .getTrendingTagsData();
-                                                if (!data
-                                                    .containsKey('error')) {
-                                                  var res = data['Resources'];
-                                                  _allResources = [];
-                                                  try {
-                                                    assert(res is List);
-                                                    for (int i = 0;
-                                                        i < res.length;
-                                                        i++) {
-                                                      _allResources.add(
-                                                          ResourceModels
-                                                              .fromJson(
-                                                                  res[i]));
-                                                    }
-
-                                                    resourcesFetched = true;
-                                                    if (this.mounted)
-                                                      setState(() {});
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
-                                                } else {
-                                                  MyApp.Show401Dialog(context);
-                                                }
-                                              },
-                                              child: Text(
-                                                _trendTags[index].tags,
-                                                style: TextStyle(
-                                                    color: Colors.blue),
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                  ),
-                                ),
-                              ),
-                            Container(
+                            Expanded(
+                              child: Container(),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  key.currentState?.openEndDrawer();
+                                },
+                                child: Icon(
+                                  AntDesign.filter,
+                                  color: Constants.kButton,
+                                )),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Addresource())).then((value) {
+                                  if (value != null) {
+                                    resourcesFetched = false;
+                                    setState(() {});
+                                    _fetchData();
+                                  }
+                                });
+                              },
+                              child: Container(
+                                  height: 70,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                      color: Constants.kButton,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Center(
+                                    child: Text(
+                                      '+ Add New',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ),
+                                  )),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      if (_allResources.length == 0)
+                        Container(
+                          height: MediaQuery.of(context).size.height - 130,
+                          child: Center(
+                            child: Text('No Resources are found'),
+                          ),
+                        ),
+                      if (_trendTags.length != 0)
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
                               child: ListView.builder(
+                                  itemCount: _trendTags.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: _allResources.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return resourceCard(index);
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          UtilsAPIHandler utilsAPIHandler =
+                                              UtilsAPIHandler({
+                                            "tags":
+                                                "[${jsonEncode(_trendTags[index].tags)}]",
+                                            "userid": MyApp.LOGIN_ID_VALUE
+                                          });
+                                          var data = await utilsAPIHandler
+                                              .getTrendingTagsData();
+                                          if (!data.containsKey('error')) {
+                                            var res = data['Resources'];
+                                            _allResources = [];
+                                            try {
+                                              assert(res is List);
+                                              for (int i = 0;
+                                                  i < res.length;
+                                                  i++) {
+                                                _allResources.add(
+                                                    ResourceModels.fromJson(
+                                                        res[i]));
+                                              }
+
+                                              resourcesFetched = true;
+                                              if (this.mounted) setState(() {});
+                                            } catch (e) {
+                                              print(e);
+                                            }
+                                          } else {
+                                            MyApp.Show401Dialog(context);
+                                          }
+                                        },
+                                        child: Text(
+                                          _trendTags[index].tags,
+                                          style: TextStyle(color: Colors.blue),
+                                        ),
+                                      ),
+                                    );
                                   }),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                          ]))
-                    : Container())));
+                          ),
+                        ),
+                      Container(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _allResources.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return resourceCard(index);
+                            }),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ]))
+              : Container(
+                  height: MediaQuery.of(context).size.height * .7,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                          child: Container(
+                              height: 40,
+                              width: 40,
+                              child: CircularProgressIndicator()))
+                    ],
+                  )),
+        )));
   }
 
   Widget resourceCard(int i) {

@@ -135,6 +135,27 @@ class _ObservationMainState extends State<ObservationMain> {
     if (this.mounted) setState(() {});
   }
 
+  clearFilterVar() async {
+    obsStatusDraft = false;
+    obsStatusPublished = false;
+    childs.clear();
+    authorValues = {
+      'Any': false,
+      'Me': false,
+      'Staff': false,
+    };
+    addedValues = {
+      'None': false,
+      'Today': false,
+      'This Week': false,
+      'This Month': false,
+      'Custom': false,
+    };
+    observations.clear();
+    startDate = null;
+    endDate = null;
+  }
+
   void printDebugValues() {
     print('=== Debugging Filter Values ===');
     print('Observation Status:');
@@ -1048,6 +1069,11 @@ class _ObservationMainState extends State<ObservationMain> {
   }
 
   Future<void> _fetchFilteredData() async {
+    if (this.mounted)
+      setState(() {
+        permission = true;
+        observationsFetched = false;
+      });
     print('+++++enter in _fetchFilteredData+++++');
     // _allObservations.clear();
 
@@ -1079,9 +1105,13 @@ class _ObservationMainState extends State<ObservationMain> {
         "observation/getListFilterObservations/" +
         MyApp.LOGIN_ID_VALUE);
     print('this' + response.statusCode.toString());
+
     var data = jsonDecode(response.body);
     var res = data['observations'];
     print(res);
+    print('================response================');
+    debugPrint(response.body.toString(), wrapWidth: 1024);
+    print('================response=====end===========');
     if (res != null) {
       _allObservations = [];
       try {
@@ -1102,9 +1132,17 @@ class _ObservationMainState extends State<ObservationMain> {
         print(s);
       }
     }
+    if (this.mounted)
+      setState(() {
+        observationsFetched = true;
+      });
   }
 
   Future<void> _fetchData() async {
+    if (this.mounted)
+      setState(() {
+        observationsFetched = false;
+      });
     print('++++++++++_fetchData++++++');
     ObservationsAPIHandler handler = ObservationsAPIHandler({});
     var data = await handler.getList(centers[currentIndex].id);
@@ -1112,7 +1150,6 @@ class _ObservationMainState extends State<ObservationMain> {
     print(data['observations']);
     print(data['permissions']);
     print(MyApp.USER_TYPE_VALUE);
-
     if (data['observations'] != null) {
       if (this.mounted) setState(() {});
     }
@@ -1181,7 +1218,8 @@ class _ObservationMainState extends State<ObservationMain> {
         body: SingleChildScrollView(
           child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: observationsFetched
+              child: centersFetched
+                  //  false
                   ? Container(
                       child: Column(children: <Widget>[
                         Row(
@@ -1193,7 +1231,8 @@ class _ObservationMainState extends State<ObservationMain> {
                             Expanded(
                               child: Container(),
                             ),
-                            if (permission && MyApp.USER_TYPE_VALUE != 'Parent')
+                            // if (permission && MyApp.USER_TYPE_VALUE != 'Parent')
+                            if (MyApp.USER_TYPE_VALUE != 'Parent')
                               GestureDetector(
                                   onTap: () async {
                                     await initializeDrawerVariables();
@@ -1278,9 +1317,9 @@ class _ObservationMainState extends State<ObservationMain> {
                                               i < centers.length;
                                               i++) {
                                             if (centers[i].id == value) {
+                                              clearFilterVar();
                                               setState(() {
                                                 currentIndex = i;
-
                                                 _fetchData();
                                               });
                                               break;
@@ -1347,6 +1386,7 @@ class _ObservationMainState extends State<ObservationMain> {
                             _allObservations.length == 0 &&
                             permission)
                           Container(
+                              height: MediaQuery.of(context).size.height * .7,
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1708,19 +1748,34 @@ class _ObservationMainState extends State<ObservationMain> {
                                         )
                                       : Container();
                                 }),
-                          )
+                          ),
+                        if (!observationsFetched)
+                          Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: Center(
+                                          child: CircularProgressIndicator())),
+                                ],
+                              ))
                       ]),
                     )
                   : Container(
+                      height: MediaQuery.of(context).size.height * .7,
                       child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                            height: 40,
-                            width: 40,
-                            child: Center(child: CircularProgressIndicator())),
-                      ],
-                    ))),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              height: 40,
+                              width: 40,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
+                        ],
+                      ))),
         ),
       ),
     );

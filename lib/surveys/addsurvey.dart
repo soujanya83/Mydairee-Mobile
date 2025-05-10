@@ -248,7 +248,7 @@ class _AddSurveyState extends State<AddSurvey> {
       print(e);
     }
 
-    if (widget.type == 'edit') {
+    if (widget.type == 'edit') {  
       SurveyAPIHandler handler = SurveyAPIHandler({
         "userid": MyApp.LOGIN_ID_VALUE,
         "surveyid": widget.id,
@@ -325,7 +325,6 @@ class _AddSurveyState extends State<AddSurvey> {
             ),
             deleteMediaCallback: (value) {
               String url;
-
               for (int i = 0; i < res['surveyQuestionMedia'][v].length; i++) {
                 if (_questions[v].helper?.vidUrl.toString() ==
                         res['surveyQuestionMedia'][v][i]['mediaUrl']

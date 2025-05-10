@@ -50,7 +50,9 @@ class _SelfAssesmentState extends State<SelfAssesment> {
     _fetchData();
   }
 
-  void _fetchData() async {
+  bool dataFetched = false;
+
+  void _fetchData() async { 
     var _objToSend = {
       "centerid": centers[currentIndex].id,
       "userid": MyApp.LOGIN_ID_VALUE
@@ -69,6 +71,10 @@ class _SelfAssesmentState extends State<SelfAssesment> {
     } catch (e) {
       print(e);
     }
+    if (this.mounted)
+      setState(() {
+        dataFetched = true;
+      });
   }
 
   @override
@@ -88,30 +94,33 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                     'Self Assesment',
                     style: Constants.header2,
                   ),
-                  GestureDetector(
-                    onTap: () async {
-                      print(centers[currentIndex].id);
-                      var _objToSend = {
-                        "centerid": centers[currentIndex].id,
-                        "userid": MyApp.LOGIN_ID_VALUE
-                      };
-                      QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
-                      await qipAPIHandler
-                          .addSelfAsses()
-                          .then((value) => _fetchData());
-                    },
-                    child: Container(
-                        decoration: BoxDecoration(
-                            color: Constants.kButton,
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                          child: Text(
-                            '+  Add Self Assesment',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        )),
-                  )
+                  if (MyApp.USER_TYPE_VALUE == 'Superadmin')
+                    GestureDetector(
+                      onTap: () async {
+                        print(centers[currentIndex].id);
+                        var _objToSend = {
+                          "centerid": centers[currentIndex].id,
+                          "userid": MyApp.LOGIN_ID_VALUE
+                        };
+                        QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
+                        await qipAPIHandler
+                            .addSelfAsses()
+                            .then((value) => _fetchData());
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: Constants.kButton,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8))),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                            child: Text(
+                              '+  Add Self Assesment',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
+                            ),
+                          )),
+                    )
                 ],
               ),
               SizedBox(
@@ -139,6 +148,10 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                             );
                           }).toList(),
                           onChanged: (value) {
+                            if(this.mounted)
+                            setState(() {
+                              dataFetched = false;
+                            });
                             for (int i = 0; i < centers.length; i++) {
                               if (centers[i].id == value) {
                                 setState(() {
@@ -155,59 +168,93 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                     ),
                   ),
                 ),
-              ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: assesments.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ViewAssesment(assesments[index])));
-                      },
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(assesments[index].name),
-                              Row(
+              !dataFetched
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              height: 40,
+                              width: 40,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
+                        ],
+                      ))
+                  : 
+                    assesments.isEmpty
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              child:
+                                  Text('Self assessments list is empty!')),
+                        ],
+                      ))
+                  : 
+                  
+                  
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: assesments.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViewAssesment(assesments[index])));
+                          },
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  if (assesments[index].educators.length > 0)
-                                    CircleAvatar(
-                                      backgroundImage: NetworkImage(assesments[
-                                                      index]
-                                                  .educators[0]['imageUrl'] !=
-                                              ""
-                                          ? Constants.ImageBaseUrl +
-                                              assesments[index].educators[0]
-                                                  ['imageUrl']
-                                          : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
-                                    ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  if (assesments[index].educators.length - 1 >
-                                      0)
-                                    CircleAvatar(
-                                      backgroundColor: Constants.greyColor,
-                                      child: Text("+" +
-                                          (assesments[index].educators.length -
-                                                  1)
-                                              .toString()),
-                                    ),
+                                  Text(assesments[index].name),
+                                  Row(
+                                    children: [
+                                      if (assesments[index].educators.length >
+                                          0)
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage(assesments[
+                                                              index]
+                                                          .educators[0]
+                                                      ['imageUrl'] !=
+                                                  ""
+                                              ? Constants.ImageBaseUrl +
+                                                  assesments[index].educators[0]
+                                                      ['imageUrl']
+                                              : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
+                                        ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      if (assesments[index].educators.length -
+                                              1 >
+                                          0)
+                                        CircleAvatar(
+                                          backgroundColor: Constants.greyColor,
+                                          child: Text("+" +
+                                              (assesments[index]
+                                                          .educators
+                                                          .length -
+                                                      1)
+                                                  .toString()),
+                                        ),
+                                    ],
+                                  )
                                 ],
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  })
+                        );
+                      })
             ],
           ),
         ),

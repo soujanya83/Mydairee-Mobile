@@ -718,7 +718,6 @@ class _ViewObservationState extends State<ViewObservation> {
                                     : SizedBox(),
                               ],
                             ),
-
                           SizedBox(
                             height: 8,
                           ),

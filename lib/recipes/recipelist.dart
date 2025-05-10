@@ -69,6 +69,11 @@ class _RecipeListState extends State<RecipeList> {
   }
 
   Future<void> _fetchData() async {
+    if (this.mounted) {
+      setState(() {
+        loading = true;
+      });
+    }
     // permission and centers
     RecipeAPIHandler handler =
         RecipeAPIHandler({"centerid": centers[currentIndex].id});
@@ -177,6 +182,7 @@ class _RecipeListState extends State<RecipeList> {
       }
       if (MyApp.USER_TYPE_VALUE == 'Parent' ||
           MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+          MyApp.USER_TYPE_VALUE == 'Staff' ||
           data['permissions'] != null) {
         permissionRecipe = true;
       } else {
@@ -253,7 +259,7 @@ class _RecipeListState extends State<RecipeList> {
                           : Container(),
                       if (loading || !dataFetched)
                         Container(
-                            height: MediaQuery.of(context).size.height,
+                            height: MediaQuery.of(context).size.height*.7,
                             width: MediaQuery.of(context).size.width,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -261,8 +267,8 @@ class _RecipeListState extends State<RecipeList> {
                               children: [
                                 Center(
                                     child: Container(
-                                        height: 30,
-                                        width: 30,
+                                        height: 40,
+                                        width: 40,
                                         child: CircularProgressIndicator()))
                               ],
                             )),

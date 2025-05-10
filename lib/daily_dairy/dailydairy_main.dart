@@ -510,29 +510,34 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 if (showType['breakfast'] ==
                                                     '1')
                                                   ListTile(
-                                                    subtitle:( _allChildrens[
+                                                    subtitle: (_allChildrens[
+                                                                        selectedIndex ??
+                                                                            0]
+                                                                    .breakfast !=
+                                                                null) &&
+                                                            _allChildrens[
                                                                     selectedIndex ??
                                                                         0]
-                                                                .breakfast !=
-                                                            null) &&  _allChildrens[
-                                                                    selectedIndex ??
-                                                                        0]
-                                                                .breakfast!.isNotEmpty
+                                                                .breakfast!
+                                                                .isNotEmpty
                                                         ? Text(_allChildrens[
-                                                                    selectedIndex ??
-                                                                        0]
-                                                                .breakfast?[
-                                                            'startTime']??'')
+                                                                        selectedIndex ??
+                                                                            0]
+                                                                    .breakfast?[
+                                                                'startTime'] ??
+                                                            '')
                                                         : Container(),
                                                     title: Text('Breakfast'),
-                                                    trailing: ( _allChildrens[
+                                                    trailing: (_allChildrens[
+                                                                        selectedIndex ??
+                                                                            0]
+                                                                    .breakfast !=
+                                                                null) &&
+                                                            _allChildrens[
                                                                     selectedIndex ??
                                                                         0]
-                                                                .breakfast !=
-                                                            null) &&  _allChildrens[
-                                                                    selectedIndex ??
-                                                                        0]
-                                                                .breakfast!.isNotEmpty
+                                                                .breakfast!
+                                                                .isNotEmpty
                                                         ? GestureDetector(
                                                             onTap: () {
                                                               var time = _allChildrens[
@@ -1022,7 +1027,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .sleep
                                                                 .isNotEmpty
                                                             ? GestureDetector(
-                                                                onTap: () {
+                                                                onTap: () { 
                                                                   Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
@@ -1896,7 +1901,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                   details,
                                                                   showType)))
                                                   .then((value) {
-                                                if (value != null){
+                                                if (value != null) {
                                                   details = null;
                                                   childrensFetched = false;
                                                   //  viewAdd = false;

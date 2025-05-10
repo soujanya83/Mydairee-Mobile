@@ -25,6 +25,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
   RecipeModel? _recipe;
   bool dataFetched = false;
 
+  bool loading = true;
   Future<void> _fetchData() async {
     RecipeAPIHandler handler = RecipeAPIHandler({"rid": widget.id});
     var data = await handler.getRecipeDetails();
@@ -39,6 +40,10 @@ class _ViewRecipeState extends State<ViewRecipe> {
     } else {
       MyApp.Show401Dialog(context);
     }
+    if (this.mounted)
+      setState(() {
+        loading = false;
+      });
   }
 
   @override
@@ -76,7 +81,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                           width: 10,
                         ),
                         Text(
-                          _recipe?.itemName??'',
+                          _recipe?.itemName ?? '',
                           style: TextStyle(color: Colors.grey, fontSize: 14),
                         )
                       ],
@@ -95,7 +100,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                         itemBuilder: (BuildContext context, int index) {
                           return Row(
                             children: [
-                              Text(_recipe?.ingredients?[index]['qty']??''),
+                              Text(_recipe?.ingredients?[index]['qty'] ?? ''),
                               SizedBox(width: 10),
                               Text(_recipe?.ingredients?[index]['name'])
                             ],
@@ -109,7 +114,8 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text(_recipe?.recipe != null ? (_recipe?.recipe??'') : ''),
+                    Text(
+                        _recipe?.recipe != null ? (_recipe?.recipe ?? '') : ''),
                     SizedBox(height: 15),
                     Text(
                       'Media',
@@ -146,7 +152,20 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   ],
                 ),
               )
-            : Container(),
+            : Container(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                        child: Container(
+                            height: 40,
+                            width: 40,
+                            child: CircularProgressIndicator()))
+                  ],
+                )),
       )),
     );
   }

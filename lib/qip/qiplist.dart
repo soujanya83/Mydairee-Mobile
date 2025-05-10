@@ -19,14 +19,14 @@ class QipList extends StatefulWidget {
 
 class _QipListState extends State<QipList> {
   bool qipsFetched = false;
-  List<QipListModel> _allQips=[];
+  List<QipListModel> _allQips = [];
 
   bool permission = true;
   bool permissionAdd = true;
   bool permissionDel = true;
   bool permissionEd = true;
 
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
 
@@ -63,32 +63,38 @@ class _QipListState extends State<QipList> {
   Future<void> _fetchData() async {
     QipAPIHandler handler = QipAPIHandler({});
     var data = await handler.getList(centers[currentIndex].id);
+    print('==========response==============');
+    debugPrint(data.toString());
     if (!data.containsKey('error')) {
       print(data);
-      if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Staff' ||
-          data['permissions'] != null ) {
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
-            data['permissions']['addQIP'] == '1') {
+      if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+          MyApp.USER_TYPE_VALUE == 'Staff' ||
+          data['permissions'] != null) {
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || 
+            (data['permissions'] !=null &&  data['permissions']['addQIP'] == '1')) {
           permissionAdd = true;
         } else {
           permissionAdd = false;
         }
 
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Staff' ||
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+            MyApp.USER_TYPE_VALUE == 'Staff' ||
             data['permissions']['deleteQIP'] == '1') {
           permissionDel = true;
         } else {
           permissionDel = false;
         }
 
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Staff' ||
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+            MyApp.USER_TYPE_VALUE == 'Staff' ||
             data['permissions']['editQIP'] == '1') {
           permissionEd = true;
         } else {
           permissionEd = false;
         }
 
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || MyApp.USER_TYPE_VALUE == 'Staff' ||
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+            MyApp.USER_TYPE_VALUE == 'Staff' ||
             data['permissions']['viewQip'] == '1') {
           var res = data['qips'];
 

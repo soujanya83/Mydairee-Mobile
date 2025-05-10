@@ -268,6 +268,8 @@ class AddObservationState extends State<AddObservation>
     }
   }
 
+  bool isDataFetched = false;
+
   Future<void> _fetchData() async {
     ObservationsAPIHandler handler = ObservationsAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": widget.centerid});
@@ -634,7 +636,7 @@ class AddObservationState extends State<AddObservation>
       options.add(in3);
       selectedOptions.add(inx3);
     }
-
+    isDataFetched = true;
     setState(() {});
   }
 
@@ -1102,7 +1104,8 @@ class AddObservationState extends State<AddObservation>
                             'Add Observation',
                             style: Constants.header1,
                           ),
-                          if (MyApp.USER_TYPE_VALUE != 'Parent')
+                          if (MyApp.USER_TYPE_VALUE != 'Parent' &&
+                              isDataFetched)
                             Container(
                                 height: 30,
                                 child: ElevatedButton(
@@ -1740,7 +1743,8 @@ class AddObservationState extends State<AddObservation>
                                               .image, // This already restricts to images
                                           allowMultiple:
                                               false, // Set to true for multiple selection
-                                        ).catchError((error) {
+                                        )
+                                                .catchError((error) {
                                           debugPrint(
                                               "File picking error: $error");
                                           return null;

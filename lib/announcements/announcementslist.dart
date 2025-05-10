@@ -60,25 +60,41 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
     _fetchData();
   }
 
+  bool loading = true;
+
   Future<void> _fetchData() async {
+    if (this.mounted)
+      setState(() {
+        loading = true;
+      });
+    print('enter in fetchdata');
     AnnouncementsAPIHandler handler = AnnouncementsAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var data = await handler.getList(centers[currentIndex].id.toString());
     if (!data.containsKey('error')) {
+      print('enter here in dsjfnjhfdhfd');
       if (data['permissions'] != null ||
           MyApp.USER_TYPE_VALUE == 'Superadmin' ||
-          MyApp.USER_TYPE_VALUE == 'Parent') {
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
-            MyApp.USER_TYPE_VALUE == 'Parent' ||
-            data['permissions']['addAnnouncement'] == '1') {
-          permissionAdd = true;
-        } else {
-          permissionAdd = false;
+          MyApp.USER_TYPE_VALUE == 'Parent' ||
+          MyApp.USER_TYPE_VALUE == 'Staff') {
+        try {
+          if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+              MyApp.USER_TYPE_VALUE == 'Parent' ||
+              data['permissions']['addAnnouncement'] == '1') {
+            permissionAdd = true;
+          } else {
+            permissionAdd = false;
+          }
+        } catch (e, s) {
+          print(e);
+          print(s);
         }
 
         if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
             MyApp.USER_TYPE_VALUE == 'Parent' ||
+            MyApp.USER_TYPE_VALUE == 'Staff' ||
             data['permissions']['viewAllAnnouncement'] == '1') {
+          print('enter in -----');
           var res = data['records'];
           _announcements = [];
           try {
@@ -103,6 +119,10 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
     } else {
       MyApp.Show401Dialog(context);
     }
+    if (this.mounted)
+      setState(() {
+        loading = false;
+      });
   }
 
   @override
@@ -233,185 +253,210 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                     if (announcementsFetched &&
                         permission &&
                         _announcements.length > 0)
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.75,
-                        width: MediaQuery.of(context).size.width,
-                        child: ListView.builder(
-                            itemCount: _announcements != null
-                                ? _announcements.length
-                                : 0,
-                            itemBuilder: (BuildContext context, int index) {
-                              var inputFormat = DateFormat("yyyy-MM-dd");
-                              final DateFormat formatter =
-                                  DateFormat('dd-MM-yyyy');
+                      Builder(builder: (context) {
+                        if (loading)
+                          return Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: Center(
+                                          child: CircularProgressIndicator())),
+                                ],
+                              ));
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.75,
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                              itemCount: _announcements != null
+                                  ? _announcements.length
+                                  : 0,
+                              itemBuilder: (BuildContext context, int index) {
+                                var inputFormat = DateFormat("yyyy-MM-dd");
+                                final DateFormat formatter =
+                                    DateFormat('dd-MM-yyyy');
 
-                              var date1 = inputFormat
-                                  .parse(_announcements[index].eventDate);
-                              var date = formatter.format(date1);
+                                var date1 = inputFormat
+                                    .parse(_announcements[index].eventDate);
+                                var date = formatter.format(date1);
 
-                              return Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (MyApp.USER_TYPE_VALUE != 'Parent') {
-                                      print(_announcements[index].id);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NewAnnouncements(
-                                                    type: 'update',
-                                                    id: _announcements[index]
-                                                        .aid,
-                                                    centerid:
-                                                        centers[currentIndex]
-                                                            .id,
-                                                  )));
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey,
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (MyApp.USER_TYPE_VALUE != 'Parent') {
+                                        print(_announcements[index].id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NewAnnouncements(
+                                                      type: 'update',
+                                                      id: _announcements[index]
+                                                          .aid,
+                                                      centerid:
+                                                          centers[currentIndex]
+                                                              .id,
+                                                    )));
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8.0)),
                                       ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 5.0, right: 5.0),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: Row(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 5.0, right: 5.0),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.35,
+                                                      child: Text(
+                                                        _announcements[index]
+                                                            .title,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Constants
+                                                                .kMain),
+                                                      )),
+                                                  Spacer(),
+                                                  Text('By: ' +
+                                                      _announcements[index]
+                                                          .createdBy),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
                                               children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Builder(
+                                                            builder: (context) {
+                                                          Timer(
+                                                              Duration(
+                                                                  seconds: 3),
+                                                              () {
+                                                            print(_announcements[
+                                                                    index]
+                                                                .eventDate
+                                                                .toString());
+                                                          });
+
+                                                          return Text(
+                                                              _announcements[
+                                                                      index]
+                                                                  .eventDate
+                                                                  .toString());
+                                                        }),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                Expanded(
+                                                  child: Container(),
+                                                ),
                                                 Container(
+                                                    decoration: BoxDecoration(
+                                                        color: _announcements[
+                                                                        index]
+                                                                    .status ==
+                                                                'Sent'
+                                                            ? Colors.green
+                                                            : Color(0xffFFEFB8),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          20, 8, 20, 8),
+                                                      child: Text(
+                                                        _announcements[index]
+                                                            .status,
+                                                        style: TextStyle(
+                                                            color: _announcements[
+                                                                            index]
+                                                                        .status ==
+                                                                    'Sent'
+                                                                ? Colors.white
+                                                                : Color(
+                                                                    0xffCC9D00)),
+                                                      ),
+                                                    ))
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Builder(builder: (context) {
+                                                  String htmlToPlainText(
+                                                      String htmlString) {
+                                                    final document =
+                                                        parse(htmlString);
+                                                    return parse(document.body
+                                                                    ?.text ??
+                                                                "")
+                                                            .documentElement
+                                                            ?.text ??
+                                                        "";
+                                                  }
+
+                                                  return SizedBox(
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
-                                                                .width *
-                                                            0.35,
+                                                                .width -
+                                                            55,
                                                     child: Text(
-                                                      _announcements[index]
-                                                          .title,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Constants.kMain),
-                                                    )),
-                                                Spacer(),
-                                                Text('By: ' +
-                                                    _announcements[index]
-                                                        .createdBy),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Builder(
-                                                        builder: (context) {
-                                                          Timer(Duration(seconds: 3), (){
-                                                            print( _announcements[index]
-                                                            .eventDate.toString());
-                                                          });
-                                                      
-                                                          return Text(_announcements[index]
-                                                            .eventDate.toString());
-                                                        }
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              Expanded(
-                                                child: Container(),
-                                              ),
-                                              Container(
-                                                  decoration: BoxDecoration(
-                                                      color: _announcements[
-                                                                      index]
-                                                                  .status ==
-                                                              'Sent'
-                                                          ? Colors.green
-                                                          : Color(0xffFFEFB8),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  8))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .fromLTRB(20, 8, 20, 8),
-                                                    child: Text(
-                                                      _announcements[index]
-                                                          .status,
-                                                      style: TextStyle(
-                                                          color: _announcements[
-                                                                          index]
-                                                                      .status ==
-                                                                  'Sent'
-                                                              ? Colors.white
-                                                              : Color(
-                                                                  0xffCC9D00)),
+                                                      htmlToPlainText(
+                                                          _announcements[index]
+                                                              .text),
+                                                      maxLines: 4,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
-                                                  ))
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Builder(builder: (context) {
-                                                String htmlToPlainText(
-                                                    String htmlString) {
-                                                  final document =
-                                                      parse(htmlString);
-                                                  return parse(document
-                                                                  .body?.text ??
-                                                              "")
-                                                          .documentElement
-                                                          ?.text ??
-                                                      "";
-                                                }
-
-                                                return SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      55,
-                                                  child: Text(
-                                                    htmlToPlainText(
-                                                        _announcements[index]
-                                                            .text),
-                                                    maxLines: 4,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                );
-                                              }),
-                                            ],
-                                          )
-                                        ],
+                                                  );
+                                                }),
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }),
-                      )
+                                );
+                              }),
+                        );
+                      })
                   ],
                 )))));
   }

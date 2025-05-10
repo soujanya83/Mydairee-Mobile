@@ -95,7 +95,7 @@ class _RoomsListState extends State<RoomsList> {
               checkValues.add(false);
             }
             permission = true;
-            roomsFetched = true;
+
             if (this.mounted) setState(() {});
           } catch (e, s) {
             print(e);
@@ -109,6 +109,7 @@ class _RoomsListState extends State<RoomsList> {
               _users.add(UserModel.fromJson(r[i]));
             }
             usersFetched = true;
+
             if (this.mounted) setState(() {});
           } catch (e, s) {
             print(e);
@@ -129,6 +130,9 @@ class _RoomsListState extends State<RoomsList> {
       permissionDel = false;
       permissionupdate = false;
     }
+
+    roomsFetched = true;
+    if (this.mounted) setState(() {});
   }
 
   Future<void> _fetchCenters() async {
@@ -374,7 +378,7 @@ class _RoomsListState extends State<RoomsList> {
                                 ),
                               ),
                             ),
-                          if (permission)
+                          // if (permission)
                             Padding(
                               padding:
                                   const EdgeInsets.only(top: 8.0, bottom: 3),
@@ -389,7 +393,7 @@ class _RoomsListState extends State<RoomsList> {
                                     ),
                                     color: Colors.white,
                                   ),
-                                  height: 30.0,
+                                  height: 40.0,
                                   width:
                                       MediaQuery.of(context).size.width * 0.97,
                                   child: Padding(
@@ -401,6 +405,8 @@ class _RoomsListState extends State<RoomsList> {
                                         color: Colors.black,
                                       ),
                                       decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.only(bottom: 10),
                                         icon: Icon(Icons.search),
                                         hintText:
                                             'Search by room name or child name',
@@ -418,7 +424,10 @@ class _RoomsListState extends State<RoomsList> {
                                 ),
                               ),
                             ),
-                          if (permission)
+                          SizedBox(
+                            height: 5,
+                          ),
+                          // if (permission)
                             DropdownButtonHideUnderline(
                               child: Container(
                                 height: 30,
