@@ -90,7 +90,7 @@ class _ResourceListState extends State<ResourceList> {
       var res2 = data['trendingTags'];
       print('resssisis' + res2.toString());
       _allResources = [];
-      _trendTags = [];
+      // _trendTags = [];
 
       try {
         assert(res is List);
@@ -100,9 +100,10 @@ class _ResourceListState extends State<ResourceList> {
         }
 
         assert(res2 is List);
-        for (int i = 0; i < res2.length; i++) {
-          _trendTags.add(TagsModel.fromJson(res2[i]));
-        }
+        if (_trendTags.isEmpty)
+          for (int i = 0; i < res2.length; i++) {
+            _trendTags.add(TagsModel.fromJson(res2[i]));
+          }
 
         resourcesFetched = true;
         if (this.mounted) setState(() {});
@@ -115,6 +116,9 @@ class _ResourceListState extends State<ResourceList> {
     if (load == 0) {
       _fetchCenters();
       load = 1;
+      loading = false;
+      setState(() {});
+    } else {
       loading = false;
       setState(() {});
     }
@@ -384,7 +388,7 @@ class _ResourceListState extends State<ResourceList> {
                     }
                   }
                 },
-                child: Text('Apply'),
+                child: Text('Apply',style: Constants.header6,),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Constants.kMain),
                 ))
@@ -405,7 +409,7 @@ class _ResourceListState extends State<ResourceList> {
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: !loading
+          child:  _trendTags.isNotEmpty
               ? Container(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,13 +474,6 @@ class _ResourceListState extends State<ResourceList> {
                       SizedBox(
                         height: 10,
                       ),
-                      if (_allResources.length == 0)
-                        Container(
-                          height: MediaQuery.of(context).size.height - 130,
-                          child: Center(
-                            child: Text('No Resources are found'),
-                          ),
-                        ),
                       if (_trendTags.length != 0)
                         Card(
                           child: Padding(
@@ -511,7 +508,6 @@ class _ResourceListState extends State<ResourceList> {
                                                     ResourceModels.fromJson(
                                                         res[i]));
                                               }
-
                                               resourcesFetched = true;
                                               if (this.mounted) setState(() {});
                                             } catch (e) {
@@ -531,15 +527,38 @@ class _ResourceListState extends State<ResourceList> {
                             ),
                           ),
                         ),
-                      Container(
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: _allResources.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return resourceCard(index);
-                            }),
-                      ),
+                      if (_allResources.length == 0 && !loading)
+                        Container(
+                          height: MediaQuery.of(context).size.height * .4,
+                          child: Center(
+                            child: Text('No Resources are found'),
+                          ),
+                        ),
+                      loading
+                          ? Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                      child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          child: CircularProgressIndicator()))
+                                ],
+                              ))
+                          : Container(
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: _allResources.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return resourceCard(index);
+                                  }),
+                            ),
                       SizedBox(
                         height: 10,
                       ),
@@ -590,13 +609,20 @@ class _ResourceListState extends State<ResourceList> {
                                   "resourceId": _allResources[i].id
                                 });
                                 var data = await handler.deleteResource();
+                                print('======data deleted======');
+                                print(data.toString());
+                                print(!data.containsKey('error'));
 
                                 if (!data.containsKey('error')) {
                                   _allResources.removeAt(i);
 
                                   setState(() {});
                                 } else {
-                                  MyApp.Show401Dialog(context);
+                                  print(
+                                      '----------------enter in else part----------------');
+                                  MyApp.ShowToast(
+                                      data['error'].toString(), context);
+                                  // MyApp.Show401Dialog(context);
                                 }
 
                                 Navigator.pop(context);
@@ -719,16 +745,16 @@ class _ResourceListState extends State<ResourceList> {
                     SizedBox(
                       width: 4,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        _onShare(context, 'sub', 'text');
-                      },
-                      child: Icon(
-                        FontAwesome.share,
-                        color: Colors.blue,
-                        size: 22,
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     _onShare(context, 'sub', 'text');
+                    //   },
+                    //   child: Icon(
+                    //     FontAwesome.share,
+                    //     color: Colors.blue,
+                    //     size: 22,
+                    //   ),
+                    // ),
                     Expanded(
                       child: Container(),
                     ),

@@ -35,6 +35,8 @@ class _ReflectionListState extends State<ReflectionList> {
     super.initState();
   }
 
+  bool loading = true;
+
   Future<void> _fetchCenters() async {
     UtilsAPIHandler hlr = UtilsAPIHandler({});
     var dt = await hlr.getCentersList();
@@ -60,6 +62,10 @@ class _ReflectionListState extends State<ReflectionList> {
   }
 
   Future<void> _fetchData() async {
+    if (this.mounted)
+      setState(() {
+        loading = true;
+      });
     Map<String, String> data = {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers[currentIndex].id,
@@ -97,6 +103,10 @@ class _ReflectionListState extends State<ReflectionList> {
     } else {
       MyApp.Show401Dialog(context);
     }
+    if (this.mounted)
+      setState(() {
+        loading = false;
+      });
   }
 
   @override
@@ -117,7 +127,8 @@ class _ReflectionListState extends State<ReflectionList> {
                         'Daily Reflection',
                         style: Constants.header1,
                       ),
-                      if (MyApp.USER_TYPE_VALUE != 'Parent')
+                      if (MyApp.USER_TYPE_VALUE != 'Parent' &&
+                          MyApp.USER_TYPE_VALUE != 'Staff')
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -190,420 +201,456 @@ class _ReflectionListState extends State<ReflectionList> {
                           ),
                         )
                       : Container(),
-                  details != null
-                      ? reflectionFetched
-                          ? Container(
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: _reflection.length,
-                                  itemBuilder: (context, listIndex) {
-                                    int index = _reflection.length - listIndex-1;
-                                    return Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
+                  details != null && !loading
+                      ? !loading
+                          ? _reflection.isEmpty
+                              ? SizedBox(
+                                  height: MediaQuery.of(context).size.height * .7,
+                                  child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                          'No Reflection Found')),
+                                )
+                              : Container(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: _reflection.length,
+                                      itemBuilder: (context, listIndex) {
+                                        int index =
+                                            _reflection.length - listIndex - 1;
+                                        return Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                Row(
                                                   children: [
-                                                    Text(
-                                                      _reflection[index].title,
-                                                      style: Constants.header7,
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          _reflection[index]
+                                                              .title,
+                                                          style:
+                                                              Constants.header7,
+                                                        ),
+                                                        Text(
+                                                          DateFormat(
+                                                                  'dd/MM/yyyy')
+                                                              .format(DateTime.parse(
+                                                                  _reflection[
+                                                                          index]
+                                                                      .createdAt
+                                                                      .toString())),
+                                                          style: TextStyle(
+                                                              fontSize: 12.0,
+                                                              color: Constants
+                                                                  .kMain,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Text(
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .format(DateTime.parse(
-                                                              _reflection[index]
-                                                                  .createdAt
-                                                                  .toString())),
-                                                      style: TextStyle(
-                                                          fontSize: 12.0,
-                                                          color:
-                                                              Constants.kMain,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Expanded(child: Container()),
-                                                if (MyApp.USER_TYPE_VALUE !=
-                                                    'Parent')
-                                                  IconButton(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              0.0),
-                                                      iconSize: 20,
-                                                      onPressed: () {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return AlertDialog(
-                                                              title: new Text(
-                                                                  "Delete Reflection"),
-                                                              content: new Text(
-                                                                  "Are you sure you want to delete Reflection"),
-                                                              actions: <Widget>[
-                                                                new TextButton(
-                                                                  child: new Text(
-                                                                      "Cancel"),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                ),
-                                                                new TextButton(
-                                                                  child:
-                                                                      new Text(
+                                                    Expanded(
+                                                        child: Container()),
+                                                    if (MyApp.USER_TYPE_VALUE !=
+                                                        'Parent')
+                                                      IconButton(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(0.0),
+                                                          iconSize: 20,
+                                                          onPressed: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  title: new Text(
+                                                                      "Delete Reflection"),
+                                                                  content: new Text(
+                                                                      "Are you sure you want to delete Reflection"),
+                                                                  actions: <Widget>[
+                                                                    new TextButton(
+                                                                      child: new Text(
+                                                                          "Cancel"),
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                    ),
+                                                                    new TextButton(
+                                                                      child: new Text(
                                                                           "Ok"),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    var _toSend =
-                                                                        Constants.BASE_URL +
-                                                                            'Reflections/deleteReflection';
-                                                                    var objTOSend =
-                                                                        {
-                                                                      "userid":
-                                                                          MyApp
-                                                                              .LOGIN_ID_VALUE,
-                                                                      "reflectionid":
-                                                                          _reflection[index]
-                                                                              .id,
-                                                                    };
-                                                                    final response = await http.post(
-                                                                        Uri.parse(
-                                                                            _toSend),
-                                                                        body: jsonEncode(
-                                                                            objTOSend),
-                                                                        headers: {
-                                                                          "X-DEVICE-ID":
-                                                                              await MyApp.getDeviceIdentity(),
-                                                                          "X-TOKEN":
-                                                                              MyApp.AUTH_TOKEN_VALUE,
-                                                                        });
+                                                                      onPressed:
+                                                                          () async {
+                                                                        var _toSend =
+                                                                            Constants.BASE_URL +
+                                                                                'Reflections/deleteReflection';
+                                                                        var objTOSend =
+                                                                            {
+                                                                          "userid":
+                                                                              MyApp.LOGIN_ID_VALUE,
+                                                                          "reflectionid":
+                                                                              _reflection[index].id,
+                                                                        };
+                                                                        final response = await http.post(
+                                                                            Uri.parse(
+                                                                                _toSend),
+                                                                            body:
+                                                                                jsonEncode(objTOSend),
+                                                                            headers: {
+                                                                              "X-DEVICE-ID": await MyApp.getDeviceIdentity(),
+                                                                              "X-TOKEN": MyApp.AUTH_TOKEN_VALUE,
+                                                                            });
 
-                                                                    if (response
-                                                                            .statusCode ==
-                                                                        200) {
-                                                                      details =
-                                                                          null;
-                                                                      setState(
-                                                                          () {});
-                                                                      details =
-                                                                          null;
-                                                                      _fetchData();
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                      MyApp.ShowToast(
-                                                                          "deleted",
-                                                                          context);
-                                                                    } else if (response
-                                                                            .statusCode ==
-                                                                        401) {
-                                                                      MyApp.Show401Dialog(
-                                                                          context);
-                                                                    }
-                                                                  },
-                                                                )
-                                                              ],
+                                                                        if (response.statusCode ==
+                                                                            200) {
+                                                                          details =
+                                                                              null;
+                                                                          setState(
+                                                                              () {});
+                                                                          details =
+                                                                              null;
+                                                                          _fetchData();
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          MyApp.ShowToast(
+                                                                              "deleted",
+                                                                              context);
+                                                                        } else if (response.statusCode ==
+                                                                            401) {
+                                                                          MyApp.Show401Dialog(
+                                                                              context);
+                                                                        }
+                                                                      },
+                                                                    )
+                                                                  ],
+                                                                );
+                                                              },
                                                             );
                                                           },
-                                                        );
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                      )),
-                                                if (MyApp.USER_TYPE_VALUE !=
-                                                    'Parent')
-                                                  IconButton(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              0.0),
-                                                      iconSize: 20,
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
+                                                          icon: Icon(
+                                                            Icons.delete,
+                                                            color: Colors.red,
+                                                          )),
+                                                    if (MyApp.USER_TYPE_VALUE !=
+                                                        'Parent')
+                                                      IconButton(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(0.0),
+                                                          iconSize: 20,
+                                                          onPressed: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
                                                                         EditReflection(
                                                                           centerid:
                                                                               centers[currentIndex].id,
                                                                           reflectionid:
                                                                               _reflection[index].id,
                                                                         ))).then(
-                                                            (value) {
-                                                          details = null;
-                                                          _fetchData();
-                                                        });
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.edit,
-                                                        color: Colors.blue,
-                                                      )),
-                                                _reflection[index].status ==
-                                                        'PUBLISHED'
-                                                    ? GestureDetector(
-                                                        onTap: () {},
-                                                        child: Container(
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .green,
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .fromLTRB(
-                                                                      12,
-                                                                      8,
-                                                                      12,
-                                                                      8),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(
-                                                                    Icons.check,
+                                                                (value) {
+                                                              details = null;
+                                                              _fetchData();
+                                                            });
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.edit,
+                                                            color: Colors.blue,
+                                                          )),
+                                                    _reflection[index].status ==
+                                                            'PUBLISHED'
+                                                        ? GestureDetector(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                                decoration: BoxDecoration(
                                                                     color: Colors
-                                                                        .white,
-                                                                    size: 10,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 4,
-                                                                  ),
-                                                                  Text(
-                                                                    _reflection[index].status !=
-                                                                            null
-                                                                        ? _reflection[index]
-                                                                            .status
-                                                                        : '',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            10,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            )),
-                                                      )
-                                                    : GestureDetector(
-                                                        onTap: () {
-                                                          // Navigator.push(context,MaterialPageRoute(
-                                                          //   builder: (context) =>AddObservation()));
-                                                        },
-                                                        child: Container(
-                                                            decoration: BoxDecoration(
-                                                                color: Color(
-                                                                    0xffFFEFB8),
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .fromLTRB(
-                                                                      12,
-                                                                      8,
-                                                                      12,
-                                                                      8),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(
-                                                                    Icons
-                                                                        .drafts,
-                                                                    color: Color(
-                                                                        0xffCC9D00),
-                                                                    size: 10,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 4,
-                                                                  ),
-                                                                  Text(
-                                                                    _reflection[index].status !=
-                                                                            null
-                                                                        ? _reflection[index]
-                                                                            .status
-                                                                        : '',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            10,
-                                                                        color: Color(
-                                                                            0xffCC9D00)),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            )),
-                                                      ),
-                                              ],
-                                            ),
-                                            _reflection[index].childs.length !=
-                                                    0
-                                                ? new Container(
-                                                    height: 50,
-                                                    child: Row(
-                                                      children: [
-                                                        ListView.builder(
-                                                            shrinkWrap: true,
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            itemCount: _reflection[
-                                                                            index]
-                                                                        .childs
-                                                                        .length >=
-                                                                    2
-                                                                ? 2
-                                                                : _reflection[
-                                                                        index]
-                                                                    .childs
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    indexs) {
-                                                              return Container(
+                                                                        .green,
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(8))),
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .only(
-                                                                      left: 8.0,
-                                                                      right:
-                                                                          8.0),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .fromLTRB(
+                                                                          12,
+                                                                          8,
+                                                                          12,
+                                                                          8),
                                                                   child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
                                                                     children: [
-                                                                      _reflection[index].childs[indexs]['imageUrl'] != '' &&
-                                                                              _reflection[index].childs[indexs]['imageUrl'] != null
-                                                                          ? CircleAvatar(
-                                                                              radius: 10.0,
-                                                                              backgroundImage: NetworkImage(Constants.ImageBaseUrl + _reflection[index].childs[indexs]['imageUrl']),
-                                                                              backgroundColor: Colors.transparent,
-                                                                            )
-                                                                          : CircleAvatar(
-                                                                              radius: 10,
-                                                                              backgroundColor: Colors.grey,
-                                                                            ),
+                                                                      Icon(
+                                                                        Icons
+                                                                            .check,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        size:
+                                                                            10,
+                                                                      ),
                                                                       SizedBox(
                                                                         width:
-                                                                            10,
+                                                                            4,
                                                                       ),
                                                                       Text(
-                                                                        _reflection[index].childs[indexs]
-                                                                            [
-                                                                            'name'],
-                                                                        style: Constants
-                                                                            .header3,
-                                                                      ),
+                                                                        _reflection[index].status !=
+                                                                                null
+                                                                            ? _reflection[index].status
+                                                                            : '',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                10,
+                                                                            color:
+                                                                                Colors.white),
+                                                                      )
                                                                     ],
                                                                   ),
-                                                                ),
-                                                              );
-                                                            }),
-                                                        _reflection[index]
-                                                                    .childs
-                                                                    .length >
-                                                                2
-                                                            ? Container(
-                                                                height: 25,
-                                                                width: 25,
-                                                                color: Colors
-                                                                    .grey[200],
-                                                                child: Center(
-                                                                  child: Text("+" +
-                                                                      '${_reflection[index].childs.length - 2}'),
-                                                                ),
-                                                              )
-                                                            : Container()
-                                                      ],
-                                                    ),
-                                                  )
-                                                : Container(),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
+                                                                )),
+                                                          )
+                                                        : GestureDetector(
+                                                            onTap: () {
+                                                              // Navigator.push(context,MaterialPageRoute(
+                                                              //   builder: (context) =>AddObservation()));
+                                                            },
+                                                            child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    color: Color(
+                                                                        0xffFFEFB8),
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(8))),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .fromLTRB(
+                                                                          12,
+                                                                          8,
+                                                                          12,
+                                                                          8),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .drafts,
+                                                                        color: Color(
+                                                                            0xffCC9D00),
+                                                                        size:
+                                                                            10,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            4,
+                                                                      ),
+                                                                      Text(
+                                                                        _reflection[index].status !=
+                                                                                null
+                                                                            ? _reflection[index].status
+                                                                            : '',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                10,
+                                                                            color:
+                                                                                Color(0xffCC9D00)),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                  ],
+                                                ),
                                                 _reflection[index]
-                                                            .media
+                                                            .childs
                                                             .length !=
                                                         0
-                                                    ? Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width /
-                                                            2,
-                                                        height: 200,
-                                                        child: ListView.builder(
-                                                          shrinkWrap: true,
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          itemCount:
-                                                              _reflection[index]
-                                                                  .media
-                                                                  .length,
-                                                          itemBuilder: (context,
-                                                              indexs) {
-                                                            return _reflection[index].media[indexs]
-                                                                            [
-                                                                            'mediaUrl'] !=
-                                                                        null &&
-                                                                    _reflection[index].media[indexs]
-                                                                            [
-                                                                            'mediaUrl'] !=
-                                                                        ''
-                                                                ? Container(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width /
-                                                                        2,
-                                                                    height: 500,
-                                                                    decoration: BoxDecoration(
-                                                                        image: DecorationImage(
-                                                                            image: NetworkImage(
-                                                                              Constants.ImageBaseUrl + _reflection[index].media[indexs]['mediaUrl'],
-                                                                            ),
-                                                                            fit: BoxFit.cover)),
-                                                                  )
-                                                                : Container(
-                                                                    color: Colors
-                                                                        .grey,
+                                                    ? new Container(
+                                                        height: 50,
+                                                        child: Row(
+                                                          children: [
+                                                            ListView.builder(
+                                                                shrinkWrap:
+                                                                    true,
+                                                                scrollDirection:
+                                                                    Axis
+                                                                        .horizontal,
+                                                                itemCount: _reflection[index]
+                                                                            .childs
+                                                                            .length >=
+                                                                        2
+                                                                    ? 2
+                                                                    : _reflection[
+                                                                            index]
+                                                                        .childs
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        indexs) {
+                                                                  return Container(
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              8.0,
+                                                                          right:
+                                                                              8.0),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          _reflection[index].childs[indexs]['imageUrl'] != '' && _reflection[index].childs[indexs]['imageUrl'] != null
+                                                                              ? CircleAvatar(
+                                                                                  radius: 10.0,
+                                                                                  backgroundImage: NetworkImage(Constants.ImageBaseUrl + _reflection[index].childs[indexs]['imageUrl']),
+                                                                                  backgroundColor: Colors.transparent,
+                                                                                )
+                                                                              : CircleAvatar(
+                                                                                  radius: 10,
+                                                                                  backgroundColor: Colors.grey,
+                                                                                ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          Text(
+                                                                            _reflection[index].childs[indexs]['name'],
+                                                                            style:
+                                                                                Constants.header3,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
                                                                   );
-                                                          },
+                                                                }),
+                                                            _reflection[index]
+                                                                        .childs
+                                                                        .length >
+                                                                    2
+                                                                ? Container(
+                                                                    height: 25,
+                                                                    width: 25,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        200],
+                                                                    child:
+                                                                        Center(
+                                                                      child: Text(
+                                                                          "+" +
+                                                                              '${_reflection[index].childs.length - 2}'),
+                                                                    ),
+                                                                  )
+                                                                : Container()
+                                                          ],
                                                         ),
                                                       )
                                                     : Container(),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                    child: Text(
-                                                  _reflection[index].about,
-                                                  style: TextStyle(
-                                                      fontSize: 12.0,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                )),
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    _reflection[index]
+                                                                .media
+                                                                .length !=
+                                                            0
+                                                        ? Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                2,
+                                                            height: 200,
+                                                            child: ListView
+                                                                .builder(
+                                                              shrinkWrap: true,
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              itemCount:
+                                                                  _reflection[
+                                                                          index]
+                                                                      .media
+                                                                      .length,
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      indexs) {
+                                                                return _reflection[index].media[indexs]['mediaUrl'] !=
+                                                                            null &&
+                                                                        _reflection[index].media[indexs]['mediaUrl'] !=
+                                                                            ''
+                                                                    ? Container(
+                                                                        width:
+                                                                            MediaQuery.of(context).size.width /
+                                                                                2,
+                                                                        height:
+                                                                            500,
+                                                                        decoration: BoxDecoration(
+                                                                            image: DecorationImage(
+                                                                                image: NetworkImage(
+                                                                                  Constants.ImageBaseUrl + _reflection[index].media[indexs]['mediaUrl'],
+                                                                                ),
+                                                                                fit: BoxFit.cover)),
+                                                                      )
+                                                                    : Container(
+                                                                        color: Colors
+                                                                            .grey,
+                                                                      );
+                                                              },
+                                                            ),
+                                                          )
+                                                        : Container(),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                        child: Text(
+                                                      _reflection[index].about,
+                                                      style: TextStyle(
+                                                          fontSize: 12.0,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    )),
+                                                  ],
+                                                )
                                               ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            )
-                          : Container()
-                      : Container()
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                )
+                          : Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: Center(
+                                          child: CircularProgressIndicator())),
+                                ],
+                              ))
+                      : Container(
+                          height: MediaQuery.of(context).size.height * .7,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  height: 40,
+                                  width: 40,
+                                  child: Center(
+                                      child: CircularProgressIndicator())),
+                            ],
+                          ))
                 ],
               ),
             ),

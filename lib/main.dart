@@ -25,15 +25,37 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint('Flutter UI Error: ${details.exception}');
-    debugPrint('Flutter UI Stacktrack: ${details.stack.toString().substring(1,200)}');
+    debugPrint(
+        'Flutter UI Stacktrack: ${details.stack.toString().substring(1, 200)}');
   };
 
   runZonedGuarded(() {
     ErrorWidget.builder = (FlutterErrorDetails details) {
-      // 👇 Show default fallback text when widget fails
-      return const Text(
-        'error',
-        style: TextStyle(color: Colors.red),
+      return Material(
+        color: Colors.white, // or any background color
+        // child: Center(
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(16.0),
+        //     child: Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         const Icon(Icons.error_outline, size: 40, color: Colors.red),
+        //         const SizedBox(height: 10),
+        //         Text(
+        //           'Oops! Something went wrong.',
+        //           style: TextStyle(color: Colors.red[800], fontSize: 16),
+        //           textAlign: TextAlign.center,
+        //         ),
+        //         const SizedBox(height: 10),
+        //         // Text(
+        //         //   details.exception.toString(),
+        //         //   style: const TextStyle(fontSize: 12, color: Colors.grey),
+        //         //   textAlign: TextAlign.center,
+        //         // ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       );
     };
 
@@ -73,9 +95,10 @@ class _RestartWidgetState extends State<RestartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyedSubtree(key: key,child: widget.child);
+    return KeyedSubtree(key: key, child: widget.child);
   }
 }
+
 class MyApp extends StatelessWidget {
   static String EMAIL_VALUE = '';
   static String PASSWORD_HASH_VALUE = '';

@@ -112,6 +112,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     RoomAPIHandler handler = RoomAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var data = await handler.getList();
+    print('++++++rooms data++++++');
+    print(rooms);
     print('HEE' + data['permission'].toString());
     var res = data['rooms'];
     rooms = [];
@@ -140,7 +142,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     };
     print('++++++data++++++++');
     try {
-      print(rooms[currentRoomIndex].id);
+      // print(rooms[currentRoomIndex].id);
       print(DateFormat("yyyy-MM-dd").format(date!));
     } catch (e, s) {
       print(e);
@@ -149,7 +151,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     print('roomsFetched');
 
     print(data);
-    if (roomsFetched) {
+    if (roomsFetched && rooms.isNotEmpty) {
       data['roomid'] = rooms[currentRoomIndex].id;
       data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     }
@@ -349,7 +351,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 [];
                                                             childrensFetched =
                                                                 false;
-                                                            _fetchData();
+                                                            // _fetchData();
+                                                            _fetchRooms();
                                                           });
                                                           break;
                                                         }
@@ -385,7 +388,11 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                 padding: const EdgeInsets.only(
                                                     left: 8, right: 8),
                                                 child: rooms.isEmpty
-                                                    ? null
+                                                    ? Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                            'NO ROOMS AVAILABLE'))
                                                     : Center(
                                                         child: DropdownButton<
                                                             String>(
@@ -438,25 +445,37 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                   height: 10,
                                 ),
                                 details != null
-                                    ? Container(
-                                        color: HexColor(details['roomcolor']),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Text(
-                                                rooms[currentRoomIndex].name,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
+                                    ? Builder(builder: (context) {
+                                        Color? color;
+                                        try {
+                                          color =
+                                              HexColor(details['roomcolor']);
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                        return Container(
+                                          color: color,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(3.0),
+                                                child: Text(
+                                                  rooms.isEmpty
+                                                      ? 'No Rooms Available'
+                                                      : rooms[currentRoomIndex]
+                                                          .name,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      })
                                     : Container(),
                                 timeScreen
                                     ? Container(
@@ -1027,7 +1046,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .sleep
                                                                 .isNotEmpty
                                                             ? GestureDetector(
-                                                                onTap: () { 
+                                                                onTap: () {
                                                                   Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
@@ -1786,88 +1805,89 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               ),
                                             ),
                                             childrensFetched
-                                                ? ListView.builder(
-                                                    shrinkWrap: true,
-                                                    itemCount:
-                                                        _allChildrens.length,
-                                                    physics:
-                                                        NeverScrollableScrollPhysics(),
-                                                    itemBuilder:
-                                                        (BuildContext context,
-                                                            int index) {
-                                                      return Container(
-                                                        child: Transform(
-                                                          transform: Matrix4
-                                                              .translationValues(
-                                                                  -6, 0.0, 0.0),
-                                                          child: ListTile(
-                                                            leading: Checkbox(
-                                                                value: childValues[
-                                                                    _allChildrens[
+                                                ? _allChildrens.isEmpty
+                                                    ? SizedBox(
+                                                      height: 200,
+                                                      child: Align(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text(
+                                                              'No childrens are there in this room')),
+                                                    )
+                                                    : ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount: _allChildrens
+                                                            .length,
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                int index) {
+                                                          return Container(
+                                                            child: Transform(
+                                                              transform: Matrix4
+                                                                  .translationValues(
+                                                                      -6,
+                                                                      0.0,
+                                                                      0.0),
+                                                              child: ListTile(
+                                                                leading:
+                                                                    Checkbox(
+                                                                        value: childValues[_allChildrens[index]
+                                                                            .id],
+                                                                        onChanged:
+                                                                            (value) {
+                                                                          if (value ==
+                                                                              true) {
+                                                                            if (!_selectedChildrens.contains(_allChildrens[index])) {
+                                                                              _selectedChildrens.add(_allChildrens[index]);
+                                                                            }
+                                                                          } else {
+                                                                            if (_selectedChildrens.contains(_allChildrens[index])) {
+                                                                              _selectedChildrens.remove(_allChildrens[index]);
+                                                                            }
+                                                                          }
+                                                                          childValues[_allChildrens[index].id] =
+                                                                              value!;
+                                                                          // if (_selectedChildrens
+                                                                          //         .length >
+                                                                          //     1)
+                                                                          //     viewAdd =
+                                                                          //true;
+                                                                          setState(
+                                                                              () {});
+                                                                        }),
+                                                                title:
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    print(_allChildrens[
                                                                             index]
-                                                                        .id],
-                                                                onChanged:
-                                                                    (value) {
-                                                                  if (value ==
-                                                                      true) {
-                                                                    if (!_selectedChildrens
-                                                                        .contains(
-                                                                            _allChildrens[index])) {
-                                                                      _selectedChildrens.add(
-                                                                          _allChildrens[
-                                                                              index]);
-                                                                    }
-                                                                  } else {
-                                                                    if (_selectedChildrens
-                                                                        .contains(
-                                                                            _allChildrens[index])) {
-                                                                      _selectedChildrens
-                                                                          .remove(
-                                                                              _allChildrens[index]);
-                                                                    }
-                                                                  }
-                                                                  childValues[_allChildrens[
-                                                                          index]
-                                                                      .id] = value!;
-                                                                  // if (_selectedChildrens
-                                                                  //         .length >
-                                                                  //     1)
-                                                                  //     viewAdd =
-                                                                  //true;
-                                                                  setState(
-                                                                      () {});
-                                                                }),
-                                                            title:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                print(_allChildrens[
-                                                                        index]
-                                                                    .toString());
-                                                                selectedIndex =
-                                                                    index;
-                                                                timeScreen =
-                                                                    true;
-                                                                setState(() {});
-                                                              },
-                                                              child: Transform(
-                                                                  transform: Matrix4
-                                                                      .translationValues(
-                                                                          -13,
-                                                                          0.0,
-                                                                          0.0),
-                                                                  child: Text(
-                                                                    _allChildrens[
-                                                                            index]
-                                                                        .name,
-                                                                    style: TextStyle(
-                                                                        color: Constants
-                                                                            .kMain),
-                                                                  )),
+                                                                        .toString());
+                                                                    selectedIndex =
+                                                                        index;
+                                                                    timeScreen =
+                                                                        true;
+                                                                    setState(
+                                                                        () {});
+                                                                  },
+                                                                  child:
+                                                                      Transform(
+                                                                          transform: Matrix4.translationValues(
+                                                                              -13,
+                                                                              0.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Text(
+                                                                            _allChildrens[index].name,
+                                                                            style:
+                                                                                TextStyle(color: Constants.kMain),
+                                                                          )),
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    })
+                                                          );
+                                                        })
                                                 : Container()
                                           ],
                                         ),
