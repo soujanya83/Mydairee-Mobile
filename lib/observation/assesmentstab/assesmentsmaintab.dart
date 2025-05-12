@@ -13,7 +13,10 @@ class AssesmentsTabs extends StatefulWidget {
   final IndexCallback changeTab;
   final Map assesData;
   final Map viewData;
-  AssesmentsTabs({required this.changeTab, required this.assesData, required this.viewData});
+  AssesmentsTabs(
+      {required this.changeTab,
+      required this.assesData,
+      required this.viewData});
   @override
   _AssesmentsTabsState createState() => _AssesmentsTabsState();
 }
@@ -27,8 +30,16 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
   @override
   void initState() {
     print(widget.viewData);
-    _controller = new TabController(length: tabCount(), vsync: this);
+    initializeController();
     super.initState();
+  }
+
+  Future<void> initializeController() async {
+    while (widget.viewData.isEmpty) {
+      await Future.delayed(Duration(seconds: 1));
+    }
+    // simulate waiting
+    _controller = new TabController(length: tabCount(), vsync: this);
   }
 
   int tabCount() {
@@ -66,83 +77,94 @@ class _AssesmentsTabsState extends State<AssesmentsTabs>
     // if (load == 0) {
     //   _fetchData(obs.obsid);
     // }
-    return Container(
-      child: Column(
-        children: <Widget>[
-          new Container(
-            child: DefaultTabController(
-              length: tabCount(),
-              child: new TabBar(
-                isScrollable: true,
-                controller: _controller,
-                labelColor: Constants.kMain,
-                unselectedLabelColor: Colors.grey,
-                tabs: [
-                  if (widget.viewData['montessori'] == '1')
-                    InkWell(
-                      onTap: () {
-                        print('=======Montessori=======');
-                        print(widget.assesData['Montessori'].toString());
-                      },
-                      child: Tab(
-                        text: 'Montessori',
-                      ),
+    return widget.assesData.isEmpty || widget.viewData.isEmpty
+        ? Container(
+            height: MediaQuery.of(context).size.height * .6,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    height: 40,
+                    width: 40,
+                    child: Center(child: CircularProgressIndicator())),
+              ],
+            ))
+        : Container(
+            child: Column(
+              children: <Widget>[
+                new Container(
+                  child: DefaultTabController(
+                    length: tabCount(),
+                    child: new TabBar(
+                      isScrollable: true,
+                      controller: _controller,
+                      labelColor: Constants.kMain,
+                      unselectedLabelColor: Colors.grey,
+                      tabs: [
+                        if (widget.viewData['montessori'] == '1')
+                          Tab(
+                            text: 'Montessori',
+                          ),
+                        if (widget.viewData['eylf'] == '1')
+                          Tab(
+                            text: 'EYLF',
+                          ),
+                        if (widget.viewData['devmile'] == '1')
+                          Tab(
+                            text: 'Developmental Milestones',
+                          ),
+                      ],
                     ),
-                  if (widget.viewData['eylf'] == '1')
-                    Tab(
-                      text: 'EYLF',
-                    ),
-                  if (widget.viewData['devmile'] == '1')
-                    Tab(
-                      text: 'Developmental Milestones',
-                    ),
-                ],
-              ),
-            ),
-          ),
-          widget.assesData != null
-              ? Container(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  child: new TabBarView(
-                    controller: _controller,
-                    children: <Widget>[
-                      if (widget.viewData['montessori'] == '1')
-                        MontessoriTabs(
-                          count: widget.assesData['Montessori']['Subjects'].length,
-                          data: widget.assesData['Montessori']['Subjects'],
-                          totaldata: obs.data,
-                          changeTab:(v){
-                            _controller?.index = 1;
-                          },
-                        ),
-                      if (widget.viewData['eylf'] == '1')
-                        EylfTabs(
-                          count: widget.assesData['EYLF']['outcome'].length,
-                          data: widget.assesData['EYLF']['outcome'],
-                          totaldata: obs.data,
-                          changeTab: (v) {
-                            _controller?.index = 2;
-                          },
-                        ),
-                      if (widget.viewData['devmile'] == '1')
-                        MilestonesTabs(
-                          count: widget
-                              .assesData['DevelopmentalMilestones']['ageGroups']
-                              .length,
-                          data: widget.assesData['DevelopmentalMilestones']
-                              ['ageGroups'],
-                          totaldata: obs.data,
-                          changeTab: (v) {
-                            print("moved");
-                            widget.changeTab(2);
-                          },
-                        ),
-                    ],
                   ),
-                )
-              : Container(),
-        ],
-      ),
-    );
+                ),
+                widget.assesData != null
+                    ? Container(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: new TabBarView(
+                          controller: _controller,
+                          children: <Widget>[
+                            if (widget.viewData['montessori'] == '1')
+                              MontessoriTabs(
+                                count: widget
+                                    .assesData['Montessori']['Subjects'].length,
+                                data: widget.assesData['Montessori']
+                                    ['Subjects'],
+                                totaldata: obs.data,
+                                changeTab: (v) {
+                                  _controller?.index = 1;
+                                },
+                              ),
+                            if (widget.viewData['eylf'] == '1')
+                              EylfTabs(
+                                count:
+                                    widget.assesData['EYLF']['outcome'].length,
+                                data: widget.assesData['EYLF']['outcome'],
+                                totaldata: obs.data,
+                                changeTab: (v) {
+                                  _controller?.index = 2;
+                                },
+                              ),
+                            if (widget.viewData['devmile'] == '1')
+                              MilestonesTabs(
+                                count: widget
+                                    .assesData['DevelopmentalMilestones']
+                                        ['ageGroups']
+                                    .length,
+                                data:
+                                    widget.assesData['DevelopmentalMilestones']
+                                        ['ageGroups'],
+                                totaldata: obs.data,
+                                changeTab: (v) {
+                                  print("moved");
+                                  widget.changeTab(2);
+                                },
+                              ),
+                          ],
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
+          );
   }
 }

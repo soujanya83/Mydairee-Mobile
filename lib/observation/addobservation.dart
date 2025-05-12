@@ -266,6 +266,10 @@ class AddObservationState extends State<AddObservation>
       print("Exception in fetchRoomsOnly: $e");
       print(s);
     }
+    if (widget.type == 'create') {
+      isDataFetched = true;
+      if (this.mounted) setState(() {});
+    }
   }
 
   bool isDataFetched = false;
@@ -282,7 +286,7 @@ class AddObservationState extends State<AddObservation>
       assert(child is List);
       for (int i = 0; i < child.length; i++) {
         _allChildrens.add(ChildModel.fromJson(child[i]));
-        childValues[_allChildrens[i]?.childid ?? ''] = false;
+        childValues[_allChildrens[i].childid ?? ''] = false;
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
@@ -1087,8 +1091,18 @@ class AddObservationState extends State<AddObservation>
           endmenu == 'Room' ? getRoomDrawer(context) : getEndDrawer(context),
       drawer: GetDrawer(),
       appBar: Header.appBar(),
-      body: _controller == null
-          ? SizedBox()
+      body: _controller == null || !isDataFetched
+          ? Container(
+              height: MediaQuery.of(context).size.height * .7,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      height: 40,
+                      width: 40,
+                      child: Center(child: CircularProgressIndicator())),
+                ],
+              ))
           : SingleChildScrollView(
               controller: scrollController,
               child: Padding(
@@ -1133,7 +1147,6 @@ class AddObservationState extends State<AddObservation>
                         child: new TabBar(
                           controller: _controller,
                           labelColor: Constants.kMain,
-                          isScrollable: true,
                           unselectedLabelColor: Colors.grey,
                           tabs: [
                             new Tab(
@@ -1157,6 +1170,7 @@ class AddObservationState extends State<AddObservation>
                             selectedRooms.length * 50 +
                             300,
                         child: new TabBarView(
+                          
                           controller: _controller,
                           children: <Widget>[
                             Container(

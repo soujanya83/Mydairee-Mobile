@@ -16,7 +16,11 @@ class MontessoriTabs extends StatefulWidget {
   final List data;
   final Map totaldata;
   final IndexCallback changeTab;
-  MontessoriTabs({required this.count, required this.data, required this.changeTab, required this.totaldata});
+  MontessoriTabs(
+      {required this.count,
+      required this.data,
+      required this.changeTab,
+      required this.totaldata});
 
   @override
   _MontessoriTabsState createState() => _MontessoriTabsState();
@@ -151,11 +155,12 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                       "montessori": ac
                     };
                     print(jsonEncode(objToSend));
-                    final response = await http
-                        .post(Uri.parse(_toSend), body: jsonEncode(objToSend), headers: {
-                      'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                    });
+                    final response = await http.post(Uri.parse(_toSend),
+                        body: jsonEncode(objToSend),
+                        headers: {
+                          'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                        });
                     print(response.body);
                     if (response.statusCode == 200) {
                       MyApp.ShowToast("updated", context);
@@ -206,12 +211,26 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                       borderRadius: BorderRadius.all(Radius.circular(6)),
                     ),
                     child: ListTile(
-                      title: Text(
-                        widget.data[val]['activity'][index]['title'],
-                        style: TextStyle(fontSize: 15),
-                      ),
+                      title: Text(widget.data[val]['activity'][index]['title'],
+                          // style: TextStyle(fontSize: 15),
+                          style: TextStyle(
+                              fontSize: 15.0,
+                              color: Constants.kBlack,
+                              fontWeight: FontWeight.w500)),
                       trailing: InkWell(
                         onTap: () {
+                          try {
+                            if (widget
+                                .data[val]['activity'][index]['SubActivity']
+                                .isEmpty) {
+                              MyApp.ShowToast('Sub activity Empty!', context);
+                              return;
+                            }
+                          } catch (e) {}
+                          print('===============');
+                          print(widget
+                                .data[val]['activity'][index]);
+                          print('-----------');
                           if (AddObservationState.em[val][index]) {
                             AddObservationState.em[val][index] = false;
                           } else {
@@ -241,200 +260,279 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                       visible: AddObservationState.em != null
                           ? AddObservationState.em[val][index]
                           : false,
-                      child: Container(
-                          height: widget
-                                  .data[val]['activity'][index]['SubActivity']
-                                  .length *
-                              130.0,
-                          width: MediaQuery.of(context).size.width,
-                          child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: widget
-                                .data[val]['activity'][index]['SubActivity']
-                                .length,
-                            itemBuilder: (BuildContext context, int i) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                    child: Column(children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                          width: 140,
-                                          child: Text(widget.data[val]
-                                                  ['activity'][index]
-                                              ['SubActivity'][i]['title'])),
-                                      Expanded(
-                                        child: Container(),
-                                      ),
-                                      Container(
-                                        height: 10,
-                                        width: 12,
-                                        child: Radio(
-                                          value: 'Not Assesed',
-                                          groupValue: AddObservationState
-                                              .dropAns[val][index][i],
-                                           onChanged: (String? value)  {
-                                            setState(() {
-                                              AddObservationState.dropAns[val]
-                                                  [index][i] = value!;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "N",
-                                      ),
-                                      SizedBox(
-                                        width: 12,
-                                      ),
-                                      Container(
-                                        height: 10,
-                                        width: 12,
-                                        child: Radio(
-                                          value: 'Introduced',
-                                          groupValue: AddObservationState
-                                              .dropAns[val][index][i],
-                                           onChanged: (String? value)  {
-                                            setState(() {
-                                              AddObservationState.dropAns[val]
-                                                  [index][i] = value!;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "I",
-                                      ),
-                                      SizedBox(
-                                        width: 12,
-                                      ),
-                                      Container(
-                                        height: 10,
-                                        width: 12,
-                                        child: Radio(
-                                          value: 'Working',
-                                          groupValue: AddObservationState
-                                              .dropAns[val][index][i],
-                                           onChanged: (String? value)  {
-                                            setState(() {
-                                              AddObservationState.dropAns[val]
-                                                  [index][i] = value!;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "W",
-                                      ),
-                                      SizedBox(
-                                        width: 12,
-                                      ),
-                                      Container(
-                                        height: 10,
-                                        width: 12,
-                                        child: Radio(
-                                          value: 'Completed',
-                                          groupValue: AddObservationState
-                                              .dropAns[val][index][i],
-                                           onChanged: (String? value)  {
-                                            setState(() {
-                                              AddObservationState.dropAns[val]
-                                                  [index][i] = value!;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "C",
-                                      ),
-
-                                      // DropdownButtonHideUnderline(
-                                      //   child: Container(
-                                      //     height: 40,
-                                      //     width: MediaQuery.of(context)
-                                      //             .size
-                                      //             .width -
-                                      //         180,
-                                      //     decoration: BoxDecoration(
-                                      //         border: Border.all(
-                                      //             color: Colors.grey),
-                                      //         color: Colors.white,
-                                      //         borderRadius: BorderRadius.all(
-                                      //             Radius.circular(8))),
-                                      //     child: Padding(
-                                      //       padding: const EdgeInsets.only(
-                                      //           left: 8, right: 8),
-                                      //       child: Center(
-                                      //         child: DropdownButton<String>(
-                                      //           isExpanded: true,
-                                      //           value: dropAns[val][index][i],
-                                      //           items: <String>[
-                                      //             'Not Assesed',
-                                      //             'Introduced',
-                                      //             'Working',
-                                      //             'Completed'
-                                      //           ].map((String value) {
-                                      //             return new DropdownMenuItem<
-                                      //                 String>(
-                                      //               value: value,
-                                      //               child: new Text(value),
-                                      //             );
-                                      //           }).toList(),
-                                      //            onChanged: (String? value)  {
-                                      //             setState(() {
-                                      //               dropAns[val][index][i] =
-                                      //                   value!;
-                                      //             });
-                                      //           },
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ],
-                                  ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: widget
+                            .data[val]['activity'][index]['SubActivity'].length,
+                        itemBuilder: (BuildContext context, int i) {
+                          return Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Container(
+                                child: Column(children: [
+                              Row(
+                                children: [
                                   Container(
-                                    height: AddObservationState
-                                            .extras[val][index][i].length *
-                                        60.0,
-                                    child: ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: AddObservationState
-                                            .extras[val][index][i].length,
-                                        itemBuilder:
-                                            (BuildContext context, int j) {
-                                          return CheckboxListTile(
-                                              title: Text(AddObservationState
-                                                  .extras[val][index][i][j]
-                                                  .title),
-                                              value: AddObservationState
-                                                      .selectedExtras[val]
-                                                  [index][i][j],
-                                              onChanged: (value) {
-                                                AddObservationState
-                                                        .selectedExtras[val]
-                                                    [index][i][j] = value!;
-                                                setState(() {});
-                                              });
-                                        }),
+                                      width: 140,
+                                      child: Text(
+                                          widget.data[val]['activity'][index]
+                                              ['SubActivity'][i]['title'],
+                                          style: TextStyle(
+                                              fontSize: 13.0,
+                                              color: Constants.kBlack,
+                                              fontWeight: FontWeight.w400))),
+                                  Expanded(
+                                    child: Container(),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        AddObservationState.dropAns[val][index]
+                                            [i] = 'Not Assesed';
+                                      });
+                                    },
+                                    borderRadius: BorderRadius.circular(8),
+                                    splashColor: Colors.grey.withOpacity(0.2),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 24,
+                                            width: 15,
+                                            child: Radio<String>(
+                                              value: 'Not Assesed',
+                                              groupValue: AddObservationState
+                                                  .dropAns[val][index][i],
+                                              onChanged: (String? value) {
+                                                setState(() {
+                                                  AddObservationState
+                                                          .dropAns[val][index]
+                                                      [i] = value!;
+                                                });
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text("N",
+                                              style: TextStyle(fontSize: 16)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: SizedBox(
+                                      width: 12,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        AddObservationState.dropAns[val][index]
+                                            [i] = 'Introduced';
+                                      });
+                                    },
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 24,
+                                            width: 15,
+                                            child: Radio<String>(
+                                              value: 'Introduced',
+                                              groupValue: AddObservationState
+                                                  .dropAns[val][index][i],
+                                              onChanged: (String? value) {
+                                                setState(() {
+                                                  AddObservationState
+                                                          .dropAns[val][index]
+                                                      [i] = value!;
+                                                });
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text("I",
+                                              style: TextStyle(fontSize: 16)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: SizedBox(
+                                      width: 12,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        AddObservationState.dropAns[val][index]
+                                            [i] = 'Working';
+                                      });
+                                    },
+                                    splashColor: Colors.grey.withOpacity(
+                                        0.3), // Custom ripple color
+                                    borderRadius: BorderRadius.circular(
+                                        8), // Rounded ripple effect
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 24, // Larger clickable area
+                                            width: 15,
+                                            child: Radio<String>(
+                                              value: 'Working',
+                                              groupValue: AddObservationState
+                                                  .dropAns[val][index][i],
+                                              onChanged: (String? value) {
+                                                setState(() {
+                                                  AddObservationState
+                                                          .dropAns[val][index]
+                                                      [i] = value!;
+                                                });
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                              width: 8), // Increased spacing
+                                          const Text("W",
+                                              style: TextStyle(fontSize: 16)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: SizedBox(
+                                      width: 12,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        AddObservationState.dropAns[val][index]
+                                            [i] = 'Completed';
+                                      });
+                                    },
+                                    borderRadius: BorderRadius.circular(
+                                        12), // Rounded touch feedback
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 24, // Larger clickable area
+                                            width: 15,
+                                            child: Radio<String>(
+                                              value: 'Completed',
+                                              groupValue: AddObservationState
+                                                  .dropAns[val][index][i],
+                                              onChanged: (String? value) {
+                                                setState(() {
+                                                  AddObservationState
+                                                          .dropAns[val][index]
+                                                      [i] = value!;
+                                                });
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text("C",
+                                              style: TextStyle(fontSize: 16)),
+                                        ],
+                                      ),
+                                    ),
                                   )
-                                ])),
-                              );
-                            },
-                          ))),
+
+                                  // DropdownButtonHideUnderline(
+                                  //   child: Container(
+                                  //     height: 40,
+                                  //     width: MediaQuery.of(context)
+                                  //             .size
+                                  //             .width -
+                                  //         180,
+                                  //     decoration: BoxDecoration(
+                                  //         border: Border.all(
+                                  //             color: Colors.grey),
+                                  //         color: Colors.white,
+                                  //         borderRadius: BorderRadius.all(
+                                  //             Radius.circular(8))),
+                                  //     child: Padding(
+                                  //       padding: const EdgeInsets.only(
+                                  //           left: 8, right: 8),
+                                  //       child: Center(
+                                  //         child: DropdownButton<String>(
+                                  //           isExpanded: true,
+                                  //           value: dropAns[val][index][i],
+                                  //           items: <String>[
+                                  //             'Not Assesed',
+                                  //             'Introduced',
+                                  //             'Working',
+                                  //             'Completed'
+                                  //           ].map((String value) {
+                                  //             return new DropdownMenuItem<
+                                  //                 String>(
+                                  //               value: value,
+                                  //               child: new Text(value),
+                                  //             );
+                                  //           }).toList(),
+                                  //            onChanged: (String? value)  {
+                                  //             setState(() {
+                                  //               dropAns[val][index][i] =
+                                  //                   value!;
+                                  //             });
+                                  //           },
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                              Container(
+                                height: AddObservationState
+                                        .extras[val][index][i].length *
+                                    60.0,
+                                child: ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: AddObservationState
+                                        .extras[val][index][i].length,
+                                    itemBuilder: (BuildContext context, int j) {
+                                      return CheckboxListTile(
+                                          title: Text(AddObservationState
+                                              .extras[val][index][i][j].title),
+                                          value: AddObservationState
+                                              .selectedExtras[val][index][i][j],
+                                          onChanged: (value) {
+                                            AddObservationState
+                                                    .selectedExtras[val][index]
+                                                [i][j] = value!;
+                                            setState(() {});
+                                          });
+                                    }),
+                              )
+                            ])),
+                          );
+                        },
+                      )),
                 ],
               ),
             ),
