@@ -28,7 +28,7 @@ void main() async {
     debugPrint(
         'Flutter UI Stacktrack: ${details.stack.toString().substring(1, 200)}');
   };
-
+ 
   runZonedGuarded(() {
     ErrorWidget.builder = (FlutterErrorDetails details) {
       return Material(

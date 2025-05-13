@@ -133,6 +133,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     }
   }
 
+  bool dataFetched = false;
+
   Future<void> _fetchData() async {
     print('enter in _fetchData');
     roomsFetched = true;
@@ -198,7 +200,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
       }
 
       showType = dt['columns'];
-      if (this.mounted) setState(() {});
+      if (this.mounted)
+        setState(() {
+          dataFetched = true;
+        });
     } else {
       MyApp.Show401Dialog(context);
     }
@@ -476,7 +481,22 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                           ),
                                         );
                                       })
-                                    : Container(),
+                                    : Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .7,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                                height: 40,
+                                                width: 40,
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator())),
+                                          ],
+                                        )),
                                 timeScreen
                                     ? Container(
                                         color: Colors.white,
@@ -2400,9 +2420,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                       comments
                                                                           ?.text
                                                                           .toString(),
-                                                                  "createdAt": DateTime
-                                                                          .now()
-                                                                      .toString(),
+                                                                  // "createdAt": DateTime
+                                                                  //         .now()
+                                                                  //     .toString(),
+                                                                  "diarydate": DateFormat(
+                                                                          'yyyy-MM-dd')
+                                                                      .format(
+                                                                          date!),
                                                                   "type": type
                                                                       .toUpperCase(),
                                                                   "calories": cal
@@ -3683,9 +3707,11 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                           "comments": comments
                                                               ?.text
                                                               .toString(),
-                                                          "createdAt":
-                                                              DateTime.now()
-                                                                  .toString(),
+                                                          // "createdAt":
+                                                          //     DateTime.now()
+                                                          //         .toString(),
+                                                          "diarydate": DateFormat('yyyy-MM-dd')
+                                                              .format(date!),
                                                           "type": type
                                                               .toUpperCase(),
                                                           "childids": [
@@ -3694,7 +3720,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .id
                                                           ]
                                                         };
-
+                   
                                                         print(jsonEncode(
                                                             objToSend));
                                                         final response =
@@ -3779,7 +3805,17 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                       : Container(),
                 ],
               )
-            : Container());
+            : Container(
+                height: MediaQuery.of(context).size.height * .7,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        height: 40,
+                        width: 40,
+                        child: Center(child: CircularProgressIndicator())),
+                  ],
+                )));
   }
 
   Future<DateTime?> _selectDate(BuildContext context, DateTime dateTime) async {

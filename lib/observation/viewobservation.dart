@@ -31,10 +31,10 @@ class ViewObservation extends StatefulWidget {
       required this.eylfCount,
       required this.devCount});
   @override
-  _ViewObservationState createState() => _ViewObservationState();
+  ViewObservationState createState() => ViewObservationState();
 }
 
-class _ViewObservationState extends State<ViewObservation> {
+class ViewObservationState extends State<ViewObservation> {
   List<ChildSubModel> _allChildrens = [];
   TextEditingController? comment;
   ObservationModel? _observation;
@@ -42,8 +42,8 @@ class _ViewObservationState extends State<ViewObservation> {
   bool expandeylf = false;
   bool expandmontessori = false;
   bool expandmilestones = false;
-  var displaydata;
-  var displaydata1;
+  static var displaydata;
+  static var displaydata1;
   List? media;
   final DateFormat formatter = DateFormat('dd-MM-yyyy – kk:mm');
 
@@ -157,7 +157,7 @@ class _ViewObservationState extends State<ViewObservation> {
 
     ObservationsAPIHandler handler1 = ObservationsAPIHandler({
       "userid": MyApp.LOGIN_ID_VALUE,
-      "observationId": widget.id,
+      "observationId": widget.id
     });
     var data1 = await handler1.getObservationDataDetails();
 
@@ -169,6 +169,7 @@ class _ViewObservationState extends State<ViewObservation> {
       } else {
         permission = false;
       }
+
       displaydata1 = data1;
 
       print('dashhhh');
@@ -180,16 +181,13 @@ class _ViewObservationState extends State<ViewObservation> {
           EylfOutcomeModel eylfOutcomeModel =
               EylfOutcomeModel.fromJson(displaydata1['outcomes'][a]);
           List<EylfActivityModel> activityModel = [];
-          for (int b = 0;
-              b < displaydata1['outcomes'][a]['Activity'].length;
+          for (int b = 0;  b < displaydata1['outcomes'][a]['Activity'].length;
               b++){
             EylfActivityModel act = EylfActivityModel.fromJson(
                 displaydata1['outcomes'][a]['Activity'][b]);
             List<EylfSubActivityModel> subActivityModel = [];
             for (int c = 0;
-                c <
-                    displaydata1['outcomes'][a]['Activity'][b]['subActivity']
-                        .length;
+                c < displaydata1['outcomes'][a]['Activity'][b]['subActivity'] .length;
                 c++) {
               subActivityModel.add(EylfSubActivityModel.fromJson(
                   displaydata1['outcomes'][a]['Activity'][b]['subActivity']

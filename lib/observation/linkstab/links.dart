@@ -10,6 +10,7 @@ import 'package:mykronicle_mobile/models/qiplistmodel.dart';
 import 'package:mykronicle_mobile/models/reflectionmodel.dart';
 import 'package:mykronicle_mobile/observation/addobservation.dart';
 import 'package:mykronicle_mobile/observation/obsdata.dart';
+import 'package:mykronicle_mobile/observation/viewobservation.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/removeTags.dart';
 import 'package:mykronicle_mobile/utils/videoitem.dart';
@@ -104,7 +105,126 @@ class _LinksState extends State<Links> {
 
   // }
 
+  initializeEditObservations() {
+    linksData = ViewObservationState.displaydata1['linkedData'];
+    print(ViewObservationState.displaydata1['linkedData'].toString());
+    for (int i = 0; i < _allObservations.length; i++) {
+      try {
+        for (int linksIndex = 0; linksIndex < linksData.length; linksIndex++) {
+          print('Checking link at index $linksIndex: ${linksData[linksIndex]}');
+
+          final linkType =
+              linksData[linksIndex]['type']?.toString()?.toLowerCase();
+          final linkId = linksData[linksIndex]['data']?['id'];
+
+          print('Link type: $linkType, Link ID: $linkId');
+
+          if (linkType.toString().toLowerCase() == 'observation') {
+            if (_allObservations[i].id == linkId) {
+              print(
+                  'Match found for observation ID: ${_allObservations[i].id}');
+              _added[i] = true;
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        print('Error while linking observation at index : $e');
+      }
+    }
+  }
+
+  initializeEditReflection(){
+    linksData = ViewObservationState.displaydata1['linkedData'];
+    // print(ViewObservationState.displaydata1['linkedData'].toString());
+    for (int i = 0; i < _allReflections.length; i++) {
+      try {
+        for (int linksIndex = 0; linksIndex < linksData.length; linksIndex++) {
+          // print('Checking link at index $linksIndex:');
+
+          final linkType =
+              linksData[linksIndex]['type']?.toString().toLowerCase();
+          final linkId = linksData[linksIndex]['data']?['id'];
+
+          // print('Link type: $linkType, Link ID: $linkId');
+
+          print('${_allReflections[i].id} == $linkId  $linkType');
+          if (linkType.toString().toLowerCase() == 'REFLECTION'.toLowerCase()) {
+            if (_allReflections[i].id == linkId) {
+              print('Match found for REFLECTION ID: ${_allReflections[i].id}');
+              _addedRef[i] = true;
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        print('Error while linking observation at index : $e');
+      }
+    }
+  }
+
+  //  initializeEditQip() {
+  //   linksData = ViewObservationState.displaydata1['linkedData'];
+  //   print(ViewObservationState.displaydata1['linkedData'].toString());
+  //   for (int i = 0; i < _allQips.length; i++) {
+  //     try {
+  //       for (int linksIndex = 0; linksIndex < linksData.length; linksIndex++) {
+  //         print('Checking link at index $linksIndex: ${linksData[linksIndex]}');
+
+  //         final linkType =
+  //             linksData[linksIndex]['type']?.toString().toLowerCase();
+  //         final linkId = linksData[linksIndex]['data']?['id'];
+
+  //         print('Link type: $linkType, Link ID: $linkId');
+
+  //         if (linkType == 'REFLECTION') {
+  //           if (_allQips[i] == linkId) {
+  //             print('Match found for OIP ID: ${_allQips[i].id}');
+  //             _addedQips[i] = true;
+  //             break;
+  //           }
+  //         }
+  //       }
+  //     } catch(e){
+  //       print('Error while linking observation at index : $e');
+  //     }
+  //   }
+  // }
+
+  // initializeEditProgramPlan(){
+  //   linksData = ViewObservationState.displaydata1['linkedData'];
+  //   print(ViewObservationState.displaydata1['linkedData'].toString());
+  //   for (int i = 0; i < _allPlans.length; i++){
+  //     try {
+  //       for (int linksIndex = 0; linksIndex < linksData.length; linksIndex++) {
+  //         print('Checking link at index $linksIndex: ${linksData[linksIndex]}');
+
+  //         final linkType = linksData[linksIndex]['type']?.toString().toLowerCase();
+  //         final linkId = linksData[linksIndex]['data']?['id'];
+
+  //         print('Link type: $linkType, Link ID: $linkId');
+
+  //         if (linkType == 'REFLECTION') {
+  //           if (_allQips[i] == linkId) {
+  //             print('Match found for OIP ID: ${_allQips[i].id}');
+  //             _addedQips[i] = true;
+  //             break;
+  //           }
+  //         }
+  //       }
+  //     } catch(e){
+  //       print('Error while linking observation at index : $e');
+  //     }
+  //   }
+  // }
+
+  var linksData;
   Future<void> _fetchData(String id, var di) async {
+    try {
+      linksData = ViewObservationState.displaydata['linkedData'];
+    } catch (e) {
+      print(e);
+    }
     ObservationsAPIHandler handler = ObservationsAPIHandler({
       "id": id,
     });
@@ -120,6 +240,22 @@ class _LinksState extends State<Links> {
         for (int i = 0; i < res.length; i++) {
           _allObservations.add(ObservationModel.fromJson(res[i]));
           _added.add(false);
+          try {
+            for (int linksIndex = 0;
+                linksIndex < linksData.length;
+                linksIndex++) {
+              if (linksData[linksIndex]['type'].toString().toLowerCase() ==
+                  'OBSERVATION'.toLowerCase()) {
+                if (_allObservations[i].id ==
+                    linksData[linksIndex]['data']['id']) {
+                  _added[i] = true;
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            _added[i] = false;
+          }
         }
         observationsFetched = true;
         load = false;
@@ -127,7 +263,7 @@ class _LinksState extends State<Links> {
       } catch (e) {
         print(e);
       }
-
+      initializeEditObservations();
       var result = data['reflections'];
       _allReflections = [];
       _addedRef = [];
@@ -143,6 +279,7 @@ class _LinksState extends State<Links> {
       } catch (e) {
         print(e);
       }
+      initializeEditReflection();
     } else {
       MyApp.Show401Dialog(context);
     }
@@ -278,8 +415,8 @@ class _LinksState extends State<Links> {
 
   @override
   Widget build(BuildContext context) {
+    print(AddObservationState.assesData);
     var obs = Provider.of<Obsdata>(context);
-
     if (loaded == 0) {
       print(obs.data);
       _fetchData(obs.obsid, obs.data);
@@ -656,7 +793,7 @@ class _LinksState extends State<Links> {
                       return GestureDetector(
                         child: Card(
                           child: Container(
-                              height: 150,
+                              height: 170,
                               width: MediaQuery.of(context).size.width * 0.85,
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -664,35 +801,43 @@ class _LinksState extends State<Links> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 8, 0, 8),
-                                          child: Text(
-                                            _allReflections[index].title != null
-                                                ? _allReflections[index].title
-                                                : '',
-                                            style: Constants.header3,
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 8, 0, 8),
+                                            child: Text(
+                                              _allReflections[index].title != null
+                                                  ? _allReflections[index].title
+                                                  : '',
+                                              style: Constants.header3,maxLines: 2,
+                                            ),
                                           ),
                                         ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Container(),
-                                        ),
+                                        // Expanded(
+                                        //   // flex: 1,
+                                        //   child: Container(),
+                                        // ),
                                         Checkbox(
                                           value: _addedRef[index],
-                                          onChanged: (value) {
+                                          onChanged: (value) { 
                                             _addedRef[index] = value!;
                                             setState(() {});
                                           },
                                         ),
                                       ],
                                     ),
-                                    Text(
-                                      _allReflections[index].about != null
-                                          ? _allReflections[index].about
-                                          : '',
-                                      overflow: TextOverflow.ellipsis,
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Text(
+                                          _allReflections[index].about != null
+                                              ? _allReflections[index].about
+                                              : '',
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 4,
+                                        ),
+                                      ),
                                     ),
                                     // SizedBox(
                                     //   height: 10,
