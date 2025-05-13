@@ -14,6 +14,7 @@ class UserModel {
   String devicetype;
   String companyLogo;
   String relation;
+  String userStatus;
 
   UserModel({
     required this.userid,
@@ -31,6 +32,7 @@ class UserModel {
     required this.devicetype,
     required this.companyLogo,
     required this.relation,
+    required this.userStatus,
   });
 
   /// Convert JSON to `UserModel`
@@ -51,6 +53,7 @@ class UserModel {
       devicetype: json['devicetype'] ?? '',
       companyLogo: json['companyLogo'] ?? '',
       relation: json['relation'] ?? '',
+      userStatus: json['status'] ?? ''
     );
   }
 
@@ -72,6 +75,7 @@ class UserModel {
       'devicetype': devicetype,
       'companyLogo': companyLogo,
       'relation': relation,
+      'status': userStatus,
     };
   }
 }

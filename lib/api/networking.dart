@@ -100,7 +100,7 @@ class ServiceWithHeaderDataPost {
       Uri.parse(url),
       headers: {
         'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE, 
       },
       body: jsonEncode(b),
     );

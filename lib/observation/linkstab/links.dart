@@ -1139,6 +1139,8 @@ class _LinksState extends State<Links> {
                               'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
                               'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                             });
+                        print('=======token===============');
+                        print(MyApp.AUTH_TOKEN_VALUE);
                         print(resp2.body);
                         final resp3 = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(objToSend4),

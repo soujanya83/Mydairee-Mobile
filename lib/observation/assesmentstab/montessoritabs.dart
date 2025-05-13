@@ -228,8 +228,7 @@ class _MontessoriTabsState extends State<MontessoriTabs>
                             }
                           } catch (e) {}
                           print('===============');
-                          print(widget
-                                .data[val]['activity'][index]);
+                          print(widget.data[val]['activity'][index]);
                           print('-----------');
                           if (AddObservationState.em[val][index]) {
                             AddObservationState.em[val][index] = false;

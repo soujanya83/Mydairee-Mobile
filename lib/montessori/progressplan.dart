@@ -55,7 +55,7 @@ class _ProgressPlanState extends State<ProgressPlan> {
         print(e);
       }
     } else {
-      //MyApp.Show401Dialog(context);
+      MyApp.Show401Dialog(context);
     }
     _load();
   }
@@ -290,9 +290,14 @@ class _ProgressPlanState extends State<ProgressPlan> {
               ),
               if (dataFetched && error == '')
                 ListTile(
-                  title: Text(
-                    typeFlag ? "Planned" : "Record",
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  title: InkWell(
+                    onTap: (){
+                      _load();
+                    },
+                    child: Text(
+                      typeFlag ? "Planned" : "Record",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                   trailing: MyApp.USER_TYPE_VALUE != 'Parent'? Switch(
                     activeColor: Colors.white,
@@ -527,7 +532,8 @@ class _ProgressPlanState extends State<ProgressPlan> {
                     }
                   }
                 },
-                child: flag(data!=null? data[index.toString()]:'', childSubModel.createdBy)
+                child: Text(data.toString()),
+                // child: flag(data!=null? data[index.toString()]:'', childSubModel.createdBy)
                 ),
       ),
     );

@@ -19,6 +19,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 
 import 'package:http_parser/http_parser.dart';
+import 'package:pinput/pinput.dart';
 
 class AddUser extends StatefulWidget {
   final String type;
@@ -39,7 +40,7 @@ class _AddUserState extends State<AddUser> {
   String dob = '';
   String editpin = '';
   bool active = false;
-  List<CentersModel> centers=[];
+  List<CentersModel> centers = [];
   Map<String, bool> centerValues = {};
   List<CentersModel> _selectedCenter = [];
   bool centersFetched = false;
@@ -47,23 +48,26 @@ class _AddUserState extends State<AddUser> {
 
   File? _image;
 
- Future<File> compressAndGetFile(File file, String targetPath) async {
-  XFile? result = await FlutterImageCompress.compressAndGetFile(
-    file.absolute.path, targetPath,
-    minWidth: 900, minHeight: 900, quality: 40,
-  );
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 900,
+      minHeight: 900,
+      quality: 40,
+    );
 
-  if (result == null) {
-    throw Exception("Compression failed: Unable to get compressed file.");
+    if (result == null) {
+      throw Exception("Compression failed: Unable to get compressed file.");
+    }
+
+    File compressedFile = File(result.path); // Convert XFile to File
+
+    print("Original size: ${file.lengthSync()} bytes");
+    print("Compressed size: ${compressedFile.lengthSync()} bytes");
+
+    return compressedFile;
   }
-
-  File compressedFile = File(result.path); // Convert XFile to File
-
-  print("Original size: ${file.lengthSync()} bytes");
-  print("Compressed size: ${compressedFile.lengthSync()} bytes");
-
-  return compressedFile;
-}
 
   Future _loadFromGallery(var context) async {
     print('heee');
@@ -73,7 +77,7 @@ class _AddUserState extends State<AddUser> {
     // setState(() {
     //   _image = File(_galleryImage.path);
     // });
-    File file = File(_galleryImage?.path??"");
+    File file = File(_galleryImage?.path ?? "");
     var fileSizeInBytes = file.length();
     var fileSizeInKB = await fileSizeInBytes / 1024;
     var fileSizeInMB = fileSizeInKB / 1024;
@@ -279,14 +283,14 @@ class _AddUserState extends State<AddUser> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                       Text(
-                     widget.type == 'edit'?'Edit User': 'Add User',
+                        widget.type == 'edit' ? 'Edit User' : 'Add User',
                         style: Constants.header1,
                       ),
                       Row(
                         children: [
                           Text('User Settings>'),
                           Text(
-                     widget.type == 'edit'?'Edit User':'Add User',
+                            widget.type == 'edit' ? 'Edit User' : 'Add User',
                             style: TextStyle(color: Constants.kMain),
                           )
                         ],
@@ -431,7 +435,7 @@ class _AddUserState extends State<AddUser> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                 onChanged: (String? value)  {
+                                onChanged: (String? value) {
                                   setState(() {
                                     _gender = value!;
                                   });
@@ -627,7 +631,7 @@ class _AddUserState extends State<AddUser> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                 onChanged: (String? value)  {
+                                onChanged: (String? value) {
                                   setState(() {
                                     status = value!;
                                   });
@@ -637,113 +641,110 @@ class _AddUserState extends State<AddUser> {
                           ),
                         ),
                       ),
-                      // if (status == 'SUPERADMIN')
-                      //   Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: [
-                      //       SizedBox(
-                      //         height: 10,
-                      //       ),
-                      //       Text(
-                      //         'Password',
-                      //         style: Constants.header2,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Container(
-                      //         height: 50,
-                      //         padding: EdgeInsets.only(left: 16.0),
-                      //         decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(3),
-                      //             border: Border.all(color: Colors.grey)),
-                      //         child: TextField(
-                      //           controller: pwd,
-                      //           autofocus: false,
-                      //           obscureText: false,
-                      //           decoration: InputDecoration(
-                      //               contentPadding: EdgeInsets.all(0),
-                      //               border: InputBorder.none),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // if (status == 'STAFF')
-                      //   Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: [
-                      //       SizedBox(height: 10),
-                      //       Text(
-                      //         'Employee Code',
-                      //         style: Constants.header2,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Container(
-                      //         height: 50,
-                      //         padding: EdgeInsets.only(left: 16.0),
-                      //         decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(3),
-                      //             border: Border.all(color: Colors.grey)),
-                      //         child: TextField(
-                      //           controller: empcode,
-                      //           autofocus: false,
-                      //           obscureText: false,
-                      //           decoration: InputDecoration(
-                      //               contentPadding: EdgeInsets.all(0),
-                      //               border: InputBorder.none),
-                      //         ),
-                      //       ),
-                      //       SizedBox(height: 10),
-                      //       Text(
-                      //         'PIN',
-                      //         style: Constants.header2,
-                      //       ),
-                      //       SizedBox(height: 3),
-                      //       if (editpin.length != 0)
-                      //         Row(
-                      //           //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //           children: [
-                      //             Text(editpin),
-                      //             Expanded(
-                      //               flex: 1,
-                      //               child: Container(),
-                      //             ),
-                      //             GestureDetector(
-                      //                 onTap: () {
-                      //                   editpin = '';
-                      //                   setState(() {});
-                      //                 },
-                      //                 child: Text(
-                      //                   'Change',
-                      //                   style: TextStyle(color: Colors.blue),
-                      //                 ))
-                      //           ],
-                      //         ),
-                      //       if (editpin.length == 0)
-                      //         OTPTextField(
-                      //           length: 4,
-                      //           width: MediaQuery.of(context).size.width,
-                      //           fieldWidth: 50,
-                      //           style: TextStyle(fontSize: 17),
-                      //           textFieldAlignment:
-                      //               MainAxisAlignment.spaceAround,
-                      //           //fieldStyle: FieldStyle.underline,
-                      //           onCompleted: (p) {
-                      //             print("Completed: " + p);
-                      //             setState(() {
-                      //               pin = p;
-                      //             });
-                      //           },
-                      //         ),
-                      //     ],
-                      //   ),
+                      if (status == 'SUPERADMIN')
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Password',
+                              style: Constants.header2,
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 16.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(3),
+                                  border: Border.all(color: Colors.grey)),
+                              child: TextField(
+                                controller: pwd,
+                                autofocus: false,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(0),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (status == 'STAFF')
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 10),
+                            Text(
+                              'Employee Code',
+                              style: Constants.header2,
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 16.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(3),
+                                  border: Border.all(color: Colors.grey)),
+                              child: TextField(
+                                controller: empcode,
+                                autofocus: false,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(0),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'PIN',
+                              style: Constants.header2,
+                            ),
+                            SizedBox(height: 10),
+                            if (editpin.length != 0)
+                              Row(
+                                //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(editpin),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        editpin = '';
+                                        setState(() {});
+                                      },
+                                      child: Text(
+                                        'Change',
+                                        style: TextStyle(color: Colors.blue),
+                                      ))
+                                ],
+                              ),
+                            if (editpin.length == 0)
+                              SizedBox(
+                                height: 50,
+                                child: Pinput(
+                                  length: 4,
+                                  onCompleted: (pin) {
+                                    print("Completed: $pin");
+                                    setState(() {
+                                      this.pin = pin;
+                                    });
+                                  },
+                                ),
+                              )
+                          ],
+                        ),
                       SizedBox(
                         height: 15,
                       ),
-                      (_image == null)? 
-                      GestureDetector(
+                      (_image == null)
+                          ? GestureDetector(
                               onTap: () async {
                                 _loadFromGallery(context);
                               },
@@ -772,18 +773,19 @@ class _AddUserState extends State<AddUser> {
                               ))
                           : Stack(
                               children: [
-                                _image!=null?
-                                Container(
-                                    width: 120,
-                                    height: 120,
-                                    decoration: new BoxDecoration(
-                                      //  borderRadius: BorderRadius.circular(15.0),
-                                      shape: BoxShape.rectangle,
-                                      image: new DecorationImage(
-                                        image: new FileImage(_image!),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )):SizedBox(),
+                                _image != null
+                                    ? Container(
+                                        width: 120,
+                                        height: 120,
+                                        decoration: new BoxDecoration(
+                                          //  borderRadius: BorderRadius.circular(15.0),
+                                          shape: BoxShape.rectangle,
+                                          image: new DecorationImage(
+                                            image: new FileImage(_image!),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ))
+                                    : SizedBox(),
                                 Positioned(
                                     right: 0,
                                     top: 0,
@@ -889,7 +891,7 @@ class _AddUserState extends State<AddUser> {
                                   MyApp.getDeviceIdentity().then(
                                       (value) => print('authtoken' + value));
                                   print('authtoken' + MyApp.AUTH_TOKEN_VALUE);
-
+                                  return;
                                   FormData formData =
                                       FormData.fromMap(objToSend);
 
@@ -904,18 +906,18 @@ class _AddUserState extends State<AddUser> {
                                                 await MyApp.getDeviceIdentity(),
                                             'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                           }))
-                                      .then((value) {
-                                    print('happ' + value.toString());
+                                      .then((value){
+                                    debugPrint('happ' + value.toString());
                                     var v = jsonDecode(value.toString());
                                     if (v['Status'] == 'SUCCESS') {
                                       MyApp.ShowToast("updated", context);
-                                      Navigator.pop(context, 'kill');
-                                    } else{
+                                      // Navigator.pop(context, 'kill');
+                                    } else {
                                       MyApp.ShowToast("error", context);
                                     }
-                                  // ignore: invalid_return_type_for_catch_error
+                                    // ignore: invalid_return_type_for_catch_error
                                   }).catchError((error) => print(error));
-                                } 
+                                }
                               },
                               child: Container(
                                   decoration: BoxDecoration(

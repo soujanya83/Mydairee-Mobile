@@ -34,8 +34,10 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
 
   @override
   void initState() {
-    hours = List<String>.generate(12, (counter) => "${counter + 1}h");
-    minutes = List<String>.generate(60, (counter) => "${counter}m");
+    hours = List<String>.generate(
+        24, (counter) => counter < 9 ? "0${counter + 1}h" : "${counter + 1}h");
+    minutes = List<String>.generate(
+        60, (counter) => counter < 10 ? "0${counter}m" : "${counter}m");
     _load();
     super.initState();
   }
@@ -58,11 +60,18 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
     if (!loaded && widget.type == 'Sunscreen') {
       len = widget.child.sunscreen.length;
       for (var i = 0; i < len; i++) {
-        var time = widget.child.sunscreen[i]['startTime'].toString().split(":");
-        hour.add(time[0]);
-        min.add(time[1]);
-        controller.add(
-            TextEditingController(text: widget.child.sunscreen[i]['comments']));
+        try {
+          print('assigning data here $i');
+          var time =
+              widget.child.sunscreen[i]['startTime'].toString().split(":");
+          hour.add(time[0]);
+          min.add(time[1]);
+          controller.add(TextEditingController(
+              text: widget.child.sunscreen[i]['comments']));
+        } catch (e) {
+          print('error $i');
+          print(e.toString());
+        }
       }
     }
 
@@ -197,8 +206,12 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       DropdownButton<
                                                                           String>(
                                                                     //  isExpanded: true,
-                                                                    value: hour[
-                                                                        index],
+                                                                    value: hours !=
+                                                                            null
+                                                                        ? hours!.contains(hour[index])
+                                                                            ? hour[index]
+                                                                            : null
+                                                                        : null,
                                                                     items: hours
                                                                         ?.map((String
                                                                             value) {
@@ -257,8 +270,12 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       DropdownButton<
                                                                           String>(
                                                                     //  isExpanded: true,
-                                                                    value: min[
-                                                                        index],
+                                                                    value: minutes !=
+                                                                            null
+                                                                        ? minutes!.contains(min[index])
+                                                                            ? min[index]
+                                                                            : null
+                                                                        : null,
                                                                     items: minutes
                                                                         ?.map((String
                                                                             value) {
@@ -325,8 +342,12 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       DropdownButton<
                                                                           String>(
                                                                     //  isExpanded: true,
-                                                                    value: hour2[
-                                                                        index],
+                                                                     value: hours !=
+                                                                            null
+                                                                        ? hours!.contains(hour2[index])
+                                                                            ? hour2[index]
+                                                                            : null
+                                                                        : null,
                                                                     items: hours
                                                                         ?.map((String
                                                                             value) {
@@ -385,8 +406,12 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       DropdownButton<
                                                                           String>(
                                                                     //  isExpanded: true,
-                                                                    value: min2[
-                                                                        index],
+                                                                    value: minutes !=
+                                                                            null
+                                                                        ? minutes!.contains(min2[index])
+                                                                            ? min2[index]
+                                                                            : null
+                                                                        : null,
                                                                     items: minutes
                                                                         ?.map((String
                                                                             value) {
@@ -545,8 +570,12 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       DropdownButton<
                                                                           String>(
                                                                     //  isExpanded: true,
-                                                                    value: hour[
-                                                                        index],
+                                                                    value: hours !=
+                                                                            null
+                                                                        ? hours!.contains(hour[index])
+                                                                            ? hour[index]
+                                                                            : null
+                                                                        : null,
                                                                     items: hours
                                                                         ?.map((String
                                                                             value) {
@@ -605,8 +634,12 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                                       DropdownButton<
                                                                           String>(
                                                                     //  isExpanded: true,
-                                                                    value: min[
-                                                                        index],
+                                                                    value: minutes !=
+                                                                            null
+                                                                        ? minutes!.contains(min[index])
+                                                                            ? min[index]
+                                                                            : null
+                                                                        : null,
                                                                     items: minutes
                                                                         ?.map((String
                                                                             value) {
@@ -691,40 +724,87 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                             children: [
                               GestureDetector(
                                 onTap: () async {
-                                  var _toSend = Constants.BASE_URL +
-                                      'dailyDiary/addMultiSunscreenRecord';
-                                  List data = [];
-                                  for (var i = 0; i < len; i++) {
-                                    data.add({
-                                      "startTime": hour[i] + ":" + min[i],
-                                      "comments": controller[i].text.toString(),
-                                      "createdAt": DateTime.now().toString(),
-                                      "childid": widget.child.id,
-                                      "dairydate": DateTime.now().toString(),
-                                      "userid": MyApp.LOGIN_ID_VALUE,
-                                    });
-                                  }
-                                  var objToSend = {
-                                    "userid": MyApp.LOGIN_ID_VALUE,
-                                    "sunscreen": data
-                                  };
-                                  print(_toSend);
-                                  print(jsonEncode(objToSend));
-                                  // return;
-                                  final response = await http.post(
-                                      Uri.parse(_toSend),
-                                      body: jsonEncode(objToSend),
-                                      headers: {
-                                        'X-DEVICE-ID':
-                                            await MyApp.getDeviceIdentity(),
-                                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                  if (widget.type == 'Sleep') {
+                                    var _toSend = Constants.BASE_URL +
+                                        'dailyDiary/addMultiSleepRecord';
+                                    List data = [];
+                                    for (var i = 0; i < len; i++) {
+                                      data.add({
+                                        "startTime": hour[i] + ":" + min[i],
+                                        "endTime": hour2[i] + ":" + min2[i],
+                                        "comments":
+                                            controller[i].text.toString(),
+                                        "createdAt": DateTime.now().toString(),
+                                        "childid": widget.child.id,
+                                        "dairydate": DateTime.now().toString(),
+                                        "userid": MyApp.LOGIN_ID_VALUE,
                                       });
-                                  print(response.body);
-                                  if (response.statusCode == 200) {
-                                    MyApp.ShowToast("updated", context);
-                                    Navigator.pop(context, 'kill');
-                                  } else if (response.statusCode == 401) {
-                                    MyApp.Show401Dialog(context);
+                                    }
+                                    var objToSend = {
+                                      "userid": MyApp.LOGIN_ID_VALUE,
+                                      "sleep": data
+                                    };
+                                    print('==========data=======');
+                                    print(_toSend);
+                                    print(jsonEncode(objToSend));
+
+                                    final response = await http.post(
+                                        Uri.parse(_toSend),
+                                        body: jsonEncode(objToSend),
+                                        headers: {
+                                          'X-DEVICE-ID':
+                                              await MyApp.getDeviceIdentity(),
+                                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                        });
+                                    print(response.body);
+                                    if (response.statusCode == 200) {
+                                      MyApp.ShowToast("updated", context);
+                                      // return;
+                                      Navigator.pop(context);
+                                    } else if (response.statusCode == 401) {
+                                      MyApp.Show401Dialog(context);
+                                    }
+                                  } else {
+                                    var _toSend = Constants.BASE_URL +
+                                        'dailyDiary/addMultiSunscreenRecord';
+                                    List data = [];
+                                    for (var i = 0; i < len; i++) {
+                                      data.add({
+                                        "startTime": hour[i] + ":" + min[i],
+                                        "comments":
+                                            controller[i].text.toString(),
+                                        // "createdAt": DateTime.now().toString(),
+                                        "childids": [widget.child.id],
+                                        "dairydate": DateTime.now().toString(),
+                                        "userid": MyApp.LOGIN_ID_VALUE,
+                                      });
+                                    }
+                                    var objToSend = {
+                                      "userid": MyApp.LOGIN_ID_VALUE,
+                                      "sunscreen": data
+                                    };
+                                    print('==========data=======');
+                                    print(_toSend);
+                                    print(jsonEncode(objToSend));
+
+                                    final response = await http.post(
+                                        Uri.parse(_toSend),
+                                        body: jsonEncode(objToSend),
+                                        headers: {
+                                          'X-DEVICE-ID':
+                                              await MyApp.getDeviceIdentity(),
+                                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                        });
+                                    print('=======response========');
+                                    debugPrint(response.body);
+                                    if (response.statusCode == 200) {
+                                      MyApp.ShowToast("updated", context);
+                                      Navigator.pop(
+                                        context,
+                                      );
+                                    } else if (response.statusCode == 401) {
+                                      MyApp.Show401Dialog(context);
+                                    }
                                   }
                                 },
                                 child: Container(

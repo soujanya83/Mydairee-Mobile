@@ -1046,8 +1046,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .sleep
                                                                 .isNotEmpty
                                                             ? GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
+                                                                onTap:
+                                                                    () async {
+                                                                  await Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
                                                                           builder: (context) => DailyDairyMultiple(
@@ -1068,6 +1069,11 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                           () {});
                                                                     }
                                                                   });
+                                                                  _fetchData();
+                                                                  if (this
+                                                                      .mounted)
+                                                                    setState(
+                                                                        () {});
                                                                 },
                                                                 child:
                                                                     Container(
@@ -1519,6 +1525,11 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                           () {});
                                                                     }
                                                                   });
+                                                                  _fetchData();
+                                                                  if (this
+                                                                      .mounted)
+                                                                    setState(
+                                                                        () {});
                                                                 },
                                                                 child:
                                                                     Container(
@@ -1807,13 +1818,13 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                             childrensFetched
                                                 ? _allChildrens.isEmpty
                                                     ? SizedBox(
-                                                      height: 200,
-                                                      child: Align(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                              'No childrens are there in this room')),
-                                                    )
+                                                        height: 200,
+                                                        child: Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                                'No childrens are there in this room')),
+                                                      )
                                                     : ListView.builder(
                                                         shrinkWrap: true,
                                                         itemCount: _allChildrens

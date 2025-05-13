@@ -91,7 +91,12 @@ class _LessonPlanState extends State<LessonPlan> {
     _load();
   }
 
+  bool _loading = true;
   void _load() async {
+    if (this.mounted)
+      setState(() {
+        _loading = true;
+      });
     LessonPlanApiHandler progressPlan = LessonPlanApiHandler({
       "usertype": MyApp.USER_TYPE_VALUE,
       "userid": MyApp.LOGIN_ID_VALUE,
@@ -115,6 +120,7 @@ class _LessonPlanState extends State<LessonPlan> {
     }
 
     dataFetched = true;
+    _loading = true;
     setState(() {});
   }
 
@@ -140,25 +146,25 @@ class _LessonPlanState extends State<LessonPlan> {
                         'Montessori Lesson Plan',
                         style: Constants.header1,
                       ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            var obj = {
-                              "usertype": MyApp.USER_TYPE_VALUE,
-                              "userid": MyApp.LOGIN_ID_VALUE,
-                              "centerid": centers[currentIndex].id,
-                            };
-                            LessonPlanApiHandler handler =
-                                LessonPlanApiHandler(obj);
-                            var data = await handler.printPlan();
-                            print(data);
-                            if (!data.containsKey('error')) {
-                              downloadFile(data['path'] + data['file'],
-                                  data['file'], context);
-                            } else {
-                              print('failed');
-                            }
-                          },
-                          child: Text("Print"))
+                      // ElevatedButton(
+                      //     onPressed: () async {
+                      //       var obj = {
+                      //         "usertype": MyApp.USER_TYPE_VALUE,
+                      //         "userid": MyApp.LOGIN_ID_VALUE,
+                      //         "centerid": centers[currentIndex].id,
+                      //       };
+                      //       LessonPlanApiHandler handler =
+                      //           LessonPlanApiHandler(obj);
+                      //       var data = await handler.printPlan();
+                      //       print(data);
+                      //       if (!data.containsKey('error')) {
+                      //         downloadFile(data['path'] + data['file'],
+                      //             data['file'], context);
+                      //       } else {
+                      //         print('failed');
+                      //       }
+                      //     },
+                      //     child: Text("Print"))
                     ],
                   )),
               centersFetched
@@ -205,7 +211,7 @@ class _LessonPlanState extends State<LessonPlan> {
                       ),
                     )
                   : Container(),
-              dataFetched
+              _loading
                   ? ListView.builder(
                       shrinkWrap: true,
                       itemCount: child.length,
@@ -266,7 +272,18 @@ class _LessonPlanState extends State<LessonPlan> {
                           ),
                         );
                       })
-                  : Container()
+                  : Container(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              height: 40,
+                              width: 40,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
+                        ],
+               ))
             ],
           ),
         ),

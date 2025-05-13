@@ -290,7 +290,7 @@ class AddObservationState extends State<AddObservation>
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
-    } catch (e) {
+    } catch (e){
       print(e);
     }
 
@@ -1170,7 +1170,6 @@ class AddObservationState extends State<AddObservation>
                             selectedRooms.length * 50 +
                             300,
                         child: new TabBarView(
-                          
                           controller: _controller,
                           children: <Widget>[
                             Container(

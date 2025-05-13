@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
+import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
+import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/models/usermodel.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/settings/adduser.dart';
@@ -304,22 +306,63 @@ class _UserSettingsState extends State<UserSettings> {
 
   @override
   void initState() {
-    _fetchData();
+    _fetchCenters();
     super.initState();
+  }
+
+  List<CentersModel> centers = [];
+  bool centersFetched = false;
+  int currentIndex = 0;
+  Future<void> _fetchCenters() async {
+    print('_fetchCenters');
+    UtilsAPIHandler hlr = UtilsAPIHandler({});
+    var dt = await hlr.getCentersList();
+    if (!dt.containsKey('error')) {
+      print(dt);
+      var res = dt['Centers'];
+      centers = [];
+      try {
+        assert(res is List);
+        for (int i = 0; i < res.length; i++) {
+          centers.add(CentersModel.fromJson(res[i]));
+        }
+        centersFetched = true;
+        if (this.mounted) setState(() {});
+        print('+++++++++++++success is in _fetchCenters+++++++++++++');
+      } catch (e, s) {
+        print('+++++++++++++error is in _fetchCenters+++++++++++++');
+        print(e);
+        print(s);
+      }
+    } else {
+      MyApp.Show401Dialog(context);
+    }
+
+    _fetchData();
   }
 
   Future<void> _fetchData() async {
     SettingsApiHandler handler = SettingsApiHandler({
       "userid": MyApp.LOGIN_ID_VALUE,
       "order": order,
+      "centerid": centers[currentIndex].id
     });
     var data = await handler.getUsers();
     if (!data.containsKey('error')) {
       print(data);
-
       var users = data['users'];
-      groupsData = data['groups'];
-      userStats = data['userStats'];
+      try {
+        groupsData = data['groups'];
+      } catch (e) {
+        print(e.toString());
+      }
+
+      try {
+        userStats = data['userStats'];
+      } catch (e) {
+        print(e.toString());
+      }
+
       _allUsers = [];
       try {
         assert(users is List);
@@ -399,6 +442,55 @@ class _UserSettingsState extends State<UserSettings> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
+                            centersFetched
+                                ? DropdownButtonHideUnderline(
+                                    child: Container(
+                                      height: 30,
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Constants.greyColor),
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8, right: 8),
+                                        child: Center(
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            value: centers[currentIndex].id,
+                                            items: centers
+                                                .map((CentersModel value) {
+                                              return new DropdownMenuItem<
+                                                  String>(
+                                                value: value.id,
+                                                child:
+                                                    new Text(value.centerName),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              for (int i = 0;
+                                                  i < centers.length;
+                                                  i++) {
+                                                if (centers[i].id == value) {
+                                                  setState(() {
+                                                    currentIndex = i;
+                                                    _fetchData();
+                                                  });
+                                                  break;
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 30,
+                            ),
                             Row(
                               children: [
                                 Text(
@@ -423,14 +515,14 @@ class _UserSettingsState extends State<UserSettings> {
                                       Entypo.select_arrows,
                                       color: Constants.kButton,
                                     )),
-                                GestureDetector(
-                                    onTap: () {
-                                      key.currentState?.openEndDrawer();
-                                    },
-                                    child: Icon(
-                                      AntDesign.filter,
-                                      color: Constants.kButton,
-                                    )),
+                                // GestureDetector(
+                                //     onTap: () {
+                                //       key.currentState?.openEndDrawer();
+                                //     },
+                                //     child: Icon(
+                                //       AntDesign.filter,
+                                //       color: Constants.kButton,
+                                //     )),
                                 SizedBox(
                                   width: 5,
                                 ),
@@ -646,11 +738,11 @@ class _UserSettingsState extends State<UserSettings> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.grey,
-                          // backgroundImage: NetworkImage(
-                          //     Constants.ImageBaseUrl + _allChildrens[i].imageUrl)
-                        ),
+                            radius: 40,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: NetworkImage(
+                                Constants.ImageBaseUrl +
+                                    _allUsers[index].imageUrl)),
                       ),
                       SizedBox(
                         width: 10,
@@ -681,8 +773,21 @@ class _UserSettingsState extends State<UserSettings> {
                               },
                               child: Text(_allUsers[index].name,
                                   style: Constants.cardHeadingStyle)),
-                          Text(_allUsers[index].userType),
-                          Text(_allUsers[index].dob)
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Builder(
+                            builder: (context) {
+                              String? text;
+                              try{
+                                text = _allUsers[index].userStatus;
+                              }catch(e){
+                                  debugPrint(e.toString());
+                              }
+                              return Text(text.toString());
+                            }
+                          ),
+                          // Text(_allUsers[index].dob)
                         ],
                       )
                     ],
