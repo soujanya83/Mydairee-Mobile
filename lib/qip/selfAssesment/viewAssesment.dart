@@ -25,7 +25,7 @@ class ViewAssesment extends StatefulWidget {
 
 class _ViewAssesmentState extends State<ViewAssesment>
     with SingleTickerProviderStateMixin {
-  List<CentersModel> centers= [];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
   int areaIndex = 0;
@@ -44,7 +44,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
     _controller = new TabController(length: 2, vsync: this);
     super.initState();
   }
-  
+
   Future<void> _fetchCenters() async {
     print('reach here 1');
     UtilsAPIHandler hlr = UtilsAPIHandler({});
@@ -69,12 +69,14 @@ class _ViewAssesmentState extends State<ViewAssesment>
     } else {
       MyApp.Show401Dialog(context);
     }
-    try{
+    try {
       print('reach here 5');
       _fetchData();
-    }catch(e,s){
+    } catch (e, s) {
       print('error error in _fetchData');
-      print(e,);
+      print(
+        e,
+      );
       print(s);
     }
   }
@@ -87,16 +89,16 @@ class _ViewAssesmentState extends State<ViewAssesment>
     };
     print('reach here 6');
     if (areas.isNotEmpty) {
-       try{
+      try {
         _objToSend["areaid"] = areas[areaIndex].id;
-       }catch(e,s){
+      } catch (e, s) {
         print(e);
         print(s);
-       }
+      }
     }
-     print('reach here 6.2');
+    print('reach here 6.2');
     QipAPIHandler qipAPIHandler = QipAPIHandler(_objToSend);
-     print('reach here 6.3');
+    print('reach here 6.3');
     var data = await qipAPIHandler.viewSelfAsses();
     print('reach here 7');
     print(areas);
@@ -114,7 +116,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
           areas.add(AreaModel.fromJson(area[i]));
         }
         if (this.mounted) setState(() {});
-      } catch (e,s) {
+      } catch (e, s) {
         print('++++++error first++++++');
         print(e);
         print(s);
@@ -132,11 +134,11 @@ class _ViewAssesmentState extends State<ViewAssesment>
       }
       if (this.mounted) setState(() {});
       print('reach here 10');
-    } catch (e,s) {
+    } catch (e, s) {
       print('reach here 11');
-       print('++++++error third++++++');
-        print(e);
-        print(s);
+      print('++++++error third++++++');
+      print(e);
+      print(s);
     }
 
     var qa = data['QA'];
@@ -152,10 +154,10 @@ class _ViewAssesmentState extends State<ViewAssesment>
       }
       print('reach here 13');
       if (this.mounted) setState(() {});
-    } catch (e,s) {
-       print('++++++error third++++++');
-        print(e);
-        print(s);
+    } catch (e, s) {
+      print('++++++error third++++++');
+      print(e);
+      print(s);
     }
   }
 
@@ -233,7 +235,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                           child: DropdownButton<String>(
                             isExpanded: true,
                             value: areas[areaIndex].id,
-                            items: areas.map((AreaModel value){
+                            items: areas.map((AreaModel value) {
                               return new DropdownMenuItem<String>(
                                 value: value.id,
                                 child: new Text(value.title),
@@ -260,7 +262,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                      onPressed: () { 
+                      onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -268,39 +270,38 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                     widget.assesmentModel.id)));
                       },
                       child: Text("+ Add Educators")),
-                  Builder(
-                    builder: (context) {
-                      Future.delayed(Duration(seconds: 10),(){
-                         print(widget.assesmentModel
-                                          .educators[0]['imageUrl']);
-                            print(widget.assesmentModel.educators[0]['imageUrl']);
+                  Builder(builder: (context) {
+                    // Future.delayed(Duration(seconds: 10),(){
+                    //    print(widget.assesmentModel
+                    //                     .educators[0]['imageUrl']);
+                    //       print(widget.assesmentModel.educators[0]['imageUrl']);
 
-                      });
-                      return Row(
-                        children: [
-                          if (widget.assesmentModel.educators.length > 0)
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(widget.assesmentModel
-                                          .educators[0]['imageUrl'] !=
-                                      ""
-                                  ? Constants.ImageBaseUrl +
-                                      widget.assesmentModel.educators[0]['imageUrl']
-                                  : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
-                            ),
-                          SizedBox(
-                            width: 8,
+                    // });
+                    return Row(
+                      children: [
+                        if (widget.assesmentModel.educators.length > 0)
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(widget.assesmentModel
+                                        .educators[0]['imageUrl'] !=
+                                    ""
+                                ? Constants.ImageBaseUrl +
+                                    widget.assesmentModel.educators[0]
+                                        ['imageUrl']
+                                : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
                           ),
-                          if (widget.assesmentModel.educators.length - 1 > 0)
-                            CircleAvatar(
-                              backgroundColor: Constants.greyColor,
-                              child: Text("+" +
-                                  (widget.assesmentModel.educators.length - 1)
-                                      .toString()),
-                            ),
-                        ],
-                      );
-                    }
-                  )
+                        SizedBox(
+                          width: 8,
+                        ),
+                        if (widget.assesmentModel.educators.length - 1 > 0)
+                          CircleAvatar(
+                            backgroundColor: Constants.greyColor,
+                            child: Text("+" +
+                                (widget.assesmentModel.educators.length - 1)
+                                    .toString()),
+                          ),
+                      ],
+                    );
+                  })
                 ],
               ),
               Container(
@@ -329,199 +330,211 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                 itemCount: lrList.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
-                                  return Card(
-                                      child: Column(children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          8.0, 20, 8, 4),
-                                      child: Container(
-                                        width: size.width,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                                width: size.width * 0.3,
-                                                child: Text(
-                                                    "National Law \n (NL)")),
-                                            Container(
-                                                width: size.width * 0.55,
-                                                child: Text(
-                                                    lrList[index].nationalLaw)),
-                                          ],
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Card(
+                                        child: Column(children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8.0, 20, 8, 4),
+                                        child: Container(
+                                          width: size.width,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                  width: size.width * 0.3,
+                                                  child: Text(
+                                                      "National Law \n (NL)")),
+                                              Container(
+                                                  width: size.width * 0.55,
+                                                  child: Text(lrList[index]
+                                                      .nationalLaw)),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Divider(
-                                      color: Colors.grey,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          8.0, 10, 8, 4),
-                                      child: Container(
-                                        width: size.width,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                                width: size.width * 0.3,
-                                                child: Text(
-                                                    "National \nRegulation \n(NR)")),
-                                            Container(
-                                                width: size.width * 0.55,
-                                                child: Text(lrList[index]
-                                                    .nationalRegulation)),
-                                          ],
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8.0, 10, 8, 4),
+                                        child: Container(
+                                          width: size.width,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                  width: size.width * 0.3,
+                                                  child: Text(
+                                                      "National \nRegulation \n(NR)")),
+                                              Container(
+                                                  width: size.width * 0.55,
+                                                  child: Text(lrList[index]
+                                                      .nationalRegulation)),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Divider(
-                                      color: Colors.grey,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          8.0, 10, 8, 4),
-                                      child: Container(
-                                        width: size.width,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                                width: size.width * 0.3,
-                                                child: Text(
-                                                    "Associated \nElement\n(AE)")),
-                                            Container(
-                                                width: size.width * 0.55,
-                                                child: Text(lrList[index]
-                                                    .associatedElements)),
-                                          ],
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8.0, 10, 8, 4),
+                                        child: Container(
+                                          width: size.width,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                  width: size.width * 0.3,
+                                                  child: Text(
+                                                      "Associated \nElement\n(AE)")),
+                                              Container(
+                                                  width: size.width * 0.55,
+                                                  child: Text(lrList[index]
+                                                      .associatedElements)),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Divider(
-                                      color: Colors.grey,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          8.0, 10, 8, 4),
-                                      child: Container(
-                                        width: size.width,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                                width: size.width * 0.3,
-                                                child: Text("Status")),
-                                            Container(
-                                                width: size.width * 0.55,
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Checkbox(
-                                                            value: lrList[index]
-                                                                    .status ==
-                                                                'Compliant',
-                                                            onChanged: (val) {
-                                                              if(val==null)return;
-                                                              if (val) {
-                                                                lrList[index]
-                                                                        .status =
-                                                                    'Compliant';
-                                                                lrController[
-                                                                        index]
-                                                                    .text = '';
-                                                              } else {
-                                                                lrList[index]
-                                                                    .status = '';
-                                                              }
-                                                              setState(() {});
-                                                            }),
-                                                        Text('Compliant')
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Checkbox(
-                                                            value: lrList[index]
-                                                                    .status ==
-                                                                'Noncompliant',
-                                                            onChanged: (val) {if(val==null)return;
-                                                              if (val) {
-                                                                lrList[index]
-                                                                        .status =
-                                                                    'Noncompliant';
-                                                              } else {
-                                                                lrList[index]
-                                                                    .status = '';
-                                                              }
-                                                              setState(() {});
-                                                            }),
-                                                        Text('Not Compliant')
-                                                      ],
-                                                    ),
-                                                  ],
-                                                )),
-                                          ],
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8.0, 10, 8, 4),
+                                        child: Container(
+                                          width: size.width,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                  width: size.width * 0.3,
+                                                  child: Text("Status")),
+                                              Container(
+                                                  width: size.width * 0.55,
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Checkbox(
+                                                              value: lrList[
+                                                                          index]
+                                                                      .status ==
+                                                                  'Compliant',
+                                                              onChanged: (val) {
+                                                                if (val == null)
+                                                                  return;
+                                                                if (val) {
+                                                                  lrList[index]
+                                                                          .status =
+                                                                      'Compliant';
+                                                                  lrController[
+                                                                          index]
+                                                                      .text = '';
+                                                                } else {
+                                                                  lrList[index]
+                                                                      .status = '';
+                                                                }
+                                                                setState(() {});
+                                                              }),
+                                                          Text('Compliant')
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Checkbox(
+                                                              value: lrList[
+                                                                          index]
+                                                                      .status ==
+                                                                  'Noncompliant',
+                                                              onChanged: (val) {
+                                                                if (val == null)
+                                                                  return;
+                                                                if (val) {
+                                                                  lrList[index]
+                                                                          .status =
+                                                                      'Noncompliant';
+                                                                } else {
+                                                                  lrList[index]
+                                                                      .status = '';
+                                                                }
+                                                                setState(() {});
+                                                              }),
+                                                          Text('Not Compliant')
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  )),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Divider(
-                                      color: Colors.grey,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          8.0, 10, 8, 4),
-                                      child: Container(
-                                        width: size.width,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                                width: size.width * 0.3,
-                                                child: Text("Action's")),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(lrList[index].status),
-                                                SizedBox(
-                                                  height: 2,
-                                                ),
-                                                if (lrList[index].status !=
-                                                    'Compliant')
-                                                  Container(
-                                                      width: size.width * 0.55,
-                                                      child: TextField(
-                                                        controller:
-                                                            lrController[index],
-                                                        decoration:
-                                                            InputDecoration(
-                                                                contentPadding:
-                                                                    EdgeInsets
-                                                                        .all(0),
-                                                                enabledBorder:
-                                                                    const OutlineInputBorder(
-                                                                  borderSide: const BorderSide(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                      width:
-                                                                          0.0),
-                                                                ),
-                                                                border:
-                                                                    new OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    const Radius
-                                                                        .circular(4),
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8.0, 10, 8, 4),
+                                        child: Container(
+                                          width: size.width,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                  width: size.width * 0.3,
+                                                  child: Text("Action's")),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(lrList[index].status),
+                                                  SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  if (lrList[index].status !=
+                                                      'Compliant')
+                                                    Container(
+                                                        width:
+                                                            size.width * 0.55,
+                                                        child: TextField(
+                                                          controller:
+                                                              lrController[
+                                                                  index],
+                                                          decoration:
+                                                              InputDecoration(
+                                                                  contentPadding:
+                                                                      EdgeInsets
+                                                                          .only(left: 10,bottom: 10),
+                                                                  enabledBorder:
+                                                                      const OutlineInputBorder(
+                                                                    borderSide: const BorderSide(
+                                                                        color: Colors
+                                                                            .grey,
+                                                                        width:
+                                                                            0.0),
                                                                   ),
-                                                                )),
-                                                      )),
-                                              ],
-                                            )
-                                          ],
+                                                                  border:
+                                                                      new OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(
+                                                                      const Radius
+                                                                          .circular(
+                                                                          4),
+                                                                    ),
+                                                                  )),
+                                                        )),
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    )
-                                  ]));
+                                      SizedBox(
+                                        height: 10,
+                                      )
+                                    ])),
+                                  );
                                 }))
                         : Container(),
                     qaList.length > 0
@@ -595,9 +608,9 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                           qaController[index],
                                                       decoration:
                                                           InputDecoration(
-                                                              contentPadding:
-                                                                  EdgeInsets
-                                                                      .all(0),
+                                                             contentPadding:
+                                                                      EdgeInsets
+                                                                          .only(left: 10,bottom: 10),
                                                               enabledBorder:
                                                                   const OutlineInputBorder(
                                                                 borderSide:
@@ -613,7 +626,8 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                                     const BorderRadius
                                                                         .all(
                                                                   const Radius
-                                                                      .circular(4),
+                                                                      .circular(
+                                                                      4),
                                                                 ),
                                                               )),
                                                     )),
@@ -646,7 +660,10 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                                         .status ==
                                                                     'Met',
                                                                 onChanged:
-                                                                    (val) {if(val==null)return;
+                                                                    (val) {
+                                                                  if (val ==
+                                                                      null)
+                                                                    return;
                                                                   if (val) {
                                                                     qaList[index]
                                                                             .status =
@@ -669,7 +686,10 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                                         .status ==
                                                                     'Not-met',
                                                                 onChanged:
-                                                                    (val) {if(val==null)return;
+                                                                    (val) {
+                                                                  if (val ==
+                                                                      null)
+                                                                    return;
                                                                   if (val) {
                                                                     qaList[index]
                                                                             .status =
@@ -745,6 +765,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                         };
 
                         print(jsonEncode(_objToSend));
+                        print(_objToSend);
                         final response = await http.post(Uri.parse(_toSend),
                             body: jsonEncode(_objToSend),
                             headers: {

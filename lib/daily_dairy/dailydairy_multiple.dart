@@ -42,12 +42,38 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
     super.initState();
   }
 
+String formatTime(String input) {
+  try {
+    final regex = RegExp(r'^(\d{1,2})h:(\d{1,2})m$');
+    final match = regex.firstMatch(input);
+
+    if (match != null) {
+      final hours = int.parse(match.group(1)!);
+      final minutes = int.parse(match.group(2)!);
+
+      if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+        return '';
+      }
+
+      final formattedHours = hours.toString().padLeft(2, '0');
+      final formattedMinutes = minutes.toString().padLeft(2, '0');
+
+      return '${formattedHours}h:${formattedMinutes}m';
+    } else {
+      return '';
+    }
+  } catch (e) {
+    return '';
+  }
+}
+
+
   Future<void> _load() async {
     if (!loaded && widget.type == 'Sleep') {
       len = widget.child.sleep.length;
       for (var i = 0; i < len; i++) {
-        var time = widget.child.sleep[i]['startTime'].toString().split(":");
-        var time2 = widget.child.sleep[i]['endTime'].toString().split(":");
+        var time = formatTime(widget.child.sleep[i]['startTime'].toString()).split(":");
+        var time2 = formatTime(widget.child.sleep[i]['endTime'].toString()).split(":");
         hour.add(time[0]);
         min.add(time[1]);
         hour2.add(time2[0]);
@@ -63,11 +89,10 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
         try {
           print('assigning data here $i');
           var time =
-              widget.child.sunscreen[i]['startTime'].toString().split(":");
+              formatTime(widget.child.sunscreen[i]['startTime'].toString()).split(":");
           hour.add(time[0]);
           min.add(time[1]);
-          controller.add(TextEditingController(
-              text: widget.child.sunscreen[i]['comments']));
+          controller.add(TextEditingController(text: widget.child.sunscreen[i]['comments']));
         } catch (e) {
           print('error $i');
           print(e.toString());
@@ -145,10 +170,10 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                           icon: Icon(Icons.add),
                                                           onPressed: () {
                                                             len = len + 1;
-                                                            hour.add("1h");
-                                                            min.add("0m");
-                                                            hour2.add("1h");
-                                                            min2.add("0m");
+                                                            hour.add("01h");
+                                                            min.add("00m");
+                                                            hour2.add("01h");
+                                                            min2.add("00m");
                                                             controller.add(
                                                                 TextEditingController());
                                                             setState(() {});
@@ -515,10 +540,9 @@ class _DailyDairyMultipleState extends State<DailyDairyMultiple> {
                                                           icon: Icon(Icons.add),
                                                           onPressed: () {
                                                             len = len + 1;
-                                                            hour.add("1h");
-                                                            min.add("0m");
-                                                            controller.add(
-                                                                TextEditingController());
+                                                            hour.add("01h");
+                                                            min.add("00m");
+                                                            controller.add(TextEditingController());
                                                             setState(() {});
                                                           }),
                                                       index == 0

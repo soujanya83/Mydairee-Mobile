@@ -48,6 +48,10 @@ class _RoomsListState extends State<RoomsList> {
   }
 
   Future<void> _fetchData() async {
+    if(this.mounted)
+    setState(() {
+      roomsFetched = false;
+    });
     RoomAPIHandler handler = RoomAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var data = await handler.getList();
@@ -243,7 +247,7 @@ class _RoomsListState extends State<RoomsList> {
         floatingActionButton: floating(context),
         drawer: GetDrawer(),
         appBar: Header.appBar(),
-        body: !roomsFetched
+        body: !centersFetched
             ? SizedBox(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
@@ -379,138 +383,138 @@ class _RoomsListState extends State<RoomsList> {
                               ),
                             ),
                           // if (permission)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, bottom: 3),
-                              child: Center(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    border: Border.all(
-                                      color: Constants.greyColor,
-                                      width: 1,
-                                      style: BorderStyle.solid,
-                                    ),
-                                    color: Colors.white,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0, bottom: 3),
+                            child: Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(
+                                    color: Constants.greyColor,
+                                    width: 1,
+                                    style: BorderStyle.solid,
                                   ),
-                                  height: 40.0,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.97,
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 15.0),
-                                    child: TextFormField(
-                                      style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: Colors.black,
-                                      ),
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            EdgeInsets.only(bottom: 10),
-                                        icon: Icon(Icons.search),
-                                        hintText:
-                                            'Search by room name or child name',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey, fontSize: 12),
-                                        border: InputBorder.none,
-                                      ),
-                                      onChanged: (text) {
-                                        searchString = text;
-                                        print(searchString);
-                                        setState(() {});
-                                      },
+                                  color: Colors.white,
+                                ),
+                                height: 40.0,
+                                width: MediaQuery.of(context).size.width * 0.97,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: TextFormField(
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.black,
                                     ),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(bottom: 10),
+                                      icon: Icon(Icons.search),
+                                      hintText:
+                                          'Search by room name or child name',
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey, fontSize: 12),
+                                      border: InputBorder.none,
+                                    ),
+                                    onChanged: (text) {
+                                      searchString = text;
+                                      print(searchString);
+                                      setState(() {});
+                                    },
                                   ),
                                 ),
                               ),
                             ),
+                          ),
                           SizedBox(
                             height: 5,
                           ),
                           // if (permission)
-                            DropdownButtonHideUnderline(
-                              child: Container(
-                                height: 30,
-                                width: 120,
-                                decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Constants.greyColor),
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8, right: 8),
-                                  child: Center(
-                                      child: DropdownButton<String>(
-                                    isExpanded: true,
-                                    value: _chosenValue,
-                                    items: <String>[
-                                      'Select',
-                                      'Active',
-                                      'Inactive'
-                                    ].map((String value) {
-                                      return new DropdownMenuItem<String>(
-                                        value: value,
-                                        child: new Text(value),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? value) async {
-                                      setState(() {
-                                        _chosenValue = value!;
-                                      });
-                                      if (_chosenValue == 'Select') {
-                                        MyApp.ShowToast(
-                                            "choose status", context);
-                                      } else if (statList.length > 0) {
-                                        print(statList);
-                                        var _toSend = Constants.BASE_URL +
-                                            'room/changeStatus';
-                                        var objToSend = {
-                                          "userid": MyApp.LOGIN_ID_VALUE,
-                                          "rooms": statList,
-                                          "filter_status": _chosenValue,
-                                        };
+                          DropdownButtonHideUnderline(
+                            child: Container(
+                              height: 30,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Constants.greyColor),
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8, right: 8),
+                                child: Center(
+                                    child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: _chosenValue,
+                                  items: <String>[
+                                    'Select',
+                                    'Active',
+                                    'Inactive'
+                                  ].map((String value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value,
+                                      child: new Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? value) async {
+                                    setState(() {
+                                      _chosenValue = value!;
+                                    });
+                                    if (_chosenValue == 'Select') {
+                                      MyApp.ShowToast("choose status", context);
+                                    } else if (statList.length > 0) {
+                                      print(statList);
+                                      var _toSend = Constants.BASE_URL +
+                                          'room/changeStatus';
+                                      var objToSend = {
+                                        "userid": MyApp.LOGIN_ID_VALUE,
+                                        "rooms": statList,
+                                        "filter_status": _chosenValue,
+                                      };
 
-                                        print(jsonEncode(objToSend));
-                                        final response = await http.post(
-                                            Uri.parse(_toSend),
-                                            body: jsonEncode(objToSend),
-                                            headers: {
-                                              'X-DEVICE-ID': await MyApp
-                                                  .getDeviceIdentity(),
-                                              'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                            });
-                                        print(response.body);
-                                        if (response.statusCode == 200) {
-                                          setState(() {
-                                            statList.clear();
-                                            _rooms = [];
-                                            _fetchData();
+                                      print(jsonEncode(objToSend));
+                                      final response = await http.post(
+                                          Uri.parse(_toSend),
+                                          body: jsonEncode(objToSend),
+                                          headers: {
+                                            'X-DEVICE-ID':
+                                                await MyApp.getDeviceIdentity(),
+                                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
                                           });
-                                          MyApp.ShowToast("updated", context);
-                                        } else if (response.statusCode == 401) {
-                                          MyApp.Show401Dialog(context);
-                                        }
-                                      } else {
-                                        MyApp.ShowToast(
-                                            "select rooms", context);
+                                      print(response.body);
+                                      if (response.statusCode == 200) {
+                                        setState(() {
+                                          statList.clear();
+                                          _rooms = [];
+                                          _fetchData();
+                                        });
+                                        MyApp.ShowToast("updated", context);
+                                      } else if (response.statusCode == 401) {
+                                        MyApp.Show401Dialog(context);
                                       }
-                                    },
-                                  )),
-                                ),
+                                    } else {
+                                      MyApp.ShowToast("select rooms", context);
+                                    }
+                                  },
+                                )),
                               ),
                             ),
+                          ),
                           if (!roomsFetched && permission)
                             Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.7,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [Center(child: Text('Loading...'))],
-                                )),
-                          if (!permission)
+                              height: MediaQuery.of(context).size.height * .7,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: Center(
+                                          child: CircularProgressIndicator())),
+                                ],
+                              )),
+                          if (!permission && roomsFetched)
                             Container(
                                 height:
                                     MediaQuery.of(context).size.height * 0.7,
@@ -527,7 +531,7 @@ class _RoomsListState extends State<RoomsList> {
                           if (_rooms != null && _rooms.length != 0)
                             Container(
                               height: _rooms.length != 0
-                                  ? _rooms.length * 150.0
+                                  ? _rooms.length * 160.0
                                   : 0,
                               child: ListView.builder(
                                   physics: NeverScrollableScrollPhysics(),
@@ -546,7 +550,7 @@ class _RoomsListState extends State<RoomsList> {
                                             : Container();
                                   }),
                             ),
-                          if (_rooms != null && _rooms.length == 0)
+                          if (_rooms.length == 0 && roomsFetched)
                             Container(
                               height: MediaQuery.of(context).size.height * 0.7,
                               child: Column(
@@ -559,57 +563,79 @@ class _RoomsListState extends State<RoomsList> {
   }
 
   Widget roomCard(RoomsModel r, int index) {
-    Color _safeHexColor(String? color) {
-      try {
-        return HexColor(color ?? "#FFFFFF");
-      } catch (e) {
-        return HexColor("#FFFFFF"); // Default to white on error
-      }
+  Color _safeHexColor(String? color) {
+    try {
+      return HexColor(color ?? "#FFFFFF");
+    } catch (e) {
+      return HexColor("#FFFFFF"); // Default to white on error
     }
+  }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-          child: Container(
-            margin: const EdgeInsets.only(left: 14),
-            child: Column(
-              children: [
-                Row(
+  return Padding(
+    padding: const EdgeInsets.all(10.0),
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 6,
+            offset: Offset(0, 3), // Bottom shadow
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                _safeHexColor(r.room.color),
+                Colors.white,
+              ],
+              stops: [0.02, 0.02],
+            ),
+          ),
+          child: Column(
+            children: [
+              // Room Name and Icons
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
                   children: [
                     GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      RoomDetails(r.room.id)));
-                        },
-                        child: Text(
-                          r.room.name,
-                          style: Constants.cardHeadingStyle,
-                        )),
-                    Expanded(child: Container()),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RoomDetails(r.room.id)));
+                      },
+                      child: Text(
+                        r.room.name,
+                        style: Constants.cardHeadingStyle.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Spacer(),
                     if (permissionupdate)
                       IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            if (_users != null) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditRoom(
-                                            centerid: centers[currentIndex].id,
-                                            roomid: r.room.id,
-                                          )));
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => ChildBasicDetails(
-                              //               centerid: centers[currentIndex].id,
-                              //               roomid: r.room.id,
-                              //             )));
-                            }
-                          }),
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          if (_users != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditRoom(
+                                          centerid: centers[currentIndex].id,
+                                          roomid: r.room.id,
+                                        )));
+                          }
+                        },
+                      ),
                     Checkbox(
                       value: checkValues[index],
                       onChanged: (val) {
@@ -625,42 +651,47 @@ class _RoomsListState extends State<RoomsList> {
                     ),
                   ],
                 ),
-                Row(
+              ),
+              // Child Count Row
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Row(
                   children: [
                     Image.asset(Constants.KID_ICON),
-                    SizedBox(
-                      width: 10,
+                    SizedBox(width: 8),
+                    Text(
+                      r.child.isNotEmpty ? r.child.length.toString() : '0',
+                      style: TextStyle(fontWeight: FontWeight.w500),
                     ),
-                    Text(r.child.isNotEmpty ? r.child.length.toString() : '')
                   ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
+              ),
+              SizedBox(height: 8),
+              // Lead Name Row
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Row(
                   children: [
                     Image.asset(Constants.LEAD_ICON),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 8),
                     Text(
-                      r.room.userName != null ? r.room.userName : '',
-                      style: TextStyle(color: Constants.kMain),
+                      r.room.userName ?? '',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Constants.kMain,
+                      ),
                     ),
-                    Text('(Lead)'),
+                    Text(' (Lead)', style: TextStyle(fontSize: 12)),
                   ],
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-              ],
-            ),
+              ),
+              SizedBox(height: 15),
+            ],
           ),
-          decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  stops: [0.02, 0.02],
-                  colors: [_safeHexColor(r.room.color), Colors.white]),
-              borderRadius: new BorderRadius.all(const Radius.circular(6.0)))),
-    );
-  }
+        ),
+      ),
+    ),
+  );
+}
+
 }

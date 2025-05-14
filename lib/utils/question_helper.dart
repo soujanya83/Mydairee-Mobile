@@ -164,12 +164,17 @@ class _QuestionHelperState extends State<QuestionHelper> {
       options3 = widget.helper?.options3 ?? [];
       options4 = widget.helper?.options4 ?? [];
       if (widget.helper?.choosenValue == 'Multiple Choice') {
-        for (var i = 0; i < options1.length; i++) {
-          if (i == 0) {
-            _mcqOptions[i].text = options1[i];
-          } else {
-            _mcqOptions.add(TextEditingController(text: options1[i]));
+        try {
+          for (var i = 0; i < options1.length; i++) {
+            if (i == 0) {
+              _mcqOptions[i].text = options1[i];
+            } else {
+              _mcqOptions.add(TextEditingController(text: options1[i]));
+            }
           }
+        } catch (e, s) {
+          print(e.toString());
+          print(s);
         }
       }
       // else if(widget.helper?.choosenValue=='TextField'){
@@ -188,26 +193,35 @@ class _QuestionHelperState extends State<QuestionHelper> {
         }
       } else if (widget.helper!.choosenValue == 'CheckBox') {
         for (var i = 0; i < options2.length; i++) {
-          _checkBoxOptions2[i].text = options2[i];
-          if (i == 0) {
+          try {
             _checkBoxOptions2[i].text = options2[i];
-          } else {
-            _checkBoxOptions2.add(TextEditingController(text: options2[i]));
+            if (i == 0) {
+              _checkBoxOptions2[i].text = options2[i];
+            } else {
+              _checkBoxOptions2.add(TextEditingController(text: options2[i]));
+            }
+          } catch (e, s) {
+            print(e.toString());
+            print(s);
           }
         }
       } else {
         for (var i = 0; i < options3.length; i++) {
-          _checkBoxOptions3[i].text = options3[i];
-          if (i == 0) {
+          try {
             _checkBoxOptions3[i].text = options3[i];
-          } else {
-            _checkBoxOptions3.add(TextEditingController(text: options3[i]));
+            if (i == 0) {
+              _checkBoxOptions3[i].text = options3[i];
+            } else {
+              _checkBoxOptions3.add(TextEditingController(text: options3[i]));
+            }
+          } catch (e, s) {
+            print(e.toString());
+            print(s);
           }
         }
       }
       setState(() {});
     }
-
     super.initState();
   }
 
@@ -365,7 +379,8 @@ class _QuestionHelperState extends State<QuestionHelper> {
                     ],
                   )
                 : Container(),
-            widget.helper?.vidUrl != null && ((widget.helper?.vidUrl.isNotEmpty)??false)
+            widget.helper?.vidUrl != null &&
+                    ((widget.helper?.vidUrl.isNotEmpty) ?? false)
                 ? Stack(
                     children: [
                       VideoItem(

@@ -52,7 +52,7 @@ class _SelfAssesmentState extends State<SelfAssesment> {
 
   bool dataFetched = false;
 
-  void _fetchData() async { 
+  void _fetchData() async {
     var _objToSend = {
       "centerid": centers[currentIndex].id,
       "userid": MyApp.LOGIN_ID_VALUE
@@ -148,10 +148,10 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                             );
                           }).toList(),
                           onChanged: (value) {
-                            if(this.mounted)
-                            setState(() {
-                              dataFetched = false;
-                            });
+                            if (this.mounted)
+                              setState(() {
+                                dataFetched = false;
+                              });
                             for (int i = 0; i < centers.length; i++) {
                               if (centers[i].id == value) {
                                 setState(() {
@@ -181,80 +181,133 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                                   Center(child: CircularProgressIndicator())),
                         ],
                       ))
-                  : 
-                    assesments.isEmpty
-                  ? Container(
-                      height: MediaQuery.of(context).size.height * .7,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                              child:
-                                  Text('Self assessments list is empty!')),
-                        ],
-                      ))
-                  : 
-                  
-                  
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: assesments.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ViewAssesment(assesments[index])));
-                          },
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(assesments[index].name),
-                                  Row(
-                                    children: [
-                                      if (assesments[index].educators.length >
-                                          0)
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(assesments[
-                                                              index]
-                                                          .educators[0]
-                                                      ['imageUrl'] !=
-                                                  ""
-                                              ? Constants.ImageBaseUrl +
-                                                  assesments[index].educators[0]
-                                                      ['imageUrl']
-                                              : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png'),
-                                        ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      if (assesments[index].educators.length -
-                                              1 >
-                                          0)
-                                        CircleAvatar(
-                                          backgroundColor: Constants.greyColor,
-                                          child: Text("+" +
-                                              (assesments[index]
-                                                          .educators
-                                                          .length -
-                                                      1)
-                                                  .toString()),
-                                        ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      })
+                  : assesments.isEmpty
+                      ? Container(
+                          height: MediaQuery.of(context).size.height * .7,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  child:
+                                      Text('Self assessments list is empty!')),
+                            ],
+                          ))
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: assesments.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ViewAssesment(assesments[index])));
+                              },
+                              child: Card(
+  elevation: 2,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15),
+  ),
+  shadowColor: Colors.blueGrey.withOpacity(0.1),
+  margin: EdgeInsets.symmetric(vertical: 8),
+  child: Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(15),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.white.withOpacity(0.95),
+          Colors.grey[50]!.withOpacity(0.95),
+        ],
+      ),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              assesments[index].name,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.blueGrey[800],
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          SizedBox(width: 12),
+          if (assesments[index].educators.length > 0)
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            padding: EdgeInsets.all(4),
+            child: Row(
+              children: [
+                if (assesments[index].educators.length > 0)
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundImage: NetworkImage(
+                        assesments[index].educators[0]['imageUrl'] != ""
+                            ? Constants.ImageBaseUrl + 
+                                assesments[index].educators[0]['imageUrl']
+                            : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png',
+                      ),
+                      backgroundColor: Colors.grey[200],
+                    ),
+                  ),
+                if (assesments[index].educators.length > 1) ...[
+                  SizedBox(width: 6),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.blueGrey[100],
+                      child: Text(
+                        "+${assesments[index].educators.length - 1}",
+                        style: TextStyle(
+                          color: Colors.blueGrey[800],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+),
+                            );
+                          })
             ],
           ),
         ),

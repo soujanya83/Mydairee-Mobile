@@ -22,8 +22,8 @@ class _ProgressPlanState extends State<ProgressPlan> {
   bool typeFlag = false;
 
   List<ProcessChildSubModel> childList = [];
-  List<MontessoriActivityModel> montessoriList= [];
-  List<CentersModel> centers= [];
+  List<MontessoriActivityModel> montessoriList = [];
+  List<CentersModel> centers = [];
   bool centersFetched = false;
   int currentIndex = 0;
   bool dataFetched = false;
@@ -291,7 +291,7 @@ class _ProgressPlanState extends State<ProgressPlan> {
               if (dataFetched && error == '')
                 ListTile(
                   title: InkWell(
-                    onTap: (){
+                    onTap: () {
                       _load();
                     },
                     child: Text(
@@ -299,17 +299,22 @@ class _ProgressPlanState extends State<ProgressPlan> {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
-                  trailing: MyApp.USER_TYPE_VALUE != 'Parent'? Switch(
-                    activeColor: Colors.white,
-                    inactiveThumbColor: Colors.white,
-                    activeTrackColor: Colors.green,
-                    inactiveTrackColor: Colors.red,
-                    value: typeFlag,
-                    onChanged: (newval) {
-                      typeFlag = newval;
-                      setState(() {});
-                    },
-                  ):Container(height: 0,width: 0,),
+                  trailing: MyApp.USER_TYPE_VALUE != 'Parent'
+                      ? Switch(
+                          activeColor: Colors.white,
+                          inactiveThumbColor: Colors.white,
+                          activeTrackColor: Colors.green,
+                          inactiveTrackColor: Colors.red,
+                          value: typeFlag,
+                          onChanged: (newval) {
+                            typeFlag = newval;
+                            setState(() {});
+                          },
+                        )
+                      : Container(
+                          height: 0,
+                          width: 0,
+                        ),
                 ),
               if (dataFetched && error == '')
                 SingleChildScrollView(
@@ -380,9 +385,19 @@ class _ProgressPlanState extends State<ProgressPlan> {
 
   List<Widget> _buildCells(ProcessChildSubModel childSubModel, int p) {
     var nameType = childSubModel.childName + "_" + childSubModel.childId;
-    var data = processData[nameType];
-    var aData = processData[p.toString()]['processactivityid'].toString().split(',');
+    // var data = processData[nameType];
+    var data = processData[''];
+    var aData =
+        processData[p.toString()]['processactivityid'].toString().split(',');
     var pData = processData[p.toString()]['subid'].toString().split(',');
+    try {
+      print('===============processData===============================');
+      debugPrint(processData.toString());
+      debugPrint(processData.toString());
+    } catch (e, s) {
+      print(e);
+      print(s.toString());
+    }
 
     return List.generate(
       montessoriList.length + 1,
@@ -395,146 +410,178 @@ class _ProgressPlanState extends State<ProgressPlan> {
         child: index == 0
             ? Text(childSubModel.childName,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))
-            : InkWell(
-                onTap: () async {
-                  if (typeFlag) {
-                    if (data[index.toString()] == "") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "Planned",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.createPlan();
-                      print(planDetails);
+            : InkWell(onTap: () async {
+                if (typeFlag) {
+                  if (data[index.toString()] == "") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "Planned",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.createPlan();
+                    print(planDetails);
 
-                      data[index.toString()] = "Planned";
-                      setState(() {});
-                    } else if (data[index.toString()] == "Planned") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.createPlan();
-                      print(planDetails);
+                    data[index.toString()] = "Planned";
+                    setState(() {});
+                  } else if (data[index.toString()] == "Planned") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.createPlan();
+                    print(planDetails);
 
-                      data[index.toString()] = "";
-                      setState(() {});
-                    }
-                  } else {
-                    if (data[index.toString()] == "") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "Introduced",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.createPlan();
-                      print(planDetails);
-
-                      data[index.toString()] = "Introduced";
-                      setState(() {});
-                    } else if (data[index.toString()] == "Introduced") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "Working",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.updatePlan();
-                      print(planDetails);
-
-                      data[index.toString()] = "Working";
-                      setState(() {});
-                    } else if (data[index.toString()] == "Working") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "Completed",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.updatePlan();
-                      print(planDetails);
-
-                      data[index.toString()] = "Completed";
-                      setState(() {});
-                    } else if (data[index.toString()] == "Completed") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "Needs More",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.updatePlan();
-                      print(planDetails);
-
-                      data[index.toString()] = "Needs More";
-                      setState(() {});
-                    } else if (data[index.toString()] == "Needs More") {
-                      var obj = {
-                        "usertype": MyApp.USER_TYPE_VALUE,
-                        "created": MyApp.LOGIN_ID_VALUE,
-                        "userid": MyApp.LOGIN_ID_VALUE,
-                        "centerid": centers[currentIndex].id,
-                        "status": "",
-                        "actvityid": aData[index - 1],
-                        "childid": childSubModel.childId,
-                        "subid": pData[index - 1]
-                      };
-                      print(obj);
-
-                      ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
-                      var planDetails = await plan.updatePlan();
-                      print(planDetails);
-
-                      data[index.toString()] = "";
-                      setState(() {});
-                    }
+                    data[index.toString()] = "";
+                    setState(() {});
                   }
-                },
-                child: Text(data.toString()),
-                // child: flag(data!=null? data[index.toString()]:'', childSubModel.createdBy)
-                ),
+                } else {
+                  if (data[index.toString()] == "") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "Introduced",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.createPlan();
+                    print(planDetails);
+
+                    data[index.toString()] = "Introduced";
+                    setState(() {});
+                  } else if (data[index.toString()] == "Introduced") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "Working",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.updatePlan();
+                    print(planDetails);
+
+                    data[index.toString()] = "Working";
+                    setState(() {});
+                  } else if (data[index.toString()] == "Working") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "Completed",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.updatePlan();
+                    print(planDetails);
+
+                    data[index.toString()] = "Completed";
+                    setState(() {});
+                  } else if (data[index.toString()] == "Completed") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "Needs More",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.updatePlan();
+                    print(planDetails);
+
+                    data[index.toString()] = "Needs More";
+                    setState(() {});
+                  } else if (data[index.toString()] == "Needs More") {
+                    var obj = {
+                      "usertype": MyApp.USER_TYPE_VALUE,
+                      "created": MyApp.LOGIN_ID_VALUE,
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "centerid": centers[currentIndex].id,
+                      "status": "",
+                      "actvityid": aData[index - 1],
+                      "childid": childSubModel.childId,
+                      "subid": pData[index - 1]
+                    };
+                    print(obj);
+
+                    ProgressPlanApiHandler plan = ProgressPlanApiHandler(obj);
+                    var planDetails = await plan.updatePlan();
+                    print(planDetails);
+
+                    data[index.toString()] = "";
+                    setState(() {});
+                  }
+                }
+              },
+                // child: Text(data.toString()),
+                child: Builder(builder: (context) {
+                String type = '';
+                try {
+                  // type = data != null ? data[index.toString()] : '';
+                  // type = processData.toString().substring(0,10);
+                } catch (e) {}
+                // try {
+                //   return Text(processData[0.toString()]['process_status']
+                //       .split(',')
+                //       .where((e) => e.trim().isNotEmpty)
+                //       .toList()[0]
+                //       .toString());
+                // } catch (e) {
+                //   //  print(e.toString());
+                //   return InkWell(
+                //     onTap: () {
+                //       print('--------------------------');
+                //       // print(childSubModel.processStatus.split(',').toList()[index]);
+                //       // print(processData[0.toString()]['process_status'].split(',')
+                //       // .toList()[2]);
+                //     },
+                //     child: Text('errord'));
+                 
+                // }
+
+                  try {
+                     return flag(childSubModel.processStatus.split(',').toList()[index], childSubModel.createdBy);
+                  // type = data != null ? data[index.toString()] : '';
+                  // type = processData.toString().substring(0,10);
+                } catch (e) {
+                  return flag('', childSubModel.createdBy);
+                }
+
+               
+              })),
       ),
     );
   }

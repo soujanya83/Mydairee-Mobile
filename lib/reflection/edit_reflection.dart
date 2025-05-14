@@ -893,6 +893,7 @@ class _EditReflectionState extends State<EditReflection> {
                         child: TextField(
                             controller: title,
                             decoration: new InputDecoration(
+                              contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                               enabledBorder: const OutlineInputBorder(
                                 borderSide: const BorderSide(
                                     color: Colors.black26, width: 0.0),
