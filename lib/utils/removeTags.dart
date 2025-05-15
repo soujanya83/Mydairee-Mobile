@@ -244,7 +244,6 @@ List tokenize(String tok) {
   print(ids);
   print(tagType);
   List d = [parse(tok).documentElement!.text, tags, ids, tagType, tagDataType];
-
   return d;
 }
 

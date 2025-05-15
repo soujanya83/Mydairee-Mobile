@@ -17,6 +17,7 @@ import 'package:mykronicle_mobile/utils/cropImage.dart';
 import 'package:mykronicle_mobile/utils/deleteDialog.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
+import 'package:mykronicle_mobile/utils/removeTags.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -91,7 +92,7 @@ class _AddrecipeState extends State<Addrecipe> {
         _recipe = RecipeModel.fromJson(res);
 
         name.text = _recipe?.itemName ?? '';
-        recipe.text = _recipe?.recipe ?? '';
+        recipe.text = removeHtmlData(_recipe?.recipe ?? '');
         for (int i = 0; i < (_recipe?.ingredients?.length ?? 0); i++) {
           _selectedIngredients
               .add(IngredientModel.fromJson(_recipe?.ingredients?[i]));

@@ -155,7 +155,13 @@ class _SleepCheckListState extends State<SleepCheckList> {
   //   _fetchDataui();
   // }
   List<SlipChecksChildModel> slipChecksChildModel = [];
+  bool loading = true;
   Future<void> _fetchData() async {
+    if(this.mounted && !loading){
+      setState(() {
+        loading = true;
+      });
+    }
     Map<String, String> data1 = {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers[currentIndex].id,
@@ -194,6 +200,11 @@ class _SleepCheckListState extends State<SleepCheckList> {
       if (this.mounted) setState(() {});
     } else {
       MyApp.Show401Dialog(context);
+    }
+     if(this.mounted){
+      setState(() {
+        loading = false;
+      });
     }
   }
 
@@ -767,6 +778,20 @@ class _SleepCheckListState extends State<SleepCheckList> {
             SizedBox(
               height: 10,
             ),
+             loading
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              height: 40,
+                              width: 40,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
+                        ],
+                      ))
+                  :
             Container(
                 child: ListView.builder(
                     shrinkWrap: true,

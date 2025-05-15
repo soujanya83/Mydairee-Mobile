@@ -313,6 +313,38 @@ class _AddAccidentsState extends State<AddAccidents> {
           paDate = DateTime.tryParse(accInfo['ack_date'] ?? '');
           aNotes?.text = accInfo['add_notes'] ?? '';
 
+          abrasion = accInfo['abrasion'].toString() == '1' ? true : false;
+          electic = accInfo['electric_shock'].toString() == '1' ? true : false;
+          allergy =
+              accInfo['allergic_reaction'].toString() == '1' ? true : false;
+          high = accInfo['high_temperature'].toString() == '1' ? true : false;
+          amputation = accInfo['amputation'].toString() == '1' ? true : false;
+          infectious =
+              accInfo['infectious_disease'].toString() == '1' ? true : false;
+          anaphylaxis = accInfo['anaphylaxis'].toString() == '1' ? true : false;
+          ingestion = accInfo['ingestion'].toString() == '1' ? true : false;
+          asthama = accInfo['asthma'].toString() == '1' ? true : false;
+          internal =
+              accInfo['internal_injury'].toString() == '1' ? true : false;
+          bite = accInfo['bite_wound'].toString() == '1' ? true : false;
+          poisoning = accInfo['poisoning'].toString() == '1' ? true : false;
+          broken = accInfo['broken_bone'].toString() == '1' ? true : false;
+          rash = accInfo['rash'].toString() == '1' ? true : false;
+          burn = accInfo['burn'].toString() == '1' ? true : false;
+          respiratory = accInfo['respiratory'].toString() == '1' ? true : false;
+          choking = accInfo['choking'].toString() == '1' ? true : false;
+          seizure = accInfo['seizure'].toString() == '1' ? true : false;
+          concussion = accInfo['concussion'].toString() == '1' ? true : false;
+          sprain = accInfo['sprain'].toString() == '1' ? true : false;
+          crush = accInfo['crush'].toString() == '1' ? true : false;
+          stabbing = accInfo['stabbing'].toString() == '1' ? true : false;
+          cut = accInfo['cut'].toString() == '1' ? true : false;
+          tooth = accInfo['tooth'].toString() == '1' ? true : false;
+          drowning = accInfo['drowning'].toString() == '1' ? true : false;
+          venomous = accInfo['venomous_bite'].toString() == '1' ? true : false;
+          eye = accInfo['eye_injury'].toString() == '1' ? true : false;
+          other = accInfo['other'].toString() == '1' ? true : false;
+
           setState(() {});
         }
       }
@@ -471,7 +503,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                     ),
                   ),
                 ),
-              ), 
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -2310,7 +2342,10 @@ class _AddAccidentsState extends State<AddAccidents> {
                               child: Center(
                                 child: DropdownButton<String>(
                                   //  isExpanded: true,
-                                  value: hours!=null && hours!.contains(gHour2)? gHour2:null,
+                                  value:
+                                      hours != null && hours!.contains(gHour2)
+                                          ? gHour2
+                                          : null,
                                   items: hours?.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3419,7 +3454,8 @@ class _AddAccidentsState extends State<AddAccidents> {
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            paDate = await _selectDate(context, paDate!);
+                            paDate = await _selectDate(
+                                context, paDate ?? DateTime.now());
                             setState(() {});
                           },
                           child: Icon(
@@ -4006,6 +4042,7 @@ class _AddAccidentsState extends State<AddAccidents> {
 
                           String _toSend =
                               Constants.BASE_URL + 'accident/saveAccident';
+
                           var objToSend = {
                             "centerid": widget.centerid,
                             "roomid": widget.roomid,
@@ -4093,6 +4130,11 @@ class _AddAccidentsState extends State<AddAccidents> {
                             "add_notes": aNotes?.text.toString(),
                             "userid": MyApp.LOGIN_ID_VALUE,
                           };
+                          if (widget.type == 'edit') {
+                            objToSend.addAll({'id': widget.accid});
+                            // _toSend =
+                            //     Constants.BASE_URL + 'accident/updateAccident';
+                          }
 
                           print(jsonEncode(objToSend));
 
@@ -4107,11 +4149,16 @@ class _AddAccidentsState extends State<AddAccidents> {
                           print(response.headers);
                           print(response.body);
                           if (response.statusCode == 200) {
-                            MyApp.ShowToast("Created", context);
+                            if (widget.type == 'edit') {
+                              MyApp.ShowToast("Updated", context);
+                            } else {
+                              MyApp.ShowToast("Created", context);
+                            }
+
                             print('created');
                             // Navigator.of(context).popUntil(
                             //     (route) => route.isFirst);
-                            // Navigator.pop(context);
+                            Navigator.pop(context);
                           } else if (response.statusCode == 401) {
                             MyApp.Show401Dialog(context);
                           }

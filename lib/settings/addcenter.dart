@@ -370,12 +370,13 @@ void changeColor(Color color) {
                                       ),
                                     
                                       Container(
-                                        height: 30,
+                                        height: 40,
                                         child: TextField(
                                             maxLines: 1,
                                            // keyboardType: TextInputType.number,
                                             controller: rname[index],
                                             decoration: new InputDecoration(
+                                              contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                               enabledBorder:
                                                   const OutlineInputBorder(
                                                 borderSide: const BorderSide(
@@ -398,12 +399,13 @@ void changeColor(Color color) {
                                         height: 5,
                                       ),
                                       Container(
-                                        height: 30,
+                                        height: 40,
                                         child: TextField(
                                             maxLines: 1,
                                             controller: capacity[index],
                                           keyboardType: TextInputType.number,
                                             decoration: new InputDecoration(
+                                              contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                               enabledBorder:
                                                   const OutlineInputBorder(
                                                 borderSide: const BorderSide(

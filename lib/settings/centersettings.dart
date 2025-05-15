@@ -14,27 +14,27 @@ class CenterSettings extends StatefulWidget {
 }
 
 class _CenterSettingsState extends State<CenterSettings> {
- 
   String searchString = '';
-  
-  String order='ASC';
-  bool settingsDataFetched = false;
-  List<CentersModel> _allCenters=[];
 
-@override
+  String order = 'ASC';
+  bool settingsDataFetched = false;
+  List<CentersModel> _allCenters = [];
+
+  @override
   void initState() {
     _fetchData();
     super.initState();
   }
 
   Future<void> _fetchData() async {
-    SettingsApiHandler handler =
-        SettingsApiHandler({"userid": MyApp.LOGIN_ID_VALUE,"order": order,});
-    
+    SettingsApiHandler handler = SettingsApiHandler({
+      "userid": MyApp.LOGIN_ID_VALUE,
+      "order": order,
+    });
+
     var data = await handler.getCenterSettings();
 
     if (!data.containsKey('error')) {
-     
       print(data);
       var centers = data['centers'];
       _allCenters = [];
@@ -43,7 +43,7 @@ class _CenterSettingsState extends State<CenterSettings> {
         for (int i = 0; i < centers.length; i++) {
           _allCenters.add(CentersModel.fromJson(centers[i]));
         }
-        settingsDataFetched=true;
+        settingsDataFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
         print(e);
@@ -51,23 +51,21 @@ class _CenterSettingsState extends State<CenterSettings> {
     } else {
       MyApp.Show401Dialog(context);
     }
-
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        
         drawer: GetDrawer(),
         appBar: Header.appBar(),
         body: SingleChildScrollView(
             child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: settingsDataFetched?Container(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
+          padding: const EdgeInsets.all(12.0),
+          child: settingsDataFetched
+              ? Container(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
                       Row(
                         children: [
                           Text(
@@ -78,16 +76,14 @@ class _CenterSettingsState extends State<CenterSettings> {
                             child: Container(),
                           ),
                           GestureDetector(
-                               onTap: () async {
-                                _allCenters= _allCenters.reversed.toList();
-                                  setState(() {});
-                                  
+                              onTap: () async {
+                                _allCenters = _allCenters.reversed.toList();
+                                setState(() {});
                               },
                               child: Icon(
                                 Entypo.select_arrows,
                                 color: Constants.kButton,
                               )),
-                         
                           SizedBox(
                             width: 5,
                           ),
@@ -96,13 +92,15 @@ class _CenterSettingsState extends State<CenterSettings> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => AddCenter('add',''))).then((value) {
-                                      if (value != null) {
-                                      settingsDataFetched=false;
-                                        setState(() {});
-                                        _fetchData();
-                                      }
-                                    });;
+                                      builder: (context) =>
+                                          AddCenter('add', ''))).then((value) {
+                                if (value != null) {
+                                  settingsDataFetched = false;
+                                  setState(() {});
+                                  _fetchData();
+                                }
+                              });
+                              ;
                             },
                             child: Container(
                                 decoration: BoxDecoration(
@@ -161,7 +159,6 @@ class _CenterSettingsState extends State<CenterSettings> {
                           ),
                         ),
                       ),
-                     
                       SizedBox(
                         height: 10,
                       ),
@@ -175,62 +172,71 @@ class _CenterSettingsState extends State<CenterSettings> {
                           },
                         ),
                       ),
-                    ])):Container(),
-                    )));
+                    ]))
+              : Container(),
+        )));
   }
 
   Widget centerCard(int i) {
-    return _allCenters[i].centerName.toLowerCase().contains(searchString.toLowerCase())?Card(
-      child: Container(
-        margin: EdgeInsets.all(8),
-        child: Column(
-          children: [
-         
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey,
-                    // backgroundImage: NetworkImage(
-                    //     Constants.ImageBaseUrl + _allChildrens[i].imageUrl)
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 15,
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddCenter('edit',_allCenters[i].id))).then((value) {
-                                      if (value != null) {
-                                      settingsDataFetched=false;
-                                        setState(() {});
-                                        _fetchData();
-                                      }
-                                    });
-                        },
-                        child: Text( _allCenters[i].centerName,
-                            style: Constants.cardHeadingStyle)),
-                    Text( _allCenters[i].adressStreet),
-                    Text( _allCenters[i].addressCity)
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    ):Container();
+    return _allCenters[i]
+            .centerName
+            .toLowerCase()
+            .contains(searchString.toLowerCase())
+        ? Card(
+            child: Container(
+              margin: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.grey,
+                          // backgroundImage: NetworkImage(
+                          //     Constants.ImageBaseUrl + _allChildrens[i].imageUrl)
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 15,
+                          ),
+                          GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => AddCenter(
+                                                'edit', _allCenters[i].id)))
+                                    .then((value) {
+                                  if (value != null) {
+                                    settingsDataFetched = false;
+                                    setState(() {});
+                                    _fetchData();
+                                  }
+                                });
+                              },
+                              child: Text(_allCenters[i].centerName,
+                                  style: Constants.cardHeadingStyle)),
+                          SizedBox(
+                            width:MediaQuery.of(context).size.width*.5,
+                            child: Text(_allCenters[i].adressStreet,overflow: TextOverflow.ellipsis,)),
+                          Text(_allCenters[i].addressCity)
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          )
+        : Container();
   }
 }

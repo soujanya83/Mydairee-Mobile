@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:http/http.dart' as http;
@@ -11,13 +12,13 @@ class Service {
   Service(this.loginURL, this.body);
 
   Future data() async {
-    print(loginURL);
-    print('post api called for...data');
-    print(jsonEncode(body));
+    debugPrint(loginURL);
+    debugPrint('post api called for...data');
+    debugPrint(jsonEncode(body));
     Response response = await post(Uri.parse(loginURL), body: jsonEncode(body));
-    print(response.body);
+    debugPrint(response.body);
     var status = jsonDecode(response.body);
-    print('dasss' + status.toString());
+    debugPrint('dasss' + status.toString());
     if (status['Status'] == 'SUCCESS') {
       String data = response.body;
       return jsonDecode(data);
@@ -42,12 +43,12 @@ class ServiceWithHeader {
     });
     print(url);
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
-    print(MyApp.AUTH_TOKEN_VALUE);
-    print(response.body);
-    print(response.statusCode);
+    debugPrint(MyApp.AUTH_TOKEN_VALUE);
+    debugPrint(response.body);
+    debugPrint(response.statusCode.toString());
     String cleanedJson = cleanJson(response.body);
     var status = jsonDecode(cleanedJson);
-    print('heee' + status['Status'].toString());
+    debugPrint('heee' + status['Status'].toString());
     if (status['Status'] == 'SUCCESS') {
       return jsonDecode(cleanedJson);
     } else {
@@ -72,9 +73,9 @@ class ServiceWithHeaderPost {
         'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
       },
     );
-    print(url);
+    debugPrint(url);
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
-    print(MyApp.AUTH_TOKEN_VALUE);
+    debugPrint(MyApp.AUTH_TOKEN_VALUE);
     var status = jsonDecode(response.body);
     if (status['Status'] == 'SUCCESS'){
       String data = response.body;
@@ -95,7 +96,7 @@ class ServiceWithHeaderDataPost {
 
   Future data() async {
     print('post api called for...');
-    print(jsonEncode(b));
+    debugPrint(jsonEncode(b));
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -105,16 +106,16 @@ class ServiceWithHeaderDataPost {
       body: jsonEncode(b),
     );
     print('after post api...........');
-    print(url);
-    print(b);
+    debugPrint(url);
+    debugPrint(b.toString());
     print({
       'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
       'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
     });
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
-    print('authtoken' + MyApp.AUTH_TOKEN_VALUE);
-    print('status code ' + response.statusCode.toString());
-    print('dataaa' + response.body.toString());
+    debugPrint('authtoken' + MyApp.AUTH_TOKEN_VALUE);
+    debugPrint('status code ' + response.statusCode.toString());
+    debugPrint('dataaa' + response.body.toString());
     String cleanedJson = cleanJson(response.body);
     var status = jsonDecode(cleanedJson);
     if (status['Status'] == 'SUCCESS' ||

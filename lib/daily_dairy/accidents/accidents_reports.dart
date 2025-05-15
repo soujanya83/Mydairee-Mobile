@@ -133,7 +133,13 @@ class _AccidentsReportsState extends State<AccidentsReports> {
   //   _fetchDataui();
   // }
 
+  bool loading = true;
   Future<void> _fetchData() async {
+    if (this.mounted && !loading) {
+      setState(() {
+        loading = true;
+      });
+    }
     Map<String, String> data1 = {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers[currentIndex].id,
@@ -159,6 +165,11 @@ class _AccidentsReportsState extends State<AccidentsReports> {
       }
     } else {
       MyApp.Show401Dialog(context);
+    }
+    if (this.mounted) {
+      setState(() {
+        loading = false;
+      });
     }
   }
 
@@ -323,7 +334,7 @@ class _AccidentsReportsState extends State<AccidentsReports> {
               SizedBox(
                 height: 10,
               ),
-              details != null
+              details != null && !loading
                   ? Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,18 +352,32 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                                 padding: const EdgeInsets.fromLTRB(15, 8, 5, 5),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      "S No" + "    " + "Name",
-                                      style: Constants.sideHeadingStyle,
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                              .40 - 15,
+                                      child: Text(
+                                        "S No" + "    " + "Name",
+                                        style: Constants.sideHeadingStyle,
+                                      ),
                                     ),
-                                    Expanded(child: Container()),
-                                    Text(
-                                      "Download",
-                                      style: Constants.sideHeadingStyle,
+                                    // Expanded(child: Container()),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          .3,
+                                      child: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                    .25 -
+                                                8,
+                                        child: Text(
+                                          "Created By",
+                                          style: Constants.sideHeadingStyle,
+                                        ),
+                                      ),
                                     ),
-                                    Expanded(child: Container()),
+                                    // Expanded(child: Container()),
                                     Text(
-                                      "Status",
+                                      "Date",
                                       style: Constants.sideHeadingStyle,
                                     ),
                                   ],
@@ -401,28 +426,74 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                                                 });
                                               },
                                               child: Container(
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      _accident[index].id +
-                                                          "    " +
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .40-15,
+                                                        child: Text(
+                                                          _accident[index].id +
+                                                              "    " +
+                                                              _accident[index]
+                                                                  .childName,
+                                                          style: TextStyle(
+                                                              fontSize: 13.0,
+                                                              color: Constants
+                                                                  .kHeader1,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                          child: Container()),
+                                                      SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .3,
+                                                        child: Text(
                                                           _accident[index]
-                                                              .childName,
-                                                      style: Constants.header2,
-                                                    ),
-                                                    Expanded(
-                                                        child: Container()),
-                                                    Text(
-                                                      "Pay",
-                                                      style: Constants.header3,
-                                                    ),
-                                                    Expanded(
-                                                        child: Container()),
-                                                    Text(
-                                                      "Signed",
-                                                      style: Constants.header3,
-                                                    ),
-                                                  ],
+                                                              .username,
+                                                          style: TextStyle(
+                                                              fontSize: 13.0,
+                                                              color: Constants
+                                                                  .kMain,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                          child: Container()),
+                                                      SizedBox(
+                                                        width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .25 -
+                                                            8,
+                                                        child: Text(
+                                                            formatDateToDdMmYyyy(
+                                                                _accident[index]
+                                                                    .incidentDate),
+                                                            style: TextStyle(
+                                                                fontSize: 13.0,
+                                                                color: Constants
+                                                                    .kMain,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -437,11 +508,33 @@ class _AccidentsReportsState extends State<AccidentsReports> {
                         ],
                       ),
                     )
-                  : Container(),
+                  : Container(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              height: 40,
+                              width: 40,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
+                        ],
+                      )),
             ],
           ),
         ),
       )),
     );
+  }
+}
+
+String formatDateToDdMmYyyy(String? dateStr) {
+  if (dateStr == null || dateStr.trim().isEmpty) return "Invalid Date";
+
+  try {
+    DateTime date = DateTime.parse(dateStr);
+    return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
+  } catch (e) {
+    return "";
   }
 }

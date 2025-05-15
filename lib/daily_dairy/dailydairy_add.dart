@@ -3,10 +3,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:intl/intl.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/recipemodel.dart';
-import 'package:mykronicle_mobile/services/constants.dart'; 
+import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/hexconversion.dart';
 import 'package:http/http.dart' as http;
@@ -14,10 +15,11 @@ import 'package:http/http.dart' as http;
 class DailyDairyAdd extends StatefulWidget {
   final List<String> child;
   final Map showPermissions;
-
+  
   final Map details;
+  final DateTime? date;
 
-  DailyDairyAdd(this.child, this.details, this.showPermissions);
+  DailyDairyAdd(this.child, this.details, this.showPermissions, this.date);
 
   @override
   _DailyDairyAddState createState() => _DailyDairyAddState();
@@ -39,7 +41,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
 
   int currentItemIndex = 0;
 
-  late List<RecipeModel> recipes;
+  List<RecipeModel> recipes = [];
   bool recipesFetched = false;
 
   late TextEditingController quant,
@@ -381,7 +383,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                       )
                                     ],
                                   ),
-                                ) ,
+                                ),
                               if (widget.showPermissions['sleep'] == '1')
                                 Container(
                                   height: 50,
@@ -403,7 +405,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                             Expanded(
                                               child: Center(
                                                 child: Text(
-                                                  'SLEEP', 
+                                                  'SLEEP',
                                                   style: TextStyle(
                                                       //      color: Colors.white,
                                                       fontWeight:
@@ -437,7 +439,10 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                           BorderRadius.all(
                                                               Radius.circular(
                                                                   8))),
-                                                  child: Padding(padding:const EdgeInsets.all(10.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -584,7 +589,7 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 type = 'Snacks';
                                                 _getItems('SNACKS');
                                                 showPop = true;
-                                                setState((){});
+                                                setState(() {});
                                               },
                                               child: Container(
                                                   width: 60,
@@ -773,8 +778,8 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                                   Colors.white),
                                                         ),
                                                       ],
-                                                  ),
-                                              )),
+                                                    ),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -971,9 +976,9 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                               "startTime": hour + ":" + min,
                                               "comments":
                                                   comments.text.toString(),
-                                              "createdAt":
-                                                  DateTime.now().toString(),
-
+                                              "diarydate":
+                                                  DateFormat('yyyy-MM-dd')
+                                                      .format(widget.date!),
                                               "type": type.toUpperCase(),
                                               "childids": widget.child
                                             };
@@ -1322,8 +1327,9 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                               "endTime": hour2 + ":" + min2,
                                               "comments":
                                                   comments.text.toString(),
-                                              "createdAt":
-                                                  DateTime.now().toString(),
+                                              "diarydate":
+                                                  DateFormat('yyyy-MM-dd')
+                                                      .format(widget.date!),
                                               "type": type.toUpperCase(),
                                               "childids": widget.child
                                             };
@@ -1661,360 +1667,10 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                                                 signature.text.toString(),
                                             "comments":
                                                 comments.text.toString(),
-                                            "createdAt":
-                                                DateTime.now().toString(),
+                                            "diarydate":
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(widget.date!),
                                             "type": type.toUpperCase(),
-                                            "childids": widget.child
-                                          };
-
-                                          print(jsonEncode(objToSend));
-                                          final response = await http.post(
-                                              Uri.parse(_toSend),
-                                              body: jsonEncode(objToSend),
-                                              headers: {
-                                                'X-DEVICE-ID': await MyApp
-                                                    .getDeviceIdentity(),
-                                                'X-TOKEN':
-                                                    MyApp.AUTH_TOKEN_VALUE,
-                                              });
-                                          print(response.body);
-                                          if (response.statusCode == 200){
-                                            MyApp.ShowToast("updated", context);
-                                            Navigator.pop(context, 'kill');
-                                          } else if (response.statusCode ==
-                                              401) {
-                                            MyApp.Show401Dialog(context);
-                                          }
-                                        },
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Constants.kButton,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8))),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      12, 8, 12, 8),
-                                              child: Text(
-                                                'SAVE',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16),
-                                              ),
-                                            )),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    )),
-              ),
-            ),
-          if ((type == 'Breakfast' ||
-                  type == 'MorningTea' ||
-                  type == 'Lunch' ||
-                  type == 'AfternoonTea' ||
-                  type == 'Snacks') &&
-              showPop)
-            Center(
-              child: SingleChildScrollView(
-                child: Container(
-                    color: Colors.white,
-                    height: 420,
-                    width: MediaQuery.of(context).size.width * 0.85,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          //  width: MediaQuery.of(context).size.width,
-                          color: HexColor(widget.details['roomcolor']),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                'Add ' + type,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Expanded(
-                                child: Container(),
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    print('called');
-                                    showPop = false;
-                                    quant.clear();
-                                    cal.clear();
-                                    comments.clear();
-                                    hour = '1h';
-                                    min = '0m';
-                                    currentItemIndex = 0;
-                                    setState(() {});
-                                  })
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            height: 355,
-                            child: ListView(
-                              children: [
-                                Text('Time'),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  children: [
-                                    hours != null
-                                        ? DropdownButtonHideUnderline(
-                                            child: Container(
-                                              height: 40,
-                                              width: 80,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color:
-                                                          Constants.greyColor),
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8))),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8, right: 8),
-                                                child: Center(
-                                                  child: DropdownButton<String>(
-                                                    //  isExpanded: true,
-                                                    value: hour,
-                                                    items: hours
-                                                        .map((String value) {
-                                                      return new DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
-                                                        child: new Text(value),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (String? value) {
-                                                      if (value == null) return;
-                                                      hour = value!;
-                                                      setState(() {});
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                    Container(
-                                      width: 20,
-                                    ),
-                                    minutes != null
-                                        ? DropdownButtonHideUnderline(
-                                            child: Container(
-                                              height: 40,
-                                              width: 80,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color:
-                                                          Constants.greyColor),
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8))),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8, right: 8),
-                                                child: Center(
-                                                  child: DropdownButton<String>(
-                                                    //  isExpanded: true,
-                                                    value: min,
-                                                    items: minutes
-                                                        .map((String value) {
-                                                      return new DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
-                                                        child: new Text(value),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (String? value) {
-                                                      if (value == null) return;
-                                                      min = value!;
-                                                      setState(() {});
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Text('Item'),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                recipesFetched && recipes.length > 0
-                                    ? DropdownButtonHideUnderline(
-                                        child: Container(
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Constants.greyColor),
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(8))),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8, right: 8),
-                                            child: Center(
-                                              child: DropdownButton<String>(
-                                                isExpanded: true,
-                                                value: recipes[currentItemIndex]
-                                                    .id,
-                                                items: recipes
-                                                    .map((RecipeModel value) {
-                                                  return new DropdownMenuItem<
-                                                      String>(
-                                                    value: value.id,
-                                                    child: new Text(
-                                                        value.itemName),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (value) {
-                                                  for (int i = 0;
-                                                      i < recipes.length;
-                                                      i++) {
-                                                    if (recipes[i].id ==
-                                                        value) {
-                                                      setState(() {
-                                                        currentItemIndex = i;
-                                                      });
-                                                      break;
-                                                    }
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Text('Quantity'),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  height: 40,
-                                  child: TextField(
-                                      maxLines: 1,
-                                      controller: quant,
-                                      decoration: new InputDecoration(
-                                        contentPadding: EdgeInsets.only(bottom: 10,left: 10),
-                                        enabledBorder: const OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.black26,
-                                              width: 0.0),
-                                        ),
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(4),
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Text('Calories'),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  height: 30,
-                                  child: TextField(
-                                      maxLines: 1,
-                                      controller: cal,
-                                      decoration: new InputDecoration(
-                                        contentPadding: EdgeInsets.only(bottom: 10,left: 10),
-                                        enabledBorder: const OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.black26,
-                                              width: 0.0),
-                                        ),
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(4),
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Text('Comments'),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  height: 60,
-                                  child: TextField(
-                                      maxLines: 2,
-                                      controller: comments,
-                                      decoration: new InputDecoration(
-                                        enabledBorder: const OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.black26,
-                                              width: 0.0),
-                                        ),
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(4),
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          var _toSend = Constants.BASE_URL +
-                                              'dailyDiary/addFoodRecord';
-
-                                          var objToSend = {
-                                            "userid": MyApp.LOGIN_ID_VALUE,
-                                            "startTime": hour + ":" + min,
-                                            "item":recipes.isNotEmpty? recipes[currentItemIndex]
-                                                .itemName:'',
-                                            "qty": quant.text.toString(),
-                                            "comments":
-                                                comments.text.toString(),
-                                            "createdAt":
-                                                DateTime.now().toString(),
-                                            "type": type.toUpperCase(),
-                                            "calories": cal.text.toString(),
                                             "childids": widget.child
                                           };
 
@@ -2066,6 +1722,422 @@ class _DailyDairyAddState extends State<DailyDairyAdd> {
                         )
                       ],
                     )),
+              ),
+            ),
+          if ((type == 'Breakfast' ||
+                  type == 'MorningTea' ||
+                  type == 'Lunch' ||
+                  type == 'AfternoonTea' ||
+                  type == 'Snacks') &&
+              showPop)
+            Center(
+              child: SingleChildScrollView(
+                child: Container(
+                    color: Colors.white,
+                    height: 420,
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: recipesFetched && recipes.length > 0
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                //  width: MediaQuery.of(context).size.width,
+                                color: HexColor(widget.details['roomcolor']),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      'Add ' + type,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Expanded(
+                                      child: Container(),
+                                    ),
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.clear,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          print('called');
+                                          showPop = false;
+                                          quant.clear();
+                                          cal.clear();
+                                          comments.clear();
+                                          hour = '1h';
+                                          min = '0m';
+                                          currentItemIndex = 0;
+                                          setState(() {});
+                                        })
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  height: 355,
+                                  child: ListView(
+                                    children: [
+                                      Text('Time'),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          hours != null
+                                              ? DropdownButtonHideUnderline(
+                                                  child: Container(
+                                                    height: 40,
+                                                    width: 80,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Constants
+                                                                .greyColor),
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8,
+                                                              right: 8),
+                                                      child: Center(
+                                                        child: DropdownButton<
+                                                            String>(
+                                                          //  isExpanded: true,
+                                                          value: hour,
+                                                          items: hours.map(
+                                                              (String value) {
+                                                            return new DropdownMenuItem<
+                                                                String>(
+                                                              value: value,
+                                                              child: new Text(
+                                                                  value),
+                                                            );
+                                                          }).toList(),
+                                                          onChanged:
+                                                              (String? value) {
+                                                            if (value == null)
+                                                              return;
+                                                            hour = value!;
+                                                            setState(() {});
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(),
+                                          Container(
+                                            width: 20,
+                                          ),
+                                          minutes != null
+                                              ? DropdownButtonHideUnderline(
+                                                  child: Container(
+                                                    height: 40,
+                                                    width: 80,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Constants
+                                                                .greyColor),
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8,
+                                                              right: 8),
+                                                      child: Center(
+                                                        child: DropdownButton<
+                                                            String>(
+                                                          //  isExpanded: true,
+                                                          value: min,
+                                                          items: minutes.map(
+                                                              (String value) {
+                                                            return new DropdownMenuItem<
+                                                                String>(
+                                                              value: value,
+                                                              child: new Text(
+                                                                  value),
+                                                            );
+                                                          }).toList(),
+                                                          onChanged:
+                                                              (String? value) {
+                                                            if (value == null)
+                                                              return;
+                                                            min = value!;
+                                                            setState(() {});
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text('Item'),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      recipesFetched && recipes.length > 0
+                                          ? DropdownButtonHideUnderline(
+                                              child: Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Constants
+                                                            .greyColor),
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                8))),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8, right: 8),
+                                                  child: Center(
+                                                    child:
+                                                        DropdownButton<String>(
+                                                      isExpanded: true,
+                                                      value: recipes[
+                                                              currentItemIndex]
+                                                          .id,
+                                                      items: recipes.map(
+                                                          (RecipeModel value) {
+                                                        return new DropdownMenuItem<
+                                                            String>(
+                                                          value: value.id,
+                                                          child: new Text(
+                                                              value.itemName),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (value) {
+                                                        for (int i = 0;
+                                                            i < recipes.length;
+                                                            i++) {
+                                                          if (recipes[i].id ==
+                                                              value) {
+                                                            setState(() {
+                                                              currentItemIndex =
+                                                                  i;
+                                                            });
+                                                            break;
+                                                          }
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text('Quantity'),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Container(
+                                        height: 40,
+                                        child: TextField(
+                                            maxLines: 1,
+                                            controller: quant,
+                                            decoration: new InputDecoration(
+                                              contentPadding: EdgeInsets.only(
+                                                  bottom: 10, left: 10),
+                                              enabledBorder:
+                                                  const OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.black26,
+                                                    width: 0.0),
+                                              ),
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(4),
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text('Calories'),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Container(
+                                        height: 30,
+                                        child: TextField(
+                                            maxLines: 1,
+                                            controller: cal,
+                                            decoration: new InputDecoration(
+                                              contentPadding: EdgeInsets.only(
+                                                  bottom: 10, left: 10),
+                                              enabledBorder:
+                                                  const OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.black26,
+                                                    width: 0.0),
+                                              ),
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(4),
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text('Comments'),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Container(
+                                        height: 60,
+                                        child: TextField(
+                                            maxLines: 2,
+                                            controller: comments,
+                                            decoration: new InputDecoration(
+                                              enabledBorder:
+                                                  const OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.black26,
+                                                    width: 0.0),
+                                              ),
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(4),
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () async {
+                                                var _toSend = Constants
+                                                        .BASE_URL +
+                                                    'dailyDiary/addFoodRecord';
+
+                                                var objToSend = {
+                                                  "userid":
+                                                      MyApp.LOGIN_ID_VALUE,
+                                                  "startTime": hour + ":" + min,
+                                                  "item": recipes.isNotEmpty
+                                                      ? recipes[
+                                                              currentItemIndex]
+                                                          .itemName
+                                                      : '',
+                                                  "qty": quant.text.toString(),
+                                                  "comments":
+                                                      comments.text.toString(),
+                                                  "diarydate":
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(widget.date!),
+                                                  "type": type.toUpperCase(),
+                                                  "calories":
+                                                      cal.text.toString(),
+                                                  "childids": widget.child
+                                                };
+
+                                                print(jsonEncode(objToSend));
+                                                final response = await http
+                                                    .post(Uri.parse(_toSend),
+                                                        body: jsonEncode(
+                                                            objToSend),
+                                                        headers: {
+                                                      'X-DEVICE-ID': await MyApp
+                                                          .getDeviceIdentity(),
+                                                      'X-TOKEN': MyApp
+                                                          .AUTH_TOKEN_VALUE,
+                                                    });
+                                                print(response.body);
+                                                if (response.statusCode ==
+                                                    200) {
+                                                  MyApp.ShowToast(
+                                                      "updated", context);
+                                                  Navigator.pop(
+                                                      context, 'kill');
+                                                } else if (response
+                                                        .statusCode ==
+                                                    401) {
+                                                  MyApp.Show401Dialog(context);
+                                                }
+                                              },
+                                              child: Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Constants.kButton,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  8))),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(12, 8, 12, 8),
+                                                    child: Text(
+                                                      'SAVE',
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 16),
+                                                    ),
+                                                  )),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        : Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Text('No Recipe Found'),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      showPop = false;
+                                      setState(() {});
+                                    },
+                                    child: Text('ok'))
+                              ],
+                            ),
+                          )),
               ),
             )
         ]));

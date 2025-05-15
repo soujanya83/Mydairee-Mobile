@@ -450,7 +450,7 @@ class _ProgressPlanState extends State<ProgressPlan> {
                     setState(() {});
                   }
                 } else {
-                  if (data[index.toString()] == "") {
+                  if (data == null || data[index.toString()] == "") {
                     var obj = {
                       "usertype": MyApp.USER_TYPE_VALUE,
                       "created": MyApp.LOGIN_ID_VALUE,

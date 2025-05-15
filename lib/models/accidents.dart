@@ -4,6 +4,7 @@ class AccidentsModel {
   String childGender;
   String roomid;
   String incidentDate;
+  String username;
 
   AccidentsModel({
     required this.id,
@@ -11,6 +12,7 @@ class AccidentsModel {
     required this.childGender,
     required this.roomid,
     required this.incidentDate,
+    required this.username,
   });
 
   static AccidentsModel fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class AccidentsModel {
       childGender: json['child_gender'] ?? "",
       roomid: json['roomid'] ?? "",
       incidentDate: json['incident_date'] ?? "",
+      username: json['username'] ?? "",
     );
   }
 }

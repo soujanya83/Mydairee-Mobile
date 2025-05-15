@@ -876,6 +876,7 @@ class _RecipeListState extends State<RecipeList> {
   }
 }
 
+
 class RecipeCard extends StatelessWidget {
   final dynamic item;
   final bool deletePermission;
@@ -892,62 +893,94 @@ class RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      margin: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 5),
-          item.media.isNotEmpty
-              ? item.media[0]['mediaType'] == 'Image'
-                  ? AspectRatio(
-                      aspectRatio: 18.0 / 16.0,
-                      child: Image.network(
+          // Image section
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+            child: item.media.isNotEmpty
+                ? item.media[0]['mediaType'] == 'Image'
+                    ? Image.network(
                         Constants.ImageBaseUrl + item.media[0]['mediaUrl'],
+                        height: 110,
+                        width: double.infinity,
                         fit: BoxFit.cover,
-                      ),
-                    )
-                  : Center(child: Icon(Icons.video_collection))
-              : AspectRatio(
-                  aspectRatio: 18.0 / 16.0,
-                  child: Image.network(
+                      )
+                    : Container(
+                        height: 110,
+                        color: Colors.grey.shade100,
+                        child: Center(
+                          child: Icon(Icons.videocam_rounded,
+                              size: 32, color: Colors.grey),
+                        ),
+                      )
+                : Image.network(
                     'https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg',
+                    height: 110,
+                    width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                ),
+          ),
+
+          // Name & icons
           Padding(
-            padding: const EdgeInsets.only(left: 4, right: 2, top: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.23,
-                  child: AutoSizeText(
-                    item.itemName,
-                    minFontSize: 8,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                 ( item.itemName ?? ''),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: Colors.black87,
                   ),
                 ),
+                SizedBox(height: 6),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (deletePermission)
                       GestureDetector(
-                        child: Icon(
-                          AntDesign.delete,
-                          color: Constants.kMain,
-                          size: 14,
-                        ),
                         onTap: onDelete,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.red.shade50,
+                          radius: 13,
+                          child: Icon(Icons.delete_outline,
+                              size: 14, color: Colors.red),
+                        ),
                       ),
-                    SizedBox(width: 10),
+                    if (deletePermission) SizedBox(width: 8),
                     GestureDetector(
-                      child: Icon(
-                        item.createdBy == MyApp.LOGIN_ID_VALUE
-                            ? Icons.edit
-                            : AntDesign.eyeo,
-                        color: Constants.kMain,
-                        size: 16,
-                      ),
                       onTap: onTap,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.shade50,
+                        radius: 13,
+                        child: Icon(
+                          item.createdBy == MyApp.LOGIN_ID_VALUE
+                              ? Icons.edit_outlined
+                              : Icons.remove_red_eye_outlined,
+                          size: 14,
+                          color: Colors.blue,
+                        ),
+                      ),
                     ),
                   ],
                 )
@@ -959,3 +992,5 @@ class RecipeCard extends StatelessWidget {
     );
   }
 }
+
+

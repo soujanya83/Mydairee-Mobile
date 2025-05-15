@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
+import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
+import 'package:mykronicle_mobile/models/centersmodel.dart';
 import 'package:mykronicle_mobile/models/parentmodel.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/settings/addparent.dart';
@@ -23,14 +25,46 @@ class _ParentSettingsState extends State<ParentSettings> {
 
   @override
   void initState() {
-    _fetchData();
+    _fetchCenters();
     super.initState();
+  }
+
+  List<CentersModel> centers = [];
+  bool centersFetched = false;
+  int currentIndex = 0;
+  Future<void> _fetchCenters() async {
+    print('_fetchCenters');
+    UtilsAPIHandler hlr = UtilsAPIHandler({});
+    var dt = await hlr.getCentersList();
+    if (!dt.containsKey('error')) {
+      print(dt);
+      var res = dt['Centers'];
+      centers = [];
+      try {
+        assert(res is List);
+        for (int i = 0; i < res.length; i++) {
+          centers.add(CentersModel.fromJson(res[i]));
+        }
+        centersFetched = true;
+        if (this.mounted) setState(() {});
+        print('+++++++++++++success is in _fetchCenters+++++++++++++');
+      } catch (e, s) {
+        print('+++++++++++++error is in _fetchCenters+++++++++++++');
+        print(e);
+        print(s);
+      }
+    } else {
+      MyApp.Show401Dialog(context);
+    }
+
+    _fetchData();
   }
 
   Future<void> _fetchData() async {
     SettingsApiHandler handler = SettingsApiHandler({
       "userid": MyApp.LOGIN_ID_VALUE,
-      "order": order,
+      // "order": order,
+      "centerid": centers[currentIndex].id
     });
 
     var data = await handler.getParents();
@@ -103,8 +137,10 @@ class _ParentSettingsState extends State<ParentSettings> {
                                   Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddParent('add', '')))
+                                              builder: (context) => AddParent(
+                                                  'add',
+                                                  '',
+                                                  centers[currentIndex].id)))
                                       .then((value) {
                                     if (value != null) {
                                       settingsDataFetched = false;
@@ -131,14 +167,61 @@ class _ParentSettingsState extends State<ParentSettings> {
                             ],
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 20,
+                          ),
+                          centersFetched
+                              ? DropdownButtonHideUnderline(
+                                  child: Container(
+                                    height: 30,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Constants.greyColor),
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8, right: 8),
+                                      child: Center(
+                                        child: DropdownButton<String>(
+                                          isExpanded: true,
+                                          value: centers[currentIndex].id,
+                                          items:
+                                              centers.map((CentersModel value) {
+                                            return new DropdownMenuItem<String>(
+                                              value: value.id,
+                                              child: new Text(value.centerName),
+                                            );
+                                          }).toList(),
+                                          onChanged: (value) {
+                                            for (int i = 0;
+                                                i < centers.length;
+                                                i++) {
+                                              if (centers[i].id == value) {
+                                                setState(() {
+                                                  currentIndex = i;
+                                                  _fetchData();
+                                                });
+                                                break;
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: 20,
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
                             child: Theme(
                               data: new ThemeData(
                                 primaryColor: Colors.grey,
-                                primaryColorDark: Colors.grey,  
+                                primaryColorDark: Colors.grey,
                               ),
                               child: Container(
                                 height: 33.0,
@@ -365,7 +448,8 @@ class _ParentSettingsState extends State<ParentSettings> {
                                         MaterialPageRoute(
                                             builder: (context) => AddParent(
                                                 'edit',
-                                                _allParents[index].userId)))
+                                                _allParents[index].userId,
+                                                centers[currentIndex].id)))
                                     .then((value) {
                                   if (value != null) {
                                     settingsDataFetched = false;

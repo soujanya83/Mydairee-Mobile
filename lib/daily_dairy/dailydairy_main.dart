@@ -14,7 +14,6 @@ import 'package:mykronicle_mobile/models/recipemodel.dart';
 import 'package:mykronicle_mobile/models/roomsmodel.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/deleteDialog.dart';
-import 'package:mykronicle_mobile/utils/floatingButton.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/hexconversion.dart';
 import 'package:mykronicle_mobile/utils/platform.dart';
@@ -1495,25 +1494,38 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .isEmpty
                                                             ? Text(
                                                                 'No Suncreen data')
-                                                            : Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: _allChildrens[
-                                                                        selectedIndex]
-                                                                    .sunscreen
-                                                                    .map<Widget>(
-                                                                        (item) {
-                                                                  return Text(
-                                                                    item['startTime']
-                                                                        .toString(),
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16),
-                                                                  );
-                                                                }).toList(),
-                                                              )
+                                                            : Builder(builder:
+                                                                (context) {
+                                                                try {
+                                                                  return Text(_allChildrens[
+                                                                              selectedIndex]
+                                                                          .sunscreen[0]
+                                                                      [
+                                                                      'startdTime']);
+                                                                } catch (e) {
+                                                                    return Text('');
+                                                                }
+                                                              })
                                                         : Container(),
+                                                    // Column(
+                                                    //     crossAxisAlignment:
+                                                    //         CrossAxisAlignment
+                                                    //             .start,
+                                                    //     children: _allChildrens[
+                                                    //             selectedIndex]
+                                                    //         .sunscreen
+                                                    //         .map<Widget>(
+                                                    //             (item) {
+                                                    //       return Text(
+                                                    //         item['startTime']
+                                                    //             .toString(),
+                                                    //         style: TextStyle(
+                                                    //             fontSize:
+                                                    //                 16),
+                                                    //       );
+                                                    //     }).toList(),
+                                                    //   )
+                                                    // : Container(),
                                                     trailing: MyApp
                                                                 .USER_TYPE_VALUE ==
                                                             'Parent'
@@ -1950,7 +1962,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                               DailyDairyAdd(
                                                                   child,
                                                                   details,
-                                                                  showType)))
+                                                                  showType,
+                                                                  date)))
                                                   .then((value) {
                                                 if (value != null) {
                                                   details = null;
@@ -2818,9 +2831,10 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             MyApp.ShowToast(
                                                                 "updated",
                                                                 context);
-                                                            Navigator.pop(
-                                                                context,
-                                                                'kill');
+                                                            showPop = false;
+                                                            if (this.mounted)
+                                                              setState(() {});
+                                                            _fetchData();
                                                           } else if (response
                                                                   .statusCode ==
                                                               401) {
@@ -3710,7 +3724,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                           // "createdAt":
                                                           //     DateTime.now()
                                                           //         .toString(),
-                                                          "diarydate": DateFormat('yyyy-MM-dd')
+                                                          "diarydate": DateFormat(
+                                                                  'yyyy-MM-dd')
                                                               .format(date!),
                                                           "type": type
                                                               .toUpperCase(),
@@ -3720,7 +3735,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 .id
                                                           ]
                                                         };
-                   
+
                                                         print(jsonEncode(
                                                             objToSend));
                                                         final response =

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/api/settingsapi.dart';
+import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/childmodel.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
@@ -12,116 +13,143 @@ import 'package:http/http.dart' as http;
 class AddParent extends StatefulWidget {
   final String type;
   final String id;
+  final String centerId;
 
-  AddParent(this.type,this.id);
+  AddParent(this.type, this.id, this.centerId);
 
   @override
   _AddParentState createState() => _AddParentState();
 }
 
 class _AddParentState extends State<AddParent> {
-  TextEditingController? full, mobile, mail,pwd;
-
+  TextEditingController? full, mobile, mail, pwd;
   String status = 'Active';
-  List<String> relation =['Father'];
+  List<String> relation = [];
   String _gender = 'MALE';
   String _dob = '';
   String dob = '';
-  List<ChildModel> children=[];
+  List<ChildModel> children = [];
   bool active = false;
-  bool childrenFetched=false;
-  List<int> currentIndex=[0];
+  bool childrenFetched = false;
+  List<int> currentIndex = [];
 
   @override
   void initState() {
     full = TextEditingController();
     mobile = TextEditingController();
     mail = TextEditingController();
-    pwd =TextEditingController();
+    pwd = TextEditingController();
+    _fetchChildData();
     _fetchData();
     super.initState();
   }
 
-  Future<void> _fetchData() async {
-    if (widget.type == 'edit') {
-   SettingsApiHandler handler =
-        SettingsApiHandler({"userid": MyApp.LOGIN_ID_VALUE,"recordId": widget.id,});
-   
-   var data = await handler.getParentDetails();
-    if (!data.containsKey('error')) {
-      print('ress'+data.toString());
-       
-       var parent =data['parents'];
-       full?.text=parent['name'];
-       mobile?.text=parent['contactNo'];
-       mail?.text=parent['emailid'];
-       pwd?.text=parent['password']; 
-       _gender=parent['gender'];
-      var inputFormat = DateFormat("yyyy-MM-dd");
-      final DateFormat formati = DateFormat('dd-MM-yyyy');
-      var date1 = inputFormat.parse(parent['dob']);
-      dob = formati.format(date1);
-      _dob=formati.format(date1);
-
-
-       var res = data['children'];
-       children = [];
-       try {
-        assert(res is List);
-        for (int i = 0; i < res.length; i++) {
-          children.add(ChildModel.fromJson(res[i]));
-        }
-        childrenFetched = true;    
-      if (this.mounted) setState(() {});
-      } catch (e) {
-        print(e);
-      }
-
-      for(var i=0;i<parent['children'].length;i++){
-        if(i!=0){
-           currentIndex.add(0);
-           relation.add('Father');
-         }
-         for (int j = 0;j < children.length; j++) {
-            if (children[j].id == parent['children'][i]['childid']) {
-                 setState(() {
-                   currentIndex[i] = j;
-                 });
-                break;
-          }
-        }
-        relation[i]=parent['children'][i]['relation']; 
-      }
-
-     if (this.mounted) setState(() {});
-    } else {
-      MyApp.Show401Dialog(context);
-    }
-
-    }else{
-   SettingsApiHandler handler =
-        SettingsApiHandler({"userid": MyApp.LOGIN_ID_VALUE});
-   
-    var data = await handler.getParentDetails();
-    if (!data.containsKey('error')) {
-      print(data);
-       var res = data['children'];
-       children = [];
-       try {
-        assert(res is List);
-        for (int i = 0; i < res.length; i++) {
-          children.add(ChildModel.fromJson(res[i]));
+  int childCurrentIndex = 0;
+  // List<ChildModel> _allChildrens = [];
+  bool childrensFetched = false;
+  Future<void> _fetchChildData() async {
+    print('changed');
+    UtilsAPIHandler handlerX = UtilsAPIHandler(
+        {"userid": MyApp.LOGIN_ID_VALUE, "centerid": widget.centerId});
+    var dataX = await handlerX.getChildrens();
+    if (!dataX.containsKey('error')) {
+      var child = dataX['ChildList'];
+      children = [];
+      try {
+        assert(child is List);
+        for (int i = 0; i < child.length; i++) {
+          children.add(ChildModel.fromJson(child[i]));
         }
         childrenFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
         print(e);
       }
-       if (this.mounted) setState(() {});
-   
+
+      _fetchData();
     } else {
       MyApp.Show401Dialog(context);
     }
+  }
+
+  Future<void> _fetchData() async {
+    if (widget.type == 'edit') {
+      SettingsApiHandler handler = SettingsApiHandler({
+        "userid": MyApp.LOGIN_ID_VALUE,
+        "recordId": widget.id,
+      });
+
+      var data = await handler.getParentDetails();
+      if (!data.containsKey('error')) {
+        print('ress' + data.toString());
+
+        var parent = data['parents'];
+        full?.text = parent['name'];
+        mobile?.text = parent['contactNo'];
+        mail?.text = parent['emailid'];
+        pwd?.text = parent['password'];
+        _gender = parent['gender'];
+        var inputFormat = DateFormat("yyyy-MM-dd");
+        final DateFormat formati = DateFormat('dd-MM-yyyy');
+        var date1 = inputFormat.parse(parent['dob']);
+        dob = formati.format(date1);
+        _dob = formati.format(date1);
+
+        // var res = data['children'];
+        // try {
+        //   assert(res is List);
+        //   for (int i = 0; i < res.length; i++) {
+        //     children.add(ChildModel.fromJson(res[i]));
+        //   }
+        //   childrenFetched = true;
+        //   if (this.mounted) setState(() {});
+        // } catch (e) {
+        //   print(e);
+        // }
+        for (var i = 0; i < parent['children'].length; i++) {
+          currentIndex.add(0);
+          relation.add('Father');
+          for (int j = 0; j < children.length; j++) {
+            if (children[j].childid == parent['children'][i]['childid']) {
+              setState(() {
+                currentIndex[i] = j;
+              });
+              break;
+            }
+          }
+          relation[i] = parent['children'][i]['relation'];
+        }
+
+        if (this.mounted) setState(() {});
+      } else {
+        MyApp.Show401Dialog(context);
+      }
+    } else {
+      relation = ['Father'];
+      currentIndex = [0];
+      return;
+      SettingsApiHandler handler =
+          SettingsApiHandler({"userid": MyApp.LOGIN_ID_VALUE});
+
+      var data = await handler.getParentDetails();
+      if (!data.containsKey('error')) {
+        print(data);
+        var res = data['children'];
+        children = [];
+        try {
+          assert(res is List);
+          for (int i = 0; i < res.length; i++) {
+            children.add(ChildModel.fromJson(res[i]));
+          }
+          childrenFetched = true;
+          if (this.mounted) setState(() {});
+        } catch (e) {
+          print(e);
+        }
+        if (this.mounted) setState(() {});
+      } else {
+        MyApp.Show401Dialog(context);
+      }
     }
   }
 
@@ -148,7 +176,7 @@ class _AddParentState extends State<AddParent> {
                             style: TextStyle(color: Constants.kMain),
                           )
                         ],
-                      ),                  
+                      ),
                       SizedBox(
                         height: 10,
                       ),
@@ -229,7 +257,7 @@ class _AddParentState extends State<AddParent> {
                                     child: new Text(value),
                                   );
                                 }).toList(),
-                                 onChanged: (String? value)  {
+                                onChanged: (String? value) {
                                   setState(() {
                                     _gender = value!;
                                   });
@@ -421,7 +449,7 @@ class _AddParentState extends State<AddParent> {
                               border: InputBorder.none),
                         ),
                       ),
-                        SizedBox(
+                      SizedBox(
                         height: 10,
                       ),
                       Row(
@@ -454,151 +482,229 @@ class _AddParentState extends State<AddParent> {
                               border: InputBorder.none),
                         ),
                       ),
-                      
+
                       SizedBox(
                         height: 15,
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         child: Row(
-                         children: [
-                           Text(
-                            'Child Details',
-                             style: Constants.header2,
-                           ),
-                           Expanded(child: Container(),),
-                           ElevatedButton(
-                             child: Text('Add'),
-                              onPressed: (){
+                          children: [
+                            Text(
+                              'Child Details',
+                              style: Constants.header2,
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            ElevatedButton(
+                              child: Text('Add'),
+                              onPressed: () {
                                 currentIndex.add(0);
                                 relation.add('Father');
-                                setState((){});
-                             },)
-                         ],
+                                setState(() {});
+                              },
+                            )
+                          ],
                         ),
                       ),
                       SizedBox(
                         height: 15,
                       ),
                       ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: currentIndex.length,
-                        itemBuilder: (BuildContext context,int i){
-                         return   Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                           Container(
-                             width: MediaQuery.of(context).size.width,
-                             child: Row(
-                               children: [
-                                Text(
-                                  'Select Children',
-                                  style: Constants.header2,
-                                ),
-                                Expanded(child: Container(),),
-                                IconButton(
-                                  icon: Icon(Icons.delete), 
-                                  onPressed: (){
-                                    currentIndex.removeAt(i);
-                                    relation.removeAt(i);
-                                    setState(() {
-                                      
-                                    });
-                                  })
-                               ],
-                             ),
-                           ),
-                          SizedBox(
-                             height: 5,
-                          ),
-                          if(childrenFetched)
-                            DropdownButtonHideUnderline(
-                             child: Container(
-                              height: 40,
-                              width: MediaQuery.of(context).size.width ,
-                              decoration: BoxDecoration(
-                               border: Border.all(color: Colors.grey),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(8))),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: currentIndex.length,
+                          itemBuilder: (BuildContext context, int i) {
+                            return Card(
                               child: Padding(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              child: Center(
-                                child: DropdownButton<String>(
-                                isExpanded: true,
-                                value: children[currentIndex[i]].id,
-                                items: children.map((ChildModel value) {
-                                  return new DropdownMenuItem<String>(
-                                    value: value.id,
-                                    child: new Text(value.name),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  for (int j = 0;j < children.length; j++) {
-                                    if (children[j].id == value) {
-                                      setState(() {
-                                        currentIndex[i] = j;
-                                      });
-                                      break;
-                                    }
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                      ),
-                    ),
-                      SizedBox(
-                          height: 15,
-                      ),
-                      Text(
-                          'Relation',
-                          style: Constants.header2,
-                      ),
-                      SizedBox(
-                          height: 5,
-                      ),
-                      DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              child: Center(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: relation[i],
-                                  items: <String>[ 'Father','Mother', 'Brother', 'Sister', 'Relative']
-                                      .map((String value) {
-                                    return new DropdownMenuItem<String>(
-                                      value: value,
-                                      child: new Text(value),
-                                    );
-                                  }).toList(),
-                                   onChanged: (String? value)  {
-                                    setState(() {
-                                      relation[i] = value!;
-                                    });
-                                  },
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'Select Children ${currentIndex[i]}',
+                                            style: Constants.header2,
+                                          ),
+                                          Expanded(
+                                            child: Container(),
+                                          ),
+                                          IconButton(
+                                              icon: Icon(Icons.delete),
+                                              onPressed: () {
+                                                currentIndex.removeAt(i);
+                                                relation.removeAt(i);
+                                                setState(() {});
+                                              })
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    if (childrenFetched)
+                                      Builder(builder: (context) {
+                                        try {
+                                          return DropdownButtonHideUnderline(
+                                            child: Container(
+                                              height: 40,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(8))),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8, right: 8),
+                                                child:
+                                                    Builder(builder: (context) {
+                                                  // String? value = null;
+                                                  // try {
+                                                  //   value = children.isNotEmpty
+                                                  //       ? children[currentIndex[i]] .id
+                                                  //       : null;
+                                                  // } catch (e) {
+                                                  //   print('eeeeeeeeeeeeeeeeeeee');
+                                                  //   print(e.toString());
+                                                  // }
+                                                  return Center(
+                                                    child:
+                                                        DropdownButton<String>(
+                                                      isExpanded: true,
+                                                      // value:List.generate(children.length, (childIndex)=>children[childIndex].id).contains(children[
+                                                      //         0]
+                                                      //     .id)? children[
+                                                      //         0]
+                                                      //     .id:null,
+                                                      value: List.generate(
+                                                              children.length,
+                                                              (index) => children[
+                                                                      index]
+                                                                  .childid).contains(
+                                                              children[
+                                                                      currentIndex[
+                                                                          i]]
+                                                                  .childid)
+                                                          ? children[
+                                                                  currentIndex[
+                                                                      i]]
+                                                              .childid
+                                                          : null,
+                                                      items: children.map(
+                                                          (ChildModel value) {
+                                                        return new DropdownMenuItem<
+                                                            String>(
+                                                          value: value.childid,
+                                                          child: new Text(
+                                                              value.name),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (value) {
+                                                        for (int j = 0;
+                                                            j < children.length;
+                                                            j++) {
+                                                          print(List.generate(
+                                                                  children.length,
+                                                                  (index) =>
+                                                                      children[
+                                                                          index])
+                                                              .toSet());
+                                                          print(
+                                                              ' currentIndex[i] ${currentIndex[i]}');
+                                                          print('=====$i=====');
+                                                          if (children[j]
+                                                                  .childid ==
+                                                              value) {
+                                                            setState(() {
+                                                              currentIndex[i] =
+                                                                  j;
+                                                              print(
+                                                                  'i $i j $j');
+                                                            });
+                                                            break;
+                                                          }
+                                                        }
+                                                        print(
+                                                            '==currentIndex[i]====${currentIndex[i]}');
+                                                      },
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          return Text(e.toString());
+                                        }
+                                      }),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                    Text(
+                                      'Relation',
+                                      style: Constants.header2,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    DropdownButtonHideUnderline(
+                                      child: Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 8, right: 8),
+                                          child: Center(
+                                            child: DropdownButton<String>(
+                                              isExpanded: true,
+                                              value: relation[i],
+                                              items: <String>[
+                                                'Father',
+                                                'Mother',
+                                                'Brother',
+                                                'Sister',
+                                                'Relative'
+                                              ].map((String value) {
+                                                return new DropdownMenuItem<
+                                                    String>(
+                                                  value: value,
+                                                  child: new Text(value),
+                                                );
+                                              }).toList(),
+                                              onChanged: (String? value) {
+                                                setState(() {
+                                                  relation[i] = value!;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ),
-                           ),
-                           SizedBox(height: 10,),
-                            ],
-                          ),
-                        ),
-                        );
-                       }),      
+                            );
+                          }),
                       SizedBox(
                         height: 15.0,
                       ),
@@ -608,60 +714,61 @@ class _AddParentState extends State<AddParent> {
                           children: [
                             GestureDetector(
                               onTap: () async {
-
-                              if (full?.text.toString().length == 0) {
-                                MyApp.ShowToast('Enter Name', context);
-                              }  else if (dob == '') {
-                                MyApp.ShowToast('Add Date', context);
-                              } else if (mobile?.text.toString() == '') {
-                                MyApp.ShowToast('Enter Mobile Number', context);
-                              } else if (mail?.text.toString()== '') {
-                                MyApp.ShowToast('Enter Mail Id', context);
-                              }else if(pwd?.text.length==0){
-                                   MyApp.ShowToast('Enter Password', context);
-                              }
-                              else{
-                                  List relations=[];
-                                 for(var i=0;i<relation.length;i++){
-                                   relations.add({
-                                     "childid": children[currentIndex[i]].id,
-                                     "relation":relation[i]
-                                   });
-                                 }
-
-                                var _toSend =
-                                    Constants.BASE_URL+'Settings/saveParentDetails';
-
-                                var objToSend ={
-                                   "name":full?.text.toString(),
-                                   "gender":_gender.toUpperCase(),
-                                   "dob":dob,
-                                   "contactNo":mobile?.text.toString(),
-                                   "emailid":mail?.text.toString(),
-                                   "password":pwd?.text.toString(),
-                                   "relation":relations,
-                                   "userid":MyApp.LOGIN_ID_VALUE};
-
-                                print(jsonEncode(objToSend));
-                                final response = await http.post(
-                                    Uri.parse(_toSend),
-                                    body: jsonEncode(objToSend),
-                                    headers: {
-                                      'X-DEVICE-ID': await MyApp
-                                          .getDeviceIdentity(),
-                                      'X-TOKEN':
-                                          MyApp.AUTH_TOKEN_VALUE,
-                                    });
-                                print(response.body);
-                                if (response.statusCode == 200) {
+                                if (full?.text.toString().length == 0) {
+                                  MyApp.ShowToast('Enter Name', context);
+                                } else if (dob == '') {
+                                  MyApp.ShowToast('Add Date', context);
+                                } else if (mobile?.text.toString() == '') {
                                   MyApp.ShowToast(
-                                      "updated", context);
-                                  Navigator.pop(context, 'kill');
-                                } else if (response.statusCode ==
-                                    401) {
-                                  MyApp.Show401Dialog(context);
+                                      'Enter Mobile Number', context);
+                                } else if (mail?.text.toString() == '') {
+                                  MyApp.ShowToast('Enter Mail Id', context);
+                                } else if (pwd?.text.length == 0) {
+                                  MyApp.ShowToast('Enter Password', context);
+                                } else {
+                                  List relations = [];
+                                  for (var i = 0; i < relation.length; i++) {
+                                    relations.add({
+                                      "childid":
+                                          children[currentIndex[i]].childid,
+                                      "relation": relation[i]
+                                    });
+                                  }
+
+                                  var _toSend = Constants.BASE_URL +
+                                      'Settings/saveParentDetails';
+
+                                  var objToSend = {
+                                    "name": full?.text.toString(),
+                                    "gender": _gender.toUpperCase(),
+                                    "dob": dob,
+                                    "contactNo": mobile?.text.toString(),
+                                    "emailid": mail?.text.toString(),
+                                    "password": pwd?.text.toString(),
+                                    "relation": relations,
+                                    "userid": MyApp.LOGIN_ID_VALUE,
+                                    "centerid": widget.centerId
+                                  };
+                                  if (widget.type == 'edit') {
+                                    objToSend.addAll({'id': widget.id});
+                                  }
+                                  print(jsonEncode(objToSend));
+                                  final response = await http.post(
+                                      Uri.parse(_toSend),
+                                      body: jsonEncode(objToSend),
+                                      headers: {
+                                        'X-DEVICE-ID':
+                                            await MyApp.getDeviceIdentity(),
+                                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                      });
+                                  print(response.body);
+                                  if (response.statusCode == 200) {
+                                    MyApp.ShowToast("updated", context);
+                                    Navigator.pop(context, 'kill');
+                                  } else if (response.statusCode == 401) {
+                                    MyApp.Show401Dialog(context);
+                                  }
                                 }
-                               }
                               },
                               child: Container(
                                   decoration: BoxDecoration(

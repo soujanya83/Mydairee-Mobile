@@ -55,8 +55,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchData() async {
-     loading = true;
-      if (this.mounted) setState(() {});
+    loading = true;
+    if (this.mounted) setState(() {});
     RecipeAPIHandler handler =
         RecipeAPIHandler({"centerid": centers[currentIndex].id});
     var data = await handler.getList();
@@ -135,7 +135,8 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
     if (!d.containsKey('error')) {
       if (data['permissions'] != null ||
           MyApp.USER_TYPE_VALUE == 'Superadmin' ||
-          MyApp.USER_TYPE_VALUE == 'Parent' ||  MyApp.USER_TYPE_VALUE == 'Staff') {
+          MyApp.USER_TYPE_VALUE == 'Parent' ||
+          MyApp.USER_TYPE_VALUE == 'Staff') {
         print('hawala');
         print(d.keys);
         menuData = d;
@@ -302,7 +303,6 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                   ),
                 )
               : Container(),
-            
           choose != null && choose == 'breakfast'
               ? Container(
                   child: SafeArea(
@@ -320,7 +320,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                           ),
                         ),
                         Container(
-                           height: MediaQuery.of(context).size.height - 150,
+                          height: MediaQuery.of(context).size.height - 150,
                           child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: _breakfast.length,
@@ -596,7 +596,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                     "userid": MyApp.LOGIN_ID_VALUE,
                                     "currentDate": dt
                                   };
-                                  print(objToSend); 
+                                  print(objToSend);
                                   print(objToSend);
                                   final response = await http.post(
                                       Uri.parse(_toSend),
@@ -647,8 +647,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                   ),
                 )
               : Container(),
-              
-                choose != null && choose == 'AFTERNOON_TEA'
+          choose != null && choose == 'AFTERNOON_TEA'
               ? Container(
                   child: SafeArea(
                     child: Column(
@@ -711,7 +710,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                     "userid": MyApp.LOGIN_ID_VALUE,
                                     "currentDate": dt
                                   };
-                                  print(objToSend); 
+                                  print(objToSend);
                                   print(objToSend);
                                   final response = await http.post(
                                       Uri.parse(_toSend),
@@ -985,7 +984,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                       MaterialPageRoute(
                                                           builder:
                                                               (context) =>
-                                                                  Addrecipe( 
+                                                                  Addrecipe(
                                                                     reciepieType:
                                                                         'MORNING_TEA',
                                                                     id: menuData[
@@ -1019,163 +1018,75 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                        menuData['Menu'][j][3].length > 0
+                                      SizedBox(
+                                          height: 10,
+                                        ),   menuData['Menu'][j][3].length > 0
                                             ? GridView.builder(
+                                                padding: EdgeInsets.all(4),
                                                 physics:
                                                     NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
                                                 itemCount: menuData['Menu'][j]
                                                         [3]
                                                     .length,
-                                                gridDelegate:
+                                                 gridDelegate:
                                                     SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisSpacing: 5,
+                                                        mainAxisSpacing: 8,
                                                         childAspectRatio:
                                                             8.0 / 9.0,
                                                         crossAxisCount: 2),
                                                 itemBuilder:
                                                     (BuildContext context,
                                                         int index) {
-                                                  return new Card(
-                                                    child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          menuData['Menu'][j][3][index]['recipeDetails'][
-                                                                          'media'] !=
-                                                                      null &&
-                                                                  menuData['Menu'][j][3][index]['recipeDetails']
-                                                                              [
-                                                                              'media']
-                                                                          .length >
-                                                                      0
-                                                              ? menuData['Menu']
-                                                                              [j][3][index]['recipeDetails']['media'][0]
-                                                                          ['mediaType'] ==
-                                                                      'Image'
-                                                                  ? Padding(
-                                                                      padding: const EdgeInsets.all(8.0),
-                                                                      child: ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        child:
-                                                                            AspectRatio(
-                                                                          aspectRatio:
-                                                                              18.0 / 16.0,
-                                                                          child:
-                                                                              Image.network(Constants.ImageBaseUrl + menuData['Menu'][j][3][index]['recipeDetails']['media'][0]['mediaUrl']),
-                                                                        ),
-                                                                      ))
-                                                                  : Center(child: Icon(Icons.video_collection))
-                                                              : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10.0,
-                                                                    right: 2),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Container(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width *
-                                                                        0.23,
-                                                                    child:
-                                                                        AutoSizeText(
-                                                                      menuData['Menu'][j][3][index]
-                                                                              [
-                                                                              'recipeDetails']
-                                                                          [
-                                                                          'itemName'],
-                                                                      minFontSize:
-                                                                          8,
-                                                                      maxLines:
-                                                                          1,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    )),
-                                                                Row(
-                                                                  children: [
-                                                                    if (deleteRecipePermission)
-                                                                      GestureDetector(
-                                                                        child:
-                                                                            Icon(
-                                                                          AntDesign
-                                                                              .delete,
-                                                                          color:
-                                                                              Constants.kMain,
-                                                                          size:
-                                                                              14,
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                              print('return');
-                                                                              try{
-  MenuAPIHandler
-                                                                              handler =
-                                                                              MenuAPIHandler({
-                                                                            "userid":
-                                                                                MyApp.LOGIN_ID_VALUE,
-                                                                            "id":
-                                                                                menuData['Menu'][j][3][index]['recipeDetails']['id'],
-                                                                          });
-                                                                          print({
-                                                                            "userid":
-                                                                                MyApp.LOGIN_ID_VALUE,
-                                                                            "id":
-                                                                                menuData['Menu'][j][3][index]['id'],
-                                                                          });
-                                                                          
-                                                                          var data =
-                                                                              await handler.deleteListItem();
-                                                                          print(
-                                                                              data);
-                                                                          if (!data
-                                                                              .containsKey('error')) {
-                                                                            menuDataFetched =
-                                                                                false;
-                                                                            _fetchData();
-                                                                            setState(() {});
-                                                                          }
-                                                                              }catch(e){
-                                                                                print(e.toString());
-                                                                              }
-                                                                        
-                                                                        },
-                                                                      ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    GestureDetector(
-                                                                      child:
-                                                                          Icon(
-                                                                        AntDesign
-                                                                            .eyeo,
-                                                                        color: Constants
-                                                                            .kMain,
-                                                                        size:
-                                                                            16,
-                                                                      ),
-                                                                      onTap: () {
-                                                                        Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) => ViewRecipe(
-                                                                                      id: menuData['Menu'][j][3][index]['recipeDetails']['id'],
-                                                                                    )));
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ]),
+                                                  return MenuRecipeCard(
+                                                    recipeDetails:
+                                                        menuData['Menu'][j][3]
+                                                                [index]
+                                                            ['recipeDetails'],
+                                                    deletePermission:
+                                                        deleteRecipePermission,
+                                                    onDelete: () async {
+                                                      try {
+                                                        MenuAPIHandler handler =
+                                                            MenuAPIHandler({
+                                                          "userid": MyApp
+                                                              .LOGIN_ID_VALUE,
+                                                          "id": menuData['Menu']
+                                                                          [j][3]
+                                                                      [index]
+                                                                  [
+                                                                  'recipeDetails']
+                                                              ['id'],
+                                                        });
+                                                        var data = await handler
+                                                            .deleteListItem();
+                                                        if (!data.containsKey(
+                                                            'error')) {
+                                                          menuDataFetched =
+                                                              false;
+                                                          _fetchData();
+                                                          setState(() {});
+                                                        }
+                                                      } catch (e) {
+                                                        print(e.toString());
+                                                      }
+                                                    },
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewRecipe(
+                                                            id: menuData['Menu']
+                                                                            [j][3]
+                                                                        [index][
+                                                                    'recipeDetails']
+                                                                ['id'],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   );
                                                 },
                                               )
@@ -1237,170 +1148,64 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
+                                         SizedBox(
+                                          height: 10,
+                                        ),
                                         if (menuData['Menu'][j][0].length > 0)
                                           GridView.builder(
+                                            padding: EdgeInsets.all(4),
                                             physics:
                                                 NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
                                             itemCount:
                                                 menuData['Menu'][j][0].length,
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                                    childAspectRatio: 8.0 / 9.0,
-                                                    crossAxisCount: 2),
+                                             gridDelegate:
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisSpacing: 5,
+                                                        mainAxisSpacing: 8,
+                                                        childAspectRatio:
+                                                            8.0 / 9.0,
+                                                        crossAxisCount: 2),
                                             itemBuilder: (BuildContext context,
                                                 int index) {
-                                              return Card(
-                                                child: Column(
-                                                  children: [
-                                                    //   Text(menuData['Menu'][j][0][index]['recipeDetails'].toString()),
-                                                    menuData['Menu'][j][0][index][
-                                                                    'recipeDetails'] !=
-                                                                null &&
-                                                            menuData['Menu'][j][0][index]
-                                                                        ['recipeDetails']
-                                                                    ['media'] !=
-                                                                null &&
-                                                            menuData['Menu'][j][0][index]['recipeDetails']['media'].length >
-                                                                0
-                                                        ? menuData['Menu'][j][0][index]
-                                                                            ['recipeDetails']
-                                                                        ['media'][0]
-                                                                    ['mediaType'] ==
-                                                                'Image'
-                                                            ? Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    child:
-                                                                        ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      child:
-                                                                          AspectRatio(
-                                                                        aspectRatio:
-                                                                            18.0 /
-                                                                                16.0,
-                                                                        child: Image.network(Constants.ImageBaseUrl +
-                                                                            menuData['Menu'][j][0][index]['recipeDetails']['media'][0]['mediaUrl']),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ))
-                                                            : Center(child: Icon(Icons.video_collection))
-                                                        : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 2,
-                                                              left: 10),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.23,
-                                                              child:
-                                                                  AutoSizeText(
-                                                                menuData['Menu'][j][0][index]
-                                                                            [
-                                                                            'recipeDetails'] !=
-                                                                        null
-                                                                    ? menuData['Menu'][j]
-                                                                            [
-                                                                            0][index]['recipeDetails']
-                                                                        [
-                                                                        'itemName']
-                                                                    : '',
-                                                                minFontSize: 8,
-                                                                maxLines: 2,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              )),
-                                                          Row(
-                                                            children: [
-                                                              if (deleteRecipePermission)
-                                                                GestureDetector(
-                                                                  child: Icon(
-                                                                    AntDesign
-                                                                        .delete,
-                                                                    color: Constants
-                                                                        .kMain,
-                                                                    size: 14,
-                                                                  ),
-                                                                  onTap:
-                                                                      () async {
-                                                                        print('ontap breakfast delete');
-                                                                    MenuAPIHandler
-                                                                        handler =
-                                                                        MenuAPIHandler({
-                                                                      "userid":
-                                                                          MyApp
-                                                                              .LOGIN_ID_VALUE,
-                                                                      "id": menuData['Menu'][j][0]
-                                                                              [
-                                                                              index]
-                                                                          ['recipeDetails']['id'],
-                                                                    });
-                                                                    var data =
-                                                                        await handler
-                                                                            .deleteListItem();
-                                                                    print(data);
-                                                                    if (!data
-                                                                        .containsKey(
-                                                                            'error')) {
-                                                                      menuDataFetched =
-                                                                          false;
-                                                                      _fetchData();
-                                                                      setState(
-                                                                          () {});
-                                                                    }
-                                                                  },
-                                                                ),
-                                                              SizedBox(
-                                                                  width: 10),
-                                                              GestureDetector(
-                                                                child: Icon(
-                                                                  AntDesign
-                                                                      .eyeo,
-                                                                  color:
-                                                                      Constants
-                                                                          .kMain,
-                                                                  size: 16,
-                                                                ),
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => ViewRecipe(
-                                                                                id: menuData['Menu'][j][0][index]['recipeDetails']['id'],
-                                                                              )));
-                                                                },
-                                                              ),
-                                                            ],
-                                                          )
-                                                        ],
+                                              return MenuRecipeCard(
+                                                recipeDetails: menuData['Menu']
+                                                        [j][0][index]
+                                                    ['recipeDetails'],
+                                                deletePermission:
+                                                    deleteRecipePermission,
+                                                onDelete: () async {
+                                                  MenuAPIHandler handler =
+                                                      MenuAPIHandler({
+                                                    "userid":
+                                                        MyApp.LOGIN_ID_VALUE,
+                                                    "id": menuData['Menu'][j][0]
+                                                            [index]
+                                                        ['recipeDetails']['id'],
+                                                  });
+                                                  var data = await handler
+                                                      .deleteListItem();
+                                                  if (!data
+                                                      .containsKey('error')) {
+                                                    menuDataFetched = false;
+                                                    _fetchData();
+                                                    setState(() {});
+                                                  }
+                                                },
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewRecipe(
+                                                        id: menuData['Menu'][j]
+                                                                    [0][index][
+                                                                'recipeDetails']
+                                                            ['id'],
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
+                                                    ),
+                                                  );
+                                                },
                                               );
                                             },
                                           ),
@@ -1408,9 +1213,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                           height: 10,
                                         ),
 
-                                        SizedBox(
-                                          height: 10,
-                                        ),
+                                        
                                         Row(
                                           children: [
                                             Text(
@@ -1465,160 +1268,64 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
+                                         SizedBox(
+                                          height: 10,
+                                        ),
                                         if (menuData['Menu'][j][1].length > 0)
                                           GridView.builder(
+                                            padding: EdgeInsets.all(4),
                                             physics:
                                                 NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
                                             itemCount:
                                                 menuData['Menu'][j][1].length,
                                             gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 2,
-                                              childAspectRatio: 8.0 / 9.0,
-                                            ),
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisSpacing: 5,
+                                                        mainAxisSpacing: 8,
+                                                        childAspectRatio:
+                                                            8.0 / 9.0,
+                                                        crossAxisCount: 2),
                                             itemBuilder: (BuildContext context,
                                                 int index) {
-                                              print(menuData['Menu'][j][1]
-                                                          [index]
-                                                      ['recipeDetails']['media']
-                                                  .toString());
-                                              return Card(
-                                                child: Column(
-                                                  children: [
-                                                    menuData['Menu'][j][1][index]
-                                                                        ['recipeDetails']
-                                                                    ['media'] !=
-                                                                null &&
-                                                            menuData['Menu'][j][1][index]['recipeDetails'][
-                                                                        'media']
-                                                                    .length >
-                                                                0
-                                                        ? menuData['Menu'][j][1][index]
-                                                                        ['recipeDetails']['media'][0]
-                                                                    ['mediaType'] ==
-                                                                'Image'
-                                                            ? Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: ClipRRect(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                    child: Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                      child:
-                                                                          ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        child:
-                                                                            AspectRatio(
-                                                                          aspectRatio:
-                                                                              18.0 / 16.0,
-                                                                          child:
-                                                                              Image.network(Constants.ImageBaseUrl + menuData['Menu'][j][1][index]['recipeDetails']['media'][0]['mediaUrl']),
-                                                                        ),
-                                                                      ),
-                                                                    )))
-                                                            : Center(child: Icon(Icons.video_collection))
-                                                        : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10.0,
-                                                              right: 2),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.23,
-                                                              child:
-                                                                  AutoSizeText(
-                                                                menuData['Menu'][j][1]
-                                                                            [
-                                                                            index]
-                                                                        [
-                                                                        'recipeDetails']
-                                                                    [
-                                                                    'itemName'],
-                                                                minFontSize: 8,
-                                                                maxLines: 2,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              )),
-                                                          Row(
-                                                            children: [
-                                                              if (deleteRecipePermission)
-                                                                GestureDetector(
-                                                                  child: Icon(
-                                                                    AntDesign
-                                                                        .delete,
-                                                                    color: Constants
-                                                                        .kMain,
-                                                                    size: 14,
-                                                                  ),
-                                                                  onTap:
-                                                                      () async {
-                                                                    MenuAPIHandler
-                                                                        handler =
-                                                                        MenuAPIHandler({
-                                                                      "userid":
-                                                                          MyApp
-                                                                              .LOGIN_ID_VALUE,
-                                                                      "id": menuData['Menu'][j][1]
-                                                                              [
-                                                                              index]
-                                                                          ['recipeDetails']['id'],
-                                                                    });
-                                                                    var data =
-                                                                        await handler
-                                                                            .deleteListItem();
-                                                                    print(data);
-                                                                    if (!data
-                                                                        .containsKey(
-                                                                            'error')) {
-                                                                      menuDataFetched =
-                                                                          false;
-                                                                      _fetchData();
-                                                                      setState(
-                                                                          () {});
-                                                                    }
-                                                                  },
-                                                                ),
-                                                              SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              GestureDetector(
-                                                                child: Icon(
-                                                                  AntDesign
-                                                                      .eyeo,
-                                                                  color:
-                                                                      Constants
-                                                                          .kMain,
-                                                                  size: 16,
-                                                                ),
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => ViewRecipe(
-                                                                                id: menuData['Menu'][j][1][index]['recipeDetails']['id'],
-                                                                              )));
-                                                                },
-                                                              ),
-                                                            ],
-                                                          )
-                                                        ],
+                                              return MenuRecipeCard(
+                                                recipeDetails: menuData['Menu']
+                                                        [j][1][index]
+                                                    ['recipeDetails'],
+                                                deletePermission:
+                                                    deleteRecipePermission,
+                                                onDelete: () async {
+                                                  MenuAPIHandler handler =
+                                                      MenuAPIHandler({
+                                                    "userid":
+                                                        MyApp.LOGIN_ID_VALUE,
+                                                    "id": menuData['Menu'][j][1]
+                                                            [index]
+                                                        ['recipeDetails']['id'],
+                                                  });
+                                                  var data = await handler
+                                                      .deleteListItem();
+                                                  if (!data
+                                                      .containsKey('error')) {
+                                                    menuDataFetched = false;
+                                                    _fetchData();
+                                                    setState(() {});
+                                                  }
+                                                },
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewRecipe(
+                                                        id: menuData['Menu'][j]
+                                                                    [1][index][
+                                                                'recipeDetails']
+                                                            ['id'],
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
+                                                    ),
+                                                  );
+                                                },
                                               );
                                             },
                                           ),
@@ -1679,8 +1386,11 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                        menuData['Menu'][j][4].length > 0
+                                        SizedBox(
+                                          height: 10,
+                                        ), menuData['Menu'][j][4].length > 0
                                             ? GridView.builder(
+                                              padding: EdgeInsets.all(4),
                                                 physics:
                                                     NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -1689,141 +1399,52 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                     .length,
                                                 gridDelegate:
                                                     SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisSpacing: 5,
+                                                        mainAxisSpacing: 8,
                                                         childAspectRatio:
                                                             8.0 / 9.0,
                                                         crossAxisCount: 2),
                                                 itemBuilder:
                                                     (BuildContext context,
                                                         int index) {
-                                                  return new Card(
-                                                    child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          menuData['Menu'][j][4][index]['recipeDetails'][
-                                                                          'media'] !=
-                                                                      null &&
-                                                                  menuData['Menu'][j][4][index]['recipeDetails']
-                                                                              [
-                                                                              'media']
-                                                                          .length >
-                                                                      0
-                                                              ? menuData['Menu']
-                                                                              [j][4][index]['recipeDetails']['media'][0]
-                                                                          ['mediaType'] ==
-                                                                      'Image'
-                                                                  ? Padding(
-                                                                      padding: const EdgeInsets.all(8.0),
-                                                                      child: ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        child:
-                                                                            AspectRatio(
-                                                                          aspectRatio:
-                                                                              18.0 / 16.0,
-                                                                          child:
-                                                                              Image.network(Constants.ImageBaseUrl + menuData['Menu'][j][4][index]['recipeDetails']['media'][0]['mediaUrl']),
-                                                                        ),
-                                                                      ))
-                                                                  : Center(child: Icon(Icons.video_collection))
-                                                              : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10.0,
-                                                                    right: 2),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Container(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width *
-                                                                        0.23,
-                                                                    child:
-                                                                        AutoSizeText(
-                                                                      menuData['Menu'][j][4][index]
-                                                                              [
-                                                                              'recipeDetails']
-                                                                          [
-                                                                          'itemName'],
-                                                                      minFontSize:
-                                                                          8,
-                                                                      maxLines:
-                                                                          2,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    )),
-                                                                Row(
-                                                                  children: [
-                                                                    if (deleteRecipePermission)
-                                                                      GestureDetector(
-                                                                        child:
-                                                                            Icon(
-                                                                          AntDesign
-                                                                              .delete,
-                                                                          color:
-                                                                              Constants.kMain,
-                                                                          size:
-                                                                              14,
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                          MenuAPIHandler
-                                                                              handler =
-                                                                              MenuAPIHandler({
-                                                                            "userid":
-                                                                                MyApp.LOGIN_ID_VALUE,
-                                                                            "id":
-                                                                                menuData['Menu'][j][4][index]['recipeDetails']['id']
-                                                                          });
-                                                                          var data =
-                                                                              await handler.deleteListItem();
-                                                                          print(
-                                                                              data);
-                                                                          if (!data
-                                                                              .containsKey('error')) {
-                                                                            menuDataFetched =
-                                                                                false;
-                                                                            _fetchData();
-                                                                            setState(() {});
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    GestureDetector(
-                                                                      child:
-                                                                          Icon(
-                                                                        AntDesign
-                                                                            .eyeo,
-                                                                        color: Constants
-                                                                            .kMain,
-                                                                        size:
-                                                                            16,
-                                                                      ),
-                                                                      onTap:
-                                                                          () {
-                                                                        Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) => ViewRecipe(
-                                                                                      id: menuData['Menu'][j][4][index]['recipeDetails']['id'],
-                                                                                    )));
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ]),
+                                                  var recipeDetails =
+                                                      menuData['Menu'][j][4]
+                                                              [index]
+                                                          ['recipeDetails'];
+
+                                                  return MenuRecipeCard(
+                                                    recipeDetails:
+                                                        recipeDetails,
+                                                    deletePermission:
+                                                        deleteRecipePermission,
+                                                    onDelete: () async {
+                                                      MenuAPIHandler handler =
+                                                          MenuAPIHandler({
+                                                        "userid": MyApp
+                                                            .LOGIN_ID_VALUE,
+                                                        "id":
+                                                            recipeDetails['id'],
+                                                      });
+                                                      var data = await handler
+                                                          .deleteListItem();
+                                                      print(data);
+                                                      if (!data.containsKey(
+                                                          'error')) {
+                                                        menuDataFetched = false;
+                                                        _fetchData();
+                                                      }
+                                                    },
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewRecipe(
+                                                                  id: recipeDetails[
+                                                                      'id']),
+                                                        ),
+                                                      );
+                                                    },
                                                   );
                                                 },
                                               )
@@ -1885,8 +1506,11 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                        menuData['Menu'][j][2].length > 0
+                                       SizedBox(
+                                          height: 10,
+                                        ),  menuData['Menu'][j][2].length > 0
                                             ? GridView.builder(
+                                              padding: EdgeInsets.all(4),
                                                 physics:
                                                     NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -1895,141 +1519,52 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                     .length,
                                                 gridDelegate:
                                                     SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisSpacing: 5,
+                                                        mainAxisSpacing: 8,
                                                         childAspectRatio:
                                                             8.0 / 9.0,
                                                         crossAxisCount: 2),
                                                 itemBuilder:
                                                     (BuildContext context,
                                                         int index) {
-                                                  return new Card(
-                                                    child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          menuData['Menu'][j][2][index]['recipeDetails'][
-                                                                          'media'] !=
-                                                                      null &&
-                                                                  menuData['Menu'][j][2][index]['recipeDetails']
-                                                                              [
-                                                                              'media']
-                                                                          .length >
-                                                                      0
-                                                              ? menuData['Menu']
-                                                                              [j][2][index]['recipeDetails']['media'][0]
-                                                                          ['mediaType'] ==
-                                                                      'Image'
-                                                                  ? Padding(
-                                                                      padding: const EdgeInsets.all(8.0),
-                                                                      child: ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        child:
-                                                                            AspectRatio(
-                                                                          aspectRatio:
-                                                                              18.0 / 16.0,
-                                                                          child:
-                                                                              Image.network(Constants.ImageBaseUrl + menuData['Menu'][j][2][index]['recipeDetails']['media'][0]['mediaUrl']),
-                                                                        ),
-                                                                      ))
-                                                                  : Center(child: Icon(Icons.video_collection))
-                                                              : AspectRatio(aspectRatio: 18.0 / 16.0, child: Image.network('https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg')), //just for testing, will fill with image later
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10.0,
-                                                                    right: 2),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Container(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width *
-                                                                        0.23,
-                                                                    child:
-                                                                        AutoSizeText(
-                                                                      menuData['Menu'][j][2][index]
-                                                                              [
-                                                                              'recipeDetails']
-                                                                          [
-                                                                          'itemName'],
-                                                                      minFontSize:
-                                                                          8,
-                                                                      maxLines:
-                                                                          2,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    )),
-                                                                Row(
-                                                                  children: [
-                                                                    if (deleteRecipePermission)
-                                                                      GestureDetector(
-                                                                        child:
-                                                                            Icon(
-                                                                          AntDesign
-                                                                              .delete,
-                                                                          color:
-                                                                              Constants.kMain,
-                                                                          size:
-                                                                              14,
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                          MenuAPIHandler
-                                                                              handler =
-                                                                              MenuAPIHandler({
-                                                                            "userid":
-                                                                                MyApp.LOGIN_ID_VALUE,
-                                                                            "id":
-                                                                                menuData['Menu'][j][2][index]['recipeDetails']['id'],
-                                                                          });
-                                                                          var data =
-                                                                              await handler.deleteListItem();
-                                                                          print(
-                                                                              data);
-                                                                          if (!data
-                                                                              .containsKey('error')) {
-                                                                            menuDataFetched =
-                                                                                false;
-                                                                            _fetchData();
-                                                                            setState(() {});
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    GestureDetector(
-                                                                      child:
-                                                                          Icon(
-                                                                        AntDesign
-                                                                            .eyeo,
-                                                                        color: Constants
-                                                                            .kMain,
-                                                                        size:
-                                                                            16,
-                                                                      ),
-                                                                      onTap:
-                                                                          () {
-                                                                        Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) => ViewRecipe(
-                                                                                      id: menuData['Menu'][j][2][index]['recipeDetails']['id'],
-                                                                                    )));
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ]),
+                                                  var recipeDetails =
+                                                      menuData['Menu'][j][2]
+                                                              [index]
+                                                          ['recipeDetails'];
+
+                                                  return MenuRecipeCard(
+                                                    recipeDetails:
+                                                        recipeDetails,
+                                                    deletePermission:
+                                                        deleteRecipePermission,
+                                                    onDelete: () async {
+                                                      MenuAPIHandler handler =
+                                                          MenuAPIHandler({
+                                                        "userid": MyApp
+                                                            .LOGIN_ID_VALUE,
+                                                        "id":
+                                                            recipeDetails['id'],
+                                                      });
+                                                      var data = await handler
+                                                          .deleteListItem();
+                                                      print(data);
+                                                      if (!data.containsKey(
+                                                          'error')) {
+                                                        menuDataFetched = false;
+                                                        _fetchData();
+                                                      }
+                                                    },
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewRecipe(
+                                                                  id: recipeDetails[
+                                                                      'id']),
+                                                        ),
+                                                      );
+                                                    },
                                                   );
                                                 },
                                               )
@@ -2055,3 +1590,148 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
     return picked;
   }
 }
+
+class MenuRecipeCard extends StatelessWidget {
+  final Map<String, dynamic> recipeDetails;
+  final bool deletePermission;
+  final VoidCallback onDelete;
+  final VoidCallback onTap;
+
+  const MenuRecipeCard({
+    Key? key,
+    required this.recipeDetails,
+    required this.deletePermission,
+    required this.onDelete,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final List media = recipeDetails['media'] ?? [];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Limit max height to avoid overflow inside grid
+        final double maxCardHeight = constraints.maxWidth * 1.2;
+
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: maxCardHeight,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              // Neumorphic style inner shadows
+              BoxShadow(
+                color: Colors.white,
+                offset: Offset(-4, -4),
+                blurRadius: 8,
+              ),
+              BoxShadow(
+                color: Colors.grey.shade400,
+                offset: Offset(4, 4),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Image or Video icon with fixed aspect ratio
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: media.isNotEmpty
+                      ? media[0]['mediaType'] == 'Image'
+                          ? Image.network(
+                              Constants.ImageBaseUrl + media[0]['mediaUrl'],
+                              fit: BoxFit.cover,
+                            )
+                          : Center(
+                              child: Icon(
+                                Icons.video_collection,
+                                size: 48,
+                                color: Colors.grey.shade600,
+                              ),
+                            )
+                      : Image.network(
+                          'https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+
+              // Spacer
+              SizedBox(height: 8),
+
+              // Text and icons row with safe sizing
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                child: Row(
+                  children: [
+                    // Title with max 2 lines and ellipsis
+                    Expanded(
+                      child: AutoSizeText(
+                        recipeDetails['itemName'] ?? '',
+                        minFontSize: 10,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ),
+
+                    // Icons with minimal padding + circle background
+                    if (deletePermission) ...[
+                      SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: onDelete,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.red.withOpacity(0.15),
+                          ),
+                          padding: EdgeInsets.all(6),
+                          child: Icon(
+                            AntDesign.delete,
+                            color: Colors.red.shade700,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    SizedBox(width: 10),
+
+                    GestureDetector(
+                      onTap: onTap,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Constants.kMain.withOpacity(0.15),
+                        ),
+                        padding: EdgeInsets.all(6),
+                        child: Icon(
+                          AntDesign.eyeo,
+                          color: Constants.kMain,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
