@@ -54,13 +54,14 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
   }
 
-  Future<void> _fetchData() async {
+  DateTime _focusDay = DateTime.now();
+  Future<void> _fetchData({DateTime? date}) async {
     print('get getCalendarDetails');
     DateFormat inputFormat = DateFormat("yyyy-MM-dd");
     print("loggg" + MyApp.LOGIN_ID_VALUE);
     DashboardAPIHandler handler = DashboardAPIHandler({});
     //  var dateDetails = await handler.getCalendarDetails();
-    var data = await handler.getCalendarDetails();
+    var data = await handler.getCalendarDetails(date: date);
     print('getCalendarDetails == getCalendarDetails');
     print(data);
     if (!data.containsKey('error')) {
@@ -171,7 +172,7 @@ class _DashboardState extends State<Dashboard> {
       body: SingleChildScrollView(
         child: Container(
           child: Padding(
-            padding:   EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
             child: Column(
               children: [
                 SizedBox(
@@ -194,7 +195,8 @@ class _DashboardState extends State<Dashboard> {
                         if (MyApp.USER_TYPE_VALUE != 'Parent') {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => RoomsList()),
+                            MaterialPageRoute(
+                                builder: (context) => RoomsList()),
                           );
                         } else {
                           Navigator.push(
@@ -235,13 +237,16 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-              SizedBox(height:  (MediaQuery.of(context).size.width * 0.02),),
+                SizedBox(
+                  height: (MediaQuery.of(context).size.width * 0.02),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CustomCard(
                       title: 'Children',
-                      count: details != null ? details['childrenCount'] ?? 0 : 0,
+                      count:
+                          details != null ? details['childrenCount'] ?? 0 : 0,
                       imagePath: Constants.STUDENTS_IMG,
                       onTap: () {
                         Navigator.push(
@@ -270,9 +275,9 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-            
+
                 //observation count not added
-            
+
                 // Container(
                 //   width: MediaQuery.of(context).size.width * 0.92,
                 //   height: 300,
@@ -289,86 +294,91 @@ class _DashboardState extends State<Dashboard> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.arrow_back_ios),
-                                onPressed: () {
-                                  setState(() {
-                                    if (month == 1) {
-                                      month = 12;
-                                      currentMon = (months.isNotEmpty
-                                          ? months[month - 1]
-                                          : "");
-                                      year = ((int.tryParse(year) ?? 0) - 1)
-                                          .toString();
-                                    } else {
-                                      month = month - 1;
-                                      currentMon = (months.length >= month
-                                          ? months[month - 1]
-                                          : "");
-                                    }
-                                  });
-                                },
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      '${currentMon ?? ""} ${year ?? ""}',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.arrow_forward_ios),
-                                onPressed: () {
-                                  setState(() {
-                                    if (month + 1 == 13) {
-                                      year = ((int.tryParse(year) ?? 0) + 1)
-                                          .toString();
-                                      month = 1;
-                                      currentMon = (months.isNotEmpty
-                                          ? months[month - 1]
-                                          : "");
-                                    } else {
-                                      month = month + 1;
-                                      currentMon = (months.length >= month
-                                          ? months[month - 1]
-                                          : "");
-                                    }
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   children: <Widget>[
+                          //     IconButton(
+                          //       icon: Icon(Icons.arrow_back_ios),
+                          //       onPressed: () {
+                          //         setState(() {
+                          //           if (month == 1) {
+                          //             month = 12;
+                          //             currentMon = (months.isNotEmpty
+                          //                 ? months[month - 1]
+                          //                 : "");
+                          //             year = ((int.tryParse(year) ?? 0) - 1)
+                          //                 .toString();
+                          //           } else {
+                          //             month = month - 1;
+                          //             currentMon = (months.length >= month
+                          //                 ? months[month - 1]
+                          //                 : "");
+                          //           }
+                          //         });
+                          //       },
+                          //     ),
+                          //     Expanded(
+                          //       child: Center(
+                          //         child: Padding(
+                          //           padding: const EdgeInsets.all(8.0),
+                          //           child: Text(
+                          //             '${currentMon ?? ""} ${year ?? ""}',
+                          //             style: TextStyle(fontSize: 16),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     IconButton(
+                          //       icon: Icon(Icons.arrow_forward_ios),
+                          //       onPressed: () {
+                          //         setState(() {
+                          //           if (month + 1 == 13) {
+                          //             year = ((int.tryParse(year) ?? 0) + 1)
+                          //                 .toString();
+                          //             month = 1;
+                          //             currentMon = (months.isNotEmpty
+                          //                 ? months[month - 1]
+                          //                 : "");
+                          //           } else {
+                          //             month = month + 1;
+                          //             currentMon = (months.length >= month
+                          //                 ? months[month - 1]
+                          //                 : "");
+                          //           }
+                          //         });
+                          //       },
+                          //     ),
+                          //   ],
+                          // ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: TableCalendar(
+                              onPageChanged: (focusedDay) {
+                                _focusDay = focusedDay;
+                                _fetchData(date: focusedDay);
+                              },
                               firstDay: DateTime.utc(2000, 1, 1),
                               lastDay: DateTime.utc(2100, 12, 31),
-                              focusedDay: DateTime.now(),
+                              focusedDay: _focusDay,
                               calendarBuilders: CalendarBuilders(
                                 markerBuilder: (context, date, events) {
                                   final dateString =
                                       DateFormat('yyyy-MM-dd').format(date);
                                   bool hasEvent = false;
                                   String? eventType;
-            
+
                                   if ((dateDetails['PublicHolidays'] ?? [])
                                       .isNotEmpty) {
                                     for (var holiday
                                         in dateDetails['PublicHolidays']) {
-                                      if ((holiday['date'] ?? "") == dateString) {
+                                      if ((holiday['date'] ?? "") ==
+                                          dateString) {
                                         hasEvent = true;
                                         eventType = 'holiday';
                                         break;
                                       }
                                     }
                                   }
-            
+
                                   if (!hasEvent &&
                                       (dateDetails['ChildBirthdays'] ?? [])
                                           .isNotEmpty) {
@@ -384,7 +394,7 @@ class _DashboardState extends State<Dashboard> {
                                       }
                                     }
                                   }
-            
+
                                   if (hasEvent) {
                                     return Positioned(
                                       bottom: 1,
@@ -406,7 +416,7 @@ class _DashboardState extends State<Dashboard> {
                               selectedDayPredicate: (day) {
                                 final dateString =
                                     DateFormat('yyyy-MM-dd').format(day);
-            
+
                                 if ((dateDetails['PublicHolidays'] ?? [])
                                     .isNotEmpty) {
                                   for (var holiday
@@ -415,7 +425,7 @@ class _DashboardState extends State<Dashboard> {
                                       return true;
                                   }
                                 }
-            
+
                                 if ((dateDetails['ChildBirthdays'] ?? [])
                                     .isNotEmpty) {
                                   for (var birthday
@@ -426,16 +436,16 @@ class _DashboardState extends State<Dashboard> {
                                     if (dob == dateString) return true;
                                   }
                                 }
-            
+
                                 return false;
                               },
                               calendarFormat: CalendarFormat.month,
                               availableGestures: AvailableGestures.all,
                               onDaySelected: (selectedDay, focusedDay) {
-                                final dateString =
-                                    DateFormat('yyyy-MM-dd').format(selectedDay);
+                                final dateString = DateFormat('yyyy-MM-dd')
+                                    .format(selectedDay);
                                 final events = <Map<String, dynamic>>[];
-            
+
                                 if ((dateDetails['PublicHolidays'] ?? [])
                                     .isNotEmpty) {
                                   for (var holiday
@@ -452,7 +462,7 @@ class _DashboardState extends State<Dashboard> {
                                     }
                                   }
                                 }
-            
+
                                 if ((dateDetails['ChildBirthdays'] ?? [])
                                     .isNotEmpty) {
                                   for (var birthday
@@ -471,20 +481,22 @@ class _DashboardState extends State<Dashboard> {
                                     }
                                   }
                                 }
-            
+
                                 if (events.isNotEmpty) {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return Dialog(
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
                                         ),
                                         child: Container(
                                           padding: EdgeInsets.all(20),
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  0.9,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.9,
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             crossAxisAlignment:
@@ -512,7 +524,8 @@ class _DashboardState extends State<Dashboard> {
                                                       ),
                                                     ),
                                                     TextSpan(
-                                                      text: events[0]['title'] ??
+                                                      text: events[0]
+                                                              ['title'] ??
                                                           "",
                                                       style: TextStyle(
                                                         fontSize: 14.0,
@@ -535,7 +548,8 @@ class _DashboardState extends State<Dashboard> {
                                               ),
                                               SizedBox(height: 24),
                                               Align(
-                                                alignment: Alignment.centerRight,
+                                                alignment:
+                                                    Alignment.centerRight,
                                                 child: TextButton(
                                                   onPressed: () =>
                                                       Navigator.pop(context),
@@ -571,7 +585,6 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
-
 
 class CustomCard extends StatelessWidget {
   final String title;

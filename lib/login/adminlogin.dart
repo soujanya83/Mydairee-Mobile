@@ -138,6 +138,7 @@ class _AdminLoginState extends State<AdminLogin> {
         controller: nameController,
         style: TextStyle(color: Constants.kGrey),
         decoration: InputDecoration(
+          
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: Constants.kButton,
@@ -147,6 +148,18 @@ class _AdminLoginState extends State<AdminLogin> {
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: Constants.kButton,
+                width: 1.5,
+              ),
+            ),
+            focusedErrorBorder:OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Constants.errorColor,
+                width: 1.5,
+              ),
+            ) ,
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Constants.errorColor,
                 width: 1.5,
               ),
             ),
@@ -206,6 +219,18 @@ class _AdminLoginState extends State<AdminLogin> {
               width: 1.5,
             ),
           ),
+           focusedErrorBorder:OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Constants.errorColor,
+                width: 1.5,
+              ),
+            ) ,
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Constants.errorColor,
+                width: 1.5,
+              ),
+            ),
         ),
         validator: _validatePassword,
         onSaved: (String? val) {
@@ -298,7 +323,7 @@ class _AdminLoginState extends State<AdminLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+        appBar: AppBar(
           automaticallyImplyLeading: true,
           backgroundColor: Colors.white,
         ),

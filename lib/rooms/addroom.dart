@@ -539,7 +539,11 @@ class _AddRoomState extends State<AddRoom> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    key.currentState?.openEndDrawer();
+                                    try {
+                                      key.currentState?.openEndDrawer();
+                                    } catch (e) {
+                                      print(e.toString());
+                                    }
                                   },
                                   child: Container(
                                       width: 160,
@@ -551,7 +555,14 @@ class _AddRoomState extends State<AddRoom> {
                                       child: Row(
                                         children: <Widget>[
                                           IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              try {
+                                                key.currentState
+                                                    ?.openEndDrawer();
+                                              } catch (e) {
+                                                print(e.toString());
+                                              }
+                                            },
                                             icon: Icon(
                                               Icons.add_circle,
                                               color: Colors.blue[100],
@@ -761,11 +772,10 @@ class _AddRoomState extends State<AddRoom> {
                                               MyApp.ShowToast(
                                                   "Created", context);
                                               print('created');
-                                              Navigator.of(context).popUntil(
-                                                  (route) => route.isFirst);
+                                              Navigator.pop(context);
                                             } else if (response.statusCode ==
                                                 401) {
-                                               MyApp.Show401Dialog(context);
+                                              MyApp.Show401Dialog(context);
                                             }
                                             setState(() {});
                                           }

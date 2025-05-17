@@ -147,8 +147,8 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                         ),
                         if (permissionAdd && MyApp.USER_TYPE_VALUE != 'Parent')
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => NewAnnouncements(
@@ -156,6 +156,7 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                                             centerid: centers[currentIndex].id,
                                             id: '',
                                           )));
+                              _fetchData();
                             },
                             child: Container(
                                 decoration: BoxDecoration(
@@ -236,12 +237,14 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                           )),
                     if (announcementsFetched &&
                         _announcements.length == 0 &&
-                        permission)
+                        permission 
+                        )
+                        !loading?
                       Container(
                           child: Column(
                         children: [
                           SizedBox(
-                            height: 50,
+                            height: MediaQuery.of(context).size.height*.25
                           ),
                           Center(
                               child: SizedBox(
@@ -249,7 +252,18 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                                   child: Image.asset(Constants.FILE))),
                           Text('No announcements')
                         ],
-                      )),
+                      )):Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: Center(
+                                          child: CircularProgressIndicator())),
+                                ],
+                              )),
                     if (announcementsFetched &&
                         permission &&
                         _announcements.length > 0)
@@ -284,144 +298,179 @@ class _AnnouncementsListState extends State<AnnouncementsList> {
                                 var date = formatter.format(date1);
 
                                 return Padding(
-  padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-  child: GestureDetector(
-    onTap: () {
-      if (MyApp.USER_TYPE_VALUE != 'Parent') {
-        print(_announcements[index].id);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NewAnnouncements(
-              type: 'update',
-              id: _announcements[index].aid,
-              centerid: centers[currentIndex].id,
-            ),
-          ),
-        );
-      }
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.white, Colors.grey.shade100],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.25),
-            blurRadius: 8,
-            offset: Offset(0, 3),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 14.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Title and Created By Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    _announcements[index].title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Constants.kMain,
-                      fontSize: 16,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'By: ${_announcements[index].createdBy}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      if (MyApp.USER_TYPE_VALUE != 'Parent') {
+                                        print(_announcements[index].id);
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                NewAnnouncements(
+                                              type: 'update',
+                                              id: _announcements[index].aid,
+                                              centerid:
+                                                  centers[currentIndex].id,
+                                            ),
+                                          ),
+                                        );
+                                        _fetchData();
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.white,
+                                            Colors.grey.shade100
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.grey.withOpacity(0.25),
+                                            blurRadius: 8,
+                                            offset: Offset(0, 3),
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0, vertical: 14.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            /// Title and Created By Row
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    _announcements[index].title,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Constants.kMain,
+                                                      fontSize: 16,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  'By: ${_announcements[index].createdBy}',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[700],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
 
-            SizedBox(height: 10),
+                                            SizedBox(height: 10),
 
-            /// Event Date and Status
-            Row(
-              children: [
-                Icon(Icons.event, size: 16, color: Constants.kMain),
-                SizedBox(width: 4),
-                Text(
-                  _announcements[index].eventDate.toString(),
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-                Spacer(),
-                Container(
-                  decoration: BoxDecoration(
-                    color: _announcements[index].status == 'Sent'
-                        ? Colors.green
-                        : Color(0xffFFEFB8),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 6),
-                  child: Text(
-                    _announcements[index].status,
-                    style: TextStyle(
-                      color: _announcements[index].status == 'Sent'
-                          ? Colors.white
-                          : Color(0xffCC9D00),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                                            /// Event Date and Status
+                                            Row(
+                                              children: [
+                                                Icon(Icons.event,
+                                                    size: 16,
+                                                    color: Constants.kMain),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  _announcements[index]
+                                                      .eventDate
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: _announcements[index]
+                                                                .status ==
+                                                            'Sent'
+                                                        ? Colors.green
+                                                        : Color(0xffFFEFB8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 6),
+                                                  child: Text(
+                                                    _announcements[index]
+                                                        .status,
+                                                    style: TextStyle(
+                                                      color: _announcements[
+                                                                      index]
+                                                                  .status ==
+                                                              'Sent'
+                                                          ? Colors.white
+                                                          : Color(0xffCC9D00),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
 
-            SizedBox(height: 12),
+                                            SizedBox(height: 12),
 
-            /// Description Text
-            Builder(
-              builder: (context) {
-                String htmlToPlainText(String htmlString) {
-                  final document = parse(htmlString);
-                  return parse(document.body?.text ?? "")
-                          .documentElement
-                          ?.text ??
-                      "";
-                }
+                                            /// Description Text
+                                            Builder(
+                                              builder: (context) {
+                                                String htmlToPlainText(
+                                                    String htmlString) {
+                                                  final document =
+                                                      parse(htmlString);
+                                                  return parse(document
+                                                                  .body?.text ??
+                                                              "")
+                                                          .documentElement
+                                                          ?.text ??
+                                                      "";
+                                                }
 
-                return Text(
-                  htmlToPlainText(_announcements[index].text),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    ),
-  ),
-)
-;
+                                                return Text(
+                                                  htmlToPlainText(
+                                                      _announcements[index]
+                                                          .text),
+                                                  maxLines: 4,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.black87,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
                               }),
                         );
                       })

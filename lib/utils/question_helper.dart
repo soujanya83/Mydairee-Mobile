@@ -288,26 +288,30 @@ class _QuestionHelperState extends State<QuestionHelper> {
                 Expanded(
                   child: Container(),
                 ),
+
+                InkWell(
+                    child: Icon(EvilIcons.image, size: 26),
+                    onTap: () {
+                      if (widget.helper?.imgUrl == null ||
+                          ((widget.helper?.imgUrl.isEmpty) ?? true)){
+                        _loadFromGallery(context);
+                      }
+                    }),
+                SizedBox(
+                  width: 10,
+                ),
                 InkWell(
                     child: Icon(Ionicons.ios_add_circle_outline),
                     onTap: () {
                       widget.funcCallback!("add");
                     }),
-                InkWell(
-                    child: Icon(EvilIcons.image),
-                    onTap: () {
-                      if (widget.helper?.imgUrl == null ||
-                          ((widget.helper?.imgUrl.isEmpty) ?? true)) {
-                        _loadFromGallery(context);
-                      }
-                    }),
-                InkWell(
-                    child: Icon(AntDesign.playcircleo),
-                    onTap: () {
-                      if (widget.helper?.vidUrl == null) {
-                        _pickVideo();
-                      }
-                    }),
+                // InkWell(
+                //     child: Icon(AntDesign.playcircleo),
+                //     onTap: () {
+                //       if (widget.helper?.vidUrl == null) {
+                //         _pickVideo();
+                //       }
+                //     }),
               ],
             ),
             SizedBox(

@@ -20,23 +20,28 @@ class _StaffLoginState extends State<StaffLogin> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String errorText = "";
   bool _validate = false;
-  TextEditingController nameController = new TextEditingController();
+  TextEditingController nameController = TextEditingController();
   bool obscureText = true;
   bool isSignInDisabled = false;
   String loginEmail = '', loginPassword = '';
   bool loggingIn = false;
   String pin = '';
   String pinErr = '', empCodeErr = '';
+  bool _isEmployeeCodeValid = true;
+  bool _isPinValid = true;
 
   Future<void> loginNow() async {
     setState(() {
       loggingIn = true;
+      errorText = ""; // Clear previous errors
     });
+    
     String deviceid = await MyApp.getDeviceIdentity();
     loginEmail = nameController.text;
     loginPassword = pin;
-    var bytes1 = utf8.encode(loginPassword); // data being hashed
+    var bytes1 = utf8.encode(loginPassword);
     var digest1 = md5.convert(bytes1);
+    
     if (loginEmail.trim().isNotEmpty && loginPassword.trim().isNotEmpty) {
       var loginBody = {
         "user_name": "${loginEmail.trim()}",
@@ -45,22 +50,20 @@ class _StaffLoginState extends State<StaffLogin> {
         "devicetype": "MOBILE",
         "userType": 'Staff'
       };
-      print(loginBody);
+      
       LoginAPIHandler login = LoginAPIHandler(loginBody);
       var result = await login.login();
 
       if (result != null && !result.containsKey('error')) {
-        print(result);
-        SharedPreferences sharedPreferences =
-            await SharedPreferences.getInstance();
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         sharedPreferences.setString(Constants.LOGIN_ID, result['userid']);
         sharedPreferences.setString(Constants.AUTH_TOKEN, result['AuthToken']);
         sharedPreferences.setString(Constants.IMG_URL, result['imageUrl']);
         sharedPreferences.setString(Constants.NAME, result['name']);
         sharedPreferences.setString(Constants.EMAIL, loginEmail);
-        sharedPreferences.setString(
-            Constants.PASSWORD_HASH, digest1.toString());
+        sharedPreferences.setString(Constants.PASSWORD_HASH, digest1.toString());
         sharedPreferences.setString(Constants.USER_TYPE, result['role']);
+        
         MyApp.LOGIN_ID_VALUE = result['userid'];
         MyApp.AUTH_TOKEN_VALUE = result['AuthToken'];
         MyApp.IMG_URL_VALUE = result['imageUrl'];
@@ -68,18 +71,16 @@ class _StaffLoginState extends State<StaffLogin> {
         MyApp.USER_TYPE_VALUE = result['role'];
         MyApp.EMAIL_VALUE = loginEmail;
         MyApp.PASSWORD_HASH_VALUE = digest1.toString();
+        
         Navigator.of(context).pushReplacementNamed(Platform.Tag);
       } else {
-        isSignInDisabled = false;
-        loggingIn = false;
-        if (result != null) errorText = result['error'];
-        setState(() {});
-        print('issue');
+        setState(() {
+          isSignInDisabled = false;
+          loggingIn = false;
+          errorText = result?['error'] ?? "Login failed. Please try again.";
+        });
       }
-      print(loginEmail.toString());
-      print(loginPassword.toString());
     } else {
-      // validation error
       setState(() {
         loggingIn = false;
         isSignInDisabled = false;
@@ -88,243 +89,342 @@ class _StaffLoginState extends State<StaffLogin> {
     }
   }
 
-  Widget loginBuild() {
-    final employeeCode = Theme(
-      data: new ThemeData(
-        primaryColor: Colors.green,
-      ),
-      child: TextFormField(
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        controller: nameController,
-        style: TextStyle(color: Constants.kGrey),
-        decoration: InputDecoration(
-          labelText: "Employee Code",
-          hintStyle: new TextStyle(color: Constants.kGrey.withOpacity(0.8)),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 3.0),
-          labelStyle: new TextStyle(color: Constants.kGrey),
-          suffixIcon: IconButton(
-              icon: Icon(
-                Icons.minimize,
-                color: Colors.transparent,
-              ),
-              onPressed: null),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Constants.kButton,
-              width: 1.0,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Constants.kButton,
-              width: 1.5,
-            ),
-          ),
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(4),
-            ),
-          ),
-        ),
-      ),
-    );
+  void _validateForm() {
+    setState(() {
+      // Employee Code validation
+      if (nameController.text.isEmpty) {
+        empCodeErr = 'Please enter employee code';
+        _isEmployeeCodeValid = false;
+      } else {
+        empCodeErr = '';
+        _isEmployeeCodeValid = true;
+      }
 
-    final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 40),
-      child: ButtonTheme(
-        height: 42.0,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Constants.kButton,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-          ),
-          onPressed: isSignInDisabled
-              ? null
-              : () {
-                  if (pin == null || pin.isEmpty) {
-                    pinErr = 'Enter Pin';
-                    setState(() {});
-                  } else {
-                    pinErr = '';
-                    setState(() {});
-                  }
+      // PIN validation
+      if (pin.isEmpty || pin.length != 4) {
+        pinErr = 'Please enter a 4-digit PIN';
+        _isPinValid = false;
+      } else {
+        pinErr = '';
+        _isPinValid = true;
+      }
 
-                  if (nameController.text.isEmpty) {
-                    empCodeErr = 'Enter Employee Code';
-                    setState(() {});
-                  } else {
-                    empCodeErr = '';
-                    setState(() {});
-                  }
-
-                  if (nameController.text.isNotEmpty &&
-                      pin != null &&
-                      pin.isNotEmpty) {
-                    setState(() {
-                      isSignInDisabled = true;
-                    });
-                    loginNow();
-                  }
-                },
-          child: Text(
-            "Login",
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    final errorLabel = Text(
-      errorText,
-      style: new TextStyle(color: Colors.red, fontSize: 14.0),
-    );
-
-    final label = new Center(
-        child: new Text(
-      "Staff Login",
-      style: new TextStyle(
-          fontSize: 24.0, fontWeight: FontWeight.bold, color: Constants.kLabel),
-    ));
-
-    final paddingValue = MediaQuery.of(context).size.width > 600 ? 105.0 : 18.0;
-
-    return new ListView(
-      shrinkWrap: true,
-      padding: EdgeInsets.only(left: paddingValue, right: paddingValue),
-      children: <Widget>[
-        Center(
-            child: SizedBox(
-                height: 120.0, child: Image.asset(Constants.APP_LOGO))),
-        label,
-        SizedBox(height: 32.0),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: employeeCode,
-        ),
-        empCodeErr != ''
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  empCodeErr,
-                  style: TextStyle(color: Colors.red),
-                ),
-              )
-            : SizedBox(),
-        SizedBox(height: 20.0),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
-          child: Text(
-            'PIN',
-            style: TextStyle(color: Colors.grey),
-          ),
-        ),
-        Pinput(
-          length: 4,
-          defaultPinTheme: PinTheme(
-            
-            width: 50,
-            height: 50,
-            textStyle: const TextStyle(
-              fontSize: 17,
-              color: Colors.black,
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(color: Constants.kButton),
-              borderRadius: BorderRadius.circular(12), // Rounded borders
-            ),
-          ),
-          focusedPinTheme: PinTheme(
-            width: 50,
-            height: 50,
-            textStyle: const TextStyle(
-              fontSize: 17,
-              color: Colors.black,
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(color: Constants.kButton, width: 2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          submittedPinTheme: PinTheme(
-            width: 50,
-            height: 50,
-            textStyle: const TextStyle(
-              fontSize: 17,
-              color: Colors.black,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              border: Border.all(color: Constants.kButton),
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          onCompleted: (pin) {
-            print("Completed: $pin");
-            setState(() {
-              this.pin = pin;
-            });
-          },
-        ),
-        pinErr != null && pinErr.isNotEmpty && pinErr.length > 0
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  pinErr,
-                  style: TextStyle(color: Colors.red),
-                ),
-              )
-            : SizedBox(),
-        SizedBox(height: 15.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 40),
-              child: InkWell(
-                  onTap:(){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ForgotPassword()));
-                  },
-                  child: Text(
-                    'Forgot Password ?',
-                    style: TextStyle(color: Colors.blue),
-                  )),
-            ),
-          ],
-        ),
-        SizedBox(height: 24.0),
-        Center(child: errorLabel),
-        loginButton,
-      ],
-    );
+      // Only proceed if all validations pass
+      if (_isEmployeeCodeValid && _isPinValid) {
+        isSignInDisabled = true;
+        loginNow();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 600;
+
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          backgroundColor: Colors.white,
-        ),
-        body: Stack(
-          children: <Widget>[
-            Center(
-              child: new Form(key: _formKey, child: loginBuild()),
+        elevation: 0,
+        iconTheme: IconThemeData(color: Constants.kButton),
+      ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: isWideScreen ? 100 : 24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: 20),
+                    Center(
+                      child: SizedBox(
+                        height: 100,
+                        child: Image.asset(Constants.APP_LOGO),
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    Text(
+                      "Staff Login",
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Constants.kLabel,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 40),
+                    
+                    // Employee Code Field
+                    Text(
+                      "Employee Code",
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    TextFormField(
+                      controller: nameController,
+                      style: TextStyle(color: Constants.kGrey),
+                      decoration: InputDecoration(
+                        hintText: "Enter your employee code",
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: _isEmployeeCodeValid
+                                ? Constants.kButton
+                                : Constants.errorColor,
+                            width: 1.0,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: _isEmployeeCodeValid
+                                ? Constants.kButton
+                                : Constants.errorColor,
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: _isEmployeeCodeValid
+                                ? Constants.kButton
+                                : Constants.errorColor,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Constants.errorColor,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Constants.errorColor,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return null; // We handle validation in _validateForm
+                        }
+                        return null;
+                      },
+                    ),
+                    if (empCodeErr.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          empCodeErr,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Constants.errorColor,
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 24),
+                    
+                    // PIN Field
+                    Text(
+                      "PIN",
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Center(
+                      child: Pinput(
+                        length: 4,
+                        obscureText: true,
+                        onChanged: (value) {
+                          setState(() {
+                            pin = value;
+                            if (value.length == 4) {
+                              _isPinValid = true;
+                              pinErr = '';
+                            }
+                          });
+                        },
+                        defaultPinTheme: PinTheme(
+                          width: 56,
+                          height: 56,
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: _isPinValid
+                                  ? Constants.kButton
+                                  : Constants.errorColor,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        focusedPinTheme: PinTheme(
+                          width: 56,
+                          height: 56,
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: _isPinValid
+                                  ? Constants.kButton
+                                  : Constants.errorColor,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        submittedPinTheme: PinTheme(
+                          width: 56,
+                          height: 56,
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            border: Border.all(
+                              color: _isPinValid
+                                  ? Constants.kButton
+                                  : Constants.errorColor,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        errorPinTheme: PinTheme(
+                          width: 56,
+                          height: 56,
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Constants.errorColor,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (pinErr.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          pinErr,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Constants.errorColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    SizedBox(height: 16),
+                    
+                    // Forgot Password Link
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ForgotPassword(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    
+                    // Error Message
+                    if (errorText.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          errorText,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Constants.errorColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    
+                    // Login Button
+                    SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Constants.kButton,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: isSignInDisabled ? null : _validateForm,
+                        child: loggingIn
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                "LOGIN",
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                  ],
+                ),
+              ),
             ),
-            loggingIn
-                ? Center(child: new CircularProgressIndicator())
-                : new Container(),
-          ],
-        ));
+          ),
+          if (loggingIn)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:mykronicle_mobile/api/dailydairyapi.dart';
+import 'package:mykronicle_mobile/api/roomsapi.dart' show RoomAPIHandler;
 import 'package:mykronicle_mobile/api/utilsapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/models/centersmodel.dart';
@@ -74,8 +75,40 @@ class _HeadChecksState extends State<HeadChecks> {
     } else {
       MyApp.Show401Dialog(context);
     }
+    fetchRooms();
+  }
 
-    _fetchData();
+  Future<void> fetchRooms() async {
+    try {
+      RoomAPIHandler handler = RoomAPIHandler({
+        "userid": MyApp.LOGIN_ID_VALUE,
+        "centerid": centers![currentIndex].id, // ✅ Use correct center id
+      });
+
+      var data = await handler.getList();
+
+      if (data != null && !data.containsKey('error')) {
+        var res = data['rooms'];
+        rooms = [];
+        try {
+          assert(res is List);
+          for (int i = 0; i < res.length; i++) {
+            rooms!.add(RoomsDescModel.fromJson(res[i]));
+          }
+          currentRoomIndex = 0;
+          roomsFetched = true;
+          _fetchData();
+        } catch (e) {
+          print(e);
+        }
+      } else {
+        print("Error in API: $data");
+      }
+    } catch (e, s) {
+      print("Exception in fetchRoomsOnly: $e");
+      print(s);
+    }
+    if (this.mounted) setState(() {});
   }
 
   bool loading = true;
@@ -97,37 +130,20 @@ class _HeadChecksState extends State<HeadChecks> {
     print(data);
     DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
     var dt = await hlr.getHeadChecksData();
-    if (!dt.containsKey('error')) {
-      print(dt);
-      details = dt;
-      var res = dt['rooms'];
-      rooms = [];
-      try {
-        assert(res is List);
-        for (int i = 0; i < res.length; i++) {
-          rooms!.add(RoomsDescModel.fromJson(res[i]));
-        }
-        roomsFetched = true;
-        if (this.mounted) setState(() {});
-      } catch (e) {
-        print(e);
-      }
-    }
     hour.clear();
     comments.clear();
     min.clear();
     signature.clear();
     headCount.clear();
-
+    print('===============');
+    debugPrint(dt.toString());
     print('+++++here+1++');
     if (dt['headChecks'] != null && dt['headChecks'].length > 0) {
       print('+++++here+2++');
       for (int i = 0; i < dt['headChecks'].length; i++) {
         var time = dt['headChecks'][i]['time'].toString().split(":");
-
         hour.add(time[0]);
         min.add(time[1]);
-
         comments
             .add(TextEditingController(text: dt['headChecks'][i]['comments']));
         signature
@@ -593,7 +609,6 @@ class _HeadChecksState extends State<HeadChecks> {
                           })),
               SizedBox(
                 height: 15,
-                
               ),
               if (!loading)
                 Container(
@@ -663,8 +678,7 @@ class _HeadChecksState extends State<HeadChecks> {
                               });
                           print('heyyy' + response.body.toString());
                           if (response.statusCode == 200) {
-                            MyApp.ShowToast("updated", context);
-                            Navigator.pop(context, 'kill');
+                            MyApp.ShowToast("Save Successfully!", context);
                           } else if (response.statusCode == 401) {
                             MyApp.Show401Dialog(context);
                           }

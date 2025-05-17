@@ -155,10 +155,8 @@ class ViewObservationState extends State<ViewObservation> {
       MyApp.Show401Dialog(context);
     }
 
-    ObservationsAPIHandler handler1 = ObservationsAPIHandler({
-      "userid": MyApp.LOGIN_ID_VALUE,
-      "observationId": widget.id
-    });
+    ObservationsAPIHandler handler1 = ObservationsAPIHandler(
+        {"userid": MyApp.LOGIN_ID_VALUE, "observationId": widget.id});
     var data1 = await handler1.getObservationDataDetails();
 
     if (!data1.containsKey('error')) {
@@ -181,13 +179,16 @@ class ViewObservationState extends State<ViewObservation> {
           EylfOutcomeModel eylfOutcomeModel =
               EylfOutcomeModel.fromJson(displaydata1['outcomes'][a]);
           List<EylfActivityModel> activityModel = [];
-          for (int b = 0;  b < displaydata1['outcomes'][a]['Activity'].length;
-              b++){
+          for (int b = 0;
+              b < displaydata1['outcomes'][a]['Activity'].length;
+              b++) {
             EylfActivityModel act = EylfActivityModel.fromJson(
                 displaydata1['outcomes'][a]['Activity'][b]);
             List<EylfSubActivityModel> subActivityModel = [];
             for (int c = 0;
-                c < displaydata1['outcomes'][a]['Activity'][b]['subActivity'] .length;
+                c <
+                    displaydata1['outcomes'][a]['Activity'][b]['subActivity']
+                        .length;
                 c++) {
               subActivityModel.add(EylfSubActivityModel.fromJson(
                   displaydata1['outcomes'][a]['Activity'][b]['subActivity']
@@ -366,6 +367,13 @@ class ViewObservationState extends State<ViewObservation> {
     print("hj" + data1.toString());
   }
 
+  Widget removeHtmlTitle(String text) {
+    return Text(
+      removeHtmlData(text).trimRight().trimLeft(),
+      style: Constants.header5,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -515,8 +523,7 @@ class ViewObservationState extends State<ViewObservation> {
                                 SizedBox(
                                   height: 8,
                                 ),
-                                
-                                Row(children:[
+                                Row(children: [
                                   widget.montCount != null
                                       ? Text(
                                           'Montessori: ' +
@@ -547,14 +554,16 @@ class ViewObservationState extends State<ViewObservation> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                 if (childrensFetched)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(
-                                    'Children',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                if (childrensFetched)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    child: Text(
+                                      'Children',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
                                 if (childrensFetched)
                                   Wrap(
                                       spacing:
@@ -610,13 +619,15 @@ class ViewObservationState extends State<ViewObservation> {
                                   height: 10,
                                 ),
                                 if (isSelectedRoomFetched)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(
-                                    'Rooms',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    child: Text(
+                                      'Rooms',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
                                 if (isSelectedRoomFetched)
                                   Wrap(
                                       spacing:
@@ -657,14 +668,10 @@ class ViewObservationState extends State<ViewObservation> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  height: 5,
                                 ),
                                 (_observation?.notes != null)
-                                    ? tagRemove(
-                                        _observation?.notes ?? '',
-                                        'title',
-                                        displaydata1['observation']['centerid'],
-                                        context)
+                                    ? removeHtmlTitle(_observation?.notes ?? '')
                                     : SizedBox(),
                                 SizedBox(
                                   height: 10,
@@ -674,14 +681,11 @@ class ViewObservationState extends State<ViewObservation> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  height: 5,
                                 ),
                                 (_observation?.reflection != null)
-                                    ? tagRemove(
-                                        _observation?.reflection ?? '',
-                                        'title',
-                                        displaydata1['observation']['centerid'],
-                                        context)
+                                    ? removeHtmlTitle(
+                                        _observation?.reflection ?? '')
                                     : SizedBox(),
                                 SizedBox(
                                   height: 10,
@@ -694,12 +698,13 @@ class ViewObservationState extends State<ViewObservation> {
                                   height: 5,
                                 ),
                                 (_observation?.childVoice != null)
-                                    ? tagRemove(
+                                    ? removeHtmlTitle(
                                         _observation?.childVoice ?? '',
-                                        'title',
-                                        displaydata1['observation']['centerid'],
-                                        context)
+                                      )
                                     : SizedBox(),
+                                 SizedBox(
+                                  height: 10,
+                                ),
                                 Text(
                                   'Future Plan',
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -708,17 +713,50 @@ class ViewObservationState extends State<ViewObservation> {
                                   height: 5,
                                 ),
                                 (_observation?.futurePlan != null)
-                                    ? tagRemove(
-                                        _observation?.futurePlan ?? '',
-                                        'title',
-                                        displaydata1['observation']['centerid'],
-                                        context)
+                                    ? removeHtmlTitle(
+                                        _observation?.futurePlan ?? '')
                                     : SizedBox(),
                               ],
                             ),
                           SizedBox(
-                            height: 8,
+                            height: 20,
                           ),
+                          Text(
+                            'Media',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics:
+                                NeverScrollableScrollPhysics(), // prevent internal scrolling
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, // 3 columns
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 1, // adjust size ratio
+                            ),
+                            itemCount: displaydata1['Media']?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      Constants.ImageBaseUrl +
+                                          displaydata1['Media'][index]
+                                              ['mediaUrl'],
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+
+                          SizedBox(height: 40),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.blueAccent),

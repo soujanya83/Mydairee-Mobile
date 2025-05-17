@@ -243,8 +243,8 @@ class _AddAccidentsState extends State<AddAccidents> {
 
           adetail?.text = accInfo['action_taken'] ?? '';
           _aEmergency = accInfo['emrg_serv_attend'] ?? 'Yes';
-          ayesdetails?.text = accInfo['med_attention'] ?? '';
-          _aAttention = accInfo['med_attention_details'] ?? 'Yes';
+          _aAttention = accInfo['med_attention'] ?? 'Yes';
+          ayesdetails?.text = accInfo['med_attention_details'] ?? '';
 
           afuture1?.text = accInfo['prevention_step_1'] ?? '';
           afuture2?.text = accInfo['prevention_step_2'] ?? '';
@@ -1922,7 +1922,7 @@ class _AddAccidentsState extends State<AddAccidents> {
                         onChanged: (String? value) {
                           if (value == null) return;
                           setState(() {
-                            _aAttention = value!;
+                            _aAttention = value;
                           });
                         },
                       ),
@@ -2955,7 +2955,8 @@ class _AddAccidentsState extends State<AddAccidents> {
                       Spacer(),
                       GestureDetector(
                           onTap: () async {
-                            nDate2 = await _selectDate(context, nDate2!);
+                            nDate2 = await _selectDate(
+                                context, nDate2 ?? DateTime.now());
                             setState(() {});
                           },
                           child: Icon(
@@ -4062,6 +4063,8 @@ class _AddAccidentsState extends State<AddAccidents> {
                             "witness_name": witnessname?.text.toString(),
                             "witness_date": IDatefinal,
                             "witness_sign": incident_sig_base,
+                            "nominated_supervisor_name": nSupervisorName?.text??'',
+                            "nominated_supervisor_sign": supervisor_sig_bases,
                             "gen_actyvt": cactivity?.text.toString(),
                             "cause": ccause?.text.toString(),
                             "illness_symptoms": ccsurrondings?.text.toString(),
@@ -4125,11 +4128,116 @@ class _AddAccidentsState extends State<AddAccidents> {
                             "enor_date": nDate2final,
                             "enor_time": nTime2,
                             "Regulatoryauthority": eAuthority?.text.toString(),
+                            "ack_parent_name": paName?.text ?? '',
+                            "ack_date:": paDatefinal,
+                            "ack_time:": paTime,
                             "enra_date": eDate1final,
                             "enra_time": eTime1,
                             "add_notes": aNotes?.text.toString(),
                             "userid": MyApp.LOGIN_ID_VALUE,
                           };
+
+                          objToSend.forEach((key, value) {
+                            print('$key: ${value.runtimeType}');
+                          });
+                          print(
+                              'hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
+                          debugPrint(
+                              {
+                                "centerid": widget.centerid,
+                                "roomid": widget.roomid,
+                                "person_name": name?.text.toString(),
+                                "person_role": positionRole?.text.toString(),
+                                "date": recorddatefinal,
+                                "time": recordtimefinal,
+                                "person_sign": "person_sig_base",
+                                "childid": _allChildrens[currentIndex].id,
+                                "child_name": _allChildrens[currentIndex].name,
+                                "child_dob": childDobfinal,
+                                "child_age": cAge?.text.toString(),
+                                "gender": _gender,
+                                "incident_date": incidentdatefinal,
+                                "incident_time": incidenttimefinal,
+                                "incident_location": cloc?.text.toString(),
+                                "witness_name": witnessname?.text.toString(),
+                                "witness_date": IDatefinal,
+                                "witness_sign": " incident_sig_base",
+                                "gen_actyvt": cactivity?.text.toString(),
+                                "cause": ccause?.text.toString(),
+                                "illness_symptoms":
+                                    ccsurrondings?.text.toString(),
+                                "missing_unaccounted":
+                                    ccunaccount?.text.toString(),
+                                "taken_removed": cclocked?.text.toString(),
+                                // "injury_image": addmarkfinal,
+                                "abrasion": abrasion == false ? 0 : 1,
+                                "electric_shock": electic == false ? 0 : 1,
+                                "allergic_reaction": allergy == false ? 0 : 1,
+                                "high_temperature": high == false ? 0 : 1,
+                                "amputation": amputation == false ? 0 : 1,
+                                "infectious_disease":
+                                    infectious == false ? 0 : 1,
+                                "anaphylaxis": anaphylaxis == false ? 0 : 1,
+                                "ingestion": ingestion == false ? 0 : 1,
+                                "asthma": asthama == false ? 0 : 1,
+                                "internal_injury": internal == false ? 0 : 1,
+                                "bite_wound": bite == false ? 0 : 1,
+                                "poisoning": poisoning == false ? 0 : 1,
+                                "broken_bone": broken == false ? 0 : 1,
+                                "rash": rash == false ? 0 : 1,
+                                "burn": burn == false ? 0 : 1,
+                                "respiratory": respiratory == false ? 0 : 1,
+                                "choking": choking == false ? 0 : 1,
+                                "seizure": seizure == false ? 0 : 1,
+                                "concussion": concussion == false ? 0 : 1,
+                                "sprain": sprain == false ? 0 : 1,
+                                "crush": crush == false ? 0 : 1,
+                                "stabbing": stabbing == false ? 0 : 1,
+                                "cut": cut == false ? 0 : 1,
+                                "tooth": tooth == false ? 0 : 1,
+                                "drowning": drowning == false ? 0 : 1,
+                                "venomous_bite": venomous == false ? 0 : 1,
+                                "eye_injury": eye == false ? 0 : 1,
+                                "other": other == false ? 0 : 1,
+                                "remarks": "other remarks",
+                                "action_taken": adetail?.text.toString(),
+                                "emrg_serv_attend":
+                                    _aEmergency == "Yes" ? 1 : 0,
+                                "med_attention": _aAttention == "Yes" ? 1 : 0,
+                                "med_attention_details":
+                                    ayesdetails?.text.toString(),
+                                "prevention_step_1": afuture1?.text.toString(),
+                                "prevention_step_2": afuture2?.text.toString(),
+                                "prevention_step_3": afuture3?.text.toString(),
+                                "parent1_name": gName1?.text.toString(),
+                                "contact1_method": gContact1?.text.toString(),
+                                "contact1_date": gDate1final,
+                                "contact1_time": gTinme1final,
+                                "contact1_made": gContacted1 == false ? 0 : 1,
+                                "contact1_msg": gMsg1 == false ? 0 : 1,
+                                "parent2_name": gName2?.text.toString(),
+                                "contact2_method": gContact2?.text.toString(),
+                                "contact2_date": gDate2final,
+                                "contact2_time": gTinme2final,
+                                "contact2_made": gContacted2 == false ? 0 : 1,
+                                "contact2_msg": gMsg2 == false ? 0 : 1,
+                                "responsible_person_name":
+                                    nName?.text.toString(),
+                                "responsible_person_sign": "incharge_sig_base",
+                                "rp_internal_notif_date": nDate1final,
+                                "rp_internal_notif_time": nTime1,
+                                "otheragency": eAgency?.text.toString(),
+                                "enor_date": nDate2final,
+                                "enor_time": nTime2,
+                                "Regulatoryauthority":
+                                    eAuthority?.text.toString(),
+                                "enra_date": eDate1final,
+                                "enra_time": eTime1,
+                                "add_notes": aNotes?.text.toString(),
+                                "userid": MyApp.LOGIN_ID_VALUE,
+                              }.toString(),
+                              wrapWidth: 1024);
+                          // return;
                           if (widget.type == 'edit') {
                             objToSend.addAll({'id': widget.accid});
                             // _toSend =

@@ -226,8 +226,11 @@ class _CenterSettingsState extends State<CenterSettings> {
                               child: Text(_allCenters[i].centerName,
                                   style: Constants.cardHeadingStyle)),
                           SizedBox(
-                            width:MediaQuery.of(context).size.width*.5,
-                            child: Text(_allCenters[i].adressStreet,overflow: TextOverflow.ellipsis,)),
+                              width: MediaQuery.of(context).size.width * .5,
+                              child: Text(
+                                _allCenters[i].adressStreet,
+                                overflow: TextOverflow.ellipsis,
+                              )),
                           Text(_allCenters[i].addressCity)
                         ],
                       )

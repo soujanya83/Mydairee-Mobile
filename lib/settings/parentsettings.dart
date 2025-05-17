@@ -56,7 +56,6 @@ class _ParentSettingsState extends State<ParentSettings> {
     } else {
       MyApp.Show401Dialog(context);
     }
-
     _fetchData();
   }
 

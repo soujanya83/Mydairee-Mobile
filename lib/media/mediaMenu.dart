@@ -305,46 +305,72 @@ class _MediaMenuState extends State<MediaMenu> {
                   height: 15,
                 ),
                 if (files.length > 0)
-                  Card(
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: size.width,
+                  Align(
+                    alignment: Alignment.center,
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
                             Wrap(
-                                spacing: 8.0, // gap between adjacent chips
-                                runSpacing: 4.0, //
-                                children: List<Widget>.generate(files.length,
-                                    (int index) {
-                                  String mimeStr =
-                                      lookupMimeType(files[index].path) ?? '';
-                                  var fileType = mimeStr.split('/');
-                                  if (fileType[0].toString() == 'image') {
-                                    return Stack(
+                              spacing: 12.0,
+                              runSpacing: 12.0,
+                              children: List<Widget>.generate(files.length,
+                                  (int index) {
+                                String mimeStr =
+                                    lookupMimeType(files[index].path) ?? '';
+                                var fileType = mimeStr.split('/');
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Stack(
                                       children: [
-                                        Container(
+                                        if (fileType[0].toString() == 'image')
+                                          Container(
                                             width: 100,
                                             height: 100,
-                                            decoration: new BoxDecoration(
-                                              //  borderRadius: BorderRadius.circular(15.0),
-                                              shape: BoxShape.rectangle,
-                                              image: new DecorationImage(
-                                                image:
-                                                    new FileImage(files[index]),
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: FileImage(files[index]),
                                                 fit: BoxFit.cover,
                                               ),
-                                            )),
+                                            ),
+                                          )
+                                        else
+                                          VideoItemLocal(
+                                            width: 100,
+                                            height: 100,
+                                            file: files[index],
+                                          ),
                                         Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
+                                          right: 0,
+                                          top: 0,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.red[400]!
+                                                  .withOpacity(0.2),
+                                            ),
+                                            child: IconButton(
+                                              icon: Icon(Icons.close, size: 18),
+                                              color: Colors.red[400],
+                                              padding: EdgeInsets.zero,
+                                              constraints: BoxConstraints(),
+                                              onPressed: () {
                                                 showDeleteDialog(context,
                                                     () async {
                                                   files.removeAt(index);
@@ -352,405 +378,233 @@ class _MediaMenuState extends State<MediaMenu> {
                                                   Navigator.pop(context);
                                                 });
                                               },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                AntDesign.eyeo,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text("Edit "),
-                                                        content:
-                                                            SingleChildScrollView(
-                                                          child: Container(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.6,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.7,
-                                                            child: ListView(
-                                                              children: [
-                                                                Container(
-                                                                    width:
-                                                                        size.height /
-                                                                            8,
-                                                                    height:
-                                                                        size.height /
-                                                                            8,
-                                                                    decoration:
-                                                                        new BoxDecoration(
-                                                                      //  borderRadius: BorderRadius.circular(15.0),
-                                                                      shape: BoxShape
-                                                                          .rectangle,
-                                                                      image:
-                                                                          new DecorationImage(
-                                                                        image: new FileImage(
-                                                                            files[index]),
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    )),
-                                                                SizedBox(
-                                                                  height: 8,
-                                                                ),
-                                                                Text(
-                                                                    'Children'),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                MultiSelectDialogField(
-                                                                  items: _allChildrens
-                                                                      .map((e) =>
-                                                                          MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                      .toList(),
-                                                                  initialValue:
-                                                                      _editChildren[
-                                                                          index],
-                                                                  listType:
-                                                                      MultiSelectListType
-                                                                          .CHIP,
-                                                                  onConfirm:
-                                                                      (values) {
-                                                                    _editChildren[
-                                                                            index] =
-                                                                        values;
-                                                                  },
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 8,
-                                                                ),
-                                                                Text(
-                                                                    'Educators'),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                MultiSelectDialogField(
-                                                                  items: _allEductarors
-                                                                      .map((e) =>
-                                                                          MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                      .toList(),
-                                                                  initialValue:
-                                                                      _editEducators[
-                                                                          index],
-                                                                  listType:
-                                                                      MultiSelectListType
-                                                                          .CHIP,
-                                                                  onConfirm:
-                                                                      (values) {
-                                                                    _editEducators[
-                                                                            index] =
-                                                                        values;
-                                                                  },
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 8,
-                                                                ),
-                                                                Text('Caption'),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                Container(
-                                                                  height: 30,
-                                                                  child: TextField(
-                                                                      maxLines: 1,
-                                                                      controller: captions[index],
-                                                                      decoration: new InputDecoration(
-                                                                        enabledBorder:
-                                                                            const OutlineInputBorder(
-                                                                          borderSide: const BorderSide(
-                                                                              color: Colors.black26,
-                                                                              width: 0.0),
-                                                                        ),
-                                                                        border:
-                                                                            new OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              const BorderRadius.all(
-                                                                            const Radius.circular(4),
-                                                                          ),
-                                                                        ),
-                                                                      )),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: Text('ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  } else {
-                                    return Stack(
-                                      children: [
-                                        VideoItemLocal(
-                                          width: 100,
-                                          height: 100,
-                                          file: files[index],
+                                            ),
+                                          ),
                                         ),
                                         Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(Icons.clear),
-                                              onTap: () {
-                                                showDeleteDialog(context, () {
-                                                  files.removeAt(index);
-                                                  setState(() {});
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                AntDesign.eyeo,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
+                                          right: 0,
+                                          top: 28,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.blue[600]!
+                                                  .withOpacity(0.2),
+                                            ),
+                                            child: IconButton(
+                                              icon:
+                                                  Icon(AntDesign.eyeo, size: 18),
+                                              color: Colors.blue[600],
+                                              padding: EdgeInsets.zero,
+                                              constraints: BoxConstraints(),
+                                              onPressed: () {
                                                 showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text("Edit "),
-                                                        content:
-                                                            SingleChildScrollView(
-                                                          child: Container(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.6,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.7,
-                                                            child: ListView(
-                                                              children: [
-                                                                Container(
-                                                                    width:
-                                                                        size.height /
-                                                                            8,
-                                                                    height:
-                                                                        size.height /
-                                                                            8,
-                                                                    decoration:
-                                                                        new BoxDecoration(
-                                                                      //  borderRadius: BorderRadius.circular(15.0),
-                                                                      shape: BoxShape
-                                                                          .rectangle,
-                                                                      image:
-                                                                          new DecorationImage(
-                                                                        image: new FileImage(
-                                                                            files[index]),
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    )),
-                                                                SizedBox(
-                                                                  height: 8,
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text("Edit"),
+                                                      content:
+                                                          SingleChildScrollView(
+                                                        child: Container(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.6,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.7,
+                                                          child:
+                                                              ListView(children: [
+                                                            Container(
+                                                              width:
+                                                                  size.height / 8,
+                                                              height:
+                                                                  size.height / 8,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: FileImage(
+                                                                      files[
+                                                                          index]),
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
-                                                                Text(
-                                                                    'Children'),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                MultiSelectDialogField(
-                                                                  items: _allChildrens
-                                                                      .map((e) =>
-                                                                          MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                      .toList(),
-                                                                  initialValue:
-                                                                      _editChildren[
-                                                                          index],
-                                                                  listType:
-                                                                      MultiSelectListType
-                                                                          .CHIP,
-                                                                  onConfirm:
-                                                                      (values) {
-                                                                    _editChildren[
-                                                                            index] =
-                                                                        values;
-                                                                  },
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 8,
-                                                                ),
-                                                                Text(
-                                                                    'Educators'),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                MultiSelectDialogField(
-                                                                  items: _allEductarors
-                                                                      .map((e) =>
-                                                                          MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                      .toList(),
-                                                                  initialValue:
-                                                                      _editEducators[
-                                                                          index],
-                                                                  listType:
-                                                                      MultiSelectListType
-                                                                          .CHIP,
-                                                                  onConfirm:
-                                                                      (values) {
-                                                                    _editEducators[
-                                                                            index] =
-                                                                        values;
-                                                                  },
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 8,
-                                                                ),
-                                                                Text('Caption'),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                Container(
-                                                                  height: 30,
-                                                                  child: TextField(
-                                                                      maxLines: 1,
-                                                                      controller: captions[index],
-                                                                      decoration: new InputDecoration(
-                                                                        enabledBorder:
-                                                                            const OutlineInputBorder(
-                                                                          borderSide: const BorderSide(
-                                                                              color: Colors.black26,
-                                                                              width: 0.0),
-                                                                        ),
-                                                                        border:
-                                                                            new OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              const BorderRadius.all(
-                                                                            const Radius.circular(4),
-                                                                          ),
-                                                                        ),
-                                                                      )),
-                                                                ),
-                                                              ],
+                                                              ),
                                                             ),
-                                                          ),
+                                                            SizedBox(height: 8),
+                                                            Text('Children'),
+                                                            SizedBox(height: 3),
+                                                            MultiSelectDialogField(
+                                                              items: _allChildrens
+                                                                  .map((e) =>
+                                                                      MultiSelectItem(
+                                                                          e,
+                                                                          e.name))
+                                                                  .toList(),
+                                                              initialValue:
+                                                                  _editChildren[
+                                                                      index],
+                                                              listType:
+                                                                  MultiSelectListType
+                                                                      .CHIP,
+                                                              onConfirm:
+                                                                  (values) {
+                                                                _editChildren[
+                                                                        index] =
+                                                                    values;
+                                                              },
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Educators'),
+                                                            SizedBox(height: 3),
+                                                            MultiSelectDialogField(
+                                                              items: _allEductarors
+                                                                  .map((e) =>
+                                                                      MultiSelectItem(
+                                                                          e,
+                                                                          e.name))
+                                                                  .toList(),
+                                                              initialValue:
+                                                                  _editEducators[
+                                                                      index],
+                                                              listType:
+                                                                  MultiSelectListType
+                                                                      .CHIP,
+                                                              onConfirm:
+                                                                  (values) {
+                                                                _editEducators[
+                                                                        index] =
+                                                                    values;
+                                                              },
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Caption'),
+                                                            SizedBox(height: 3),
+                                                            Container(
+                                                              height: 30,
+                                                              child: TextField(
+                                                                maxLines: 1,
+                                                                controller:
+                                                                    captions[
+                                                                        index],
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors
+                                                                            .black26,
+                                                                        width:
+                                                                            0.0),
+                                                                  ),
+                                                                  border:
+                                                                      OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .all(
+                                                                      Radius
+                                                                          .circular(
+                                                                              4),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ]),
                                                         ),
-                                                        actions: <Widget>[
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: Text('ok'),
-                                                          )
-                                                        ],
-                                                      );
-                                                    });
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
                                               },
-                                            ))
+                                            ),
+                                          ),
+                                        ),
                                       ],
-                                    );
-                                  }
-                                })),
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                            SizedBox(height: 20),
                             ElevatedButton(
-                                onPressed: () async {
-                                  var _toSend =
-                                      Constants.BASE_URL + 'Media/uploadFiles/';
-
-                                  Map<String, dynamic> postData = {};
-                                  for (int i = 0; i < files.length; i++) {
-                                    List childTags = [];
-                                    List eduTags = [];
-                                    for (int j = 0;
-                                        j < _editChildren[i].length;
-                                        j++) {
-                                      childTags.add(_editChildren[i][j].id);
-                                    }
-                                    for (int k = 0;
-                                        k < _editEducators[i].length;
-                                        k++) {
-                                      eduTags.add(_editEducators[i][k].id);
-                                    }
-                                    postData["childTags" + i.toString()] =
-                                        jsonEncode(childTags);
-                                    postData["eduTags" + i.toString()] =
-                                        jsonEncode(eduTags);
-                                    postData['caption' + i.toString()] =
-                                        captions[i].text;
-                                    postData["media" + i.toString()] =
-                                        await MultipartFile.fromFile(
-                                            files[i].path,
-                                            filename: basename(files[i].path));
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () async {
+                                var _toSend =
+                                    Constants.BASE_URL + 'Media/uploadFiles/';
+                                Map<String, dynamic> postData = {};
+                                for (int i = 0; i < files.length; i++) {
+                                  List childTags = [];
+                                  List eduTags = [];
+                                  for (int j = 0;
+                                      j < _editChildren[i].length;
+                                      j++) {
+                                    childTags.add(_editChildren[i][j].id);
                                   }
-                                  postData['userid'] = MyApp.LOGIN_ID_VALUE;
-                                  postData['centerid'] =
-                                      centers[currentIndex].id;
-                                  print(postData);
-
-                                  FormData formData =
-                                      FormData.fromMap(postData);
-
-                                  print(formData.fields.toString());
-                                  Dio dio = new Dio();
-                                  await MyApp.getDeviceIdentity()
-                                      .then((value) => print(value));
-                                  print(MyApp.AUTH_TOKEN_VALUE);
-                                  Response? response = await dio
-                                      .post(_toSend,
-                                          data: formData,
-                                          options: Options(headers: {
-                                            'X-DEVICE-ID':
-                                                await MyApp.getDeviceIdentity(),
-                                            'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                                          }))
-                                      .then((value) {
-                                    print('happ' + value.toString());
-                                    var v = jsonDecode(value.toString());
-
-                                    if (v['Status'] == 'SUCCESS') {
-                                      files = [];
-                                      menuMedia = [];
-                                      _allChildrens = [];
-                                      _editEducators = [];
-                                      _editChildren = [];
-                                      captions = [];
-                                      _fetchData();
-                                    } else {
-                                      MyApp.ShowToast("error", context);
-                                    }
-                                  }).catchError((error) => print(error));
-                                },
-                                child: Text("Upload"))
+                                  for (int k = 0;
+                                      k < _editEducators[i].length;
+                                      k++) {
+                                    eduTags.add(_editEducators[i][k].id);
+                                  }
+                                  postData["childTags" + i.toString()] =
+                                      jsonEncode(childTags);
+                                  postData["eduTags" + i.toString()] =
+                                      jsonEncode(eduTags);
+                                  postData['caption' + i.toString()] =
+                                      captions[i].text;
+                                  postData["media" + i.toString()] =
+                                      await MultipartFile.fromFile(files[i].path,
+                                          filename: basename(files[i].path));
+                                }
+                                postData['userid'] = MyApp.LOGIN_ID_VALUE;
+                                postData['centerid'] = centers[currentIndex].id;
+                    
+                                FormData formData = FormData.fromMap(postData);
+                                Dio dio = new Dio();
+                                Response? response = await dio
+                                    .post(_toSend,
+                                        data: formData,
+                                        options: Options(headers: {
+                                          'X-DEVICE-ID':
+                                              await MyApp.getDeviceIdentity(),
+                                          'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                                        }))
+                                    .then((value) {
+                                  var v = jsonDecode(value.toString());
+                                  if (v['Status'] == 'SUCCESS') {
+                                    files = [];
+                                    menuMedia = [];
+                                    _allChildrens = [];
+                                    _editEducators = [];
+                                    _editChildren = [];
+                                    captions = [];
+                                    _fetchData();
+                                  } else {
+                                    MyApp.ShowToast("error", context);
+                                  }
+                                }).catchError((error) => print(error));
+                              },
+                              child: Text("Upload"),
+                            ),
                           ],
                         ),
                       ),
@@ -782,8 +636,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                     return Stack(
                                       children: [
                                         Container(
-                                            width: size.height / 8,
-                                            height: size.height / 8,
+                                            width: size.width*.27,
+                                            height: size.width*.27,
                                             decoration: new BoxDecoration(
                                               //  borderRadius: BorderRadius.circular(15.0),
                                               shape: BoxShape.rectangle,
@@ -1663,7 +1517,7 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                         .width *
                                                                     0.7,
                                                                 child: ListView(
-                                                                  children:[
+                                                                  children: [
                                                                     Container(
                                                                         width:
                                                                             size.height /

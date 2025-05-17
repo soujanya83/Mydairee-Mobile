@@ -503,8 +503,11 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                           decoration:
                                                               InputDecoration(
                                                                   contentPadding:
-                                                                      EdgeInsets
-                                                                          .only(left: 10,bottom: 10),
+                                                                      EdgeInsets.only(
+                                                                          left:
+                                                                              10,
+                                                                          bottom:
+                                                                              10),
                                                                   enabledBorder:
                                                                       const OutlineInputBorder(
                                                                     borderSide: const BorderSide(
@@ -608,9 +611,11 @@ class _ViewAssesmentState extends State<ViewAssesment>
                                                           qaController[index],
                                                       decoration:
                                                           InputDecoration(
-                                                             contentPadding:
-                                                                      EdgeInsets
-                                                                          .only(left: 10,bottom: 10),
+                                                              contentPadding:
+                                                                  EdgeInsets.only(
+                                                                      left: 10,
+                                                                      bottom:
+                                                                          10),
                                                               enabledBorder:
                                                                   const OutlineInputBorder(
                                                                 borderSide:
@@ -775,6 +780,7 @@ class _ViewAssesmentState extends State<ViewAssesment>
                         print(response.body);
                         if (response.statusCode == 200) {
                           MyApp.ShowToast("updated", context);
+                          Navigator.pop(context);
                         } else if (response.statusCode == 401) {
                           MyApp.Show401Dialog(context);
                         }

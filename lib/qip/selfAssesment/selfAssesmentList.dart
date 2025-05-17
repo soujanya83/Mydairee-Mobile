@@ -106,6 +106,11 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                         await qipAPIHandler
                             .addSelfAsses()
                             .then((value) => _fetchData());
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ViewAssesment(assesments[0])));
                       },
                       child: Container(
                           decoration: BoxDecoration(
@@ -206,106 +211,127 @@ class _SelfAssesmentState extends State<SelfAssesment> {
                                             ViewAssesment(assesments[index])));
                               },
                               child: Card(
-  elevation: 2,
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(15),
-  ),
-  shadowColor: Colors.blueGrey.withOpacity(0.1),
-  margin: EdgeInsets.symmetric(vertical: 8),
-  child: Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(15),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withOpacity(0.95),
-          Colors.grey[50]!.withOpacity(0.95),
-        ],
-      ),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              assesments[index].name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.blueGrey[800],
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          SizedBox(width: 12),
-          if (assesments[index].educators.length > 0)
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.grey.withOpacity(0.2),
-                width: 1.5,
-              ),
-            ),
-            padding: EdgeInsets.all(4),
-            child: Row(
-              children: [
-                if (assesments[index].educators.length > 0)
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 2,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundImage: NetworkImage(
-                        assesments[index].educators[0]['imageUrl'] != ""
-                            ? Constants.ImageBaseUrl + 
-                                assesments[index].educators[0]['imageUrl']
-                            : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png',
-                      ),
-                      backgroundColor: Colors.grey[200],
-                    ),
-                  ),
-                if (assesments[index].educators.length > 1) ...[
-                  SizedBox(width: 6),
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 2,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Colors.blueGrey[100],
-                      child: Text(
-                        "+${assesments[index].educators.length - 1}",
-                        style: TextStyle(
-                          color: Colors.blueGrey[800],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                shadowColor: Colors.blueGrey.withOpacity(0.1),
+                                margin: EdgeInsets.symmetric(vertical: 8),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colors.white.withOpacity(0.95),
+                                        Colors.grey[50]!.withOpacity(0.95),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            assesments[index].name,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.blueGrey[800],
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        SizedBox(width: 12),
+                                        if (assesments[index].educators.length >
+                                            0)
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.grey
+                                                    .withOpacity(0.2),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            padding: EdgeInsets.all(4),
+                                            child: Row(
+                                              children: [
+                                                if (assesments[index]
+                                                        .educators
+                                                        .length >
+                                                    0)
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: Colors.white,
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                    child: CircleAvatar(
+                                                      radius: 16,
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                        assesments[index].educators[
+                                                                        0][
+                                                                    'imageUrl'] !=
+                                                                ""
+                                                            ? Constants
+                                                                    .ImageBaseUrl +
+                                                                assesments[index]
+                                                                        .educators[0]
+                                                                    ['imageUrl']
+                                                            : 'https://www.alchinlong.com/wp-content/uploads/2015/09/sample-profile.png',
+                                                      ),
+                                                      backgroundColor:
+                                                          Colors.grey[200],
+                                                    ),
+                                                  ),
+                                                if (assesments[index]
+                                                        .educators
+                                                        .length >
+                                                    1) ...[
+                                                  SizedBox(width: 6),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: Colors.white,
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                    child: CircleAvatar(
+                                                      radius: 16,
+                                                      backgroundColor:
+                                                          Colors.blueGrey[100],
+                                                      child: Text(
+                                                        "+${assesments[index].educators.length - 1}",
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .blueGrey[800],
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             );
                           })
             ],

@@ -48,10 +48,10 @@ class _RoomsListState extends State<RoomsList> {
   }
 
   Future<void> _fetchData() async {
-    if(this.mounted)
-    setState(() {
-      roomsFetched = false;
-    });
+    if (this.mounted)
+      setState(() {
+        roomsFetched = false;
+      });
     RoomAPIHandler handler = RoomAPIHandler(
         {"userid": MyApp.LOGIN_ID_VALUE, "centerid": centers[currentIndex].id});
     var data = await handler.getList();
@@ -168,71 +168,57 @@ class _RoomsListState extends State<RoomsList> {
     _fetchData();
   }
 
-  void showDeleteConfirmationDialog(
-    BuildContext context,
-  ) {
+  void showDeleteConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text(
-            "Are you sure you want to delete?",
-            style: TextStyle(color: Colors.black),
-          ),
-          actions: <Widget>[
+          title: const Text("Delete Items?"),
+          content: const Text("This action cannot be undone."),
+          actions: [
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.grey[700],
-              ),
               child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.pop(context),
             ),
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.red,
               ),
-              child: const Text("OK"),
+              child: const Text("Delete"),
               onPressed: () async {
                 try {
-                  var _toSend = Constants.BASE_URL + 'room/deleteRoom';
-                  var objToSend = {
-                    "userid": MyApp.LOGIN_ID_VALUE,
-                    "rooms": statList,
-                    "centerid": centers[currentIndex].id
-                  };
-                  print(jsonEncode(objToSend));
-                  final response = await http.post(Uri.parse(_toSend),
-                      body: jsonEncode(objToSend),
-                      headers: {
-                        'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-                        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
-                      });
-                  print(response.statusCode);
-                  print(response.body);
+                  final response = await http.post(
+                    Uri.parse("${Constants.BASE_URL}room/deleteRoom"),
+                    body: jsonEncode({
+                      "userid": MyApp.LOGIN_ID_VALUE,
+                      "rooms": statList,
+                      "centerid": centers[currentIndex].id
+                    }),
+                    headers: {
+                      'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
+                      'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
+                    },
+                  );
+
                   if (response.statusCode == 200) {
                     setState(() {
                       statList.clear();
                       _rooms = [];
                       _fetchData();
                     });
-                    MyApp.ShowToast("deleted", context);
+                    MyApp.ShowToast("Deleted successfully", context);
                   } else if (response.statusCode == 401) {
                     MyApp.ShowToast(
-                        jsonDecode(response.body)['Message'].toString(),
-                        context);
-                    // MyApp.Show401Dialog(context);
-                  } // call delete function
-                } catch (e, s) {
-                  print('+++++++++++++++++++');
-                  print(e);
-                  print(s);
+                      jsonDecode(response.body)['Message'].toString(),
+                      context,
+                    );
+                  }
+                } catch (e) {
+                  debugPrint('Delete error: $e');
+                  MyApp.ShowToast("Deletion failed", context);
                 }
-                Navigator.of(context).pop();
+                if (mounted) Navigator.pop(context);
               },
             ),
           ],
@@ -297,16 +283,17 @@ class _RoomsListState extends State<RoomsList> {
                               ),
                               if (permissionAdd)
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async{
                                     if (_users != null && _users.length > 0) {
                                       print(_users);
-                                      Navigator.push(
+                                    await  Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => AddRoom(
                                                   centerid:
                                                       centers[currentIndex]
                                                           .id)));
+                                      _fetchData();
                                     }
                                   },
                                   child: Container(
@@ -503,17 +490,18 @@ class _RoomsListState extends State<RoomsList> {
                           ),
                           if (!roomsFetched && permission)
                             Container(
-                              height: MediaQuery.of(context).size.height * .7,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                      height: 40,
-                                      width: 40,
-                                      child: Center(
-                                          child: CircularProgressIndicator())),
-                                ],
-                              )),
+                                height: MediaQuery.of(context).size.height * .7,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        height: 40,
+                                        width: 40,
+                                        child: Center(
+                                            child:
+                                                CircularProgressIndicator())),
+                                  ],
+                                )),
                           if (!permission && roomsFetched)
                             Container(
                                 height:
@@ -533,7 +521,7 @@ class _RoomsListState extends State<RoomsList> {
                               height: _rooms.length != 0
                                   ? _rooms.length * 160.0
                                   : 0,
-                              child: ListView.builder(
+                              child: ListView.builder( 
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: _rooms.length,
                                   itemBuilder:
@@ -563,135 +551,137 @@ class _RoomsListState extends State<RoomsList> {
   }
 
   Widget roomCard(RoomsModel r, int index) {
-  Color _safeHexColor(String? color) {
-    try {
-      return HexColor(color ?? "#FFFFFF");
-    } catch (e) {
-      return HexColor("#FFFFFF"); // Default to white on error
+    Color _safeHexColor(String? color) {
+      try {
+        return HexColor(color ?? "#FFFFFF");
+      } catch (e) {
+        return HexColor("#FFFFFF"); // Default to white on error
+      }
     }
-  }
 
-  return Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 6,
-            offset: Offset(0, 3), // Bottom shadow
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                _safeHexColor(r.room.color),
-                Colors.white,
-              ],
-              stops: [0.02, 0.02],
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: Offset(0, 3), // Bottom shadow
             ),
-          ),
-          child: Column(
-            children: [
-              // Room Name and Icons
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RoomDetails(r.room.id)));
-                      },
-                      child: Text(
-                        r.room.name,
-                        style: Constants.cardHeadingStyle.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  _safeHexColor(r.room.color),
+                  Colors.white,
+                ],
+                stops: [0.02, 0.02],
+              ),
+            ),
+            child: Column(
+              children: [
+                // Room Name and Icons
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      RoomDetails(r.room.id)));
+                        },
+                        child: Text(
+                          r.room.name,
+                          style: Constants.cardHeadingStyle.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    Spacer(),
-                    if (permissionupdate)
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          if (_users != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EditRoom(
-                                          centerid: centers[currentIndex].id,
-                                          roomid: r.room.id,
-                                        )));
+                      Spacer(),
+                      if (permissionupdate)
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blue),
+                          onPressed: ()async {
+                            if (_users != null) {
+                             await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditRoom(
+                                            centerid: centers[currentIndex].id,
+                                            roomid: r.room.id,
+                                          )));
+
+                                  _fetchData();
+                            }
+                          },
+                        ),
+                      Checkbox(
+                        value: checkValues[index],
+                        onChanged: (val) {
+                          if (val == null) return;
+                          checkValues[index] = val;
+                          if (val == true) {
+                            statList.add(r.room.id);
+                          } else {
+                            statList.remove(r.room.id);
                           }
+                          setState(() {});
                         },
                       ),
-                    Checkbox(
-                      value: checkValues[index],
-                      onChanged: (val) {
-                        if (val == null) return;
-                        checkValues[index] = val;
-                        if (val == true) {
-                          statList.add(r.room.id);
-                        } else {
-                          statList.remove(r.room.id);
-                        }
-                        setState(() {});
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              // Child Count Row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  children: [
-                    Image.asset(Constants.KID_ICON),
-                    SizedBox(width: 8),
-                    Text(
-                      r.child.isNotEmpty ? r.child.length.toString() : '0',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 8),
-              // Lead Name Row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  children: [
-                    Image.asset(Constants.LEAD_ICON),
-                    SizedBox(width: 8),
-                    Text(
-                      r.room.userName ?? '',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Constants.kMain,
+                // Child Count Row
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Row(
+                    children: [
+                      Image.asset(Constants.KID_ICON),
+                      SizedBox(width: 8),
+                      Text(
+                        r.child.isNotEmpty ? r.child.length.toString() : '0',
+                        style: TextStyle(fontWeight: FontWeight.w500),
                       ),
-                    ),
-                    Text(' (Lead)', style: TextStyle(fontSize: 12)),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 15),
-            ],
+                SizedBox(height: 8),
+                // Lead Name Row
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Row(
+                    children: [
+                      Image.asset(Constants.LEAD_ICON),
+                      SizedBox(width: 8),
+                      Text(
+                        r.room.userName ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Constants.kMain,
+                        ),
+                      ),
+                      Text(' (Lead)', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

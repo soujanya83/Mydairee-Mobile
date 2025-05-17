@@ -752,8 +752,7 @@ class _EditRoomState extends State<EditRoom> {
                                   if (response.statusCode == 200) {
                                     MyApp.ShowToast("edited", context);
                                     print('created');
-                                    Navigator.of(context)
-                                        .popUntil((route) => route.isFirst);
+                                    Navigator.pop(context);
                                   } else if (response.statusCode == 401) {
                                     //  MyApp.Show401Dialog(context);
                                   }

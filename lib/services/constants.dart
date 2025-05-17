@@ -150,4 +150,5 @@ class Constants {
 
   static final Color greyColor = Colors.grey[300]!;
   static final Color kprogresscard = const Color(0xffC8DBE5);
+  static final Color errorColor =  Colors.red;
 }

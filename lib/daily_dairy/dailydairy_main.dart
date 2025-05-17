@@ -1496,12 +1496,12 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 'No Suncreen data')
                                                             : Builder(builder:
                                                                 (context) {
-                                                                try {
+                                                                try { 
                                                                   return Text(_allChildrens[
                                                                               selectedIndex]
                                                                           .sunscreen[0]
                                                                       [
-                                                                      'startdTime']);
+                                                                      'startTime']);
                                                                 } catch (e) {
                                                                     return Text('');
                                                                 }
@@ -3509,80 +3509,80 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                       : Container(),
                                                 ],
                                               ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Nappy'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                height: 40,
-                                                child: TextField(
-                                                    maxLines: 1,
-                                                    controller: nappy,
-                                                    decoration:
-                                                        new InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.only(
-                                                              bottom: 10,
-                                                              left: 10),
-                                                      enabledBorder:
-                                                          const OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black26,
-                                                                width: 0.0),
-                                                      ),
-                                                      border:
-                                                          new OutlineInputBorder(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                          const Radius.circular(
-                                                              4),
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Potty'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                height: 40,
-                                                child: TextField(
-                                                    maxLines: 1,
-                                                    controller: potty,
-                                                    decoration:
-                                                        new InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.only(
-                                                              bottom: 10,
-                                                              left: 10),
-                                                      enabledBorder:
-                                                          const OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black26,
-                                                                width: 0.0),
-                                                      ),
-                                                      border:
-                                                          new OutlineInputBorder(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                          const Radius.circular(
-                                                              4),
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
+                                              // SizedBox(
+                                              //   height: 15,
+                                              // ),
+                                              // Text('Nappy'),
+                                              // SizedBox(
+                                              //   height: 5,
+                                              // ),
+                                              // Container(
+                                              //   height: 40,
+                                              //   child: TextField(
+                                              //       maxLines: 1,
+                                              //       controller: nappy,
+                                              //       decoration:
+                                              //           new InputDecoration(
+                                              //         contentPadding:
+                                              //             EdgeInsets.only(
+                                              //                 bottom: 10,
+                                              //                 left: 10),
+                                              //         enabledBorder:
+                                              //             const OutlineInputBorder(
+                                              //           borderSide:
+                                              //               const BorderSide(
+                                              //                   color: Colors
+                                              //                       .black26,
+                                              //                   width: 0.0),
+                                              //         ),
+                                              //         border:
+                                              //             new OutlineInputBorder(
+                                              //           borderRadius:
+                                              //               const BorderRadius
+                                              //                   .all(
+                                              //             const Radius.circular(
+                                              //                 4),
+                                              //           ),
+                                              //         ),
+                                              //       )),
+                                              // ),
+                                              // SizedBox(
+                                              //   height: 15,
+                                              // ),
+                                              // Text('Potty'),
+                                              // SizedBox(
+                                              //   height: 5,
+                                              // ),
+                                              // Container(
+                                              //   height: 40,
+                                              //   child: TextField(
+                                              //       maxLines: 1,
+                                              //       controller: potty,
+                                              //       decoration:
+                                              //           new InputDecoration(
+                                              //         contentPadding:
+                                              //             EdgeInsets.only(
+                                              //                 bottom: 10,
+                                              //                 left: 10),
+                                              //         enabledBorder:
+                                              //             const OutlineInputBorder(
+                                              //           borderSide:
+                                              //               const BorderSide(
+                                              //                   color: Colors
+                                              //                       .black26,
+                                              //                   width: 0.0),
+                                              //         ),
+                                              //         border:
+                                              //             new OutlineInputBorder(
+                                              //           borderRadius:
+                                              //               const BorderRadius
+                                              //                   .all(
+                                              //             const Radius.circular(
+                                              //                 4),
+                                              //           ),
+                                              //         ),
+                                              //       )),
+                                              // ),
                                               SizedBox(
                                                 height: 15,
                                               ),
@@ -3620,43 +3620,43 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                       ),
                                                     )),
                                               ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text('Toilet'),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                height: 40,
-                                                child: TextField(
-                                                    maxLines: 1,
-                                                    controller: toilet,
-                                                    decoration:
-                                                        new InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.only(
-                                                              bottom: 10,
-                                                              left: 10),
-                                                      enabledBorder:
-                                                          const OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black26,
-                                                                width: 0.0),
-                                                      ),
-                                                      border:
-                                                          new OutlineInputBorder(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                          const Radius.circular(
-                                                              4),
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
+                                              // SizedBox(
+                                              //   height: 15,
+                                              // ),
+                                              // Text('Toilet'),
+                                              // SizedBox(
+                                              //   height: 5,
+                                              // ),
+                                              // Container(
+                                              //   height: 40,
+                                              //   child: TextField(
+                                              //       maxLines: 1,
+                                              //       controller: toilet,
+                                              //       decoration:
+                                              //           new InputDecoration(
+                                              //         contentPadding:
+                                              //             EdgeInsets.only(
+                                              //                 bottom: 10,
+                                              //                 left: 10),
+                                              //         enabledBorder:
+                                              //             const OutlineInputBorder(
+                                              //           borderSide:
+                                              //               const BorderSide(
+                                              //                   color: Colors
+                                              //                       .black26,
+                                              //                   width: 0.0),
+                                              //         ),
+                                              //         border:
+                                              //             new OutlineInputBorder(
+                                              //           borderRadius:
+                                              //               const BorderRadius
+                                              //                   .all(
+                                              //             const Radius.circular(
+                                              //                 4),
+                                              //           ),
+                                              //         ),
+                                              //       )),
+                                              // ),
                                               SizedBox(
                                                 height: 15,
                                               ),
@@ -3708,13 +3708,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                           "userid": MyApp
                                                               .LOGIN_ID_VALUE,
                                                           "startTime":
-                                                              hour + ":" + min,
-                                                          "nappy": nappy?.text
-                                                              .toString(),
-                                                          "potty": potty?.text
-                                                              .toString(),
-                                                          "toilet": toilet?.text
-                                                              .toString(),
+                                                             [ hour + ":" + min], 
                                                           "signature": signature
                                                               ?.text
                                                               .toString(),

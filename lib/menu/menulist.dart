@@ -1677,7 +1677,7 @@ class MenuRecipeCard extends StatelessWidget {
                       child: AutoSizeText(
                         recipeDetails['itemName'] ?? '',
                         minFontSize: 10,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,

@@ -215,259 +215,374 @@ class _PlansListState extends State<PlansList> {
                           itemCount: planList.length,
                           itemBuilder: (context, index) {
                             final plan = planList[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
+                            return PlanCard(
+                              plan: plan,
+                              onEdit: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddPlan(
+                                      'edit',
+                                      centers[currentIndex].id,
+                                      plan['id'],
+                                      null,
+                                      plan,
                                     ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 20,left: 10,right: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Month and Year
-                                      Text(
-                                        "${_getMonthName(plan['months'])} ${plan['years']}",
-                                        //  'Created By -' +   plan['creator_name'],
-                                        style: Constants.header4
-                                      ),
-                                      SizedBox(height: 10),
-
-                                      // Room Name
-                                      Row(
-                                        children: [
-                                          Icon(Icons.meeting_room_outlined,
-                                              size: 18, color: Colors.black),
-                                          SizedBox(width: 6),
-                                          Text(
-                                            plan['room_name'] ?? '',
-                                            style: Constants.header7,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 8),
-
-                                      // Created By
-                                      Row(
-                                        children: [
-                                          Icon(Icons.person_outline,
-                                              size: 18, color: Colors.black),
-                                          SizedBox(width: 6),
-                                          Text(
-                                            "Created by ${plan['creator_name'] ?? ''}",
-                                           style: Constants.header7,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 8),
-
-                                      // Inquiry Topic
-                                      if ((plan['inquiry_topic'] ?? '')
-                                          .isNotEmpty) ...[
-                                        Row(
-                                          children: [
-                                            Icon(Icons.lightbulb_outline,
-                                                size: 18, color: Colors.black),
-                                            SizedBox(width: 6),
-                                            Flexible(
-                                              child: Text(
-                                                "Inquiry Topic: ${plan['inquiry_topic']}",
-                                                style: Constants.header7
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 8),
-                                      ],
-
-                                      // Special Events
-                                      if ((plan['special_events'] ?? '')
-                                          .isNotEmpty) ...[
-                                        Row(
-                                          children: [
-                                            Icon(Icons.event_outlined,
-                                                size: 18, color: Colors.black),
-                                            SizedBox(width: 6),
-                                            Flexible(
-                                              child: Text(
-                                                "Special Events: ${plan['special_events']}",
-                                                  style: Constants.header7
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 8),
-                                      ],
-
-                                      Divider(
-                                          color: Colors.grey.shade300,
-                                          height: 30),
-
-                                      // Dates
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Created: ${_formatDate(plan['created_at'])}",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                          ),
-                                          Text(
-                                            "Updated: ${_formatDate(plan['updated_at'])}",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 12),
-                                      // Action Buttons
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [ 
-                                          if (MyApp.USER_TYPE_VALUE ==
-                                              'Superadmin')
-                                            IconButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AddPlan(
-                                                            'edit',
-                                                            centers[currentIndex]
-                                                                .id,
-                                                            plan['id'],
-                                                            null,
-                                                            plan),
-                                                  ),
-                                                ).then((value) {
-                                                  _fetchData();
-                                                });
-                                              },
-                                              icon: Icon(Icons.edit,
-                                                  color: Colors.black),
-                                            ),
-                                          // IconButton(
-                                          //   onPressed: () {
-                                          //     Navigator.push(
-                                          //       context,
-                                          //       MaterialPageRoute(
-                                          //         builder: (context) =>
-                                          //             ViewPlan(
-                                          //           centers[currentIndex].id,
-                                          //           plan['id'],
-                                          //         ),
-                                          //       ),
-                                          //     );
-                                          //   },
-                                          //   icon: Icon(Icons.visibility,
-                                          //       color: Colors.black),
-                                          // ),
-                                          if (MyApp.USER_TYPE_VALUE != 'Parent')
-                                            IconButton(
-                                              onPressed: () async {
-                                                return showDialog<void>(
-                                                  context: context,
-                                                  barrierDismissible:
-                                                      false, // User must tap button
-                                                  builder: (BuildContext
-                                                      dialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                          'Confirm Delete'),
-                                                      content: Text(
-                                                          'Are you sure you want to delete this program plan?'),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: Text('Cancel'),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    dialogContext)
-                                                                .pop(); // Dismiss dialog
-                                                          },
-                                                        ),
-                                                        TextButton(
-                                                          child: Text('Delete'),
-                                                          onPressed: () async {
-                                                            Navigator.of(
-                                                                    dialogContext)
-                                                                .pop(); // Close the dialog first
-
-                                                            Map<String, String>
-                                                                _objToSend = {
-                                                              "user_id": MyApp
-                                                                  .LOGIN_ID_VALUE,
-                                                              "program_id": plan[
-                                                                      'id']
-                                                                  .toString(),
-                                                            };
-
-                                                            ProgramPlanApiHandler
-                                                                programPlanApiHandler =
-                                                                ProgramPlanApiHandler(
-                                                                    _objToSend);
-
-                                                            var response =
-                                                                await programPlanApiHandler
-                                                                    .deletePlan();
-                                                            print(
-                                                                '========response================');
-                                                            print(response);
-
-                                                            if (response['Status'] == 'SUCCESS' ||
-                                                                response[
-                                                                        'Status'] ==
-                                                                    'Success' ||
-                                                                response[
-                                                                        'Status'] ==
-                                                                    true ||
-                                                                response[
-                                                                        'status'] ==
-                                                                    true ||
-                                                                response[
-                                                                        'status'] ==
-                                                                    'success') {
-                                                              MyApp.ShowToast(
-                                                                  'Program plan deleted successfully',
-                                                                  context);
-                                                              _fetchData();
-                                                            }
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              icon: Icon(Icons.delete,
-                                                  color: Colors.black),
-                                            ),
-                                        ],
-                                      ),
-                                    ],
                                   ),
-                                ),
-                              ),
+                                ).then((value) {
+                                  _fetchData(); // Refresh data after returning
+                                });
+                              },
+                              onDelete: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext dialogContext) {
+                                    return AlertDialog(
+                                      title: Text('Confirm Delete'),
+                                      content: Text(
+                                          'Are you sure you want to delete this program plan?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(dialogContext).pop();
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.of(dialogContext).pop();
+
+                                            Map<String, String> objToSend = {
+                                              "user_id": MyApp.LOGIN_ID_VALUE,
+                                              "program_id":
+                                                  plan['id'].toString(),
+                                            };
+
+                                            ProgramPlanApiHandler apiHandler =
+                                                ProgramPlanApiHandler(
+                                                    objToSend);
+                                            var response =
+                                                await apiHandler.deletePlan();
+
+                                            if (response['Status'] == 'SUCCESS' ||
+                                                response['Status'] ==
+                                                    'Success' ||
+                                                response['Status'] == true ||
+                                                response['status'] == true ||
+                                                response['status'] ==
+                                                    'success') {
+                                              MyApp.ShowToast(
+                                                  'Program plan deleted successfully',
+                                                  context);
+                                              _fetchData();
+                                            }
+                                          },
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              getMonthName: (value) =>
+                                  _getMonthName(value as String?),
+                              formatDate: (value) =>
+                                  _formatDate(value as String?),
+                              isSuperAdmin:
+                                  MyApp.USER_TYPE_VALUE == 'Superadmin',
+                              isParent: MyApp.USER_TYPE_VALUE == 'Parent',
                             );
                           },
                         );
                       })
                     ])))));
+  }
+}
+
+class PlanCard extends StatelessWidget {
+  final Map<String, dynamic> plan;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final String Function(dynamic) getMonthName;
+  final String Function(dynamic) formatDate;
+  final bool isSuperAdmin;
+  final bool isParent;
+
+  const PlanCard({
+    Key? key,
+    required this.plan,
+    required this.onEdit,
+    required this.onDelete,
+    required this.getMonthName,
+    required this.formatDate,
+    required this.isSuperAdmin,
+    required this.isParent,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: double.infinity,
+        ),
+        child: Material(
+          borderRadius: BorderRadius.circular(16),
+          elevation: 0,
+          color: isDarkMode ? Colors.grey[900] : Colors.white,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDarkMode ? Colors.grey[800]! : Colors.grey[100]!,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header Section
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "${getMonthName(plan['months'])} ${plan['years']}",
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: theme.primaryColor,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (isSuperAdmin || !isParent)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isSuperAdmin)
+                              _ActionButton(
+                                icon: Icons.edit_rounded,
+                                onPressed: onEdit,
+                                color: theme.primaryColor,
+                              ),
+                            if (!isParent) const SizedBox(width: 8),
+                            if (!isParent)
+                              _ActionButton(
+                                icon: Icons.delete_rounded,
+                                onPressed: onDelete,
+                                color: Colors.red[400]!,
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+
+                // Content Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _InfoRow(
+                        icon: Icons.meeting_room_rounded,
+                        text: plan['room_name']?.toString() ?? 'Not specified',
+                      ),
+                      const SizedBox(height: 12),
+                      _InfoRow(
+                        icon: Icons.person_rounded,
+                        text:
+                            "Created by ${plan['creator_name']?.toString() ?? 'Unknown'}",
+                      ),
+                      if ((plan['inquiry_topic']?.toString() ?? '')
+                          .isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        _InfoRow(
+                          icon: Icons.lightbulb_rounded,
+                          text: "Topic: ${plan['inquiry_topic']}",
+                        ),
+                      ],
+                      if ((plan['special_events']?.toString() ?? '')
+                          .isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        _InfoRow(
+                          icon: Icons.event_rounded,
+                          text: "Events: ${plan['special_events']}",
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Footer Section
+                const SizedBox(height: 16),
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _DateBadge(
+                          label: "Created",
+                          date: formatDate(plan['created_at']),
+                          isDarkMode: isDarkMode,
+                        ),
+                        const SizedBox(width: 12),
+                        _DateBadge(
+                          label: "Updated",
+                          date: formatDate(plan['updated_at']),
+                          isDarkMode: isDarkMode,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+  final Color color;
+
+  const _ActionButton({
+    required this.icon,
+    required this.onPressed,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child:Material(
+  color: Colors.transparent,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20),
+  ),
+  child: InkWell(
+    borderRadius: BorderRadius.circular(20),
+    onTap: onPressed,
+    splashColor: color.withOpacity(0.2),
+    highlightColor: color.withOpacity(0.1),
+    hoverColor: color.withOpacity(0.05),
+    child: Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: color.withOpacity(0.05),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Icon(
+        icon,
+        size: 22,
+        color: color,
+      ),
+    ),
+  ),
+)
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _InfoRow({
+    required this.icon,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: Theme.of(context).primaryColor.withOpacity(0.8),
+        ),
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withOpacity(0.8),
+                ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DateBadge extends StatelessWidget {
+  final String label;
+  final String date;
+  final bool isDarkMode;
+
+  const _DateBadge({
+    required this.label,
+    required this.date,
+    required this.isDarkMode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(
+        maxWidth: 150, // Prevents excessive widening
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        "$label: $date",
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.color
+                  ?.withOpacity(0.7),
+            ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
   }
 }
 

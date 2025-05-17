@@ -104,7 +104,7 @@ class DailyDairyAPIHandler {
 Future<dynamic> getAccidentsInfo() async {
     var getAccidentsInfoURL = _getAccidentsInfoURL;
     ServiceWithHeaderDataPost helper =
-        ServiceWithHeaderDataPost(getAccidentsInfoURL, this.data);
+        ServiceWithHeaderDataPost(getAccidentsInfoURL, this.data);  
     var d = await helper.data();
     return d;
   }

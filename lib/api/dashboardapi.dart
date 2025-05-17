@@ -21,9 +21,9 @@ Future<dynamic> getDashboardDetails() async {
   }
   
 
-Future<dynamic> getCalendarDetails() async {
+Future<dynamic> getCalendarDetails({DateTime? date}) async {
   
-    var now = new DateTime.now();
+    var now =date ?? new DateTime.now();
     var getDetailsURL = _getCalendarDetailsURL+MyApp.LOGIN_ID_VALUE+'/'+now.month.toString()+'/'+now.year.toString();
     ServiceWithHeader helper = ServiceWithHeader(getDetailsURL);
     var d = await helper.data();

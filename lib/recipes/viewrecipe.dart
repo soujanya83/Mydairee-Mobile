@@ -59,6 +59,21 @@ class _ViewRecipeState extends State<ViewRecipe> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 24,
+                        )),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Text(
                       'Recipe',
                       style: Constants.header1,
@@ -66,26 +81,26 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     SizedBox(
                       height: 15,
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.grey,
-                              size: 18,
-                            )),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          _recipe?.itemName ?? '',
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        )
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     GestureDetector(
+                    //         onTap: () {
+                    //           Navigator.pop(context);
+                    //         },
+                    //         child: Icon(
+                    //           Icons.arrow_back,
+                    //           color: Colors.grey,
+                    //           size: 18,
+                    //         )),
+                    //     SizedBox(
+                    //       width: 10,
+                    //     ),
+                    //     Text(
+                    //       _recipe?.itemName ?? '',
+                    //       style: TextStyle(color: Colors.grey, fontSize: 14),
+                    //     )
+                    //   ],
+                    // ),
                     SizedBox(height: 15),
                     Text(
                       'Ingredients',
@@ -130,24 +145,38 @@ class _ViewRecipeState extends State<ViewRecipe> {
                         itemCount: _recipe?.media.length,
                         itemBuilder: (BuildContext context, int index) {
                           return _recipe?.media[index]['mediaType'] == 'Image'
-                              ? Card(
-                                  child: Container(
-                                    child: Image.network(
-                                      Constants.ImageBaseUrl +
-                                          _recipe?.media[index]['mediaUrl'],
-                                      height: 150,
-                                      width: MediaQuery.of(context).size.width,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                )
-                              : Card(
-                                  child: Container(
-                                    child: VideoItem(
-                                        url: Constants.ImageBaseUrl +
-                                            _recipe?.media[index]['mediaUrl']),
-                                  ),
-                                );
+                                  ? Card(
+                                      child: Container(
+                                        child: Image.network(
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container(
+                                              height: 150,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              color:
+                                                  Colors.white.withOpacity(.3),
+                                            );
+                                          },
+                                          Constants.ImageBaseUrl +
+                                              _recipe?.media[index]['mediaUrl'],
+                                          height: 150,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox()
+                              // : Card(
+                              //     child: Container(
+                              //       child: VideoItem(
+                              //           url: Constants.ImageBaseUrl +
+                              //               _recipe?.media[index]['mediaUrl']),
+                              //     ),
+                              //   )
+                              ;
                         })
                   ],
                 ),

@@ -120,7 +120,7 @@ class _LessonPlanState extends State<LessonPlan> {
     }
 
     dataFetched = true;
-    _loading = true;
+    _loading = false;
     setState(() {});
   }
 
@@ -210,9 +210,20 @@ class _LessonPlanState extends State<LessonPlan> {
                         ),
                       ),
                     )
-                  : Container(),
-              _loading
-                  ? ListView.builder(
+                  : Container(), 
+              !_loading
+                  ? 
+                  child.isEmpty?
+                  Container(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('No Lesson Plan')
+                        ],
+               )):
+                  
+                  ListView.builder(
                       shrinkWrap: true,
                       itemCount: child.length,
                       physics: NeverScrollableScrollPhysics(),

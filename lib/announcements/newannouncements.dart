@@ -91,6 +91,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
           Future.delayed(Duration(seconds: 1), () {
             print('++++data seted ++++');
             print(textData);
+            if(this.mounted)
             setState(() {
               textData = dataDetail['text'];
               desController.text = textData;
@@ -425,8 +426,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                                 if (response.statusCode == 200) {
                                   MyApp.ShowToast("updated", context);
                                   print('created');
-                                  Navigator.of(context)
-                                      .popUntil((route) => route.isFirst);
+                                  Navigator.pop(context);
                                 } else if (response.statusCode == 401) {
                                   MyApp.Show401Dialog(context);
                                 }
@@ -463,8 +463,7 @@ class _NewAnnouncementsState extends State<NewAnnouncements> {
                                 if (response.statusCode == 200) {
                                   MyApp.ShowToast("Saved", context);
                                   print('created');
-                                  Navigator.of(context)
-                                      .popUntil((route) => route.isFirst);
+                                  Navigator.pop(context);
                                 } else if (response.statusCode == 401) {
                                   MyApp.Show401Dialog(context);
                                 }
