@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/parser.dart';
+import 'package:mime/mime.dart';
 import 'package:mykronicle_mobile/services/constants.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
+import 'package:reorderables/reorderables.dart';
 import 'addobservation.dart';
 
 class Preview extends StatefulWidget {
@@ -35,26 +39,14 @@ class _PreviewState extends State<Preview> {
   }
 
   void _load() {
-    if (AddObservationState.type == 'add') {
-      // notes = AddObservationState
-      //         .mentionNotes.currentState?.controller?.markupText ??
-      notes = AddObservationState.notesController.text;
-      '';
-      title = AddObservationState.titleController.text;
-      // ref =
-      //     AddObservationState.mentionRef.currentState?.controller?.markupText ??
-      //         '';
-      ref = AddObservationState.refController.text;
-    } else {
-      // notes = AddObservationState.previewnotes ?? '';
-      // title = AddObservationState.previewtitle ?? '';
-      // ref = AddObservationState.previewRef ?? '';
-      notes = AddObservationState.notesController.text;
-      title = AddObservationState.titleController.text;
-      ref = AddObservationState.refController.text;
-      childVoice = AddObservationState.childVoiceController.text;
-      futurePlan = AddObservationState.futurePlanController.text;
-    }
+    // notes = AddObservationState.previewnotes ?? '';
+    // title = AddObservationState.previewtitle ?? '';
+    // ref = AddObservationState.previewRef ?? '';
+    notes = AddObservationState.notesController.text;
+    title = AddObservationState.titleController.text;
+    ref = AddObservationState.refController.text;
+    childVoice = AddObservationState.childVoiceController.text;
+    futurePlan = AddObservationState.futurePlanController.text;
 
     outcomes = List<bool>.generate(
         AddObservationState.assesData['EYLF']['outcome'].length,
@@ -67,7 +59,7 @@ class _PreviewState extends State<Preview> {
             .assesData['DevelopmentalMilestones']['ageGroups'].length,
         (index) => false);
     setState(() {});
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +93,14 @@ class _PreviewState extends State<Preview> {
                 SizedBox(
                   height: 5,
                 ),
-                 if (AddObservationState.selectedRooms.length > 0)
-                   Padding(
-                     padding: const EdgeInsets.symmetric(vertical: 8),
-                     child:  Text('Childrens',style: TextStyle(color:Colors.black,fontSize: 15),),
-                   ),
+                if (AddObservationState.selectedRooms.length > 0)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      'Childrens',
+                      style: TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+                  ),
                 if (AddObservationState.selectedChildrens.length > 0)
                   Wrap(
                       spacing: 8.0, // gap between adjacent chips
@@ -143,25 +138,29 @@ class _PreviewState extends State<Preview> {
                 SizedBox(
                   height: 5,
                 ),
-                 if (AddObservationState.selectedRooms.length > 0)
-                   Padding(
-                     padding: const EdgeInsets.symmetric(vertical: 8),
-                     child: Text('Rooms',style: TextStyle(color:Colors.black,fontSize: 15),),
-                   ),
+                if (AddObservationState.selectedRooms.length > 0)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      'Rooms',
+                      style: TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+                  ),
                 if (AddObservationState.selectedRooms.length > 0)
                   Wrap(
                       spacing: 8.0, // gap between adjacent chips
                       runSpacing: 6.0, // gap between lines
                       children: List<Widget>.generate(
                           AddObservationState.selectedRooms.length,
-                          (int index){
+                          (int index) {
                         return Container(
-                          padding: EdgeInsets.only(left: 8,right: 8,top: 5,bottom: 5),
+                          padding: EdgeInsets.only(
+                              left: 8, right: 8, top: 5, bottom: 5),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            // ignore: deprecated_member_use
-                            border: Border.all(color: Constants.kButton.withOpacity(.7))
-                          ),
+                              borderRadius: BorderRadius.circular(10),
+                              // ignore: deprecated_member_use
+                              border: Border.all(
+                                  color: Constants.kButton.withOpacity(.7))),
                           child: Text(AddObservationState
                                       .selectedRooms[index].room.name !=
                                   null
@@ -170,30 +169,31 @@ class _PreviewState extends State<Preview> {
                               : ''),
                         );
                       })),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 // if (notes != "")
-                  Text(
-                    'Notes',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                Text(
+                  'Notes',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 // if (notes != "")
-                 Text(notes),
+                Text(notes.trimRight()),
                 SizedBox(
                   height: 10,
                 ),
                 // if (ref != "")
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Reflection',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                     
-                      Text(ref),
-                    ],
-                  ),
-                  SizedBox(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Reflection',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(ref.trimRight()),
+                  ],
+                ),
+                SizedBox(
                   height: 10,
                 ),
                 if (childVoice != "")
@@ -204,11 +204,10 @@ class _PreviewState extends State<Preview> {
                         'Child Voice',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                     
-                      Text(childVoice),
+                      Text(childVoice.trimRight()),
                     ],
                   ),
-                   SizedBox(
+                SizedBox(
                   height: 10,
                 ),
                 if (futurePlan != "")
@@ -219,10 +218,161 @@ class _PreviewState extends State<Preview> {
                         'Future Plan',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                     
-                      Text(futurePlan),
+                      Text(futurePlan.trimRight()),
                     ],
                   ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Media',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                AddObservationState.files.length > 0
+                    ? ReorderableWrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        onReorder: (int oldIndex, int newIndex) {
+                          // print(oldIndex);
+                          // print(newIndex);
+                          // File file1 = AddObservationState.files[oldIndex];
+                          // File file2 = AddObservationState.files[newIndex];
+                          // AddObservationState.files[oldIndex] = file2;
+                          // AddObservationState.files[newIndex] = file1;
+
+                          // String caption1 = AddObservationState.captions[oldIndex].text.toString();
+                          // String caption2 = AddObservationState.captions[newIndex].text.toString();
+                          // AddObservationState.captions[oldIndex].text = caption2;
+                          // AddObservationState.captions[newIndex].text = caption1;
+
+                          // List<ChildModel> child1 = AddObservationState._editChildren[oldIndex];
+                          // List<ChildModel> child2 = AddObservationState._editChildren[newIndex];
+
+                          // AddObservationState._editChildren[oldIndex] = child2;
+                          // AddObservationState._editChildren[newIndex] = child1;
+
+                          // List<StaffModel> edu1 = AddObservationState._editEducators[oldIndex];
+                          // List<StaffModel> edu2 = AddObservationState._editEducators[newIndex];
+
+                          // AddObservationState._editEducators[oldIndex] = edu2;
+                          // AddObservationState._editEducators[newIndex] = edu1;
+                          // setState(() {});
+                        },
+                        children: List<Widget>.generate(
+                            AddObservationState.files.length, (int index) {
+                          String mimeStr = lookupMimeType(
+                                  AddObservationState.files[index].path) ??
+                              '';
+                          var fileType = mimeStr.split('/');
+                          if (fileType[0].toString() == 'image') {
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                  image: new FileImage(
+                                      AddObservationState.files[index]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                      )
+                    : Container(),
+                SizedBox(height: 10),
+                AddObservationState.mediaFiles.length > 0
+                    ? ReorderableWrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        onReorder: (int oldIndex, int newIndex) {
+                          // print(oldIndex);
+                          // print(newIndex);
+                          // var file1 = AddObservationState.mediaFiles[oldIndex];
+                          // var file2 = AddObservationState.mediaFiles[newIndex];
+                          // AddObservationState.mediaFiles[oldIndex] = file2;
+                          // AddObservationState.mediaFiles[newIndex] = file1;
+
+                          // String caption1 = AddObservationState.mediaFilecaptions[oldIndex].text.toString();
+                          // String caption2 = AddObservationState.mediaFilecaptions[newIndex].text.toString();
+                          // AddObservationState.mediaFilecaptions[oldIndex].text = caption2;
+                          // AddObservationState.mediaFilecaptions[newIndex].text = caption1;
+
+                          // List<ChildModel> child1 = AddObservationState._editMediaFileChildren[oldIndex];
+                          // List<ChildModel> child2 = AddObservationState._editMediaFileChildren[newIndex];
+
+                          // AddObservationState._editMediaFileChildren[oldIndex] = child2;
+                          // AddObservationState._editMediaFileChildren[newIndex] = child1;
+
+                          // List<StaffModel> edu1 = AddObservationState._editMediaFileEducators[oldIndex];
+                          // List<StaffModel> edu2 = AddObservationState._editMediaFileEducators[newIndex];
+
+                          // AddObservationState._editMediaFileEducators[oldIndex] = edu2;
+                          // AddObservationState._editMediaFileEducators[newIndex] = edu1;
+                          // setState(() {});
+                        },
+                        children: List<Widget>.generate(
+                            AddObservationState.mediaFiles.length, (int index) {
+                          if (AddObservationState.mediaFiles[index]['type'] ==
+                              'Image') {
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                  image: new NetworkImage(
+                                      Constants.ImageBaseUrl +
+                                          AddObservationState.mediaFiles[index]
+                                              ['filename']),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                      )
+                    : Container(),
+                SizedBox(height: 10),
+
+                AddObservationState.media.length > 0
+                    ? ReorderableWrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        onReorder: (int oldIndex, int newIndex) {},
+                        children: List<Widget>.generate(
+                            AddObservationState.media.length, (int index) {
+                          if (AddObservationState.media[index].mediaType ==
+                              'Image'){
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                  image: new NetworkImage(
+                                      Constants.ImageBaseUrl +
+                                          AddObservationState
+                                              .media[index].mediaUrl),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                      )
+                    : Container(),
+                SizedBox(height: 10),
                 SizedBox(
                   height: 10,
                 ),
@@ -884,8 +1034,6 @@ class _PreviewState extends State<Preview> {
                 //                     ])
                 //                   : Container();
                 //             }))),
-             
-             
               ],
             ),
           ),

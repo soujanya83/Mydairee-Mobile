@@ -136,7 +136,8 @@ class _RoomsListState extends State<RoomsList> {
     }
 
     roomsFetched = true;
-    if (this.mounted) setState(() {});
+    if (this.mounted)
+    setState(() {});
   }
 
   Future<void> _fetchCenters() async {
@@ -538,7 +539,7 @@ class _RoomsListState extends State<RoomsList> {
                                             : Container();
                                   }),
                             ),
-                          if (_rooms.length == 0 && roomsFetched)
+                          if (_rooms.length == 0 && roomsFetched && permission)
                             Container(
                               height: MediaQuery.of(context).size.height * 0.7,
                               child: Column(

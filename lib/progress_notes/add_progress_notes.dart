@@ -7,8 +7,8 @@ import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:http/http.dart' as http;
 
 class AddProgressNotesActivity extends StatefulWidget {
-  final String childid;
-  final String centerid;
+final String childid;
+final String centerid;
 
   AddProgressNotesActivity({
     required this.childid,

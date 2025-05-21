@@ -563,8 +563,7 @@ class _EditRoomState extends State<EditRoom> {
                             height: 38,
                             decoration: BoxDecoration(
                                 color: Constants.kButton,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
+                                borderRadius:   BorderRadius.all(Radius.circular(8))),
                             child: Row(
                               children: <Widget>[
                                 IconButton(
@@ -710,11 +709,10 @@ class _EditRoomState extends State<EditRoom> {
                                   ageFromError = '';
                                   ageToError = '';
                                   setState(() {});
-                                  String _toSend =
-                                      Constants.BASE_URL + 'room/editRoom';
+                                  String _toSend = Constants.BASE_URL + 'room/editRoom';
                                   print(_toSend);
                                   List edu = [];
-                                  for (int i = 0; i < selectedEdu.length; i++) {
+                                  for (int i = 0; i < selectedEdu.length; i++){
                                     edu.add(int.parse(selectedEdu[i].userid));
                                   }
                                   var objToSend = {
@@ -735,7 +733,7 @@ class _EditRoomState extends State<EditRoom> {
                                     "educators": edu,
                                   };
                                   print('000000000000000000');
-                                  print(jsonEncode(objToSend));
+                                  print(jsonEncode(objToSend));//                                                  
                                   print(parseColorToHex('#' +
                                       currentColor.toString().substring(10,
                                           currentColor.toString().length - 1)));

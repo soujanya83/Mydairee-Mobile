@@ -70,8 +70,9 @@ class _QipListState extends State<QipList> {
       if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
           MyApp.USER_TYPE_VALUE == 'Staff' ||
           data['permissions'] != null) {
-        if (MyApp.USER_TYPE_VALUE == 'Superadmin' || 
-            (data['permissions'] !=null &&  data['permissions']['addQIP'] == '1')) {
+        if (MyApp.USER_TYPE_VALUE == 'Superadmin' ||
+            (data['permissions'] != null &&
+                data['permissions']['addQIP'] == '1')) {
           permissionAdd = true;
         } else {
           permissionAdd = false;
@@ -272,10 +273,20 @@ class _QipListState extends State<QipList> {
                                         "id": _allQips[index].id,
                                       });
                                       var data = await handler.deleteListItem();
+                                      print('===================');
                                       print(data);
-                                      qipsFetched = false;
-                                      _fetchData();
-                                      setState(() {});
+                                      if (data['error'] != null) {
+                                        MyApp.ShowToast(
+                                            data['error'].toString(), context);
+                                      } else {
+                                        MyApp.ShowToast(
+                                            'Deleted Successfully!'.toString(),
+                                            context);
+                                        qipsFetched = false;
+                                        _fetchData();
+                                        setState(() {});
+                                      }
+
                                       Navigator.pop(context);
                                     });
                                   },

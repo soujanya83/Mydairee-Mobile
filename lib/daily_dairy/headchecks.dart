@@ -86,8 +86,11 @@ class _HeadChecksState extends State<HeadChecks> {
       });
 
       var data = await handler.getList();
-
+      print('=======data==1========');
+      print(data.toString());
       if (data != null && !data.containsKey('error')) {
+        print('=======data==2========');
+        print(data.toString());
         var res = data['rooms'];
         rooms = [];
         try {
@@ -123,10 +126,10 @@ class _HeadChecksState extends State<HeadChecks> {
       'userid': MyApp.LOGIN_ID_VALUE,
       'centerid': centers![currentIndex].id
     };
-    if (roomsFetched) {
+    if (roomsFetched && rooms != null && rooms!.isNotEmpty) {
       data['roomid'] = rooms![currentRoomIndex].id;
-      data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     }
+    data['date'] = DateFormat("yyyy-MM-dd").format(date!);
     print(data);
     DailyDairyAPIHandler hlr = DailyDairyAPIHandler(data);
     var dt = await hlr.getHeadChecksData();
@@ -258,7 +261,7 @@ class _HeadChecksState extends State<HeadChecks> {
                                         setState(() {
                                           currentIndex = i;
                                           details = null;
-                                          _fetchData();
+                                          fetchRooms();
                                         });
                                         break;
                                       }
@@ -273,7 +276,7 @@ class _HeadChecksState extends State<HeadChecks> {
                   SizedBox(
                     height: 20,
                   ),
-                  roomsFetched
+                  roomsFetched && rooms != null && rooms!.isNotEmpty
                       ? DropdownButtonHideUnderline(
                           child: Container(
                             height: 40,

@@ -83,8 +83,8 @@ class AddObservationState extends State<AddObservation>
 
   Map groups = {};
   bool all = false;
-  List<File> files = [];
-  List<ObsMediaModel> media = [];
+  static List<File> files = [];
+  static List<ObsMediaModel> media = [];
   String obsid = '';
   Map<String, bool> childValues = {};
   Map<String, bool> roomValues = {};
@@ -123,7 +123,7 @@ class AddObservationState extends State<AddObservation>
   static TextEditingController refController = TextEditingController();
   static TextEditingController childVoiceController = TextEditingController();
   static TextEditingController futurePlanController = TextEditingController();
-  List mediaFiles = [];
+  static List mediaFiles = [];
 
 // assesment data
   static List<List<List<bool>>> checkValue = [];

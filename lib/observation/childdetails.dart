@@ -23,15 +23,14 @@ class ChildDetails extends StatefulWidget {
 }
 
 class _ChildDetailsState extends State<ChildDetails> {
-List<CentersModel> centers = [];
-bool centersFetched = false;
-int currentIndex = 0;
-int childCurrentIndex = 0;
-List<ChildModel> _allChildrens = [];
-List<UserModel> _allRelatives = [];
-List<MenuMediaModel> menuMedia = [];
-List<ObservationModel> _allObservations = [];
-
+  List<CentersModel> centers = [];
+  bool centersFetched = false;
+  int currentIndex = 0;
+  int childCurrentIndex = 0;
+  List<ChildModel> _allChildrens = [];
+  List<UserModel> _allRelatives = [];
+  List<MenuMediaModel> menuMedia = [];
+  List<ObservationModel> _allObservations = [];
 
   bool dataFetched = false;
   bool childrensFetched = false;
@@ -278,15 +277,20 @@ List<ObservationModel> _allObservations = [];
                           itemBuilder: (BuildContext context, int index) {
                             return GestureDetector(
                               onTap: () {
+                                print('=====================');
+                                print(_allObservations[index].id);
+                             
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ViewObservation(
-                                              id: _allObservations[index].id,
-                                              montCount: _allObservations[index].montessoricount,
-                                              eylfCount: _allObservations[index].eylfcount,
-                                              devCount:_allObservations[index].milestonecount
-                                            )));
+                                            id: _allObservations[index].id,
+                                            montCount: _allObservations[index]
+                                                .montessoricount,
+                                            eylfCount: _allObservations[index]
+                                                .eylfcount,
+                                            devCount: _allObservations[index]
+                                                .milestonecount)));
                               },
                               child: Card(
                                 child: Container(
@@ -391,7 +395,9 @@ List<ObservationModel> _allObservations = [];
                                                               .ImageBaseUrl +
                                                           _allObservations[
                                                                   index]
-                                                              .observationsMedia, height: null,),
+                                                              .observationsMedia,
+                                                      height: null,
+                                                    ),
                                           SizedBox(
                                             height: 10,
                                           ),
@@ -441,7 +447,7 @@ List<ObservationModel> _allObservations = [];
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .fromLTRB(
+                                                                    .fromLTRB(
                                                                     12,
                                                                     8,
                                                                     12,
@@ -489,7 +495,7 @@ List<ObservationModel> _allObservations = [];
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .fromLTRB(
+                                                                    .fromLTRB(
                                                                     12,
                                                                     8,
                                                                     12,
@@ -617,9 +623,9 @@ List<ObservationModel> _allObservations = [];
                     ),
                     Text(_allChildrens[index].name,
                         style: Constants.cardHeadingStyle),
-                    Text(_allChildrens[index].gender??''),
-                    Text(_allChildrens[index].status??''),
-                    Text(_allChildrens[index].dob??'')
+                    Text(_allChildrens[index].gender ?? ''),
+                    Text(_allChildrens[index].status ?? ''),
+                    Text(_allChildrens[index].dob ?? '')
                   ],
                 )
               ],

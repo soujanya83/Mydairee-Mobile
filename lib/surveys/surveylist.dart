@@ -31,12 +31,32 @@ class _SurveyListState extends State<SurveyList> {
     super.initState();
   }
 
+  bool permissionShow = true;
+  bool permissionAdd = true;
+  bool permissionEdit = true;
+  bool permissionDelete = true;
+
   Future<void> _fetchCenters() async {
     UtilsAPIHandler hlr = UtilsAPIHandler({});
     var dt = await hlr.getCentersList();
     print(dt);
     if (!dt.containsKey('error')) {
       print(dt);
+      if (dt['permissions'] != null) {
+        if (dt['permissions']['add'] == null) {
+          permissionAdd = false;
+        }
+        if (dt['permissions']['edit'] == null) {
+          permissionEdit = false;
+        }
+        if (dt['permissions']['delete'] == null) {
+          permissionDelete = false;
+        }
+      } else {
+        permissionAdd = false;
+        permissionDelete = false;
+        permissionEdit = false;
+      }
       var res = dt['Centers'];
       centers = [];
       try {
@@ -73,10 +93,20 @@ class _SurveyListState extends State<SurveyList> {
       var res = data['records'];
       _survey = [];
       try {
-        assert(res is List);
-        for (int i = 0; i < res.length; i++) {
-          _survey.add(SurveyModel.fromJson(res[i]));
+        if (res != null) {
+          assert(res is List);
+          for (int i = 0; i < res.length; i++) {
+            _survey.add(SurveyModel.fromJson(res[i]));
+          }
+        } else {
+          if (data['errormsg']
+              .toString()
+              .toLowerCase()
+              .contains('permission')) {
+            permissionShow = false;
+          }
         }
+
         surveyFetched = true;
         if (this.mounted)
           setState(() {
@@ -164,7 +194,9 @@ class _SurveyListState extends State<SurveyList> {
                               Expanded(
                                 child: Container(),
                               ),
-                              if (MyApp.USER_TYPE_VALUE != 'Parent')
+                              if ((MyApp.USER_TYPE_VALUE != 'Parent' &&
+                                      permissionAdd) ||
+                                  (MyApp.USER_TYPE_VALUE == 'Superadmin'))
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -196,255 +228,285 @@ class _SurveyListState extends State<SurveyList> {
                                 )
                             ],
                           ),
-                           ! (surveyFetched && !loading)?
-                            Container(
-                              height: MediaQuery.of(context).size.height * .7,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                      height: 40,
-                                      width: 40,
-                                      child: Center(
-                                          child: CircularProgressIndicator())),
-                                ],
-                              )):
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.75,
-                              width: MediaQuery.of(context).size.width,
-                              child: _survey.length == 0
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text("No survey found"),
-                                      ],
-                                    )
-                                  : ListView.builder(
-                                      itemCount:
-                                          _survey != null ? _survey.length : 0,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        var inputFormat =
-                                            DateFormat("yyyy-MM-dd");
-                                        final DateFormat formatter =
-                                            DateFormat('dd-MM-yyyy');
+                          !(surveyFetched && !loading)
+                              ? Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .7,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          height: 40,
+                                          width: 40,
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator())),
+                                    ],
+                                  ))
+                              : Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.75,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: _survey.length == 0
+                                      ? ((!permissionShow) &&
+                                              (MyApp.USER_TYPE_VALUE !=
+                                                  'Superadmin')
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                    "You need permission to view all surveys!"),
+                                              ],
+                                            )
+                                          : Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text("No survey found"),
+                                              ],
+                                            ))
+                                      : ListView.builder(
+                                          itemCount: _survey != null
+                                              ? _survey.length
+                                              : 0,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            var inputFormat =
+                                                DateFormat("yyyy-MM-dd");
+                                            final DateFormat formatter =
+                                                DateFormat('dd-MM-yyyy');
 
-                                        var date1 = inputFormat
-                                            .parse(_survey[index].createdAt);
-                                        var date = formatter.format(date1);
+                                            var date1 = inputFormat.parse(
+                                                _survey[index].createdAt);
+                                            var date = formatter.format(date1);
 
-                                        return Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 8, 0, 8),
-                                            child: Container(
-                                              padding: EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  width: 1.5,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1),
-                                                    spreadRadius: 1,
-                                                    blurRadius: 4,
-                                                    offset: Offset(0, 2),
-                                                  )
-                                                ],
-                                              ),
-                                              child: Padding(
+                                            return Padding(
                                                 padding:
-                                                    const EdgeInsets.symmetric(
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 8, 0, 8),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.3),
+                                                      width: 1.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
+                                                        spreadRadius: 1,
+                                                        blurRadius: 4,
+                                                        offset: Offset(0, 2),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                         horizontal: 8.0),
-                                                child: Column(
-                                                  children: [
-                                                    Row(
+                                                    child: Column(
                                                       children: [
-                                                        Expanded(
-                                                          flex: 5,
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      SaveSurvey(
-                                                                    id: _survey[
-                                                                            index]
-                                                                        .id,
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              flex: 5,
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          SaveSurvey(
+                                                                        id: _survey[index]
+                                                                            .id,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                                child: Text(
+                                                                  _survey[index]
+                                                                              .title !=
+                                                                          null
+                                                                      ? _survey[
+                                                                              index]
+                                                                          .title
+                                                                      : '',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Constants
+                                                                        .kMain,
+                                                                    fontSize:
+                                                                        16,
                                                                   ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 2,
                                                                 ),
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                              _survey[index]
-                                                                          .title !=
-                                                                      null
-                                                                  ? _survey[
-                                                                          index]
-                                                                      .title
-                                                                  : '',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Constants
-                                                                    .kMain,
-                                                                fontSize: 16,
                                                               ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 2,
                                                             ),
-                                                          ),
+                                                            if (_survey[index]
+                                                                    .createdByName !=
+                                                                null)
+                                                              Expanded(
+                                                                flex: 3,
+                                                                child: Text(
+                                                                  'By: ${_survey[index].createdByName.toString()}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        600],
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .end,
+                                                                ),
+                                                              ),
+                                                          ],
                                                         ),
-                                                        if (_survey[index]
-                                                                .createdByName !=
-                                                            null)
-                                                          Expanded(
-                                                            flex: 3,
-                                                            child: Text(
-                                                              'By: ${_survey[index].createdByName.toString()}',
+                                                        SizedBox(height: 12),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              date.toString(),
                                                               style: TextStyle(
                                                                 color: Colors
-                                                                    .grey[600],
+                                                                    .grey[700],
                                                                 fontSize: 12,
                                                               ),
-                                                              textAlign:
-                                                                  TextAlign.end,
                                                             ),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 12),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          date.toString(),
-                                                          style: TextStyle(
-                                                            color: Colors
-                                                                .grey[700],
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                        Spacer(),
-                                                        if (MyApp
-                                                                .USER_TYPE_VALUE !=
-                                                            'Parent') ...[
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          AddSurvey(
-                                                                    type:
-                                                                        'edit',
-                                                                    centerId:
-                                                                        centers[currentIndex]
+                                                            Spacer(),
+                                                            if ((MyApp.USER_TYPE_VALUE !=
+                                                                        'Parent' &&
+                                                                    permissionEdit) ||
+                                                                (MyApp.USER_TYPE_VALUE ==
+                                                                    'Superadmin')) ...[
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              AddSurvey(
+                                                                        type:
+                                                                            'edit',
+                                                                        centerId:
+                                                                            centers[currentIndex].id,
+                                                                        id: _survey[index]
                                                                             .id,
-                                                                    id: _survey[
-                                                                            index]
-                                                                        .id,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              6),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Constants
+                                                                        .kMain
+                                                                        .withOpacity(
+                                                                            0.1),
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                                  child: Icon(
+                                                                    Icons.edit,
+                                                                    color: Constants
+                                                                        .kMain,
+                                                                    size: 18,
                                                                   ),
                                                                 ),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(6),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Constants
-                                                                    .kMain
-                                                                    .withOpacity(
-                                                                        0.1),
-                                                                shape: BoxShape
-                                                                    .circle,
                                                               ),
-                                                              child: Icon(
-                                                                Icons.edit,
-                                                                color: Constants
-                                                                    .kMain,
-                                                                size: 18,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(width: 8),
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              showDeleteDialog(
-                                                                  context,
-                                                                  () async {
-                                                                SurveyAPIHandler
-                                                                    handler =
-                                                                    SurveyAPIHandler({
-                                                                  "userid": MyApp
-                                                                      .LOGIN_ID_VALUE,
-                                                                  "id": _survey[
-                                                                          index]
-                                                                      .id,
-                                                                });
-                                                                var data =
-                                                                    await handler
-                                                                        .deleteListItem();
-                                                                print('heyys' +
-                                                                    data.toString());
-                                                                if (!data
-                                                                    .containsKey(
-                                                                        'error')) {
-                                                                  surveyFetched =
-                                                                      false;
-                                                                  _fetchData();
-                                                                  setState(
-                                                                      () {});
-                                                                }
-                                                                Navigator.pop(
-                                                                    context);
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(6),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .red
-                                                                    .withOpacity(
-                                                                        0.1),
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                              ),
-                                                              child: Icon(
-                                                                AntDesign
-                                                                    .delete,
-                                                                color:
-                                                                    Colors.red,
-                                                                size: 16,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              if (permissionDelete ||
+                                                                  (MyApp.USER_TYPE_VALUE ==
+                                                                      'Superadmin'))
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    showDeleteDialog(
+                                                                        context,
+                                                                        () async {
+                                                                      SurveyAPIHandler
+                                                                          handler =
+                                                                          SurveyAPIHandler({
+                                                                        "userid":
+                                                                            MyApp.LOGIN_ID_VALUE,
+                                                                        "id": _survey[index]
+                                                                            .id,
+                                                                      });
+                                                                      var data =
+                                                                          await handler
+                                                                              .deleteListItem();
+                                                                      print('heyys' +
+                                                                          data.toString());
+                                                                      if (!data
+                                                                          .containsKey(
+                                                                              'error')) {
+                                                                        surveyFetched =
+                                                                            false;
+                                                                        _fetchData();
+                                                                        setState(
+                                                                            () {});
+                                                                      }
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .all(6),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .red
+                                                                          .withOpacity(
+                                                                              0.1),
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                    ),
+                                                                    child: Icon(
+                                                                      AntDesign
+                                                                          .delete,
+                                                                      color: Colors
+                                                                          .red,
+                                                                      size: 16,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                            ],
+                                                          ],
+                                                        ),
                                                       ],
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ));
-                                      }),
-                            )
+                                                  ),
+                                                ));
+                                          }),
+                                )
                         ],
                       ))
                     : Container(

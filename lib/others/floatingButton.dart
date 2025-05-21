@@ -93,7 +93,7 @@ class _FloatingButtonState extends State<FloatingButton> {
     } else {
       MyApp.Show401Dialog(context);
     }
-     loading = false;
+    loading = false;
     if (this.mounted) setState(() {});
   }
 
@@ -233,152 +233,152 @@ class _FloatingButtonState extends State<FloatingButton> {
                   },
                 ),
               ),
-              if (childrensFetched )
-                Builder(
-                  builder: (context) {
-                    if(loading){
-                      return SizedBox(
+              if (childrensFetched)
+                Builder(builder: (context) {
+                  if (loading) {
+                    return SizedBox(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height*.6,
+                        height: MediaQuery.of(context).size.height * .6,
                         child: Center(child: CircularProgressIndicator()));
-                    }
-                    return ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        reverse: reverse,
-                        itemCount: childData.length,
-                        itemBuilder: (context, index) {
-                          return childData[index]
-                                  .childName
-                                  .toString()
-                                  .toLowerCase()
-                                  .contains(searchString.toLowerCase())
-                              ? Card(
-                                  color: Colors.blueGrey[50],
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              childData[index].image != '' &&
-                                                      childData[index].image != null
-                                                  ? CircleAvatar(
-                                                      radius: 30.0,
-                                                      backgroundImage: NetworkImage(
-                                                          Constants.ImageBaseUrl +
-                                                              childData[index]
-                                                                  .image),
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                    )
-                                                  : CircleAvatar(
-                                                      radius: 30,
-                                                      backgroundColor: Colors.grey,
-                                                    ),
-                                              SizedBox(
-                                                width: 15,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width -
-                                                        120,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              ViewObservation(
-                                                                                id: childData[index].obsId,
-                                                                                montCount:
-                                                                                    '',
-                                                                                eylfCount:
-                                                                                    '',
-                                                                                devCount:
-                                                                                    '',
-                                                                              )));
-                                                            },
-                                                            child: Text(
-                                                              childData[index]
-                                                                  .childName,
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      Colors.blue,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                            )),
-                                                        GestureDetector(
+                  }
+                  return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      reverse: reverse,
+                      itemCount: childData.length,
+                      itemBuilder: (context, index) {
+                        return childData[index]
+                                .childName
+                                .toString()
+                                .toLowerCase()
+                                .contains(searchString.toLowerCase())
+                            ? Card(
+                                color: Colors.blueGrey[50],
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            childData[index].image != '' &&
+                                                    childData[index].image !=
+                                                        null
+                                                ? CircleAvatar(
+                                                    radius: 30.0,
+                                                    backgroundImage:
+                                                        NetworkImage(Constants
+                                                                .ImageBaseUrl +
+                                                            childData[index]
+                                                                .image),
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                  )
+                                                : CircleAvatar(
+                                                    radius: 30,
+                                                    backgroundColor:
+                                                        Colors.grey,
+                                                  ),
+                                            SizedBox(
+                                              width: 15,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      120,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      GestureDetector(
                                                           onTap: () {
+                                                            // return;
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                            ChildDetails(
-                                                                              childId:
-                                                                                  childData[index].childId,
-                                                                              centerId:
-                                                                                  childData[index].centerid,
+                                                                            ViewObservation(
+                                                                              id: childData[index].obsId,
+                                                                              montCount: '',
+                                                                              eylfCount: '',
+                                                                              devCount: '',
                                                                             )));
                                                           },
-                                                          child: Card(
-                                                              child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Text(
-                                                                childData[index]
-                                                                    .obsCount),
+                                                          child: Text(
+                                                            childData[index]
+                                                                .childName,
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
                                                           )),
-                                                        )
-                                                      ],
-                                                    ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          ChildDetails(
+                                                                            childId:
+                                                                                childData[index].childId,
+                                                                            centerId:
+                                                                                childData[index].centerid,
+                                                                          )));
+                                                        },
+                                                        child: Card(
+                                                            child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                              childData[index]
+                                                                  .obsCount),
+                                                        )),
+                                                      )
+                                                    ],
                                                   ),
-                                                  // SizedBox(
-                                                  //   height: 10,
-                                                  // ),
-                                                  Builder(builder: (context) {
-                                                    try {
-                                                      return Text("Last Obs: " +
-                                                          formatter.format(
-                                                              DateTime.parse(
-                                                                  childData[index]
-                                                                      .obsDate)));
-                                                    } catch (e) {
-                                                      return Text('');
-                                                    }
-                                                  }),
-                                                ],
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
+                                                ),
+                                                // SizedBox(
+                                                //   height: 10,
+                                                // ),
+                                                Builder(builder: (context) {
+                                                  try {
+                                                    return Text("Last Obs: " +
+                                                        formatter.format(
+                                                            DateTime.parse(
+                                                                childData[index]
+                                                                    .obsDate)));
+                                                  } catch (e) {
+                                                    return Text('');
+                                                  }
+                                                }),
+                                              ],
+                                            )
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
-                                )
-                              : Container();
-                        });
-                  }
-                )
+                                ),
+                              )
+                            : Container();
+                      });
+                })
             ],
           ),
         ),

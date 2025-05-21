@@ -117,6 +117,7 @@ class ServiceWithHeaderDataPost {
     debugPrint('status code ' + response.statusCode.toString());
     debugPrint('dataaa' + response.body.toString());
     String cleanedJson = cleanJson(response.body);
+    debugPrint('clean response'+ cleanedJson);
     var status = jsonDecode(cleanedJson);
     if (status['Status'] == 'SUCCESS' ||
         status['Status'] == 'Success' ||

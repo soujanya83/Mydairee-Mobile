@@ -34,6 +34,8 @@ class _SaveSurveyState extends State<SaveSurvey> {
         {"userid": MyApp.LOGIN_ID_VALUE, "surveyid": widget.id});
 
     var data = await handler.getSurveyResponse();
+    print('========after data===========');
+    print(data.toString());
     if (!data.containsKey('error')) {
       viewData = data['Surveys'];
       submitted = data['Responsed'];
