@@ -530,16 +530,19 @@ class _ReflectionListState extends State<ReflectionList> {
                                                   Container(
                                                     height: 40,
                                                     child: ListView.builder(
+                                                      physics: ScrollPhysics(),
                                                       shrinkWrap: true,
                                                       scrollDirection:
                                                           Axis.horizontal,
-                                                      itemCount: _reflection[
-                                                                      index]
-                                                                  .childs
-                                                                  .length >=
-                                                              2
-                                                          ? 2
-                                                          : _reflection[index]
+                                                      itemCount:
+                                                      //  _reflection[
+                                                      //                 index]
+                                                      //             .childs
+                                                      //             .length >=
+                                                      //         2
+                                                      //     ? 2
+                                                      //     : 
+                                                          _reflection[index]
                                                               .childs
                                                               .length,
                                                       itemBuilder:
@@ -607,22 +610,22 @@ class _ReflectionListState extends State<ReflectionList> {
                                                       },
                                                     ),
                                                   ),
-                                                if (_reflection[index]
-                                                        .childs
-                                                        .length >
-                                                    2)
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 8.0),
-                                                    child: Text(
-                                                      "+${_reflection[index].childs.length - 2} more",
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                // if (_reflection[index]
+                                                //         .childs
+                                                //         .length >
+                                                //     2)
+                                                //   Padding(
+                                                //     padding:
+                                                //         const EdgeInsets.only(
+                                                //             top: 8.0),
+                                                //     child: Text(
+                                                //       "+${_reflection[index].childs.length - 2} more",
+                                                //       style: TextStyle(
+                                                //         fontSize: 12,
+                                                //         color: Colors.grey,
+                                                //       ),
+                                                //     ),
+                                                //   ),
                                                 SizedBox(height: 16),
                                                 Row(
                                                   crossAxisAlignment:

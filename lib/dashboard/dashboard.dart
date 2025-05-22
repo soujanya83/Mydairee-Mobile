@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mykronicle_mobile/announcements/announcementslist.dart';
 import 'package:mykronicle_mobile/api/dashboardapi.dart';
@@ -588,7 +589,7 @@ class _DashboardState extends State<Dashboard> {
 
 class CustomCard extends StatelessWidget {
   final String title;
-  final int count;
+  final dynamic count;
   final String imagePath;
   final VoidCallback onTap;
 
@@ -644,13 +645,16 @@ class CustomCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   child: Row(
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                    children: [ 
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*.25,
+                        child: AutoSizeText(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                       const Spacer(),

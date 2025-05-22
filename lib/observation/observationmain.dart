@@ -1283,7 +1283,6 @@ class _ObservationMainState extends State<ObservationMain> {
                               )
                           ],
                         ),
-
                         SizedBox(
                           height: 8,
                         ),

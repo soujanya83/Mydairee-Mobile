@@ -1018,9 +1018,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                      SizedBox(
+                                        SizedBox(
                                           height: 10,
-                                        ),   menuData['Menu'][j][3].length > 0
+                                        ),
+                                        menuData['Menu'][j][3].length > 0
                                             ? GridView.builder(
                                                 padding: EdgeInsets.all(4),
                                                 physics:
@@ -1029,7 +1030,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                 itemCount: menuData['Menu'][j]
                                                         [3]
                                                     .length,
-                                                 gridDelegate:
+                                                gridDelegate:
                                                     SliverGridDelegateWithFixedCrossAxisCount(
                                                         crossAxisSpacing: 5,
                                                         mainAxisSpacing: 8,
@@ -1148,7 +1149,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                         SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
                                         if (menuData['Menu'][j][0].length > 0)
@@ -1159,13 +1160,12 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                             shrinkWrap: true,
                                             itemCount:
                                                 menuData['Menu'][j][0].length,
-                                             gridDelegate:
-                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisSpacing: 5,
-                                                        mainAxisSpacing: 8,
-                                                        childAspectRatio:
-                                                            8.0 / 9.0,
-                                                        crossAxisCount: 2),
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisSpacing: 5,
+                                                    mainAxisSpacing: 8,
+                                                    childAspectRatio: 8.0 / 9.0,
+                                                    crossAxisCount: 2),
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return MenuRecipeCard(
@@ -1213,7 +1213,6 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                           height: 10,
                                         ),
 
-                                        
                                         Row(
                                           children: [
                                             Text(
@@ -1268,7 +1267,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                         SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
                                         if (menuData['Menu'][j][1].length > 0)
@@ -1280,12 +1279,11 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                             itemCount:
                                                 menuData['Menu'][j][1].length,
                                             gridDelegate:
-                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisSpacing: 5,
-                                                        mainAxisSpacing: 8,
-                                                        childAspectRatio:
-                                                            8.0 / 9.0,
-                                                        crossAxisCount: 2),
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisSpacing: 5,
+                                                    mainAxisSpacing: 8,
+                                                    childAspectRatio: 8.0 / 9.0,
+                                                    crossAxisCount: 2),
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return MenuRecipeCard(
@@ -1388,9 +1386,10 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                         ),
                                         SizedBox(
                                           height: 10,
-                                        ), menuData['Menu'][j][4].length > 0
+                                        ),
+                                        menuData['Menu'][j][4].length > 0
                                             ? GridView.builder(
-                                              padding: EdgeInsets.all(4),
+                                                padding: EdgeInsets.all(4),
                                                 physics:
                                                     NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -1506,11 +1505,12 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                               )
                                           ],
                                         ),
-                                       SizedBox(
+                                        SizedBox(
                                           height: 10,
-                                        ),  menuData['Menu'][j][2].length > 0
+                                        ),
+                                        menuData['Menu'][j][2].length > 0
                                             ? GridView.builder(
-                                              padding: EdgeInsets.all(4),
+                                                padding: EdgeInsets.all(4),
                                                 physics:
                                                     NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -1734,4 +1734,3 @@ class MenuRecipeCard extends StatelessWidget {
     );
   }
 }
-

@@ -279,7 +279,7 @@ class _ChildDetailsState extends State<ChildDetails> {
                               onTap: () {
                                 print('=====================');
                                 print(_allObservations[index].id);
-                             
+
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -317,6 +317,7 @@ class _ChildDetailsState extends State<ChildDetails> {
                                                   ? _allObservations[index]
                                                       .title
                                                   : '',
+                                              overflow: TextOverflow.ellipsis,
                                               style: Constants.header3,
                                             ),
                                           ),
@@ -362,7 +363,9 @@ class _ChildDetailsState extends State<ChildDetails> {
                                                         : '',
                                                     style: TextStyle(
                                                         color: Constants.kMain,
-                                                        fontSize: 12),
+                                                        fontSize: 12,
+                                                        overflow: TextOverflow
+                                                            .ellipsis),
                                                   ),
                                                 ],
                                               ),

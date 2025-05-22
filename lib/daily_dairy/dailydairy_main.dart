@@ -154,7 +154,7 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
     print(data);
     if (roomsFetched && rooms.isNotEmpty) {
       data['roomid'] = rooms[currentRoomIndex].id;
-      data['date'] = DateFormat("yyyy-MM-dd").format(date!);
+      data['date'] = DateFormat("yyyy-MM-dd").format(date ?? DateTime.now());
     }
     if (MyApp.USER_TYPE_VALUE == 'Superadmin') {
       data['superadmin'] = '1';
@@ -287,7 +287,8 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                               GestureDetector(
                                                   onTap: () async {
                                                     date = await _selectDate(
-                                                        context, date!);
+                                                        context,
+                                                        date ?? DateTime.now());
                                                     details = null;
                                                     childrensFetched = false;
                                                     setState(() {});
@@ -566,158 +567,160 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                             '')
                                                         : Container(),
                                                     title: Text('Breakfast'),
-                                                    trailing: (_allChildrens[
+                                                    trailing: MyApp
+                                                                .USER_TYPE_VALUE ==
+                                                            'Parent'
+                                                        ? SizedBox()
+                                                        : (_allChildrens[selectedIndex ??
+                                                                            0]
+                                                                        .breakfast !=
+                                                                    null) &&
+                                                                _allChildrens[
                                                                         selectedIndex ??
                                                                             0]
-                                                                    .breakfast !=
-                                                                null) &&
-                                                            _allChildrens[
-                                                                    selectedIndex ??
-                                                                        0]
-                                                                .breakfast!
-                                                                .isNotEmpty
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              var time = _allChildrens[
-                                                                      selectedIndex ??
-                                                                          0]
-                                                                  .breakfast?[
-                                                                      'startTime']
-                                                                  .toString()
-                                                                  .split(":");
-                                                              print(time);
-
-                                                              type =
-                                                                  'Breakfast';
-                                                              _getItems(
-                                                                      'BREAKFAST')
-                                                                  .then(
-                                                                      (value) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        recipes
-                                                                            .length;
-                                                                    i++) {
-                                                                  if (recipes[i]
-                                                                          .itemName
-                                                                          .toLowerCase() ==
-                                                                      _allChildrens[selectedIndex ??
+                                                                    .breakfast!
+                                                                    .isNotEmpty
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  var time = _allChildrens[
+                                                                          selectedIndex ??
                                                                               0]
-                                                                          .breakfast?[
-                                                                              'item']
-                                                                          .toString()
-                                                                          .toLowerCase()) {
-                                                                    currentItemIndex =
-                                                                        i;
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              });
-                                                              try {
-                                                                hour = time![0];
-                                                                min = time[1];
-                                                              } catch (e) {
-                                                                print(e
-                                                                    .toString());
-                                                              }
-                                                              quant?.text =
-                                                                  _allChildrens[
-                                                                          selectedIndex]
-                                                                      .breakfast?['qty'];
-                                                              cal?.text = _allChildrens[
-                                                                          selectedIndex]
                                                                       .breakfast?[
-                                                                  'calories'];
-                                                              comments
-                                                                  ?.text = _allChildrens[
-                                                                          selectedIndex]
-                                                                      .breakfast?[
-                                                                  'comments'];
+                                                                          'startTime']
+                                                                      .toString()
+                                                                      .split(
+                                                                          ":");
+                                                                  print(time);
 
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Edit',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              type =
-                                                                  'Breakfast';
-                                                              _getItems(
-                                                                  'BREAKFAST');
-                                                              showPop = true;
-                                                              setState(() {});
-                                                            },
-                                                            child: Container(
-                                                                width: 65,
-                                                                decoration: BoxDecoration(
-                                                                    color: Constants
-                                                                        .kButton,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(8))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          12,
-                                                                          8,
-                                                                          12,
-                                                                          8),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            12,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      Text(
-                                                                        ' Add',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ),
+                                                                  type =
+                                                                      'Breakfast';
+                                                                  _getItems(
+                                                                          'BREAKFAST')
+                                                                      .then(
+                                                                          (value) {
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < recipes.length;
+                                                                        i++) {
+                                                                      if (recipes[i]
+                                                                              .itemName
+                                                                              .toLowerCase() ==
+                                                                          _allChildrens[selectedIndex ?? 0]
+                                                                              .breakfast?['item']
+                                                                              .toString()
+                                                                              .toLowerCase()) {
+                                                                        currentItemIndex =
+                                                                            i;
+                                                                        break;
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                  try {
+                                                                    hour =
+                                                                        time![
+                                                                            0];
+                                                                    min =
+                                                                        time[1];
+                                                                  } catch (e) {
+                                                                    print(e
+                                                                        .toString());
+                                                                  }
+                                                                  quant?.text =
+                                                                      _allChildrens[selectedIndex]
+                                                                              .breakfast?[
+                                                                          'qty'];
+                                                                  cal?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .breakfast?[
+                                                                      'calories'];
+                                                                  comments
+                                                                      ?.text = _allChildrens[
+                                                                              selectedIndex]
+                                                                          .breakfast?[
+                                                                      'comments'];
+
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Edit',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              )
+                                                            : GestureDetector(
+                                                                onTap: () {
+                                                                  type =
+                                                                      'Breakfast';
+                                                                  _getItems(
+                                                                      'BREAKFAST');
+                                                                  showPop =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                        width:
+                                                                            65,
+                                                                        decoration: BoxDecoration(
+                                                                            color: Constants
+                                                                                .kButton,
+                                                                            borderRadius: BorderRadius.all(Radius.circular(
+                                                                                8))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                              12,
+                                                                              8,
+                                                                              12,
+                                                                              8),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.edit,
+                                                                                size: 12,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                              Text(
+                                                                                ' Add',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                              ),
                                                   ),
                                                 if (showType['morningtea'] ==
                                                     '1')
@@ -1496,14 +1499,15 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                 'No Suncreen data')
                                                             : Builder(builder:
                                                                 (context) {
-                                                                try { 
+                                                                try {
                                                                   return Text(_allChildrens[
                                                                               selectedIndex]
                                                                           .sunscreen[0]
                                                                       [
                                                                       'startTime']);
                                                                 } catch (e) {
-                                                                    return Text('');
+                                                                  return Text(
+                                                                      '');
                                                                 }
                                                               })
                                                         : Container(),
@@ -1914,18 +1918,45 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                                     setState(
                                                                         () {});
                                                                   },
-                                                                  child:
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(15),
+                                                                        child: CircleAvatar(
+                                                                            radius: 15.0,
+                                                                            child: Image.network(
+                                                                              errorBuilder: (context, error, stackTrace) {
+                                                                                return SizedBox();
+                                                                              },
+                                                                              Constants.ImageBaseUrl + _allChildrens[index].imageUrl,
+                                                                              fit: BoxFit.fitWidth,
+                                                                            )),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              20),
                                                                       Transform(
                                                                           transform: Matrix4.translationValues(
                                                                               -13,
                                                                               0.0,
                                                                               0.0),
                                                                           child:
-                                                                              Text(
-                                                                            _allChildrens[index].name,
-                                                                            style:
-                                                                                TextStyle(color: Constants.kMain),
+                                                                              SizedBox(
+                                                                            width:
+                                                                                MediaQuery.of(context).size.width * .45,
+                                                                            child:
+                                                                                Text(
+                                                                              _allChildrens[index].name,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(color: Constants.kMain),
+                                                                            ),
                                                                           )),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
@@ -3707,8 +3738,9 @@ class _DailyDairyMainState extends State<DailyDairyMain> {
                                                         var objToSend = {
                                                           "userid": MyApp
                                                               .LOGIN_ID_VALUE,
-                                                          "startTime":
-                                                             [ hour + ":" + min], 
+                                                          "startTime": [
+                                                            hour + ":" + min
+                                                          ],
                                                           "signature": signature
                                                               ?.text
                                                               .toString(),

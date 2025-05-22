@@ -180,32 +180,32 @@ class _GetDrawerState extends State<GetDrawer> {
                     .push(MaterialPageRoute(builder: (context) => RoomsList()));
               },
             ),
-          if (MyApp.USER_TYPE_VALUE != 'Parent')
-            Divider(
-              color: Colors.white.withOpacity(0.8),
+          // if (MyApp.USER_TYPE_VALUE != 'Parent')
+          Divider(
+            color: Colors.white.withOpacity(0.8),
+          ),
+          // if (MyApp.USER_TYPE_VALUE != 'Parent')
+          ListTile(
+            leading: Icon(
+              FontAwesome.newspaper_o,
+              color: Colors.white,
             ),
-          if (MyApp.USER_TYPE_VALUE != 'Parent')
-            ListTile(
-              leading: Icon(
-                FontAwesome.newspaper_o,
-                color: Colors.white,
-              ),
-              title: Text(
-                Constants.PROGRAMPLANS_TAG,
-                style: Constants.sideHeadingStyle,
-              ),
-              onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => PlansList()));
-                // if (showProgPlan == false) {
-                //   showProgPlan = true;
-                //   setState(() {});
-                // } else {
-                //   showProgPlan = false;
-                //   setState(() {});
-                // }
-              },
+            title: Text(
+              Constants.PROGRAMPLANS_TAG,
+              style: Constants.sideHeadingStyle,
             ),
+            onTap: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => PlansList()));
+              // if (showProgPlan == false) {
+              //   showProgPlan = true;
+              //   setState(() {});
+              // } else {
+              //   showProgPlan = false;
+              //   setState(() {});
+              // }
+            },
+          ),
           // Visibility(
           //   visible: showProgPlan,
           //   child: Column(
@@ -421,6 +421,7 @@ class _GetDrawerState extends State<GetDrawer> {
                         builder: (context) => DailyDairyMain()));
                   },
                 ),
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
                 Divider(color: Colors.transparent),
                 if (MyApp.USER_TYPE_VALUE != 'Parent')
                   ListTile(
@@ -434,7 +435,9 @@ class _GetDrawerState extends State<GetDrawer> {
                           builder: (context) => HeadChecks()));
                     },
                   ),
+                  if (MyApp.USER_TYPE_VALUE != 'Parent')
                 Divider(color: Colors.transparent),
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
                 ListTile(
                   title: Text(
                     Constants.SLEEPCHECKLIST_TAG,
@@ -461,7 +464,7 @@ class _GetDrawerState extends State<GetDrawer> {
               ],
             ),
           ),
-          if (MyApp.USER_TYPE_VALUE != 'Parent')
+          // if (MyApp.USER_TYPE_VALUE != 'Parent')
             Divider(
               // ignore: deprecated_member_use
               color: Colors.white.withOpacity(0.8),
