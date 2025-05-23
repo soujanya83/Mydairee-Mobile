@@ -1048,7 +1048,7 @@ class _MenuListState extends State<MenuList> with TickerProviderStateMixin {
                                                     deletePermission:
                                                         deleteRecipePermission,
                                                     onDelete: () async {
-                                                      try {
+                                                      try { 
                                                         MenuAPIHandler handler =
                                                             MenuAPIHandler({
                                                           "userid": MyApp

@@ -422,7 +422,7 @@ class _GetDrawerState extends State<GetDrawer> {
                   },
                 ),
                 if (MyApp.USER_TYPE_VALUE != 'Parent')
-                Divider(color: Colors.transparent),
+                  Divider(color: Colors.transparent),
                 if (MyApp.USER_TYPE_VALUE != 'Parent')
                   ListTile(
                     title: Text(
@@ -435,20 +435,20 @@ class _GetDrawerState extends State<GetDrawer> {
                           builder: (context) => HeadChecks()));
                     },
                   ),
-                  if (MyApp.USER_TYPE_VALUE != 'Parent')
-                Divider(color: Colors.transparent),
                 if (MyApp.USER_TYPE_VALUE != 'Parent')
-                ListTile(
-                  title: Text(
-                    Constants.SLEEPCHECKLIST_TAG,
-                    style: Constants.sideHeadingStyle,
+                  Divider(color: Colors.transparent),
+                if (MyApp.USER_TYPE_VALUE != 'Parent')
+                  ListTile(
+                    title: Text(
+                      Constants.SLEEPCHECKLIST_TAG,
+                      style: Constants.sideHeadingStyle,
+                    ),
+                    //   leading: Icon(Icons.food_bank_outlined,color: Colors.white,),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SleepCheckList()));
+                    },
                   ),
-                  //   leading: Icon(Icons.food_bank_outlined,color: Colors.white,),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => SleepCheckList()));
-                  },
-                ),
                 Divider(color: Colors.transparent),
                 ListTile(
                   title: Text(
@@ -465,10 +465,10 @@ class _GetDrawerState extends State<GetDrawer> {
             ),
           ),
           // if (MyApp.USER_TYPE_VALUE != 'Parent')
-            Divider(
-              // ignore: deprecated_member_use
-              color: Colors.white.withOpacity(0.8),
-            ),
+          Divider(
+            // ignore: deprecated_member_use
+            color: Colors.white.withOpacity(0.8),
+          ),
 //  if (MyApp.USER_TYPE_VALUE != 'Parent')
           ListTile(
             leading: Icon(
@@ -608,9 +608,11 @@ class _GetDrawerState extends State<GetDrawer> {
               style: Constants.sideHeadingStyle,
             ),
             onTap: () {
-              MyApp.logout();
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  UserType.Tag, (Route<dynamic> route) => false);
+              showLogoutDialog(context, onLogout: () {
+                MyApp.logout();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    UserType.Tag, (Route<dynamic> route) => false);
+              });
             },
           ),
 
@@ -621,4 +623,130 @@ class _GetDrawerState extends State<GetDrawer> {
         //: Center(child: CircularProgressIndicator(),),
         );
   }
+}
+
+
+void showLogoutDialog(BuildContext context, {required VoidCallback onLogout}) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 24.0,
+            bottom: 24.0,
+            left: 24.0,
+            right: 24.0,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: Offset(0.0, 10.0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // Icon with circular background
+              Container(
+                padding: EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Constants.kButton.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.logout,
+                  size: 36.0,
+                  color: Constants.kButton,
+                ),
+              ),
+              SizedBox(height: 20.0),
+              
+              // Title
+              Text(
+                "Logout Confirmation",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+              SizedBox(height: 12.0),
+              
+              // Message
+              Text(
+                "Are you sure you want to logout?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 24.0),
+              
+              // Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Cancel Button
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      backgroundColor: Colors.grey[200],
+                    ),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  
+                  // Logout Button
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      onLogout();
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      backgroundColor: Constants.kButton,
+                    ),
+                    child: Text(
+                      "Logout",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

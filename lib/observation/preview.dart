@@ -43,7 +43,7 @@ class _PreviewState extends State<Preview> {
     // title = AddObservationState.previewtitle ?? '';
     // ref = AddObservationState.previewRef ?? '';
     notes = AddObservationState.notesController.text;
-    title = AddObservationState.titleController.text;
+    title = AddObservationState.observationTextController.text;
     ref = AddObservationState.refController.text;
     childVoice = AddObservationState.childVoiceController.text;
     futurePlan = AddObservationState.futurePlanController.text;

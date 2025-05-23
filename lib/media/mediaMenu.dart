@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -225,7 +226,10 @@ class _MediaMenuState extends State<MediaMenu> {
                 GestureDetector(
                   onTap: () async {
                     FilePickerResult? result =
-                        await FilePicker.platform.pickFiles();
+                        await FilePicker.platform.pickFiles(
+                      type: FileType.image,
+                      allowMultiple: false, // Allows selecting multiple images
+                    );
 
                     if (result != null) {
                       File file = File(result.files.single.path ?? '');
@@ -276,27 +280,45 @@ class _MediaMenuState extends State<MediaMenu> {
                     }
                   },
                   child: DottedBorder(
-                    color: Colors.blueGrey,
-                    dashPattern: [8, 4],
-                    strokeWidth: 2,
+                    color: Colors.blueGrey.withOpacity(0.5),
+                    dashPattern: const [10, 6],
+                    strokeWidth: 1.8,
+                    borderType: BorderType.RRect,
+                    radius: const Radius.circular(16),
+                    padding: const EdgeInsets.all(16),
                     child: Container(
-                      width: size.width,
-                      height: size.height / 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: <Widget>[
-                            Center(
-                                child: SizedBox(
-                                    height: size.height / 6,
-                                    child: Image.asset(Constants.UPLOAD_IMG))),
-                            Text(
-                              'Upload Media',
-                              style: TextStyle(
-                                  fontSize: 22, color: Colors.blueGrey),
+                      width: double.infinity,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.cloud_upload_outlined,
+                            size: 60,
+                            color: Colors.blueGrey.withOpacity(0.6),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Upload Media',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blueGrey,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'JPG, PNG up to 5MB',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blueGrey.withOpacity(0.7),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -391,8 +413,8 @@ class _MediaMenuState extends State<MediaMenu> {
                                                   .withOpacity(0.2),
                                             ),
                                             child: IconButton(
-                                              icon:
-                                                  Icon(AntDesign.eyeo, size: 18),
+                                              icon: Icon(AntDesign.eyeo,
+                                                  size: 18),
                                               color: Colors.blue[600],
                                               padding: EdgeInsets.zero,
                                               constraints: BoxConstraints(),
@@ -416,105 +438,113 @@ class _MediaMenuState extends State<MediaMenu> {
                                                                   .size
                                                                   .width *
                                                               0.7,
-                                                          child:
-                                                              ListView(children: [
-                                                            Container(
-                                                              width:
-                                                                  size.height / 8,
-                                                              height:
-                                                                  size.height / 8,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                image:
-                                                                    DecorationImage(
-                                                                  image: FileImage(
-                                                                      files[
-                                                                          index]),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                            Text('Children'),
-                                                            SizedBox(height: 3),
-                                                            MultiSelectDialogField(
-                                                              items: _allChildrens
-                                                                  .map((e) =>
-                                                                      MultiSelectItem(
-                                                                          e,
-                                                                          e.name))
-                                                                  .toList(),
-                                                              initialValue:
-                                                                  _editChildren[
-                                                                      index],
-                                                              listType:
-                                                                  MultiSelectListType
-                                                                      .CHIP,
-                                                              onConfirm:
-                                                                  (values) {
-                                                                _editChildren[
-                                                                        index] =
-                                                                    values;
-                                                              },
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                            Text('Educators'),
-                                                            SizedBox(height: 3),
-                                                            MultiSelectDialogField(
-                                                              items: _allEductarors
-                                                                  .map((e) =>
-                                                                      MultiSelectItem(
-                                                                          e,
-                                                                          e.name))
-                                                                  .toList(),
-                                                              initialValue:
-                                                                  _editEducators[
-                                                                      index],
-                                                              listType:
-                                                                  MultiSelectListType
-                                                                      .CHIP,
-                                                              onConfirm:
-                                                                  (values) {
-                                                                _editEducators[
-                                                                        index] =
-                                                                    values;
-                                                              },
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                            Text('Caption'),
-                                                            SizedBox(height: 3),
-                                                            Container(
-                                                              height: 30,
-                                                              child: TextField(
-                                                                maxLines: 1,
-                                                                controller:
-                                                                    captions[
-                                                                        index],
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderSide: BorderSide(
-                                                                        color: Colors
-                                                                            .black26,
-                                                                        width:
-                                                                            0.0),
-                                                                  ),
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .all(
-                                                                      Radius
-                                                                          .circular(
-                                                                              4),
+                                                          child: ListView(
+                                                              children: [
+                                                                Container(
+                                                                  width:
+                                                                      size.height /
+                                                                          8,
+                                                                  height:
+                                                                      size.height /
+                                                                          8,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    image:
+                                                                        DecorationImage(
+                                                                      image: FileImage(
+                                                                          files[
+                                                                              index]),
+                                                                      fit: BoxFit
+                                                                          .cover,
                                                                     ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ]),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text(
+                                                                    'Children'),
+                                                                SizedBox(
+                                                                    height: 3),
+                                                                MultiSelectDialogField(
+                                                                  items: _allChildrens
+                                                                      .map((e) =>
+                                                                          MultiSelectItem(
+                                                                              e,
+                                                                              e.name))
+                                                                      .toList(),
+                                                                  initialValue:
+                                                                      _editChildren[
+                                                                          index],
+                                                                  listType:
+                                                                      MultiSelectListType
+                                                                          .CHIP,
+                                                                  onConfirm:
+                                                                      (values) {
+                                                                    _editChildren[
+                                                                            index] =
+                                                                        values;
+                                                                  },
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text(
+                                                                    'Educators'),
+                                                                SizedBox(
+                                                                    height: 3),
+                                                                MultiSelectDialogField(
+                                                                  items: _allEductarors
+                                                                      .map((e) =>
+                                                                          MultiSelectItem(
+                                                                              e,
+                                                                              e.name))
+                                                                      .toList(),
+                                                                  initialValue:
+                                                                      _editEducators[
+                                                                          index],
+                                                                  listType:
+                                                                      MultiSelectListType
+                                                                          .CHIP,
+                                                                  onConfirm:
+                                                                      (values) {
+                                                                    _editEducators[
+                                                                            index] =
+                                                                        values;
+                                                                  },
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text('Caption'),
+                                                                SizedBox(
+                                                                    height: 3),
+                                                                Container(
+                                                                  height: 30,
+                                                                  child:
+                                                                      TextField(
+                                                                    maxLines: 1,
+                                                                    controller:
+                                                                        captions[
+                                                                            index],
+                                                                    decoration:
+                                                                        InputDecoration(
+                                                                      enabledBorder:
+                                                                          OutlineInputBorder(
+                                                                        borderSide: BorderSide(
+                                                                            color:
+                                                                                Colors.black26,
+                                                                            width: 0.0),
+                                                                      ),
+                                                                      border:
+                                                                          OutlineInputBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(
+                                                                          Radius.circular(
+                                                                              4),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ]),
                                                         ),
                                                       ),
                                                       actions: <Widget>[
@@ -572,12 +602,13 @@ class _MediaMenuState extends State<MediaMenu> {
                                   postData['caption' + i.toString()] =
                                       captions[i].text;
                                   postData["media" + i.toString()] =
-                                      await MultipartFile.fromFile(files[i].path,
+                                      await MultipartFile.fromFile(
+                                          files[i].path,
                                           filename: basename(files[i].path));
                                 }
                                 postData['userid'] = MyApp.LOGIN_ID_VALUE;
                                 postData['centerid'] = centers[currentIndex].id;
-                    
+
                                 FormData formData = FormData.fromMap(postData);
                                 Dio dio = new Dio();
                                 Response? response = await dio
@@ -617,728 +648,395 @@ class _MediaMenuState extends State<MediaMenu> {
                   ),
                 if (menuMedia != null && menuMedia.length > 0)
                   Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    margin: EdgeInsets.all(8),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Wrap(
-                                spacing: 8.0, // gap between adjacent chips
-                                runSpacing: 4.0, //
-                                children: List<Widget>.generate(
-                                    menuMedia.length, (int index) {
-                                  if (menuMedia[index].type.toString() ==
-                                      'Image') {
-                                    // print(Constants.ImageBaseUrl +
-                                    //     menuMedia[index].filename);
-                                    return Stack(
-                                      children: [
-                                        Container(
-                                            width: size.width*.27,
-                                            height: size.width*.27,
-                                            decoration: new BoxDecoration(
-                                              //  borderRadius: BorderRadius.circular(15.0),
-                                              shape: BoxShape.rectangle,
-                                              image: new DecorationImage(
-                                                image: new NetworkImage(
-                                                    Constants.ImageBaseUrl +
-                                                        menuMedia[index]
-                                                            .filename),
-                                                fit: BoxFit.cover,
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 1,
+                            ),
+                            itemCount: menuMedia.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: menuMedia[index].type.toString() ==
+                                              'Image'
+                                          ? Image.network(
+                                              Constants.ImageBaseUrl +
+                                                  menuMedia[index].filename,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  Container(
+                                                      color: Colors.grey[200]),
+                                            )
+                                          : Container(
+                                              color: Colors.grey[200],
+                                              child: Center(
+                                                child: Icon(
+                                                    Icons.play_circle_filled,
+                                                    size: 40,
+                                                    color: Colors.white),
                                               ),
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                showDeleteDialog(context,
-                                                    () async {
-                                                  MediaAPIHandler handler =
-                                                      MediaAPIHandler({
-                                                    "mediaid":
-                                                        menuMedia[index].id,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE
-                                                  });
-                                                  await handler
-                                                      .deleteMedia()
-                                                      .then((value) {
-                                                    if (value['Status'] ==
-                                                        'SUCCESS') {
-                                                      _fetchData();
-                                                    }
-                                                  });
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                print(menuMedia[index].id);
-                                                MediaAPIHandler handler =
-                                                    MediaAPIHandler({
-                                                  "mediaid":
-                                                      menuMedia[index].id,
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                handler
-                                                    .getMediaTags()
-                                                    .then((value) {
-                                                  if (value['Status'] ==
-                                                      'SUCCESS') {
-                                                    print(value);
-
-                                                    TextEditingController
-                                                        caption =
-                                                        TextEditingController(
-                                                            text: value['Media']
-                                                                ['caption']);
-                                                    List<ChildModel> editChild =
-                                                        [];
-                                                    List<StaffModel>
-                                                        editEducator = [];
-                                                    String mediaId =
-                                                        value['Media']['id'];
-
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['ChildTags']
-                                                                .length;
-                                                        i++) {
-                                                      var childID =
-                                                          value['ChildTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allChildrens
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            childID) {
-                                                          editChild.add(
-                                                              _allChildrens[j]);
-                                                        }
+                                            ),
+                                    ),
+                                    Positioned(
+                                      right: 4,
+                                      top: 4,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text("Delete Media"),
+                                              content: Text(
+                                                  "Are you sure you want to delete this media?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: Text("Cancel"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    Navigator.pop(context);
+                                                    MediaAPIHandler handler =
+                                                        MediaAPIHandler({
+                                                      "mediaid":
+                                                          menuMedia[index].id,
+                                                      "userid":
+                                                          MyApp.LOGIN_ID_VALUE
+                                                    });
+                                                    await handler
+                                                        .deleteMedia()
+                                                        .then((value) {
+                                                      if (value['Status'] ==
+                                                          'SUCCESS') {
+                                                        _fetchData();
                                                       }
-                                                    }
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['StaffTags']
-                                                                .length;
-                                                        i++) {
-                                                      var userID =
-                                                          value['StaffTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allEductarors
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allEductarors[j]
-                                                                .id ==
-                                                            userID) {
-                                                          editEducator.add(
-                                                              _allEductarors[
-                                                                  j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    print('yee');
-                                                    print('hry' +
-                                                        editEducator
-                                                            .toString());
-                                                    print('hr' +
-                                                        editChild.toString());
-                                                    print('hj');
-                                                    //below also you need to add the same code
+                                                    });
+                                                  },
+                                                  child: Text("Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.red)),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(Icons.close,
+                                              size: 16, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 4,
+                                      top: 30,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          MediaAPIHandler handler =
+                                              MediaAPIHandler({
+                                            "mediaid": menuMedia[index].id,
+                                            "userid": MyApp.LOGIN_ID_VALUE
+                                          });
+                                          handler.getMediaTags().then((value) {
+                                            if (value['Status'] == 'SUCCESS') {
+                                              TextEditingController caption =
+                                                  TextEditingController(
+                                                      text: value['Media']
+                                                          ['caption']);
+                                              List<ChildModel> editChild = [];
+                                              List<StaffModel> editEducator =
+                                                  [];
+                                              String mediaId =
+                                                  value['Media']['id'];
 
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title:
-                                                                Text("Edit "),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                              child: Container(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.6,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                                child: ListView(
-                                                                  children: [
-                                                                    Container(
-                                                                        width:
-                                                                            size.height /
-                                                                                8,
-                                                                        height:
-                                                                            size.height /
-                                                                                8,
-                                                                        decoration:
-                                                                            new BoxDecoration(
-                                                                          //  borderRadius: BorderRadius.circular(15.0),
-                                                                          shape:
-                                                                              BoxShape.rectangle,
-                                                                          image:
-                                                                              new DecorationImage(
-                                                                            image:
-                                                                                new NetworkImage(Constants.ImageBaseUrl + menuMedia[index].filename),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        )),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Children'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allChildrens
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editChild,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editChild =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Educators'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allEductarors
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editEducator,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editEducator =
-                                                                            values;
-                                                                        print(
-                                                                            editEducator);
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Caption'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      child: TextField(
-                                                                          maxLines: 1,
-                                                                          controller: caption,
-                                                                          decoration: new InputDecoration(
-                                                                            enabledBorder:
-                                                                                const OutlineInputBorder(
-                                                                              borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                            ),
-                                                                            border:
-                                                                                new OutlineInputBorder(
-                                                                              borderRadius: const BorderRadius.all(
-                                                                                const Radius.circular(4),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ],
+                                              for (int i = 0;
+                                                  i < value['ChildTags'].length;
+                                                  i++) {
+                                                var childID = value['ChildTags']
+                                                    [i]['userid'];
+                                                for (int j = 0;
+                                                    j < _allChildrens.length;
+                                                    j++) {
+                                                  if (_allChildrens[j].id ==
+                                                      childID) {
+                                                    editChild
+                                                        .add(_allChildrens[j]);
+                                                  }
+                                                }
+                                              }
+                                              for (int i = 0;
+                                                  i < value['StaffTags'].length;
+                                                  i++) {
+                                                var userID = value['StaffTags']
+                                                    [i]['userid'];
+                                                for (int j = 0;
+                                                    j < _allEductarors.length;
+                                                    j++) {
+                                                  if (_allEductarors[j].id ==
+                                                      userID) {
+                                                    editEducator
+                                                        .add(_allEductarors[j]);
+                                                  }
+                                                }
+                                              }
+
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("Edit"),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                      child: Container(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.6,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.7,
+                                                        child: ListView(
+                                                          children: [
+                                                            Container(
+                                                              width:
+                                                                  size.height /
+                                                                      8,
+                                                              height:
+                                                                  size.height /
+                                                                      8,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .rectangle,
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: NetworkImage(Constants
+                                                                          .ImageBaseUrl +
+                                                                      menuMedia[
+                                                                              index]
+                                                                          .filename),
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
                                                               ),
                                                             ),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
-
-                                                                  List tags =
-                                                                      [];
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editChild
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "child",
-                                                                        "mediaid":
-                                                                            menuMedia[index].id,
-                                                                        "userid":
-                                                                            editChild[i].id
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editEducator
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "staff",
-                                                                        "mediaid":
-                                                                            menuMedia[index].id,
-                                                                        "userid":
-                                                                            editEducator[i].id,
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  var _objToSend =
-                                                                      {
-                                                                    "mediaId":
-                                                                        menuMedia[index]
-                                                                            .id,
-                                                                    "imgCaption":
-                                                                        caption
-                                                                            .text
-                                                                            .toString(),
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "tags":
-                                                                        tags,
-                                                                  };
-                                                                  print(
-                                                                      _objToSend);
-
-                                                                  var resp = await http.post(
-                                                                      Uri.parse(
-                                                                          _toSend),
-                                                                      body: jsonEncode(
-                                                                          _objToSend),
-                                                                      headers: {
-                                                                        'X-DEVICE-ID':
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        'X-TOKEN':
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
-                                                                  var data =
-                                                                      jsonDecode(
-                                                                          resp.body);
-                                                                  if (data[
-                                                                          'Status'] ==
-                                                                      'SUCCESS') {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Text('ok'),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        });
-                                                  } else {
-                                                    MyApp.ShowToast(
-                                                        value['Status'],
-                                                        context);
-                                                  }
-                                                });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  } else {
-                                    return Stack(
-                                      children: [
-                                        VideoItem(
-                                            width: 100,
-                                            height: 100,
-                                            url: Constants.ImageBaseUrl +
-                                                menuMedia[index].filename),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(Icons.clear),
-                                              onTap: () {
-                                                showDeleteDialog(context,
-                                                    () async {
-                                                  MediaAPIHandler handler =
-                                                      MediaAPIHandler({
-                                                    "mediaid":
-                                                        menuMedia[index].id,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE
-                                                  });
-                                                  await handler
-                                                      .deleteMedia()
-                                                      .then((value) {
-                                                    if (value['Status'] ==
-                                                        'SUCCESS') {
-                                                      _fetchData();
-                                                    }
-                                                  });
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                print(menuMedia[index].id);
-                                                MediaAPIHandler handler =
-                                                    MediaAPIHandler({
-                                                  "mediaid":
-                                                      menuMedia[index].id,
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                handler
-                                                    .getMediaTags()
-                                                    .then((value) {
-                                                  if (value['Status'] ==
-                                                      'SUCCESS') {
-                                                    print(value);
-
-                                                    TextEditingController
-                                                        caption =
-                                                        TextEditingController(
-                                                            text: value['Media']
-                                                                ['caption']);
-                                                    List<ChildModel> editChild =
-                                                        [];
-                                                    List<StaffModel>
-                                                        editEducator = [];
-                                                    String mediaId =
-                                                        value['Media']['id'];
-
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['ChildTags']
-                                                                .length;
-                                                        i++) {
-                                                      var childID =
-                                                          value['ChildTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allChildrens
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            childID) {
-                                                          editChild.add(
-                                                              _allChildrens[j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['StaffTags']
-                                                                .length;
-                                                        i++) {
-                                                      var userID =
-                                                          value['StaffTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allEductarors
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            userID) {
-                                                          editEducator.add(
-                                                              _allEductarors[
-                                                                  j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    print('yee');
-                                                    print('hry' +
-                                                        editEducator
-                                                            .toString());
-                                                    print('hr' +
-                                                        editChild.toString());
-                                                    print('hj');
-                                                    //below also you need to add the same code
-
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title:
-                                                                Text("Edit "),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                              child: Container(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.6,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                                child: ListView(
-                                                                  children: [
-                                                                    Container(
+                                                            SizedBox(height: 8),
+                                                            Text('Children'),
+                                                            SizedBox(height: 3),
+                                                            MultiSelectDialogField(
+                                                              items: _allChildrens
+                                                                  .map((e) =>
+                                                                      MultiSelectItem(
+                                                                          e,
+                                                                          e.name))
+                                                                  .toList(),
+                                                              initialValue:
+                                                                  editChild,
+                                                              listType:
+                                                                  MultiSelectListType
+                                                                      .CHIP,
+                                                              onConfirm:
+                                                                  (values) {
+                                                                editChild =
+                                                                    values;
+                                                              },
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Educators'),
+                                                            SizedBox(height: 3),
+                                                            MultiSelectDialogField(
+                                                              items: _allEductarors
+                                                                  .map((e) =>
+                                                                      MultiSelectItem(
+                                                                          e,
+                                                                          e.name))
+                                                                  .toList(),
+                                                              initialValue:
+                                                                  editEducator,
+                                                              listType:
+                                                                  MultiSelectListType
+                                                                      .CHIP,
+                                                              onConfirm:
+                                                                  (values) {
+                                                                editEducator =
+                                                                    values;
+                                                              },
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Caption'),
+                                                            SizedBox(height: 3),
+                                                            Container(
+                                                              height: 30,
+                                                              child: TextField(
+                                                                maxLines: 1,
+                                                                controller:
+                                                                    caption,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors
+                                                                            .black26,
                                                                         width:
-                                                                            size.height /
-                                                                                8,
-                                                                        height:
-                                                                            size.height /
-                                                                                8,
-                                                                        decoration:
-                                                                            new BoxDecoration(
-                                                                          //  borderRadius: BorderRadius.circular(15.0),
-                                                                          shape:
-                                                                              BoxShape.rectangle,
-                                                                          image:
-                                                                              new DecorationImage(
-                                                                            image:
-                                                                                new NetworkImage(Constants.ImageBaseUrl + menuMedia[index].filename),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        )),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Children'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allChildrens
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editChild,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editChild =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Educators'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allEductarors
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editEducator,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editEducator =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Caption'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      child: TextField(
-                                                                          maxLines: 1,
-                                                                          controller: caption,
-                                                                          decoration: new InputDecoration(
-                                                                            enabledBorder:
-                                                                                const OutlineInputBorder(
-                                                                              borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                            ),
-                                                                            border:
-                                                                                new OutlineInputBorder(
-                                                                              borderRadius: const BorderRadius.all(
-                                                                                const Radius.circular(4),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ],
+                                                                            0.0),
+                                                                  ),
+                                                                  border:
+                                                                      OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(4)),
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
-
-                                                                  List tags =
-                                                                      [];
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editChild
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add({
-                                                                      "usertype":
-                                                                          "child",
-                                                                      "mediaid":
-                                                                          menuMedia[index]
-                                                                              .id,
-                                                                      "userid":
-                                                                          editChild[i]
-                                                                              .id
-                                                                    });
-                                                                  }
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editEducator
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add({
-                                                                      "usertype":
-                                                                          "staff",
-                                                                      "mediaid":
-                                                                          menuMedia[index]
-                                                                              .id,
-                                                                      "userid":
-                                                                          editEducator[i]
-                                                                              .id,
-                                                                    });
-                                                                  }
-                                                                  var _objToSend =
-                                                                      {
-                                                                    "mediaId":
-                                                                        menuMedia[index]
-                                                                            .id,
-                                                                    "imgCaption":
-                                                                        caption
-                                                                            .text
-                                                                            .toString(),
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "tags":
-                                                                        tags,
-                                                                  };
-                                                                  print(
-                                                                      _objToSend);
-
-                                                                  var resp =
-                                                                      await http
-                                                                          .post(
-                                                                    Uri.parse(
-                                                                        _toSend),
-                                                                    body: jsonEncode(
-                                                                        _objToSend),
-                                                                    headers: {
-                                                                      'X-DEVICE-ID':
-                                                                          await MyApp
-                                                                              .getDeviceIdentity(),
-                                                                      'X-TOKEN':
-                                                                          MyApp
-                                                                              .AUTH_TOKEN_VALUE,
-                                                                    },
-                                                                  );
-                                                                  var data =
-                                                                      jsonDecode(
-                                                                          resp.body);
-                                                                  if (data[
-                                                                          'Status'] ==
-                                                                      'SUCCESS') {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Text('ok'),
-                                                              )
-                                                            ],
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          var _toSend =
+                                                              'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
+                                                          List tags = [];
+                                                          for (int i = 0;
+                                                              i <
+                                                                  editChild
+                                                                      .length;
+                                                              i++) {
+                                                            tags.add({
+                                                              "usertype":
+                                                                  "child",
+                                                              "mediaid":
+                                                                  menuMedia[
+                                                                          index]
+                                                                      .id,
+                                                              "userid":
+                                                                  editChild[i]
+                                                                      .id
+                                                            });
+                                                          }
+                                                          for (int i = 0;
+                                                              i <
+                                                                  editEducator
+                                                                      .length;
+                                                              i++) {
+                                                            tags.add({
+                                                              "usertype":
+                                                                  "staff",
+                                                              "mediaid":
+                                                                  menuMedia[
+                                                                          index]
+                                                                      .id,
+                                                              "userid":
+                                                                  editEducator[
+                                                                          i]
+                                                                      .id,
+                                                            });
+                                                          }
+                                                          var _objToSend = {
+                                                            "mediaId":
+                                                                menuMedia[index]
+                                                                    .id,
+                                                            "imgCaption":
+                                                                caption.text
+                                                                    .toString(),
+                                                            "userid": MyApp
+                                                                .LOGIN_ID_VALUE,
+                                                            "tags": tags,
+                                                          };
+                                                          var resp =
+                                                              await http.post(
+                                                            Uri.parse(_toSend),
+                                                            body: jsonEncode(
+                                                                _objToSend),
+                                                            headers: {
+                                                              'X-DEVICE-ID':
+                                                                  await MyApp
+                                                                      .getDeviceIdentity(),
+                                                              'X-TOKEN': MyApp
+                                                                  .AUTH_TOKEN_VALUE,
+                                                            },
                                                           );
-                                                        });
-                                                  } else {
-                                                    MyApp.ShowToast(
-                                                        value['Status'],
-                                                        context);
-                                                  }
-                                                });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  }
-                                })),
-                          ],
-                        ),
+                                                          var data = jsonDecode(
+                                                              resp.body);
+                                                          if (data['Status'] ==
+                                                              'SUCCESS') {
+                                                            Navigator.pop(
+                                                                context);
+                                                          }
+                                                        },
+                                                        child: Text('ok'),
+                                                      )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            } else {
+                                              MyApp.ShowToast(
+                                                  value['Status'], context);
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(Icons.edit,
+                                              size: 16, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -1349,1453 +1047,803 @@ class _MediaMenuState extends State<MediaMenu> {
                   ),
                 if (menuMediaWeek != null && menuMediaWeek.length > 0)
                   Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: EdgeInsets.all(8),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Wrap(
-                                spacing: 8.0, // gap between adjacent chips
-                                runSpacing: 4.0, //
-                                children: List<Widget>.generate(
-                                    menuMediaWeek.length, (int index) {
-                                  if (menuMediaWeek[index].type.toString() ==
-                                      'Image') {
-                                    return Stack(
-                                      children: [
-                                        Container(
-                                            width: size.height / 8,
-                                            height: size.height / 8,
-                                            decoration: new BoxDecoration(
-                                              //  borderRadius: BorderRadius.circular(15.0),
-                                              shape: BoxShape.rectangle,
-                                              image: new DecorationImage(
-                                                image: new NetworkImage(
-                                                    Constants.ImageBaseUrl +
-                                                        menuMediaWeek[index]
-                                                            .filename),
-                                                fit: BoxFit.cover,
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 1,
+                            ),
+                            itemCount: menuMediaWeek.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: menuMediaWeek[index]
+                                                  .type
+                                                  .toString() ==
+                                              'Image'
+                                          ? Image.network(
+                                              Constants.ImageBaseUrl +
+                                                  menuMediaWeek[index].filename,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  Container(
+                                                      color: Colors.grey[200]),
+                                            )
+                                          : Container(
+                                              color: Colors.grey[200],
+                                              child: Center(
+                                                child: Icon(
+                                                    Icons.play_circle_filled,
+                                                    size: 40,
+                                                    color: Colors.white),
                                               ),
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                showDeleteDialog(context,
-                                                    () async {
-                                                  MediaAPIHandler handler =
-                                                      MediaAPIHandler({
-                                                    "mediaid":
-                                                        menuMediaWeek[index].id,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE
-                                                  });
-                                                  await handler
-                                                      .deleteMedia()
-                                                      .then((value) {
-                                                    if (value['Status'] ==
-                                                        'SUCCESS') {
-                                                      _fetchData();
-                                                    }
-                                                  });
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                print(menuMediaWeek[index].id);
-                                                MediaAPIHandler handler =
-                                                    MediaAPIHandler({
-                                                  "mediaid":
-                                                      menuMediaWeek[index].id,
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                handler
-                                                    .getMediaTags()
-                                                    .then((value) {
-                                                  if (value['Status'] ==
-                                                      'SUCCESS') {
-                                                    print(value);
-
-                                                    TextEditingController
-                                                        caption =
-                                                        TextEditingController(
-                                                            text: value['Media']
-                                                                ['caption']);
-                                                    List<ChildModel> editChild =
-                                                        [];
-                                                    List<StaffModel>
-                                                        editEducator = [];
-                                                    String mediaId =
-                                                        value['Media']['id'];
-
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['ChildTags']
-                                                                .length;
-                                                        i++) {
-                                                      var childID =
-                                                          value['ChildTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allChildrens
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            childID) {
-                                                          editChild.add(
-                                                              _allChildrens[j]);
-                                                        }
+                                            ),
+                                    ),
+                                    Positioned(
+                                      right: 4,
+                                      top: 4,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text("Delete Media"),
+                                              content: Text(
+                                                  "Are you sure you want to delete this media?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: Text("Cancel"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    Navigator.pop(context);
+                                                    MediaAPIHandler handler =
+                                                        MediaAPIHandler({
+                                                      "mediaid":
+                                                          menuMediaWeek[index]
+                                                              .id,
+                                                      "userid":
+                                                          MyApp.LOGIN_ID_VALUE
+                                                    });
+                                                    await handler
+                                                        .deleteMedia()
+                                                        .then((value) {
+                                                      if (value['Status'] ==
+                                                          'SUCCESS') {
+                                                        _fetchData();
                                                       }
-                                                    }
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['StaffTags']
-                                                                .length;
-                                                        i++) {
-                                                      var userID =
-                                                          value['StaffTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allEductarors
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allEductarors[j]
-                                                                .id ==
-                                                            userID) {
-                                                          editEducator.add(
-                                                              _allEductarors[
-                                                                  j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    print('yee');
-                                                    print('hry' +
-                                                        editEducator
-                                                            .toString());
-                                                    print('hr' +
-                                                        editChild.toString());
-                                                    print('hj');
-                                                    //below also you need to add the same code
+                                                    });
+                                                  },
+                                                  child: Text("Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.red)),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(Icons.close,
+                                              size: 16, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 4,
+                                      top: 30,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          MediaAPIHandler handler =
+                                              MediaAPIHandler({
+                                            "mediaid": menuMediaWeek[index].id,
+                                            "userid": MyApp.LOGIN_ID_VALUE
+                                          });
+                                          handler.getMediaTags().then((value) {
+                                            if (value['Status'] == 'SUCCESS') {
+                                              TextEditingController caption =
+                                                  TextEditingController(
+                                                      text: value['Media']
+                                                          ['caption']);
+                                              List<ChildModel> editChild = [];
+                                              List<StaffModel> editEducator =
+                                                  [];
+                                              String mediaId =
+                                                  value['Media']['id'];
 
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title:
-                                                                Text("Edit "),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                              child: Container(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.6,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                                child: ListView(
-                                                                  children: [
-                                                                    Container(
-                                                                        width:
-                                                                            size.height /
-                                                                                8,
-                                                                        height:
-                                                                            size.height /
-                                                                                8,
-                                                                        decoration:
-                                                                            new BoxDecoration(
-                                                                          //  borderRadius: BorderRadius.circular(15.0),
-                                                                          shape:
-                                                                              BoxShape.rectangle,
-                                                                          image:
-                                                                              new DecorationImage(
-                                                                            image:
-                                                                                new NetworkImage(Constants.ImageBaseUrl + menuMediaWeek[index].filename),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        )),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Children'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allChildrens
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editChild,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editChild =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Educators'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allEductarors
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editEducator,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editEducator =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Caption'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      child: TextField(
-                                                                          maxLines: 1,
-                                                                          controller: caption,
-                                                                          decoration: new InputDecoration(
-                                                                            enabledBorder:
-                                                                                const OutlineInputBorder(
-                                                                              borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                            ),
-                                                                            border:
-                                                                                new OutlineInputBorder(
-                                                                              borderRadius: const BorderRadius.all(
-                                                                                const Radius.circular(4),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ],
+                                              for (int i = 0;
+                                                  i < value['ChildTags'].length;
+                                                  i++) {
+                                                var childID = value['ChildTags']
+                                                    [i]['userid'];
+                                                for (int j = 0;
+                                                    j < _allChildrens.length;
+                                                    j++) {
+                                                  if (_allChildrens[j].id ==
+                                                      childID) {
+                                                    editChild
+                                                        .add(_allChildrens[j]);
+                                                  }
+                                                }
+                                              }
+                                              for (int i = 0;
+                                                  i < value['StaffTags'].length;
+                                                  i++) {
+                                                var userID = value['StaffTags']
+                                                    [i]['userid'];
+                                                for (int j = 0;
+                                                    j < _allEductarors.length;
+                                                    j++) {
+                                                  if (_allEductarors[j].id ==
+                                                      userID) {
+                                                    editEducator
+                                                        .add(_allEductarors[j]);
+                                                  }
+                                                }
+                                              }
+
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("Edit"),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                      child: Container(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.6,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.7,
+                                                        child: ListView(
+                                                          children: [
+                                                            Container(
+                                                              width:
+                                                                  size.height /
+                                                                      8,
+                                                              height:
+                                                                  size.height /
+                                                                      8,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .rectangle,
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: NetworkImage(Constants
+                                                                          .ImageBaseUrl +
+                                                                      menuMediaWeek[
+                                                                              index]
+                                                                          .filename),
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
                                                               ),
                                                             ),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
-
-                                                                  List tags =
-                                                                      [];
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editChild
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "child",
-                                                                        "mediaid":
-                                                                            menuMediaWeek[index].id,
-                                                                        "userid":
-                                                                            editChild[i].id
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editEducator
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "staff",
-                                                                        "mediaid":
-                                                                            menuMediaWeek[index].id,
-                                                                        "userid":
-                                                                            editEducator[i].id,
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  var _objToSend =
-                                                                      {
-                                                                    "mediaId":
-                                                                        menuMediaWeek[index]
-                                                                            .id,
-                                                                    "imgCaption":
-                                                                        caption
-                                                                            .text
-                                                                            .toString(),
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "tags":
-                                                                        tags,
-                                                                  };
-                                                                  print(
-                                                                      _objToSend);
-
-                                                                  var resp = await http.post(
-                                                                      Uri.parse(
-                                                                          _toSend),
-                                                                      body: jsonEncode(
-                                                                          _objToSend),
-                                                                      headers: {
-                                                                        'X-DEVICE-ID':
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        'X-TOKEN':
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
-                                                                  var data =
-                                                                      jsonDecode(
-                                                                          resp.body);
-                                                                  if (data[
-                                                                          'Status'] ==
-                                                                      'SUCCESS') {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Text('ok'),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        });
-                                                  } else {
-                                                    MyApp.ShowToast(
-                                                        value['Status'],
-                                                        context);
-                                                  }
-                                                });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  } else {
-                                    return Stack(
-                                      children: [
-                                        VideoItem(
-                                            width: 100,
-                                            height: 100,
-                                            url: Constants.ImageBaseUrl +
-                                                menuMediaWeek[index].filename),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(Icons.clear),
-                                              onTap: () {
-                                                showDeleteDialog(context,
-                                                    () async {
-                                                  MediaAPIHandler handler =
-                                                      MediaAPIHandler({
-                                                    "mediaid":
-                                                        menuMediaWeek[index].id,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE
-                                                  });
-                                                  await handler
-                                                      .deleteMedia()
-                                                      .then((value) {
-                                                    if (value['Status'] ==
-                                                        'SUCCESS') {
-                                                      _fetchData();
-                                                    }
-                                                  });
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                print(menuMediaWeek[index].id);
-                                                MediaAPIHandler handler =
-                                                    MediaAPIHandler({
-                                                  "mediaid":
-                                                      menuMediaWeek[index].id,
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                handler
-                                                    .getMediaTags()
-                                                    .then((value) {
-                                                  if (value['Status'] ==
-                                                      'SUCCESS') {
-                                                    print(value);
-
-                                                    TextEditingController
-                                                        caption =
-                                                        TextEditingController(
-                                                            text: value['Media']
-                                                                ['caption']);
-                                                    List<ChildModel> editChild =
-                                                        [];
-                                                    List<StaffModel>
-                                                        editEducator = [];
-                                                    String mediaId =
-                                                        value['Media']['id'];
-
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['ChildTags']
-                                                                .length;
-                                                        i++) {
-                                                      var childID =
-                                                          value['ChildTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allChildrens
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            childID) {
-                                                          editChild.add(
-                                                              _allChildrens[j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['StaffTags']
-                                                                .length;
-                                                        i++) {
-                                                      var userID =
-                                                          value['StaffTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allEductarors
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allEductarors[j]
-                                                                .id ==
-                                                            userID) {
-                                                          editEducator.add(
-                                                              _allEductarors[
-                                                                  j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    print('yee');
-                                                    print('hry' +
-                                                        editEducator
-                                                            .toString());
-                                                    print('hr' +
-                                                        editChild.toString());
-                                                    print('hj');
-                                                    //below also you need to add the same code
-
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title:
-                                                                Text("Edit "),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                              child: Container(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.6,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                                child: ListView(
-                                                                  children: [
-                                                                    Container(
+                                                            SizedBox(height: 8),
+                                                            Text('Children'),
+                                                            SizedBox(height: 3),
+                                                            MultiSelectDialogField(
+                                                              items: _allChildrens
+                                                                  .map((e) =>
+                                                                      MultiSelectItem(
+                                                                          e,
+                                                                          e.name))
+                                                                  .toList(),
+                                                              initialValue:
+                                                                  editChild,
+                                                              listType:
+                                                                  MultiSelectListType
+                                                                      .CHIP,
+                                                              onConfirm:
+                                                                  (values) {
+                                                                editChild =
+                                                                    values;
+                                                              },
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Educators'),
+                                                            SizedBox(height: 3),
+                                                            MultiSelectDialogField(
+                                                              items: _allEductarors
+                                                                  .map((e) =>
+                                                                      MultiSelectItem(
+                                                                          e,
+                                                                          e.name))
+                                                                  .toList(),
+                                                              initialValue:
+                                                                  editEducator,
+                                                              listType:
+                                                                  MultiSelectListType
+                                                                      .CHIP,
+                                                              onConfirm:
+                                                                  (values) {
+                                                                editEducator =
+                                                                    values;
+                                                              },
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Caption'),
+                                                            SizedBox(height: 3),
+                                                            Container(
+                                                              height: 30,
+                                                              child: TextField(
+                                                                maxLines: 1,
+                                                                controller:
+                                                                    caption,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors
+                                                                            .black26,
                                                                         width:
-                                                                            size.height /
-                                                                                8,
-                                                                        height:
-                                                                            size.height /
-                                                                                8,
-                                                                        decoration:
-                                                                            new BoxDecoration(
-                                                                          //  borderRadius: BorderRadius.circular(15.0),
-                                                                          shape:
-                                                                              BoxShape.rectangle,
-                                                                          image:
-                                                                              new DecorationImage(
-                                                                            image:
-                                                                                new NetworkImage(Constants.ImageBaseUrl + menuMediaWeek[index].filename),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        )),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Children'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allChildrens
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editChild,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editChild =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Educators'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allEductarors
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editEducator,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editEducator =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Caption'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      child: TextField(
-                                                                          maxLines: 1,
-                                                                          controller: caption,
-                                                                          decoration: new InputDecoration(
-                                                                            enabledBorder:
-                                                                                const OutlineInputBorder(
-                                                                              borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                            ),
-                                                                            border:
-                                                                                new OutlineInputBorder(
-                                                                              borderRadius: const BorderRadius.all(
-                                                                                const Radius.circular(4),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ],
+                                                                            0.0),
+                                                                  ),
+                                                                  border:
+                                                                      OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(4)),
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
-
-                                                                  List tags =
-                                                                      [];
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editChild
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "child",
-                                                                        "mediaid":
-                                                                            menuMediaWeek[index].id,
-                                                                        "userid":
-                                                                            editChild[i].id
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editEducator
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "staff",
-                                                                        "mediaid":
-                                                                            menuMediaWeek[index].id,
-                                                                        "userid":
-                                                                            editEducator[i].id,
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  var _objToSend =
-                                                                      {
-                                                                    "mediaId":
-                                                                        menuMediaWeek[index]
-                                                                            .id,
-                                                                    "imgCaption":
-                                                                        caption
-                                                                            .text
-                                                                            .toString(),
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "tags":
-                                                                        tags,
-                                                                  };
-                                                                  print(
-                                                                      _objToSend);
-
-                                                                  var resp = await http.post(
-                                                                      Uri.parse(
-                                                                          _toSend),
-                                                                      body: jsonEncode(
-                                                                          _objToSend),
-                                                                      headers: {
-                                                                        'X-DEVICE-ID':
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        'X-TOKEN':
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
-                                                                  var data =
-                                                                      jsonDecode(
-                                                                          resp.body);
-                                                                  if (data[
-                                                                          'Status'] ==
-                                                                      'SUCCESS') {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Text('ok'),
-                                                              ),
-                                                            ],
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          var _toSend =
+                                                              'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
+                                                          List tags = [];
+                                                          for (int i = 0;
+                                                              i <
+                                                                  editChild
+                                                                      .length;
+                                                              i++) {
+                                                            tags.add({
+                                                              "usertype":
+                                                                  "child",
+                                                              "mediaid":
+                                                                  menuMediaWeek[
+                                                                          index]
+                                                                      .id,
+                                                              "userid":
+                                                                  editChild[i]
+                                                                      .id
+                                                            });
+                                                          }
+                                                          for (int i = 0;
+                                                              i <
+                                                                  editEducator
+                                                                      .length;
+                                                              i++) {
+                                                            tags.add({
+                                                              "usertype":
+                                                                  "staff",
+                                                              "mediaid":
+                                                                  menuMediaWeek[
+                                                                          index]
+                                                                      .id,
+                                                              "userid":
+                                                                  editEducator[
+                                                                          i]
+                                                                      .id,
+                                                            });
+                                                          }
+                                                          var _objToSend = {
+                                                            "mediaId":
+                                                                menuMediaWeek[
+                                                                        index]
+                                                                    .id,
+                                                            "imgCaption":
+                                                                caption.text
+                                                                    .toString(),
+                                                            "userid": MyApp
+                                                                .LOGIN_ID_VALUE,
+                                                            "tags": tags,
+                                                          };
+                                                          var resp =
+                                                              await http.post(
+                                                            Uri.parse(_toSend),
+                                                            body: jsonEncode(
+                                                                _objToSend),
+                                                            headers: {
+                                                              'X-DEVICE-ID':
+                                                                  await MyApp
+                                                                      .getDeviceIdentity(),
+                                                              'X-TOKEN': MyApp
+                                                                  .AUTH_TOKEN_VALUE,
+                                                            },
                                                           );
-                                                        });
-                                                  } else {
-                                                    MyApp.ShowToast(
-                                                        value['Status'],
-                                                        context);
-                                                  }
-                                                });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  }
-                                })),
-                          ],
-                        ),
+                                                          var data = jsonDecode(
+                                                              resp.body);
+                                                          if (data['Status'] ==
+                                                              'SUCCESS') {
+                                                            Navigator.pop(
+                                                                context);
+                                                          }
+                                                        },
+                                                        child: Text('ok'),
+                                                      )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            } else {
+                                              MyApp.ShowToast(
+                                                  value['Status'], context);
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(Icons.edit,
+                                              size: 16, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                if (menuMediaEarlier != null && menuMediaEarlier.length > 0)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Earlier :"),
-                  ),
-                if (menuMediaEarlier != null && menuMediaEarlier.length > 0)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Wrap(
-                                spacing: 8.0, // gap between adjacent chips
-                                runSpacing: 4.0, //
-                                children: List<Widget>.generate(
-                                    menuMediaEarlier.length, (int index) {
-                                  if (menuMediaEarlier[index].type.toString() ==
-                                      'Image') {
-                                    return Stack(
-                                      children: [
-                                        Container(
-                                            width: size.height / 8,
-                                            height: size.height / 8,
-                                            decoration: new BoxDecoration(
-                                              //  borderRadius: BorderRadius.circular(15.0),
-                                              shape: BoxShape.rectangle,
-                                              image: new DecorationImage(
-                                                image: new NetworkImage(
-                                                    Constants.ImageBaseUrl +
-                                                        menuMediaEarlier[index]
-                                                            .filename),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                showDeleteDialog(context,
-                                                    () async {
-                                                  MediaAPIHandler handler =
-                                                      MediaAPIHandler({
-                                                    "mediaid":
-                                                        menuMediaEarlier[index]
-                                                            .id,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE
-                                                  });
-                                                  await handler
-                                                      .deleteMedia()
-                                                      .then((value) {
-                                                    if (value['Status'] ==
-                                                        'SUCCESS') {
-                                                      _fetchData();
-                                                    }
-                                                  });
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                print(
-                                                    menuMediaEarlier[index].id);
-                                                MediaAPIHandler handler =
-                                                    MediaAPIHandler({
-                                                  "mediaid":
-                                                      menuMediaEarlier[index]
-                                                          .id,
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                handler
-                                                    .getMediaTags()
-                                                    .then((value) {
-                                                  if (value['Status'] ==
-                                                      'SUCCESS') {
-                                                    print(value);
-
-                                                    TextEditingController
-                                                        caption =
-                                                        TextEditingController(
-                                                            text: value['Media']
-                                                                ['caption']);
-                                                    List<ChildModel> editChild =
-                                                        [];
-                                                    List<StaffModel>
-                                                        editEducator = [];
-                                                    String mediaId =
-                                                        value['Media']['id'];
-
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['ChildTags']
-                                                                .length;
-                                                        i++) {
-                                                      var childID =
-                                                          value['ChildTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allChildrens
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            childID) {
-                                                          editChild.add(
-                                                              _allChildrens[j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['StaffTags']
-                                                                .length;
-                                                        i++) {
-                                                      var userID =
-                                                          value['StaffTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allEductarors
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allEductarors[j]
-                                                                .id ==
-                                                            userID) {
-                                                          editEducator.add(
-                                                              _allEductarors[
-                                                                  j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    print('yee');
-                                                    print('hry' +
-                                                        editEducator
-                                                            .toString());
-                                                    print('hr' +
-                                                        editChild.toString());
-                                                    print('hj');
-                                                    //below also you need to add the same code
-
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title:
-                                                                Text("Edit "),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                              child: Container(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.6,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                                child: ListView(
-                                                                  children: [
-                                                                    Container(
-                                                                        width:
-                                                                            size.height /
-                                                                                8,
-                                                                        height:
-                                                                            size.height /
-                                                                                8,
-                                                                        decoration:
-                                                                            new BoxDecoration(
-                                                                          //  borderRadius: BorderRadius.circular(15.0),
-                                                                          shape:
-                                                                              BoxShape.rectangle,
-                                                                          image:
-                                                                              new DecorationImage(
-                                                                            image:
-                                                                                new NetworkImage(Constants.ImageBaseUrl + menuMediaEarlier[index].filename),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        )),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Children'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allChildrens
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editChild,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editChild =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Educators'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allEductarors
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editEducator,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editEducator =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Caption'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      child: TextField(
-                                                                          maxLines: 1,
-                                                                          controller: caption,
-                                                                          decoration: new InputDecoration(
-                                                                            enabledBorder:
-                                                                                const OutlineInputBorder(
-                                                                              borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                            ),
-                                                                            border:
-                                                                                new OutlineInputBorder(
-                                                                              borderRadius: const BorderRadius.all(
-                                                                                const Radius.circular(4),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
-
-                                                                  List tags =
-                                                                      [];
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editChild
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "child",
-                                                                        "mediaid":
-                                                                            menuMediaEarlier[index].id,
-                                                                        "userid":
-                                                                            editChild[i].id
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editEducator
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "staff",
-                                                                        "mediaid":
-                                                                            menuMediaEarlier[index].id,
-                                                                        "userid":
-                                                                            menuMediaEarlier[i].id,
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  var _objToSend =
-                                                                      {
-                                                                    "mediaId":
-                                                                        menuMediaEarlier[index]
-                                                                            .id,
-                                                                    "imgCaption":
-                                                                        caption
-                                                                            .text
-                                                                            .toString(),
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "tags":
-                                                                        tags,
-                                                                  };
-                                                                  print(
-                                                                      _objToSend);
-
-                                                                  var resp = await http.post(
-                                                                      Uri.parse(
-                                                                          _toSend),
-                                                                      body: jsonEncode(
-                                                                          _objToSend),
-                                                                      headers: {
-                                                                        'X-DEVICE-ID':
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        'X-TOKEN':
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
-                                                                  var data =
-                                                                      jsonDecode(
-                                                                          resp.body);
-                                                                  if (data[
-                                                                          'Status'] ==
-                                                                      'SUCCESS') {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Text('ok'),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        });
-                                                  } else {
-                                                    MyApp.ShowToast(
-                                                        value['Status'],
-                                                        context);
-                                                  }
-                                                });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  } else {
-                                    return Stack(
-                                      children: [
-                                        VideoItem(
-                                            width: 100,
-                                            height: 100,
-                                            url: Constants.ImageBaseUrl +
-                                                menuMediaEarlier[index]
-                                                    .filename),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                              child: Icon(Icons.clear),
-                                              onTap: () {
-                                                showDeleteDialog(context,
-                                                    () async {
-                                                  MediaAPIHandler handler =
-                                                      MediaAPIHandler({
-                                                    "mediaid":
-                                                        menuMediaEarlier[index]
-                                                            .id,
-                                                    "userid":
-                                                        MyApp.LOGIN_ID_VALUE
-                                                  });
-                                                  await handler
-                                                      .deleteMedia()
-                                                      .then((value) {
-                                                    if (value['Status'] ==
-                                                        'SUCCESS') {
-                                                      _fetchData();
-                                                    }
-                                                  });
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                            )),
-                                        Positioned(
-                                            right: 0,
-                                            top: 22,
-                                            child: GestureDetector(
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                              ),
-                                              onTap: () {
-                                                print(
-                                                    menuMediaEarlier[index].id);
-                                                MediaAPIHandler handler =
-                                                    MediaAPIHandler({
-                                                  "mediaid":
-                                                      menuMediaEarlier[index]
-                                                          .id,
-                                                  "userid": MyApp.LOGIN_ID_VALUE
-                                                });
-                                                handler
-                                                    .getMediaTags()
-                                                    .then((value) {
-                                                  if (value['Status'] ==
-                                                      'SUCCESS') {
-                                                    print(value);
-
-                                                    TextEditingController
-                                                        caption =
-                                                        TextEditingController(
-                                                            text: value['Media']
-                                                                ['caption']);
-                                                    List<ChildModel> editChild =
-                                                        [];
-                                                    List<StaffModel>
-                                                        editEducator = [];
-                                                    String mediaId =
-                                                        value['Media']['id'];
-
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['ChildTags']
-                                                                .length;
-                                                        i++) {
-                                                      var childID =
-                                                          value['ChildTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allChildrens
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allChildrens[j]
-                                                                .id ==
-                                                            childID) {
-                                                          editChild.add(
-                                                              _allChildrens[j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    for (int i = 0;
-                                                        i <
-                                                            value['StaffTags']
-                                                                .length;
-                                                        i++) {
-                                                      var userID =
-                                                          value['StaffTags'][i]
-                                                              ['userid'];
-                                                      for (int j = 0;
-                                                          j <
-                                                              _allEductarors
-                                                                  .length;
-                                                          j++) {
-                                                        if (_allEductarors[j]
-                                                                .id ==
-                                                            userID) {
-                                                          editEducator.add(
-                                                              _allEductarors[
-                                                                  j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    print('yee');
-                                                    print('hry' +
-                                                        editEducator
-                                                            .toString());
-                                                    print('hr' +
-                                                        editChild.toString());
-                                                    print('hj');
-                                                    //below also you need to add the same code
-
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title:
-                                                                Text("Edit "),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                              child: Container(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.6,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                                child: ListView(
-                                                                  children: [
-                                                                    Container(
-                                                                        width:
-                                                                            size.height /
-                                                                                8,
-                                                                        height:
-                                                                            size.height /
-                                                                                8,
-                                                                        decoration:
-                                                                            new BoxDecoration(
-                                                                          //  borderRadius: BorderRadius.circular(15.0),
-                                                                          shape:
-                                                                              BoxShape.rectangle,
-                                                                          image:
-                                                                              new DecorationImage(
-                                                                            image:
-                                                                                new NetworkImage(Constants.ImageBaseUrl + menuMediaEarlier[index].filename),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        )),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Children'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allChildrens
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editChild,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editChild =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Educators'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    MultiSelectDialogField(
-                                                                      items: _allEductarors
-                                                                          .map((e) => MultiSelectItem(
-                                                                              e,
-                                                                              e.name))
-                                                                          .toList(),
-                                                                      initialValue:
-                                                                          editEducator,
-                                                                      listType:
-                                                                          MultiSelectListType
-                                                                              .CHIP,
-                                                                      onConfirm:
-                                                                          (values) {
-                                                                        editEducator =
-                                                                            values;
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        'Caption'),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      child: TextField(
-                                                                          maxLines: 1,
-                                                                          controller: caption,
-                                                                          decoration: new InputDecoration(
-                                                                            enabledBorder:
-                                                                                const OutlineInputBorder(
-                                                                              borderSide: const BorderSide(color: Colors.black26, width: 0.0),
-                                                                            ),
-                                                                            border:
-                                                                                new OutlineInputBorder(
-                                                                              borderRadius: const BorderRadius.all(
-                                                                                const Radius.circular(4),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var _toSend =
-                                                                      'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
-
-                                                                  List tags =
-                                                                      [];
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editChild
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "child",
-                                                                        "mediaid":
-                                                                            menuMediaEarlier[index].id,
-                                                                        "userid":
-                                                                            editChild[i].id
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          editEducator
-                                                                              .length;
-                                                                      i++) {
-                                                                    tags.add(
-                                                                      {
-                                                                        "usertype":
-                                                                            "staff",
-                                                                        "mediaid":
-                                                                            menuMediaEarlier[index].id,
-                                                                        "userid":
-                                                                            editEducator[i].id,
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  var _objToSend =
-                                                                      {
-                                                                    "mediaId":
-                                                                        menuMediaEarlier[index]
-                                                                            .id,
-                                                                    "imgCaption":
-                                                                        caption
-                                                                            .text
-                                                                            .toString(),
-                                                                    "userid": MyApp
-                                                                        .LOGIN_ID_VALUE,
-                                                                    "tags":
-                                                                        tags,
-                                                                  };
-                                                                  print(
-                                                                      _objToSend);
-
-                                                                  var resp = await http.post(
-                                                                      Uri.parse(
-                                                                          _toSend),
-                                                                      body: jsonEncode(
-                                                                          _objToSend),
-                                                                      headers: {
-                                                                        'X-DEVICE-ID':
-                                                                            await MyApp.getDeviceIdentity(),
-                                                                        'X-TOKEN':
-                                                                            MyApp.AUTH_TOKEN_VALUE,
-                                                                      });
-                                                                  var data =
-                                                                      jsonDecode(
-                                                                          resp.body);
-                                                                  if (data[
-                                                                          'Status'] ==
-                                                                      'SUCCESS') {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Text('ok'),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        });
-                                                  } else {
-                                                    MyApp.ShowToast(
-                                                        value['Status'],
-                                                        context);
-                                                  }
-                                                });
-                                              },
-                                            ))
-                                      ],
-                                    );
-                                  }
-                                })),
-                          ],
+                // Earlier section (directly pasteable)
+if (menuMediaEarlier != null && menuMediaEarlier.length > 0)
+  Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Text("Earlier :"),
+  ),
+if (menuMediaEarlier != null && menuMediaEarlier.length > 0)
+  Card(
+    elevation: 4,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12)),
+    margin: EdgeInsets.all(8),
+    child: Padding(
+      padding: EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1,
+            ),
+            itemCount: menuMediaEarlier.length,
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: menuMediaEarlier[index].type.toString() ==
+                              'Image'
+                          ? Image.network(
+                              Constants.ImageBaseUrl +
+                                  menuMediaEarlier[index].filename,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error,
+                                      stackTrace) =>
+                                  Container(
+                                      color: Colors.grey[200]),
+                            )
+                          : Container(
+                              color: Colors.grey[200],
+                              child: Center(
+                                child: Icon(
+                                    Icons.play_circle_filled,
+                                    size: 40,
+                                    color: Colors.white),
+                              ),
+                            ),
+                    ),
+                    Positioned(
+                      right: 4,
+                      top: 4,
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Delete Media"),
+                              content: Text(
+                                  "Are you sure you want to delete this media?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context),
+                                  child: Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    MediaAPIHandler handler =
+                                        MediaAPIHandler({
+                                      "mediaid":
+                                          menuMediaEarlier[index].id,
+                                      "userid":
+                                          MyApp.LOGIN_ID_VALUE
+                                    });
+                                    await handler
+                                        .deleteMedia()
+                                        .then((value) {
+                                      if (value['Status'] ==
+                                          'SUCCESS') {
+                                        _fetchData();
+                                      }
+                                    });
+                                  },
+                                  child: Text("Delete",
+                                      style: TextStyle(
+                                          color: Colors.red)),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color:
+                                Colors.black.withOpacity(0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close,
+                              size: 16, color: Colors.white),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                    Positioned(
+                      right: 4,
+                      top: 30,
+                      child: GestureDetector(
+                        onTap: () {
+                          MediaAPIHandler handler =
+                              MediaAPIHandler({
+                            "mediaid": menuMediaEarlier[index].id,
+                            "userid": MyApp.LOGIN_ID_VALUE
+                          });
+                          handler.getMediaTags().then((value) {
+                            if (value['Status'] == 'SUCCESS') {
+                              TextEditingController caption =
+                                  TextEditingController(
+                                      text: value['Media']
+                                          ['caption']);
+                              List<ChildModel> editChild = [];
+                              List<StaffModel> editEducator =
+                                  [];
+                              String mediaId =
+                                  value['Media']['id'];
+
+                              for (int i = 0;
+                                  i < value['ChildTags'].length;
+                                  i++) {
+                                var childID = value['ChildTags']
+                                    [i]['userid'];
+                                for (int j = 0;
+                                    j < _allChildrens.length;
+                                    j++) {
+                                  if (_allChildrens[j].id ==
+                                      childID) {
+                                    editChild
+                                        .add(_allChildrens[j]);
+                                  }
+                                }
+                              }
+                              for (int i = 0;
+                                  i < value['StaffTags'].length;
+                                  i++) {
+                                var userID = value['StaffTags']
+                                    [i]['userid'];
+                                for (int j = 0;
+                                    j < _allEductarors.length;
+                                    j++) {
+                                  if (_allEductarors[j].id ==
+                                      userID) {
+                                    editEducator
+                                        .add(_allEductarors[j]);
+                                  }
+                                }
+                              }
+
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Edit"),
+                                    content:
+                                        SingleChildScrollView(
+                                      child: Container(
+                                        height: MediaQuery.of(
+                                                    context)
+                                                .size
+                                                .height *
+                                            0.6,
+                                        width: MediaQuery.of(
+                                                    context)
+                                                .size
+                                                .width *
+                                            0.7,
+                                        child: ListView(
+                                          children: [
+                                            Container(
+                                              width:
+                                                  size.height /
+                                                      8,
+                                              height:
+                                                  size.height /
+                                                      8,
+                                              decoration:
+                                                  BoxDecoration(
+                                                shape: BoxShape
+                                                    .rectangle,
+                                                image:
+                                                    DecorationImage(
+                                                  image: NetworkImage(Constants
+                                                          .ImageBaseUrl +
+                                                      menuMediaEarlier[
+                                                              index]
+                                                          .filename),
+                                                  fit: BoxFit
+                                                      .cover,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text('Children'),
+                                            SizedBox(height: 3),
+                                            MultiSelectDialogField(
+                                              items: _allChildrens
+                                                  .map((e) =>
+                                                      MultiSelectItem(
+                                                          e,
+                                                          e.name))
+                                                  .toList(),
+                                              initialValue:
+                                                  editChild,
+                                              listType:
+                                                  MultiSelectListType
+                                                      .CHIP,
+                                              onConfirm:
+                                                  (values) {
+                                                editChild =
+                                                    values;
+                                              },
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text('Educators'),
+                                            SizedBox(height: 3),
+                                            MultiSelectDialogField(
+                                              items: _allEductarors
+                                                  .map((e) =>
+                                                      MultiSelectItem(
+                                                          e,
+                                                          e.name))
+                                                  .toList(),
+                                              initialValue:
+                                                  editEducator,
+                                              listType:
+                                                  MultiSelectListType
+                                                      .CHIP,
+                                              onConfirm:
+                                                  (values) {
+                                                editEducator =
+                                                    values;
+                                              },
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text('Caption'),
+                                            SizedBox(height: 3),
+                                            Container(
+                                              height: 30,
+                                              child: TextField(
+                                                maxLines: 1,
+                                                controller:
+                                                    caption,
+                                                decoration:
+                                                    InputDecoration(
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors
+                                                            .black26,
+                                                        width:
+                                                            0.0),
+                                                  ),
+                                                  border:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(Radius.circular(4)),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () async {
+                                          var _toSend =
+                                              'https://stage.todquest.com/mykronicle101/api/Media/saveImageTags/';
+                                          List tags = [];
+                                          for (int i = 0;
+                                              i <
+                                                  editChild
+                                                      .length;
+                                              i++) {
+                                            tags.add({
+                                              "usertype":
+                                                  "child",
+                                              "mediaid":
+                                                  menuMediaEarlier[
+                                                          index]
+                                                      .id,
+                                              "userid":
+                                                  editChild[i]
+                                                      .id
+                                            });
+                                          }
+                                          for (int i = 0;
+                                              i <
+                                                  editEducator
+                                                      .length;
+                                              i++) {
+                                            tags.add({
+                                              "usertype":
+                                                  "staff",
+                                              "mediaid":
+                                                  menuMediaEarlier[
+                                                          index]
+                                                      .id,
+                                              "userid":
+                                                  editEducator[
+                                                          i]
+                                                      .id,
+                                            });
+                                          }
+                                          var _objToSend = {
+                                            "mediaId":
+                                                menuMediaEarlier[
+                                                        index]
+                                                    .id,
+                                            "imgCaption":
+                                                caption.text
+                                                    .toString(),
+                                            "userid": MyApp
+                                                .LOGIN_ID_VALUE,
+                                            "tags": tags,
+                                          };
+                                          var resp =
+                                              await http.post(
+                                            Uri.parse(_toSend),
+                                            body: jsonEncode(
+                                                _objToSend),
+                                            headers: {
+                                              'X-DEVICE-ID':
+                                                  await MyApp
+                                                      .getDeviceIdentity(),
+                                              'X-TOKEN': MyApp
+                                                  .AUTH_TOKEN_VALUE,
+                                            },
+                                          );
+                                          var data = jsonDecode(
+                                              resp.body);
+                                          if (data['Status'] ==
+                                              'SUCCESS') {
+                                            Navigator.pop(
+                                                context);
+                                          }
+                                        },
+                                        child: Text('ok'),
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              MyApp.ShowToast(
+                                  value['Status'], context);
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color:
+                                Colors.black.withOpacity(0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.edit,
+                              size: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ),
+  ),   ],
             ),
           ),
         ),

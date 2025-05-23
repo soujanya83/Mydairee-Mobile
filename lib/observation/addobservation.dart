@@ -118,7 +118,10 @@ class AddObservationState extends State<AddObservation>
   //     GlobalKey<FlutterMentionsState>();
   // static GlobalKey<FlutterMentionsState> mentionFuturePlan =
   //     GlobalKey<FlutterMentionsState>();
-  static TextEditingController titleController = TextEditingController();
+  static TextEditingController observationTextController =
+      TextEditingController();
+  static TextEditingController observationTitleController =
+      TextEditingController();
   static TextEditingController notesController = TextEditingController();
   static TextEditingController refController = TextEditingController();
   static TextEditingController childVoiceController = TextEditingController();
@@ -176,7 +179,8 @@ class AddObservationState extends State<AddObservation>
   ScrollController scrollController = ScrollController();
 
   clearAllData() {
-    titleController.clear();
+    observationTextController.clear();
+    observationTitleController.clear();
     notesController.clear();
     refController.clear();
     childVoiceController.clear();
@@ -246,7 +250,7 @@ class AddObservationState extends State<AddObservation>
           } catch (e, s) {
             print('==============');
             print(e);
-            // print(s.toString);
+            print(s.toString);
           }
 
           if (mounted) {
@@ -290,8 +294,9 @@ class AddObservationState extends State<AddObservation>
       }
       childrensFetched = true;
       if (this.mounted) setState(() {});
-    } catch (e){
+    } catch (e, s) {
       print(e);
+      print(s);
     }
 
     await fetchRoomsOnly();
@@ -309,8 +314,9 @@ class AddObservationState extends State<AddObservation>
       }
       staffFetched = true;
       if (this.mounted) setState(() {});
-    } catch (e) {
+    } catch (e, s) {
       print(e);
+      print(s);
     }
 
     var users = await handler.getUsersList();
@@ -327,8 +333,9 @@ class AddObservationState extends State<AddObservation>
       }
       mChildFetched = true;
       if (this.mounted) setState(() {});
-    } catch (e) {
+    } catch (e, s) {
       print(e);
+      print(s);
     }
 
     var viewD = await handler.viewTabs();
@@ -353,8 +360,9 @@ class AddObservationState extends State<AddObservation>
       print('hereMontFetched');
       print(mMontFetched);
       if (this.mounted) setState(() {});
-    } catch (e) {
+    } catch (e, s) {
       print(e);
+      print(s);
     }
 
     var d = await handler.getListGroup();
@@ -371,7 +379,9 @@ class AddObservationState extends State<AddObservation>
 
     if (widget.type == 'edit') {
       type = 'edit';
-      titleController.text = removeHtmlData(widget.data?.title ?? '');
+      observationTextController.text = removeHtmlData(widget.data?.title ?? '');
+      observationTitleController.text = widget.data?.obsTitle ?? '';
+      removeHtmlData(widget.data?.obsTitle ?? '');
       notesController.text = removeHtmlData(widget.data?.notes ?? '');
 
       refController.text = removeHtmlData(widget.data?.reflection ?? '');
@@ -437,7 +447,7 @@ class AddObservationState extends State<AddObservation>
         media.add(ObsMediaModel.fromJson(widget.media[i]));
         h = h + 100;
       }
-      setState(() {});
+      if (this.mounted) setState(() {});
     } else {
       type = 'add';
     }
@@ -641,7 +651,7 @@ class AddObservationState extends State<AddObservation>
       selectedOptions.add(inx3);
     }
     isDataFetched = true;
-    setState(() {});
+    if (this.mounted) setState(() {});
   }
 
   @override
@@ -686,7 +696,7 @@ class AddObservationState extends State<AddObservation>
                                   value == false) {
                                 selectedChildrens.remove(_allChildrens[s]);
                               }
-                              setState(() {});
+                              if (this.mounted) setState(() {});
                             },
                             value: childValues[groups[key][index]
                                         ['child_id']] !=
@@ -1078,7 +1088,11 @@ class AddObservationState extends State<AddObservation>
     if (uploadObs == 0) {
       obs.data = widget.totaldata;
       if (widget.type == 'edit') {
-        obs.obsid = widget.totaldata['observation']['id'].toString();
+        try {
+          obs.obsid = widget.totaldata['observation']['id'].toString();
+        } catch (e) {
+          debugPrint(e.toString());
+        }
       }
       uploadObs = 1;
     }
@@ -1385,8 +1399,23 @@ class AddObservationState extends State<AddObservation>
                                   ),
                                   // if (mMontFetched && mChildFetched)
                                   customTextField(
-                                      context: context,
-                                      controller: titleController),
+                                    context: context,
+                                    controller: observationTitleController,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Observation'),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  // if (mMontFetched && mChildFetched)
+                                  customMultilineTextField(
+                                    context: context,
+                                    controller: observationTextController,
+                                    maxLines: 5,
+                                    minLines: 3,
+                                  ),
                                   // Container(
                                   //   // height: 40,
                                   //   padding: const EdgeInsets.all(3.0),
@@ -1450,7 +1479,7 @@ class AddObservationState extends State<AddObservation>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Text('Notes'),
+                                  Text('Analysis/Evaluation'), //notes
                                   SizedBox(
                                     height: 5,
                                   ),
@@ -2045,7 +2074,7 @@ class AddObservationState extends State<AddObservation>
                                                           Icons.edit,
                                                           size: 20,
                                                         ),
-                                                        onTap:(){
+                                                        onTap: () {
                                                           showDialog(
                                                               context: context,
                                                               builder:
@@ -3422,7 +3451,12 @@ class AddObservationState extends State<AddObservation>
                                           onTap: () async {
                                             if (selectedChildrens.length > 0) {
                                               String title =
-                                                  titleController.text;
+                                                  observationTextController
+                                                      .text;
+
+                                              String obsTitle =
+                                                  observationTitleController
+                                                      .text;
                                               // previewtitle = title;
                                               for (int i = 0;
                                                   i < mentionUser.length;
@@ -3620,6 +3654,7 @@ class AddObservationState extends State<AddObservation>
                                                   "childrens":
                                                       jsonEncode(child),
                                                   "title": title,
+                                                  "obestitle": obsTitle,
                                                   "notes": notes,
                                                   "userid":
                                                       MyApp.LOGIN_ID_VALUE,
@@ -3696,6 +3731,7 @@ class AddObservationState extends State<AddObservation>
                                                   "childrens":
                                                       jsonEncode(child),
                                                   "title": title,
+                                                  "obestitle": obsTitle,
                                                   "notes": notes,
                                                   "status": "Draft",
                                                   "userid":
@@ -3948,7 +3984,10 @@ class AddObservationState extends State<AddObservation>
                                         onTap: () async {
                                           if (selectedChildrens.length > 0 &&
                                               selectedRooms.length > 0) {
-                                            String title = titleController.text;
+                                            String title =
+                                                observationTextController.text;
+                                            String obsTitle =
+                                                observationTitleController.text;
                                             for (int i = 0;
                                                 i < mentionUser.length;
                                                 i++) {
@@ -4148,6 +4187,7 @@ class AddObservationState extends State<AddObservation>
                                                 "childrens": jsonEncode(child),
                                                 "room": rooms,
                                                 "title": title,
+                                                "obestitle": obsTitle,
                                                 "notes": notes,
                                                 "userid": MyApp.LOGIN_ID_VALUE,
                                                 "observationId":
@@ -4222,6 +4262,7 @@ class AddObservationState extends State<AddObservation>
                                                 "childrens": jsonEncode(child),
                                                 "room": rooms,
                                                 "title": title,
+                                                "obestitle": obsTitle,
                                                 "notes": notes,
                                                 "userid": MyApp.LOGIN_ID_VALUE,
                                                 "centerid": widget.centerid

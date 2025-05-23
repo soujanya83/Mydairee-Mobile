@@ -26,9 +26,9 @@ void main() async {
     FlutterError.presentError(details);
     debugPrint('Flutter UI Error: ${details.exception}');
     debugPrint(
-        'Flutter UI Stacktrack: ${details.stack.toString().substring(1, 200)}');
+        'Flutter UI Stacktrack: ${details.stack.toString()}');
   };
- 
+
   runZonedGuarded(() {
     ErrorWidget.builder = (FlutterErrorDetails details) {
       return Material(
@@ -189,7 +189,6 @@ class MyApp extends StatelessWidget {
     UserType.Tag: (BuildContext context) => UserType(),
     Dashboard.Tag: (BuildContext context) => Dashboard(),
   };
-
   @override
   Widget build(BuildContext context) {
     return Portal(

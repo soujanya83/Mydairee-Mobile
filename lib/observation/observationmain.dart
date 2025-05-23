@@ -1395,358 +1395,40 @@ class _ObservationMainState extends State<ObservationMain> {
                             permission)
                           Container(
                             child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: _allObservations.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return _allObservations[index]
-                                          .title
-                                          .toLowerCase()
-                                          .contains(searchString.toLowerCase())
-                                      ? GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => ViewObservation(
-                                                        id: _allObservations[
-                                                                index]
-                                                            .id,
-                                                        montCount:
-                                                            _allObservations[
-                                                                    index]
-                                                                .montessoricount,
-                                                        eylfCount:
-                                                            _allObservations[
-                                                                    index]
-                                                                .eylfcount,
-                                                        devCount: _allObservations[
-                                                                index]
-                                                            .milestonecount)));
-                                          },
-                                          child: Card(
-                                            child: Container(
-                                                // height: _allObservations[index]
-                                                //             .observationsMedia ==
-                                                //         'null'
-                                                //     ? 160
-                                                //     : 280,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.85,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          8, 0, 8, 8),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .fromLTRB(
-                                                                0, 8, 0, 8),
-                                                        child: _allObservations[
-                                                                        index]
-                                                                    .title ==
-                                                                null
-                                                            ? null
-                                                            : tagRemove(
-                                                                _allObservations[
-                                                                        index]
-                                                                    .title,
-                                                                maxLines: 5,
-                                                                'heading',
-                                                                centers[currentIndex]
-                                                                    .id,
-                                                                context),
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Author:',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                              Text(
-                                                                _allObservations[index]
-                                                                            .userName !=
-                                                                        null
-                                                                    ? _allObservations[
-                                                                            index]
-                                                                        .userName
-                                                                        .toString()
-                                                                    : '',
-                                                                style: TextStyle(
-                                                                    color: Constants
-                                                                        .kMain,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Approved by:',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                              Text(
-                                                                _allObservations[index]
-                                                                            .userName !=
-                                                                        null
-                                                                    ? _allObservations[
-                                                                            index]
-                                                                        .userName
-                                                                        .toString()
-                                                                    : '',
-                                                                style: TextStyle(
-                                                                    color: Constants
-                                                                        .kMain,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            'Created on:',
-                                                            style: TextStyle(
-                                                                fontSize: 12),
-                                                          ),
-                                                          Builder(builder:
-                                                              (context) {
-                                                            try {
-                                                              return Text(
-                                                                _allObservations[index]
-                                                                            .dateAdded !=
-                                                                        null
-                                                                    ? formatter.format(
-                                                                        DateTime.parse(
-                                                                            _allObservations[index].dateAdded))
-                                                                    : '',
-                                                                style: TextStyle(
-                                                                    color: Constants
-                                                                        .kMain,
-                                                                    fontSize:
-                                                                        12),
-                                                              );
-                                                            } catch (e) {
-                                                              return Text(
-                                                                  _allObservations[
-                                                                          index]
-                                                                      .dateAdded
-                                                                      .toString());
-                                                            }
-                                                          }),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      _allObservations[index]
-                                                                      .observationsMedia ==
-                                                                  'null' ||
-                                                              _allObservations[
-                                                                          index]
-                                                                      .observationsMedia ==
-                                                                  ''
-                                                          ? Text('')
-                                                          : Builder(builder:
-                                                              (context) {
-                                                              try {
-                                                                return Image
-                                                                    .network(
-                                                                  errorBuilder:
-                                                                      (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                    return Text(
-                                                                        '');
-                                                                  },
-                                                                  Constants
-                                                                          .ImageBaseUrl +
-                                                                      _allObservations[
-                                                                              index]
-                                                                          .observationsMedia,
-                                                                  height: 150,
-                                                                  width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
-                                                                  fit: BoxFit
-                                                                      .fill,
-                                                                );
-                                                              } catch (e) {
-                                                                return VideoItem(
-                                                                    url: Constants
-                                                                            .ImageBaseUrl +
-                                                                        _allObservations[index]
-                                                                            .observationsMedia);
-                                                              }
-                                                            }),
-                                                      // _allObservations[
-                                                      //                 index]
-                                                      //             .observationsMediaType !=
-                                                      //         'Video' ||  _allObservations[
-                                                      //                 index]
-                                                      //             .observationsMedia ==
-                                                      //         'null'
-                                                      //     ? Image.network(
-                                                      //         Constants
-                                                      //                 .ImageBaseUrl +
-                                                      //             _allObservations[
-                                                      //                     index]
-                                                      //                 .observationsMedia,
-                                                      //         height: 150,
-                                                      //         width: MediaQuery.of(
-                                                      //                 context)
-                                                      //             .size
-                                                      //             .width,
-                                                      //         fit: BoxFit
-                                                      //             .fill,
-                                                      //       )
-                                                      //     : VideoItem(
-                                                      //         url: Constants
-                                                      //                 .ImageBaseUrl +
-                                                      //             _allObservations[
-                                                      //                     index]
-                                                      //                 .observationsMedia),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          _allObservations[
-                                                                          index]
-                                                                      .montessoricount !=
-                                                                  null
-                                                              ? Text(
-                                                                  'Montessori: ' +
-                                                                      _allObservations[
-                                                                              index]
-                                                                          .montessoricount +
-                                                                      ' ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Constants
-                                                                        .kCount,
-                                                                  ))
-                                                              : SizedBox(),
-                                                          _allObservations[
-                                                                          index]
-                                                                      .eylfcount !=
-                                                                  null
-                                                              ? Text(
-                                                                  'EYLF: ' +
-                                                                      _allObservations[
-                                                                              index]
-                                                                          .eylfcount,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Constants
-                                                                        .kCount,
-                                                                  ))
-                                                              : SizedBox(),
-                                                          Expanded(
-                                                              child:
-                                                                  SizedBox()),
-                                                          _allObservations[
-                                                                          index]
-                                                                      .status ==
-                                                                  'Published'
-                                                              ? GestureDetector(
-                                                                  onTap: () {
-                                                                    // Navigator.push(context,MaterialPageRoute(
-                                                                    //   builder: (context) =>AddObservation()));
-                                                                  },
-                                                                  child: Container(
-                                                                      decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.all(Radius.circular(8))),
-                                                                      child: Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .fromLTRB(
-                                                                            12,
-                                                                            8,
-                                                                            12,
-                                                                            8),
-                                                                        child:
-                                                                            Row(
-                                                                          children: [
-                                                                            Icon(
-                                                                              Icons.check,
-                                                                              color: Colors.white,
-                                                                              size: 14,
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 4,
-                                                                            ),
-                                                                            Text(
-                                                                              _allObservations[index].status != null ? _allObservations[index].status : '',
-                                                                              style: TextStyle(color: Colors.white),
-                                                                            )
-                                                                          ],
-                                                                        ),
-                                                                      )),
-                                                                )
-                                                              : GestureDetector(
-                                                                  onTap: () {
-                                                                    // Navigator.push(context,MaterialPageRoute(
-                                                                    //   builder: (context) =>AddObservation()));
-                                                                  },
-                                                                  child: Container(
-                                                                      decoration: BoxDecoration(color: Color(0xffFFEFB8), borderRadius: BorderRadius.all(Radius.circular(8))),
-                                                                      child: Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .fromLTRB(
-                                                                            12,
-                                                                            8,
-                                                                            12,
-                                                                            8),
-                                                                        child:
-                                                                            Row(
-                                                                          children: [
-                                                                            Icon(
-                                                                              Icons.drafts,
-                                                                              color: Color(0xffCC9D00),
-                                                                              size: 14,
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 4,
-                                                                            ),
-                                                                            Text(
-                                                                              _allObservations[index].status != null ? _allObservations[index].status : '',
-                                                                              style: TextStyle(color: Color(0xffCC9D00)),
-                                                                            )
-                                                                          ],
-                                                                        ),
-                                                                      )),
-                                                                ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                )),
-                                          ),
-                                        )
-                                      : Container();
-                                }),
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: _allObservations.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return _allObservations[index]
+                                        .title
+                                        .toLowerCase()
+                                        .contains(searchString.toLowerCase())
+                                    ? ObservationCard(
+                                        observation: _allObservations[index],
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ViewObservation(
+                                                id: _allObservations[index].id,
+                                                montCount:
+                                                    _allObservations[index]
+                                                        .montessoricount,
+                                                eylfCount:
+                                                    _allObservations[index]
+                                                        .eylfcount,
+                                                devCount:
+                                                    _allObservations[index]
+                                                        .milestonecount,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Container();
+                              },
+                            ),
                           ),
                         if (!observationsFetched)
                           Container(
@@ -1783,4 +1465,182 @@ class _ObservationMainState extends State<ObservationMain> {
 
 String textcustom() {
   return 'hbfdjhfjdhfjdhfjhfjhfjdhfjhfjhfjhfjhfjhfjjjjjjjjjN DH FHSD FHS DFH F HFH SDHFSUFD H UFHUFHUFHUFHU FHF HFH G FU FUF  F FF  HH FUFHUFHDU FHUF F  DHFUFHUEHURHUGF   F F jjj jjjj jjjj jjjjjjjjjjjjjjj    fdujfhudfh uf hu h eudf uch ufi hiufgayugf AFG F GAG DFAFESUYFG  FHF UFHUI FF   HF GDG  HFUFHH F F F FUHFDU FDHSUFHUDSFHUSHFU   HDSUFHSUGFUFGF';
+} 
+
+class ObservationCard extends StatelessWidget {
+  final dynamic observation;
+  final VoidCallback onTap;
+
+  const ObservationCard({
+    required this.observation,
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.grey.shade100],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade300,
+              blurRadius: 10,
+              offset: Offset(4, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Title
+            if (observation.title != null)
+              Text(
+                removeHtmlData(observation.title),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+              ),
+            const SizedBox(height: 12),
+
+            /// Author and Approver
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _infoRow("Author:", observation.userName),
+                _infoRow("Approved by:", observation.userName),
+              ],
+            ),
+            const SizedBox(height: 6),
+
+            /// Date
+            _infoRow("Created on:", _formattedDate(observation.dateAdded)),
+            const SizedBox(height: 12),
+
+            /// Media
+            if (_hasMedia(observation.observationsMedia))
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  Constants.ImageBaseUrl + observation.observationsMedia,
+                  height: 160,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                ),
+              ),
+            const SizedBox(height: 12),
+
+            /// Tags + Status
+            Row(
+              children: [
+                if (observation.montessoricount != null)
+                  _buildChip("Montessori: ${observation.montessoricount}", Constants.kCount),
+                if (observation.eylfcount != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: _buildChip("EYLF: ${observation.eylfcount}", Constants.kCount),
+                  ),
+                const Spacer(),
+                _buildStatusChip(observation.status),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// === HELPERS ===
+
+  bool _hasMedia(String? media) {
+    return media != null && media != '' && media != 'null';
+  }
+
+  String _formattedDate(String? dateString) {
+    try {
+      if (dateString == null) return '';
+      return DateFormat('dd-MM-yyyy – kk:mm').format(DateTime.parse(dateString));
+    } catch (_) {
+      return dateString ?? '';
+    }
+  }
+
+  Widget _infoRow(String label, String? value) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          value ?? '',
+          style: TextStyle(
+            fontSize: 12,
+            color: Constants.kMain,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChip(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          color: color,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(String? status) {
+    final isPublished = status == 'Published';
+    final chipColor = isPublished ? Colors.green : const Color(0xffFFEFB8);
+    final textColor = isPublished ? Colors.white : const Color(0xffCC9D00);
+    final icon = isPublished ? Icons.check_circle : Icons.drafts;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: chipColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            status ?? '',
+            style: TextStyle(
+              color: textColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

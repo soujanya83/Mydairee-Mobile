@@ -2,6 +2,7 @@ class ObservationModel {
   String id;
   String userId;
   String title;
+  String obsTitle;
   String notes;
   String reflection;
   String childVoice;
@@ -25,6 +26,7 @@ class ObservationModel {
     required this.id,
     required this.userId,
     required this.title,
+    required this.obsTitle,
     required this.notes,
     required this.reflection,
     required this.childVoice,
@@ -50,6 +52,7 @@ class ObservationModel {
       id: json['id'] ?? "",
       userId: json['userId'] ?? "",
       title: json['title'] ?? "",
+      obsTitle: json['obestitle'] ?? "",
       notes: json['notes'] ?? "",
       reflection: json['reflection'] ?? "",
       childVoice: json['child_voice'] ?? "",

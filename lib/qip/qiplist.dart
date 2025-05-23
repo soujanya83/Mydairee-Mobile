@@ -242,88 +242,43 @@ class _QipListState extends State<QipList> {
             Container(
               child: ListView.builder(
                 shrinkWrap: true,
+                padding: EdgeInsets.only(bottom: 100),
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.0),
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                      ),
-                      child: ListTile(
-                        title: Text('QIP / ' + _allQips[index].name),
-                        trailing: Container(
-                          width: 60,
-                          child: Row(
-                            children: [
-                              if (permissionDel)
-                                GestureDetector(
-                                  child: Icon(
-                                    AntDesign.delete,
-                                    color: Constants.kMain,
-                                  ),
-                                  onTap: () async {
-                                    showDeleteDialog(context, () async {
-                                      QipAPIHandler handler = QipAPIHandler({
-                                        "userid": MyApp.LOGIN_ID_VALUE,
-                                        "id": _allQips[index].id,
-                                      });
-                                      var data = await handler.deleteListItem();
-                                      print('===================');
-                                      print(data);
-                                      if (data['error'] != null) {
-                                        MyApp.ShowToast(
-                                            data['error'].toString(), context);
-                                      } else {
-                                        MyApp.ShowToast(
-                                            'Deleted Successfully!'.toString(),
-                                            context);
-                                        qipsFetched = false;
-                                        _fetchData();
-                                        setState(() {});
-                                      }
-
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              if (permissionEd)
-                                GestureDetector(
-                                  child: Icon(
-                                    AntDesign.eyeo,
-                                    color: Constants.kMain,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => EditQip(
-                                                  centers[currentIndex].id,
-                                                  _allQips[index].id,
-                                                )));
-
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => NewQip(
-                                    //               view: 'edit',
-                                    //               qipid: _allQips[index].id,
-                                    //               centerid:
-                                    //                   centers[currentIndex].id,
-                                    //             )));
-                                  },
-                                ),
-                            ],
+                    child: QipTileWidget(
+                      title: 'QIP / ${_allQips[index].name}',
+                      permissionDelete: permissionDel,
+                      permissionEdit: permissionEd,
+                      onDelete: () {
+                        showDeleteDialog(context, () async {
+                          QipAPIHandler handler = QipAPIHandler({
+                            "userid": MyApp.LOGIN_ID_VALUE,
+                            "id": _allQips[index].id,
+                          });
+                          var data = await handler.deleteListItem();
+                          if (data['error'] != null) {
+                            MyApp.ShowToast(data['error'].toString(), context);
+                          } else {
+                            MyApp.ShowToast('Deleted Successfully!', context);
+                            qipsFetched = false;
+                            _fetchData();
+                          }
+                          Navigator.pop(context);
+                        });
+                      },
+                      onEdit: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditQip(
+                              centers[currentIndex].id,
+                              _allQips[index].id,
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   );
                 },
@@ -332,6 +287,118 @@ class _QipListState extends State<QipList> {
             ),
         ])),
       )),
+    );
+  }
+}
+
+class QipTileWidget extends StatelessWidget {
+  final String title;
+  final bool permissionDelete;
+  final bool permissionEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
+
+  const QipTileWidget({
+    required this.title,
+    required this.permissionDelete,
+    required this.permissionEdit,
+    required this.onDelete,
+    required this.onEdit,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+      child: Material(
+        elevation: 6,
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        shadowColor: Colors.black.withOpacity(0.1),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              /// Main Title
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+
+              /// Action Buttons
+              Row(
+                children: [
+                  if (permissionEdit)
+                    _ActionIcon(
+                      icon: AntDesign.eyeo,
+                      tooltip: "View",
+                      color: Colors.blueAccent,
+                      onTap: onEdit,
+                    ),
+                  if (permissionDelete && permissionEdit) SizedBox(width: 12),
+                  if (permissionDelete)
+                    _ActionIcon(
+                      icon: AntDesign.delete,
+                      tooltip: "Delete",
+                      color: Colors.redAccent,
+                      onTap: onDelete,
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final String tooltip;
+
+  const _ActionIcon({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    required this.tooltip,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color.withOpacity(0.1),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: 20,
+          ),
+        ),
+      ),
     );
   }
 }

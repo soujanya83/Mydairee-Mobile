@@ -17,11 +17,18 @@ class Service {
     debugPrint(jsonEncode(body));
     Response response = await post(Uri.parse(loginURL), body: jsonEncode(body));
     debugPrint(response.body);
-    var status = jsonDecode(response.body);
-    debugPrint('dasss' + status.toString());
-    if (status['Status'] == 'SUCCESS') {
-      String data = response.body;
-      return jsonDecode(data);
+    String cleanedJson = cleanJson(response.body);
+    var status = jsonDecode(cleanedJson);
+    debugPrint('heee' + status['Status'].toString());
+    if (status['Status'] == 'SUCCESS' ||
+        status['Status'] == 'Success' ||
+        status['Status'] == true ||
+        status['status'] == true ||
+        status['status'] == 'success' ||
+        status['success'] == true ||
+        status['Success'] == true) {
+      // String data = response.body;
+      return jsonDecode(cleanedJson);
     } else {
       return {
         "error": status['Message'],
@@ -49,7 +56,14 @@ class ServiceWithHeader {
     String cleanedJson = cleanJson(response.body);
     var status = jsonDecode(cleanedJson);
     debugPrint('heee' + status['Status'].toString());
-    if (status['Status'] == 'SUCCESS') {
+    if (status['Status'] == 'SUCCESS' ||
+        status['Status'] == 'Success' ||
+        status['Status'] == true ||
+        status['status'] == true ||
+        status['status'] == 'success' ||
+        status['success'] == true ||
+        status['Success'] == true) {
+      // String data = response.body;
       return jsonDecode(cleanedJson);
     } else {
       return {
@@ -76,10 +90,18 @@ class ServiceWithHeaderPost {
     debugPrint(url);
     MyApp.getDeviceIdentity().then((value) => print('deviceid' + value));
     debugPrint(MyApp.AUTH_TOKEN_VALUE);
-    var status = jsonDecode(response.body);
-    if (status['Status'] == 'SUCCESS'){
-      String data = response.body;
-      return jsonDecode(data);
+    String cleanedJson = cleanJson(response.body);
+    debugPrint('clean response' + cleanedJson);
+    var status = jsonDecode(cleanedJson);
+    if (status['Status'] == 'SUCCESS' ||
+        status['Status'] == 'Success' ||
+        status['Status'] == true ||
+        status['status'] == true ||
+        status['status'] == 'success' ||
+        status['success'] == true ||
+        status['Success'] == true) {
+      // String data = response.body;
+      return jsonDecode(cleanedJson);
     } else {
       return {
         "error": status['Message'],
@@ -101,7 +123,7 @@ class ServiceWithHeaderDataPost {
       Uri.parse(url),
       headers: {
         'X-DEVICE-ID': await MyApp.getDeviceIdentity(),
-        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE, 
+        'X-TOKEN': MyApp.AUTH_TOKEN_VALUE,
       },
       body: jsonEncode(b),
     );
@@ -117,7 +139,7 @@ class ServiceWithHeaderDataPost {
     debugPrint('status code ' + response.statusCode.toString());
     debugPrint('dataaa' + response.body.toString());
     String cleanedJson = cleanJson(response.body);
-    debugPrint('clean response'+ cleanedJson);
+    debugPrint('clean response' + cleanedJson);
     var status = jsonDecode(cleanedJson);
     if (status['Status'] == 'SUCCESS' ||
         status['Status'] == 'Success' ||
