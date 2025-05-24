@@ -65,13 +65,16 @@ class _ResetPasswordState extends State<ResetPassword> {
                                       child: TextField(
                                           controller: current,
                                           decoration: new InputDecoration(
+                                            contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                             enabledBorder:
                                                 const OutlineInputBorder(
+                                                  
                                               borderSide: const BorderSide(
                                                   color: Colors.black26,
                                                   width: 0.0),
                                             ),
                                             border: new OutlineInputBorder(
+                                              
                                               borderRadius:
                                                   const BorderRadius.all(
                                                 const Radius.circular(4),
@@ -99,6 +102,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                       child: TextField(
                                           controller: newpassword,
                                           decoration: new InputDecoration(
+                                            contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                             enabledBorder:
                                                 const OutlineInputBorder(
                                               borderSide: const BorderSide(
@@ -133,6 +137,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                       child: TextField(
                                           controller: confirmpassword,
                                           decoration: new InputDecoration(
+                                            contentPadding: EdgeInsets.only(bottom: 10,left: 10),
                                             enabledBorder:
                                                 const OutlineInputBorder(
                                               borderSide: const BorderSide(

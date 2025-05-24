@@ -1486,19 +1486,29 @@ class ObservationCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.grey.shade100],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
+            // Outer shadow (for elevation effect)
             BoxShadow(
-              color: Colors.grey.shade300,
-              blurRadius: 10,
-              offset: Offset(4, 4),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 15,
+              spreadRadius: 2,
+              offset: const Offset(5, 5),
             ),
+            // Inner shadow (for depth)
+            BoxShadow(
+              color: Colors.white.withOpacity(0.4),
+              blurRadius: 15,
+              spreadRadius: -5,
+              offset: const Offset(-5, -5),
+            )
           ],
+          // Inner border highlight
+          border: Border.all(
+            color: Colors.white.withOpacity(0.8),
+            width: 2,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1530,14 +1540,30 @@ class ObservationCard extends StatelessWidget {
 
             /// Media
             if (_hasMedia(observation.observationsMedia))
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  Constants.ImageBaseUrl + observation.observationsMedia,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(.1),
+                      blurRadius: 2,
+                      offset: const Offset(.5, 1),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    Constants.ImageBaseUrl + observation.observationsMedia,
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey.shade100,
+                      child: const Icon(Icons.image_not_supported_outlined,
+                          color: Colors.grey),
+                    ),
+                  ),
                 ),
               ),
             const SizedBox(height: 12),
@@ -1546,11 +1572,13 @@ class ObservationCard extends StatelessWidget {
             Row(
               children: [
                 if (observation.montessoricount != null)
-                  _buildChip("Montessori: ${observation.montessoricount}", Constants.kCount),
+                  _buildChip("Montessori: ${observation.montessoricount}",
+                      Constants.kCount),
                 if (observation.eylfcount != null)
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
-                    child: _buildChip("EYLF: ${observation.eylfcount}", Constants.kCount),
+                    child: _buildChip(
+                        "EYLF: ${observation.eylfcount}", Constants.kCount),
                   ),
                 const Spacer(),
                 _buildStatusChip(observation.status),
@@ -1571,7 +1599,8 @@ class ObservationCard extends StatelessWidget {
   String _formattedDate(String? dateString) {
     try {
       if (dateString == null) return '';
-      return DateFormat('dd-MM-yyyy – kk:mm').format(DateTime.parse(dateString));
+      return DateFormat('dd-MM-yyyy – kk:mm')
+          .format(DateTime.parse(dateString));
     } catch (_) {
       return dateString ?? '';
     }

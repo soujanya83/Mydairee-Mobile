@@ -55,6 +55,52 @@ class _HeadChecksState extends State<HeadChecks> {
     super.initState();
   }
 
+  void dispose() {
+    // Clean up all controllers
+    for (var controller in comments) {
+      controller.dispose();
+    }
+    for (var controller in signature) {
+      controller.dispose();
+    }
+    for (var controller in headCount) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _addEntry() {
+    setState(() {
+      hour.add("1h");
+      min.add("0m");
+      comments.add(TextEditingController());
+      signature.add(TextEditingController());
+      headCount.add(TextEditingController());
+    });
+  }
+
+  void _removeEntry(int index) {
+    setState(() {
+      hour.removeAt(index);
+      min.removeAt(index);
+      comments.removeAt(index).dispose();
+      signature.removeAt(index).dispose();
+      headCount.removeAt(index).dispose();
+    });
+  }
+
+  void _updateHour(int index, String? value) {
+    setState(() {
+      hour[index] = value ?? "1h";
+    });
+  }
+
+  void _updateMin(int index, String? value) {
+    setState(() {
+      min[index] = value ?? "0m";
+    });
+  }
+
   Future<void> _fetchCenters() async {
     UtilsAPIHandler hlr = UtilsAPIHandler({});
     var dt = await hlr.getCentersList();
@@ -336,280 +382,28 @@ class _HeadChecksState extends State<HeadChecks> {
                       ))
                   : Container(
                       child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: hour.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Card(
-                                child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: Row(
-                                              children: [
-                                                Text('Time'),
-                                                Spacer(),
-                                                IconButton(
-                                                    icon: Icon(Icons.add),
-                                                    onPressed: () {
-                                                      hour.add("1h");
-                                                      min.add("0m");
-
-                                                      comments.add(
-                                                          TextEditingController());
-                                                      signature.add(
-                                                          TextEditingController());
-                                                      headCount.add(
-                                                          TextEditingController());
-                                                      setState(() {});
-                                                    }),
-                                                index == 0
-                                                    ? Container()
-                                                    : IconButton(
-                                                        icon: Icon(
-                                                          Icons.remove,
-                                                        ),
-                                                        onPressed: () {
-                                                          hour.removeAt(index);
-                                                          min.removeAt(index);
-
-                                                          comments
-                                                              .removeAt(index);
-                                                          signature
-                                                              .removeAt(index);
-                                                          headCount
-                                                              .removeAt(index);
-                                                          setState(() {});
-                                                        }),
-                                              ],
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              hours != null
-                                                  ? DropdownButtonHideUnderline(
-                                                      child: Container(
-                                                        height: 40,
-                                                        width: 80,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Constants
-                                                                    .greyColor),
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 8,
-                                                                  right: 8),
-                                                          child: Center(
-                                                            child:
-                                                                DropdownButton<
-                                                                    String>(
-                                                              //  isExpanded: true,
-                                                              value:
-                                                                  hour[index],
-                                                              items: hours!.map(
-                                                                  (String
-                                                                      value) {
-                                                                return new DropdownMenuItem<
-                                                                    String>(
-                                                                  value: value,
-                                                                  child:
-                                                                      new Text(
-                                                                          value),
-                                                                );
-                                                              }).toList(),
-                                                              onChanged:
-                                                                  (String?
-                                                                      value) {
-                                                                if (value ==
-                                                                    null)
-                                                                  return;
-                                                                hour[index] =
-                                                                    value!;
-                                                                setState(() {});
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                              Container(
-                                                width: 20,
-                                              ),
-                                              minutes != null
-                                                  ? DropdownButtonHideUnderline(
-                                                      child: Container(
-                                                        height: 40,
-                                                        width: 80,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Constants
-                                                                    .greyColor),
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 8,
-                                                                  right: 8),
-                                                          child: Center(
-                                                            child:
-                                                                DropdownButton<
-                                                                    String>(
-                                                              //  isExpanded: true,
-                                                              value: min[index],
-                                                              items: minutes
-                                                                  ?.map((String
-                                                                      value) {
-                                                                return new DropdownMenuItem<
-                                                                    String>(
-                                                                  value: value,
-                                                                  child:
-                                                                      new Text(
-                                                                          value),
-                                                                );
-                                                              }).toList(),
-                                                              onChanged:
-                                                                  (String?
-                                                                      value) {
-                                                                if (value ==
-                                                                    null)
-                                                                  return;
-                                                                min[index] =
-                                                                    value!;
-                                                                setState(() {});
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text('Head Count'),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            height: 40,
-                                            child: TextField(
-                                                maxLines: 1,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                controller: headCount[index],
-                                                decoration: new InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          left: 10, bottom: 10),
-                                                  enabledBorder:
-                                                      const OutlineInputBorder(
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black26,
-                                                            width: 0.0),
-                                                  ),
-                                                  border:
-                                                      new OutlineInputBorder(
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                      const Radius.circular(4),
-                                                    ),
-                                                  ),
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text('Signature'),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            height: 40,
-                                            child: TextField(
-                                                maxLines: 1,
-                                                controller: signature[index],
-                                                decoration: new InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          left: 10, bottom: 10),
-                                                  enabledBorder:
-                                                      const OutlineInputBorder(
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black26,
-                                                            width: 0.0),
-                                                  ),
-                                                  border:
-                                                      new OutlineInputBorder(
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                      const Radius.circular(4),
-                                                    ),
-                                                  ),
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text('Comments'),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            height: 60,
-                                            child: TextField(
-                                                maxLines: 2,
-                                                controller: comments[index],
-                                                decoration: new InputDecoration(
-                                                  enabledBorder:
-                                                      const OutlineInputBorder(
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black26,
-                                                            width: 0.0),
-                                                  ),
-                                                  border:
-                                                      new OutlineInputBorder(
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                      const Radius.circular(4),
-                                                    ),
-                                                  ),
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                        ]))));
-                          })),
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: hour.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return TimeEntryCard(
+                          index: index,
+                          hour: hour,
+                          min: min,
+                          comments: comments,
+                          signature: signature,
+                          headCount: headCount,
+                          hours: hours,
+                          minutes: minutes,
+                          onAdd: index == hour.length - 1 ? _addEntry : null,
+                          onRemove: hour.length > 1
+                              ? () => _removeEntry(index)
+                              : null,
+                          onHourChanged: (value) => _updateHour(index, value),
+                          onMinChanged: (value) => _updateMin(index, value),
+                        );
+                      },
+                    )),
               SizedBox(
                 height: 15,
               ),
@@ -721,5 +515,254 @@ class _HeadChecksState extends State<HeadChecks> {
       lastDate: new DateTime(2100),
     );
     return picked;
+  }
+}
+
+class TimeEntryCard extends StatelessWidget {
+  final int index;
+  final List<String> hour;
+  final List<String> min;
+  final List<TextEditingController> comments;
+  final List<TextEditingController> signature;
+  final List<TextEditingController> headCount;
+  final List<String>? hours;
+  final List<String>? minutes;
+  final VoidCallback? onAdd;
+  final VoidCallback? onRemove;
+  final ValueChanged<String?> onHourChanged;
+  final ValueChanged<String?> onMinChanged;
+
+  const TimeEntryCard({
+    Key? key,
+    required this.index,
+    required this.hour,
+    required this.min,
+    required this.comments,
+    required this.signature,
+    required this.headCount,
+    this.hours,
+    this.minutes,
+    this.onAdd,
+    this.onRemove,
+    required this.onHourChanged,
+    required this.onMinChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            spreadRadius: 1,
+            offset: Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.grey.shade200,
+          width: 1,
+        ),
+      ),
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.grey.shade200,
+                  width: 1,
+                ),
+              ),
+            ),
+            padding: EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: [
+                Text(
+                  'Time Entry',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                Spacer(),
+                if (onAdd != null)
+                  _buildIconButton(
+                    icon: Icons.add,
+                    color: Theme.of(context).primaryColor,
+                    onPressed: onAdd,
+                  ),
+                if (onRemove != null) SizedBox(width: 8),
+                if (onRemove != null)
+                  _buildIconButton(
+                    icon: Icons.remove,
+                    color: Colors.red.shade400,
+                    onPressed: onRemove,
+                  ),
+              ],
+            ),
+          ),
+          SizedBox(height: 16),
+
+          // Time Selection
+          Row(
+            children: [
+              if (hours != null)
+                _buildTimeDropdown(
+                  value: hour[index],
+                  items: hours!,
+                  onChanged: onHourChanged,
+                  label: 'Hours',
+                ),
+              SizedBox(width: 16),
+              if (minutes != null)
+                _buildTimeDropdown(
+                  value: min[index],
+                  items: minutes!,
+                  onChanged: onMinChanged,
+                  label: 'Minutes',
+                ),
+            ],
+          ),
+          SizedBox(height: 20),
+
+          // Head Count
+          _buildSectionLabel('Head Count'),
+          SizedBox(height: 8),
+          _buildInputField(
+            controller: headCount[index],
+            keyboardType: TextInputType.number,
+          ),
+          SizedBox(height: 20),
+
+          // Signature
+          _buildSectionLabel('Signature'),
+          SizedBox(height: 8),
+          _buildInputField(controller: signature[index]),
+          SizedBox(height: 20),
+
+          // Comments
+          _buildSectionLabel('Comments'),
+          SizedBox(height: 8),
+          _buildInputField(
+            controller: comments[index],
+            maxLines: 3,
+            minLines: 2,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionLabel(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Colors.grey.shade700,
+      ),
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+    int minLines = 1,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      minLines: minLines,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Constants.kButton),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeDropdown({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+    required String label,
+  }) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          SizedBox(height: 4),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: DropdownButton<String>(
+              value: value,
+              items: items.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: onChanged,
+              isExpanded: true,
+              underline: SizedBox(),
+              icon: Icon(Icons.arrow_drop_down),
+              borderRadius: BorderRadius.circular(8),
+              dropdownColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback? onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withOpacity(0.1),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 20, color: color),
+        onPressed: onPressed,
+        padding: EdgeInsets.all(6),
+        constraints: BoxConstraints(),
+      ),
+    );
   }
 }

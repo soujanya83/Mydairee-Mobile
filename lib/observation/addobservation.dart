@@ -173,7 +173,29 @@ class AddObservationState extends State<AddObservation>
     centerid = widget.centerid;
     clearAllData();
     _fetchData();
+    _initializeData(this.context);
     super.initState();
+  }
+
+  bool _initialized = false;
+  void _initializeData(BuildContext context) {
+    if (uploadObs == 0 && !_initialized) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final obs = Provider.of<Obsdata>(context, listen: false);
+        obs.data = widget.totaldata;
+        if (widget.type == 'edit') {
+          try {
+            obs.obsid = widget.totaldata['observation']['id'].toString();
+          } catch (e) {
+            debugPrint(e.toString());
+          }
+        }
+        setState(() {
+          uploadObs = 1;
+          _initialized = true;
+        });
+      });
+    }
   }
 
   ScrollController scrollController = ScrollController();
@@ -1084,18 +1106,7 @@ class AddObservationState extends State<AddObservation>
 
   @override
   Widget build(BuildContext context) {
-    var obs = Provider.of<Obsdata>(context);
-    if (uploadObs == 0) {
-      obs.data = widget.totaldata;
-      if (widget.type == 'edit') {
-        try {
-          obs.obsid = widget.totaldata['observation']['id'].toString();
-        } catch (e) {
-          debugPrint(e.toString());
-        }
-      }
-      uploadObs = 1;
-    }
+    final obs = Provider.of<Obsdata>(context);
 
     Size size = MediaQuery.of(context).size;
 

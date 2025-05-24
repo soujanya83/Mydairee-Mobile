@@ -388,7 +388,10 @@ class _ResourceListState extends State<ResourceList> {
                     }
                   }
                 },
-                child: Text('Apply',style: Constants.header6,),
+                child: Text(
+                  'Apply',
+                  style: Constants.header6,
+                ),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Constants.kMain),
                 ))
@@ -409,7 +412,7 @@ class _ResourceListState extends State<ResourceList> {
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child:  _trendTags.isNotEmpty
+          child: _trendTags.isNotEmpty
               ? Container(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,54 +479,110 @@ class _ResourceListState extends State<ResourceList> {
                       ),
                       if (_trendTags.length != 0)
                         Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              child: ListView.builder(
-                                  itemCount: _trendTags.length,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          UtilsAPIHandler utilsAPIHandler =
-                                              UtilsAPIHandler({
-                                            "tags":
-                                                "[${jsonEncode(_trendTags[index].tags)}]",
-                                            "userid": MyApp.LOGIN_ID_VALUE
-                                          });
-                                          var data = await utilsAPIHandler
-                                              .getTrendingTagsData();
-                                          if (!data.containsKey('error')) {
-                                            var res = data['Resources'];
-                                            _allResources = [];
-                                            try {
-                                              assert(res is List);
-                                              for (int i = 0;
-                                                  i < res.length;
-                                                  i++) {
-                                                _allResources.add(
-                                                    ResourceModels.fromJson(
-                                                        res[i]));
-                                              }
-                                              resourcesFetched = true;
-                                              if (this.mounted) setState(() {});
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          } else {
-                                            MyApp.Show401Dialog(context);
-                                          }
-                                        },
-                                        child: Text(
-                                          _trendTags[index].tags,
-                                          style: TextStyle(color: Colors.blue),
-                                        ),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          margin: EdgeInsets.all(8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 8),
+                                    child: Text(
+                                      'Trending Tags',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[800],
                                       ),
-                                    );
-                                  }),
+                                    ),
+                                  ),
+                                  Container(
+                                    constraints: BoxConstraints(maxHeight: 200),
+                                    child: ListView.builder(
+                                      itemCount: _trendTags.length,
+                                      shrinkWrap: true,
+                                      physics: ClampingScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 4),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              onTap: () async {
+                                                UtilsAPIHandler
+                                                    utilsAPIHandler =
+                                                    UtilsAPIHandler({
+                                                  "tags":
+                                                      "[${jsonEncode(_trendTags[index].tags)}]",
+                                                  "userid": MyApp.LOGIN_ID_VALUE
+                                                });
+                                                var data = await utilsAPIHandler
+                                                    .getTrendingTagsData();
+
+                                                if (!data
+                                                    .containsKey('error')) {
+                                                  var res = data['Resources'];
+                                                  _allResources = [];
+                                                  try {
+                                                    assert(res is List);
+                                                    for (int i = 0;
+                                                        i < res.length;
+                                                        i++) {
+                                                      _allResources.add(
+                                                          ResourceModels
+                                                              .fromJson(
+                                                                  res[i]));
+                                                    }
+                                                    resourcesFetched = true;
+                                                    if (mounted)
+                                                      setState(() {});
+                                                  } catch (e) {
+                                                    print(e);
+                                                  }
+                                                } else {
+                                                  MyApp.Show401Dialog(context);
+                                                }
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue
+                                                      .withOpacity(0.1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Text(
+                                                  _trendTags[index].tags,
+                                                  style: TextStyle(
+                                                    color: Colors.blue[700],
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -582,197 +641,291 @@ class _ResourceListState extends State<ResourceList> {
 
   Widget resourceCard(int i) {
     return Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        // margin: EdgeInsets.all(8),
         child: Container(
-            margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title and Menu
                 Row(
                   children: [
-                    Text(_allResources[i].title),
                     Expanded(
-                      child: Container(),
-                      flex: 1,
+                      child: Text(
+                        _allResources[i].title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
                     ),
                     PopupMenuButton(
-                      child: Icon(Icons.more_horiz),
+                      icon: Icon(Icons.more_vert, color: Colors.grey[600]),
                       itemBuilder: (context) {
                         return [
                           PopupMenuItem(
-                            child: GestureDetector(
-                                child: TextButton(
-                              child: Text('delete'),
-                              onPressed: () async {
-                                ResourceAPIHandler handler =
-                                    ResourceAPIHandler({
-                                  "userid": MyApp.LOGIN_ID_VALUE,
-                                  "resourceId": _allResources[i].id
-                                });
-                                var data = await handler.deleteResource();
-                                print('======data deleted======');
-                                print(data.toString());
-                                print(!data.containsKey('error'));
+                            height: 40, // Consistent height for all menu items
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(4),
+                              onTap: () async {
+                                Navigator.pop(
+                                    context); // Close menu immediately
+                                final shouldDelete = await showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text('Confirm Delete',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    content: Text(
+                                        'Are you sure you want to delete this resource?'),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('Cancel',
+                                            style: TextStyle(
+                                                color: Colors.grey[600])),
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, false),
+                                      ),
+                                      TextButton(
+                                        child: Text('Delete',
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, true),
+                                      ),
+                                    ],
+                                  ),
+                                );
 
-                                if (!data.containsKey('error')) {
-                                  _allResources.removeAt(i);
+                                if (shouldDelete == true) {
+                                  ResourceAPIHandler handler =
+                                      ResourceAPIHandler({
+                                    "userid": MyApp.LOGIN_ID_VALUE,
+                                    "resourceId": _allResources[i].id
+                                  });
+                                  var data = await handler.deleteResource();
 
-                                  setState(() {});
-                                } else {
-                                  print(
-                                      '----------------enter in else part----------------');
-                                  MyApp.ShowToast(
-                                      data['error'].toString(), context);
-                                  // MyApp.Show401Dialog(context);
+                                  if (!data.containsKey('error')) {
+                                    if (mounted) {
+                                      setState(() => _allResources.removeAt(i));
+                                    }
+                                  } else {
+                                    if (mounted) {
+                                      MyApp.ShowToast(
+                                          data['error'].toString(), context);
+                                    }
+                                  }
                                 }
-
-                                Navigator.pop(context);
                               },
-                            )),
+                              child: Container(
+                                width: double.infinity, // Full width tap area
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete_outline,
+                                        size: 20, color: Colors.red),
+                                    SizedBox(width: 12),
+                                    Text(
+                                      'Delete',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           )
                         ];
                       },
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 12),
+
+                // Media Content
                 _allResources[i].media.length > 0
                     ? _allResources[i].media[0]['mediaType'] == 'Image'
-                        ? Image.network(
-                            Constants.ImageBaseUrl +
-                                _allResources[i].media[0]['mediaUrl'],
-                            height: 150,
-                            width: MediaQuery.of(context).size.width,
-                            fit: BoxFit.fill,
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              Constants.ImageBaseUrl +
+                                  _allResources[i].media[0]['mediaUrl'],
+                              height: 180,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                           )
-                        : VideoItem(
-                            url: Constants.ImageBaseUrl +
-                                _allResources[i].media[0]['mediaUrl'])
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: VideoItem(
+                                url: Constants.ImageBaseUrl +
+                                    _allResources[i].media[0]['mediaUrl']),
+                          )
                     : Container(
                         height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Center(
-                          child: Text("No Media Available!"),
+                          child: Text(
+                            "No Media Available!",
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
                         ),
                       ),
-                SizedBox(
-                  height: 5,
-                ),
+                SizedBox(height: 12),
+
+                // Description
                 (_allResources?[i].description != null)
-                    ? tagRemove(
-                        _allResources[i].description, 'title', '', context)
+                    ? Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: tagRemove(
+                          _allResources[i].description,
+                          'title',
+                          '',
+                          context,
+                        ),
+                      )
                     : SizedBox(),
-                // Html(
-                //     data: unescape.convert(
-                //   _allResources[i].description,
-                // )),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                      child: _allResources[i].likes['liked'].toString() == "1"
-                          ? Icon(
-                              AntDesign.heart,
-                              color: Colors.red,
-                              size: 22,
-                            )
-                          : Icon(
-                              AntDesign.hearto,
-                              color: Colors.black,
-                              size: 22,
-                            ),
-                      onTap: () async {
-                        if (_allResources[i].likes['liked'].toString() == "0") {
-                          _allResources[i].likes['liked'] = "1";
-                          _allResources[i].likes['likesCount'] = (int.parse(
-                                      _allResources[i]
-                                          .likes['likesCount']
-                                          .toString()) +
-                                  1)
-                              .toString();
-                          setState(() {});
+                SizedBox(height: 8),
 
-                          ResourceAPIHandler handler = ResourceAPIHandler({
-                            "userid": MyApp.LOGIN_ID_VALUE,
-                            "resourceId": _allResources[i].id
-                          });
-                          var data = await handler.addLike();
-                        } else {
-                          _allResources[i].likes['liked'] = "0";
-                          _allResources[i].likes['likesCount'] = (int.parse(
-                                      _allResources[i]
-                                          .likes['likesCount']
-                                          .toString()) -
-                                  1)
-                              .toString();
-                          setState(() {});
-
-                          ResourceAPIHandler handler = ResourceAPIHandler({
-                            "userid": MyApp.LOGIN_ID_VALUE,
-                            "likeId": _allResources[i].likes['likeid']
-                          });
-
-                          var data = await handler.removeLike();
-                        }
-                      },
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CommentsList(_allResources[i].id)))
-                            .then((value) {
-                          if (value != null) {
-                            resourcesFetched = false;
+                // Action Buttons
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          child:
+                              _allResources[i].likes['liked'].toString() == "1"
+                                  ? Icon(
+                                      AntDesign.heart,
+                                      color: Colors.red,
+                                      size: 24,
+                                    )
+                                  : Icon(
+                                      AntDesign.hearto,
+                                      color: Colors.grey[700],
+                                      size: 24,
+                                    ),
+                        ),
+                        onTap: () async {
+                          if (_allResources[i].likes['liked'].toString() ==
+                              "0") {
+                            _allResources[i].likes['liked'] = "1";
+                            _allResources[i].likes['likesCount'] = (int.parse(
+                                        _allResources[i]
+                                            .likes['likesCount']
+                                            .toString()) +
+                                    1)
+                                .toString();
                             setState(() {});
-                            _fetchData();
+
+                            ResourceAPIHandler handler = ResourceAPIHandler({
+                              "userid": MyApp.LOGIN_ID_VALUE,
+                              "resourceId": _allResources[i].id
+                            });
+                            var data = await handler.addLike();
+                          } else {
+                            _allResources[i].likes['liked'] = "0";
+                            _allResources[i].likes['likesCount'] = (int.parse(
+                                        _allResources[i]
+                                            .likes['likesCount']
+                                            .toString()) -
+                                    1)
+                                .toString();
+                            setState(() {});
+
+                            ResourceAPIHandler handler = ResourceAPIHandler({
+                              "userid": MyApp.LOGIN_ID_VALUE,
+                              "likeId": _allResources[i].likes['likeid']
+                            });
+
+                            var data = await handler.removeLike();
                           }
-                        });
-                      },
-                      child: Icon(
-                        EvilIcons.comment,
-                        size: 32,
+                        },
                       ),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     _onShare(context, 'sub', 'text');
-                    //   },
-                    //   child: Icon(
-                    //     FontAwesome.share,
-                    //     color: Colors.blue,
-                    //     size: 22,
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: Container(),
-                    ),
-                  ],
+                      SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) => Dialog(
+                              insetPadding: EdgeInsets.all(16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: CommentsDialog(
+                                  resourceId: _allResources[i].id),
+                            ),
+                          ).then((value) {
+                            if (value == 'refresh') {
+                              resourcesFetched = false;
+                              setState(() {});
+                              _fetchData();
+                            }
+                          });
+                          // Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 CommentsList(_allResources[i].id)))
+                          //     .then((value) {
+                          //   if (value != null) {
+                          //     resourcesFetched = false;
+                          //     setState(() {});
+                          //     _fetchData();
+                          //   }
+                          // });
+                        },
+                        child: Icon(
+                          EvilIcons.comment,
+                          size: 28,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 10),
+
+                // Likes Count
                 _allResources[i].likes['likesCount'].toString() != '0'
-                    ? Text(
-                        _allResources[i].likes['likesCount'].toString() +
-                            " likes",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    ? Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          _allResources[i].likes['likesCount'].toString() +
+                              " likes",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
                       )
                     : Container(),
                 SizedBox(
                   height: _allResources[i].likes['likesCount'].toString() != '0'
-                      ? 10
+                      ? 4
                       : 0,
                 ),
+
+                // Comments Preview
                 _allResources[i].comments['userCommented'] != null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -782,77 +935,108 @@ class _ResourceListState extends State<ResourceList> {
                                     .comments['userCommented']
                                     .toString() +
                                 " ",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                           _allResources[i].comments['lastComment'] != null
-                              ? tagRemove(
-                                  _allResources[i].comments['lastComment'],
-                                  'title',
-                                  '',
-                                  context)
+                              ? Padding(
+                                  padding: EdgeInsets.only(top: 4, bottom: 8),
+                                  child: tagRemove(
+                                      _allResources[i].comments['lastComment'],
+                                      'title',
+                                      '',
+                                      context),
+                                )
                               : SizedBox(),
                         ],
                       )
                     : Container(),
                 SizedBox(
                   height: _allResources[i].comments['userCommented'] != null
-                      ? 10
+                      ? 4
                       : 0,
                 ),
+
+                // View All Comments
                 _allResources[i].comments['totalComments'] != null
-                    ? GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          CommentsList(_allResources[i].id)))
-                              .then((value) {
-                            if (value != null) {
-                              resourcesFetched = false;
-                              setState(() {});
-                              _fetchData();
-                            }
-                          });
-                        },
-                        child: Text(
-                          'View all ' +
-                              _allResources[i]
-                                  .comments['totalComments']
-                                  .toString() +
-                              ' comments',
-                          style: TextStyle(color: Colors.grey),
+                    ? Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (context) => Dialog(
+                                insetPadding: EdgeInsets.all(16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: CommentsDialog(
+                                    resourceId: _allResources[i].id),
+                              ),
+                            ).then((value) {
+                              if (value == 'refresh') {
+                                resourcesFetched = false;
+                                setState(() {});
+                                _fetchData();
+                              }
+                            });
+                          },
+                          child: Text(
+                            'View all ${_allResources[i].comments['totalComments']} comments',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 14,
+                              // decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
                       )
                     : Container(),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                    height: 1,
-                    width: MediaQuery.of(context).size.width,
-                    color: Colors.grey),
-                SizedBox(
-                  height: 10,
-                ),
+
+                // Divider and Add Comment
+                Divider(height: 1, color: Colors.grey[300]),
+                SizedBox(height: 8),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    CommentsList(_allResources[i].id)))
-                        .then((value) {
-                      if (value != null) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) => Dialog(
+                        insetPadding: EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: CommentsDialog(resourceId: _allResources[i].id),
+                      ),
+                    ).then((value) {
+                      if (value == 'refresh') {
                         resourcesFetched = false;
                         setState(() {});
                         _fetchData();
                       }
                     });
+                    // Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) =>
+                    //                 CommentsList(_allResources[i].id)))
+                    //     .then((value) {
+                    //   if (value != null) {
+                    //     resourcesFetched = false;
+                    //     setState(() {});
+                    //     _fetchData();
+                    //   }
+                    // });
                   },
                   child: Text(
                     'Add Comment',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ],

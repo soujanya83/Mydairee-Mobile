@@ -13,11 +13,10 @@ class ChildGroups extends StatefulWidget {
 }
 
 class _ChildGroupsState extends State<ChildGroups> {
-
   bool settingsDataFetched = false;
-  List<ChildGroupsModel> _allGroups=[];
+  List<ChildGroupsModel> _allGroups = [];
 
-@override
+  @override
   void initState() {
     _fetchData();
     super.initState();
@@ -26,11 +25,10 @@ class _ChildGroupsState extends State<ChildGroups> {
   Future<void> _fetchData() async {
     SettingsApiHandler handler =
         SettingsApiHandler({"userid": MyApp.LOGIN_ID_VALUE});
-    
+
     var data = await handler.getChildGroups();
 
     if (!data.containsKey('error')) {
-     
       print(data);
       var groups = data['groups'];
       _allGroups = [];
@@ -39,7 +37,7 @@ class _ChildGroupsState extends State<ChildGroups> {
         for (int i = 0; i < groups.length; i++) {
           _allGroups.add(ChildGroupsModel.fromJson(groups[i]));
         }
-        settingsDataFetched=true;
+        settingsDataFetched = true;
         if (this.mounted) setState(() {});
       } catch (e) {
         print(e);
@@ -47,153 +45,312 @@ class _ChildGroupsState extends State<ChildGroups> {
     } else {
       MyApp.Show401Dialog(context);
     }
-
   }
-
-
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header.appBar(),
-      drawer: GetDrawer(),      
+      drawer: GetDrawer(),
       body: SingleChildScrollView(
-          child: Padding(
-           padding: const EdgeInsets.all(12.0),
-            child: settingsDataFetched? Container(
-              child: Column(
-                children: [
-                  Row(
-                      children: [
-                         Text(
-                             'Child Groups',
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: settingsDataFetched
+              ? Container(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Child Groups',
                             style: Constants.header2,
                           ),
                           Expanded(
-                              child: Container(),
-                           ),
-                            // GestureDetector(
-                            //     onTap: () async {},
-                            //     child: Icon(
-                            //       Entypo.select_arrows,
-                            //       color: Constants.kButton,
-                            //     )),
-                           
-                            SizedBox(
-                              width: 5,
+                            child: Container(),
+                          ),
+                          // GestureDetector(
+                          //     onTap: () async {},
+                          //     child: Icon(
+                          //       Entypo.select_arrows,
+                          //       color: Constants.kButton,
+                          //     )),
+
+                          SizedBox(
+                            width: 5,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddGroup('add', ''))).then((value) {
+                                if (value != null) {
+                                  settingsDataFetched = false;
+                                  setState(() {});
+                                  _fetchData();
+                                }
+                              });
+                            },
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: Constants.kButton,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8))),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                  child: Text(
+                                    '+ Add Group',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12),
+                                  ),
+                                )),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: _allGroups.length,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          final group = _allGroups[index];
+                          final childrenCount = group.children.length;
+                          final showCount =
+                              childrenCount > 5 ? 5 : childrenCount;
+
+                          return Card(
+                            elevation:
+                                4, // Increased elevation for better depth
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  16), // More rounded corners
+                              side: BorderSide(
+                                color: Colors.grey.shade200, // Subtle border
+                                width: 1,
+                              ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddGroup('add',''))).then((value) {
-                                      if (value != null) {
-                                      settingsDataFetched=false;
-                                        setState(() {});
-                                        _fetchData();
-                                      }
-                                    });
-                              },
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Constants.kButton,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                    child: Text(
-                                      '+ Add Group',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    ),
-                                  )),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: _allGroups.length,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context,int index){
-                             return Card(
-                                   child: Container(
-                                 child: Padding(
-                                   padding: const EdgeInsets.all(8.0),
-                                   child: Column(
-                                     children: [
-                                        Row(
-                                          children: [
-                                            Text(_allGroups[index].name),
-                                            Expanded(child: Container(),),
-                                             GestureDetector(
-                                              child: Icon(Icons.edit),
-                                              onTap: (){
-                                               Navigator.push(
-                                                       context,
-                                                        MaterialPageRoute(
-                                        builder: (context) => AddGroup('edit',_allGroups[index].id))).then((value) {
-                                      if (value != null) {
-                                      settingsDataFetched=false;
-                                        setState(() {});
-                                        _fetchData();
-                                      }
-                                    });
-                                               },
-                                              ),
-                                            // GestureDetector(
-                                            //   child: Icon(Icons.delete),
-                                            //   onTap: (){
-
-                                            //    },
-                                            //   )
-
-                                          ],
+                            shadowColor: Colors.grey
+                                .withOpacity(0.2), // Custom shadow color
+                            child: Container(
+                              constraints: BoxConstraints(
+                                minHeight:
+                                    120, // Slightly taller minimum height
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.white.withOpacity(0.9),
+                                    Colors.grey.shade50.withOpacity(0.9),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                    16), // Match card border radius
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Header Row
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            group.name,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[800],
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
+                                        SizedBox(width: 8),
+                                        Container(
+                                          height: 35,width: 35,
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.withOpacity(
+                                                0.1), // Subtle background
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.blue.withOpacity(
+                                                  0.3), // Light border
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(Icons.edit_outlined,
+                                                size:
+                                                    20), // Outlined version looks cleaner
+                                            color: Colors
+                                                .blue[700], // Deeper blue color
 
-                                         _allGroups[index].children.length>0? Wrap(
-                      spacing: 8.0, // gap between adjacent chips
-                      runSpacing: 4.0, // gap between lines
-                      children: List<Widget>.generate(
-                        _allGroups[index].children.length>5?5:_allGroups[index].children.length, (int i) {
-                         return  _allGroups[index].children[i]['imageUrl']!=null &&_allGroups[index].children[i]['imageUrl']!=''?CircleAvatar(
-                             radius: 40,
-                             backgroundColor: Colors.grey,
-                             backgroundImage: NetworkImage(
-                                 Constants.ImageBaseUrl + _allGroups[index].children[i]['imageUrl'])
-                           ): CircleAvatar(radius: 40,backgroundColor: Colors.grey,child: Text(_allGroups[index].children[i]['name'],style: TextStyle(color: Colors.white),),);
-                         })
-                       ):Container(),
+                                            padding: EdgeInsets.all(0),  // Comfortable padding
+                                            constraints: BoxConstraints(
+                                              minWidth:
+                                                  36, // Minimum touch target size
+                                              minHeight: 36,
+                                            ),
+                                            splashRadius:
+                                                15, // Controlled splash effect
+                                            onPressed: () async {
+                                              final result =
+                                                  await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddGroup(
+                                                          'edit', group.id),
+                                                ),
+                                              );
+                                              if (result != null && mounted) {
+                                                settingsDataFetched = false;
+                                                setState(() {});
+                                                _fetchData();
+                                              }
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: 12),
 
-                      _allGroups[index].children.length>4?TextButton(onPressed: (){
-                          Navigator.push(
-                                           context,
-                                                        MaterialPageRoute(
-                                        builder: (context) => AddGroup('edit',_allGroups[index].id))).then((value) {
-                                      if (value != null) {
-                                      settingsDataFetched=false;
-                                        setState(() {});
-                                        _fetchData();
-                                      }
-                                    });
-                       }, child: Text('more..')):Container(),
-                      
+                                    // Children Avatars
+                                    if (childrenCount > 0)
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 60,
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: showCount,
+                                              itemBuilder: (context, i) {
+                                                final child = group.children[i];
+                                                return Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 12),
+                                                  child: Container(
+                                                    width: 48,
+                                                    height: 48,
+                                                    child: child['imageUrl'] !=
+                                                                null &&
+                                                            child['imageUrl'] !=
+                                                                ''
+                                                        ? CircleAvatar(
+                                                            backgroundImage:
+                                                                NetworkImage(
+                                                              Constants
+                                                                      .ImageBaseUrl +
+                                                                  child[
+                                                                      'imageUrl'],
+                                                            ),
+                                                          )
+                                                        : CircleAvatar(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .blue[100],
+                                                            child: Text(
+                                                              child['name']
+                                                                      .isNotEmpty
+                                                                  ? child['name']
+                                                                          [0]
+                                                                      .toUpperCase()
+                                                                  : '?',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .blue[800],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(height: 8),
 
-                                     ],
-                                   ),
-                                 ),
-                               ),
-                             );
-                         }),
-               ],
-             ),
-            ):Container(),
-          ),
+                                          // More Button
+                                          if (childrenCount > 5)
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: TextButton(
+                                                style: TextButton.styleFrom(
+                                                  padding: EdgeInsets.zero,
+                                                  minimumSize: Size(50, 30),
+                                                ),
+                                                onPressed: () async {
+                                                  final result =
+                                                      await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AddGroup(
+                                                              'edit', group.id),
+                                                    ),
+                                                  );
+                                                  if (result != null &&
+                                                      mounted) {
+                                                    settingsDataFetched = false;
+                                                    setState(() {});
+                                                    _fetchData();
+                                                  }
+                                                },
+                                                child: Text(
+                                                  '+${childrenCount - 5} more',
+                                                  style: TextStyle(
+                                                    color: Colors.blue,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      )
+                                    else
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 8),
+                                        child: Text(
+                                          'No children',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                )
+              : Container(),
+        ),
       ),
     );
   }

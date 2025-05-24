@@ -5,210 +5,217 @@ import 'package:mykronicle_mobile/api/resourcesapi.dart';
 import 'package:mykronicle_mobile/main.dart';
 import 'package:mykronicle_mobile/utils/header.dart';
 import 'package:mykronicle_mobile/utils/removeTags.dart';
-
-class CommentsList extends StatefulWidget {
+// Create this new widget class:
+class CommentsDialog extends StatefulWidget {
   final String resourceId;
-  CommentsList(this.resourceId);
+  
+  const CommentsDialog({Key? key, required this.resourceId}) : super(key: key);
 
   @override
-  _CommentsListState createState() => _CommentsListState();
+  _CommentsDialogState createState() => _CommentsDialogState();
 }
 
-class _CommentsListState extends State<CommentsList> {
-  // TextEditingController add;
-  var res;
-
-  static GlobalKey<FlutterMentionsState> add =
-      GlobalKey<FlutterMentionsState>();
-
+class _CommentsDialogState extends State<CommentsDialog> {
+  List<dynamic>? comments;
   List<Map<String, dynamic>> mentionUser = [];
   bool mChildFetched = false;
+  final GlobalKey<FlutterMentionsState> addCommentKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    //  add = new TextEditingController();
     _fetchData();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    // add.dispose();
-  }
-
   Future<void> _fetchData() async {
-    ObservationsAPIHandler handler2 =
-        ObservationsAPIHandler({"userid": MyApp.LOGIN_ID_VALUE});
-
-    var users = await handler2.getUsersList();
-    print('hereee users');
-    print(users);
-    var usersList = users['UsersList'];
+    // Fetch mention users
+    final usersHandler = ObservationsAPIHandler({
+      "userid": MyApp.LOGIN_ID_VALUE
+    });
+    
+    final users = await usersHandler.getUsersList();
+    final usersList = users['UsersList'];
+    
     mentionUser = [];
-    try {
-      assert(usersList is List);
-      for (int i = 0; i < usersList.length; i++) {
-        Map<String, dynamic> mChild = usersList[i];
-        mChild['display'] = usersList[i]['name'];
-        if (mChild['type'] == 'Staff') {
-          mentionUser.add(mChild);
+    if (usersList is List) {
+      for (final user in usersList) {
+        if (user['type'] == 'Staff') {
+          mentionUser.add({
+            ...user,
+            'display': user['name']
+          });
         }
       }
       mChildFetched = true;
-      if (this.mounted) setState(() {});
-    } catch (e) {
-      print(e);
     }
 
-    ResourceAPIHandler handler = ResourceAPIHandler(
-        {'userid': MyApp.LOGIN_ID_VALUE, 'resourceId': widget.resourceId});
+    // Fetch comments
+    final commentsHandler = ResourceAPIHandler({
+      'userid': MyApp.LOGIN_ID_VALUE,
+      'resourceId': widget.resourceId
+    });
 
-    var data = await handler.getCommentsList();
-
+    final data = await commentsHandler.getCommentsList();
+    
     if (!data.containsKey('error')) {
-      res = data['commentsList'];
-      print(res);
-      setState(() {});
+      setState(() {
+        comments = data['commentsList'];
+      });
     } else {
-      MyApp.Show401Dialog(context);
+      MyApp.ShowToast(data['error'].toString(), context);
+    }
+  }
+
+  Future<void> _addComment() async {
+    final markup = addCommentKey.currentState?.controller?.markupText ?? '';
+    var processedComment = markup;
+
+    for (final user in mentionUser) {
+      if (markup.contains(user['name'])) {
+        processedComment = processedComment.replaceAll(
+          "@${user['name']}",
+          '<a href="user_${user['type']}_${user['id']}">@${user['name']}</a>'
+        );
+      }
+    }
+
+    if (processedComment.isNotEmpty) {
+      final handler = ResourceAPIHandler({
+        'userid': MyApp.LOGIN_ID_VALUE,
+        'resourceId': widget.resourceId,
+        'comment': processedComment
+      });
+      
+      final data = await handler.addComment();
+      
+      if (!data.containsKey('error')) {
+        Navigator.pop(context, 'refresh');
+      } else {
+        MyApp.ShowToast(data['error'].toString(), context);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: Header.appBar(),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: res != null
-                    ? Container(
-                        height: MediaQuery.of(context).size.height - 50,
-                        child: ListView.separated(
-                            separatorBuilder:
-                                (BuildContext context, int index) => Divider(),
-                            itemCount: res.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                  title: Text(res[index]['name']),
-                                  subtitle: tagRemove(res[index]['comment'],
-                                      'title', '', context));
-                            }),
-                      )
-                    : Container(),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 40,
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 10,
-                      ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width - 50,
-                      //   child:
-
-                      //  TextField(
-                      //   controller: add,
-                      //   decoration: InputDecoration(
-                      //       disabledBorder: InputBorder.none,
-                      //       hintStyle: TextStyle(color: Colors.grey),
-                      //       hintText: ' add comment'),
-                      // ),
-
-                      // ),
-                      if (mChildFetched)
-                        Container(
-                          width: MediaQuery.of(context).size.width - 40,
-                          padding: const EdgeInsets.all(3.0),
-                          // decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(4),
-                          //     border: Border.all(color: Colors.blueAccent)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: FlutterMentions(
-                              key: add,
-                              suggestionPosition: SuggestionPosition.Top,
-                              //  maxLines: 5,
-                              minLines: 1,
-                              style: TextStyle(color: Colors.black),
-                              decoration: InputDecoration(
-                                  disabledBorder: InputBorder.none,
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                  hintText: ' add comment'),
-                              mentions: [
-                                Mention(
-                                    trigger: '@',
-                                    style: TextStyle(
-                                      color: Colors.amber,
-                                    ),
-                                    data: mentionUser,
-                                    disableMarkup: true,
-                                    matchAll: false,
-                                    suggestionBuilder: (data) {
-                                      return Container(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Column(
-                                              children: <Widget>[
-                                                Text(data['name']),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              ],
-                            ),
-                          ),
-                        ),
-                      Container(
-                        width: 20,
-                        child: GestureDetector(
-                            onTap: () async {
-                              String added =
-                                  add.currentState?.controller?.markupText??'';
-
-                              for (int i = 0; i < mentionUser.length; i++) {
-                                if (added.contains(mentionUser[i]['name'])) {
-                                  added = added.replaceAll(
-                                      "@" + mentionUser[i]['name'],
-                                      '<a href="user_${mentionUser[i]['type']}_${mentionUser[i]['id']}">@${mentionUser[i]['name']}</a>');
-                                }
-                              }
-
-                              if (added.length > 0) {
-                                ResourceAPIHandler handler =
-                                    ResourceAPIHandler({
-                                  'userid': MyApp.LOGIN_ID_VALUE,
-                                  'resourceId': widget.resourceId,
-                                  'comment': added
-                                });
-                                var data = await handler.addComment();
-                                if (!data.containsKey('error')) {
-                                  Navigator.pop(context, 'kill');
-                                }
-                              }
-                            },
-                            child: Icon(Icons.send)),
-                      ),
-                      Container(
-                        width: 10,
-                      )
-                    ],
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Text(
+                  'Comments',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
-            ],
+                Spacer(),
+                IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
           ),
-        ));
+          Divider(height: 1),
+          
+          // Comments List
+          Expanded(
+            child: comments == null
+                ? Center(child: CircularProgressIndicator())
+                : ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: comments!.length,
+                    separatorBuilder: (_, __) => Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 16,
+                        ),
+                        title: Text(
+                          comments![index]['name'],
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Padding(
+                          padding: EdgeInsets.only(top: 4),
+                          child: tagRemove(
+                            comments![index]['comment'],
+                            'title',
+                            '',
+                            context
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          Divider(height: 1),
+          
+          // Add Comment
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: mChildFetched
+                          ? FlutterMentions(
+                              key: addCommentKey,
+                              suggestionPosition: SuggestionPosition.Top,
+                              minLines: 1,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Add a comment...',
+                                hintStyle: TextStyle(color: Colors.grey),
+                              ),
+                              mentions: [
+                                Mention(
+                                  trigger: '@',
+                                  style: TextStyle(color: Colors.blue),
+                                  data: mentionUser,
+                                  matchAll: false,
+                                  suggestionBuilder: (data) => ListTile(
+                                    title: Text(data['name']),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : TextField(
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Loading mentions...',
+                              ),
+                              enabled: false,
+                            ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(Icons.send, color: Colors.blue),
+                  onPressed: _addComment,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
