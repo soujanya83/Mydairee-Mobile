@@ -154,22 +154,21 @@ class _SettingsListState extends State<SettingsList> {
                                                 ChildGroups()));
                                   },
                                 ),
+                              if (MyApp.USER_TYPE_VALUE != 'Parent') Divider(),
                               if (MyApp.USER_TYPE_VALUE != 'Parent')
-                              Divider(),
-                              if (MyApp.USER_TYPE_VALUE != 'Parent')
-                              ListTile(
-                                title: Text(
-                                  Constants.ASSESMENTS_TAG,
-                                  style: Constants.settingsHeadingStyle,
+                                ListTile(
+                                  title: Text(
+                                    Constants.ASSESMENTS_TAG,
+                                    style: Constants.settingsHeadingStyle,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AssesmentsList()));
+                                  },
                                 ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AssesmentsList()));
-                                },
-                              ),
                               // if (MyApp.USER_TYPE_VALUE != 'Parent') Divider(),
                               // if (MyApp.USER_TYPE_VALUE != 'Parent')
                               //   ListTile(

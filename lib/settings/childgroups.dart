@@ -185,7 +185,8 @@ class _ChildGroupsState extends State<ChildGroups> {
                                         ),
                                         SizedBox(width: 8),
                                         Container(
-                                          height: 35,width: 35,
+                                          height: 35,
+                                          width: 35,
                                           decoration: BoxDecoration(
                                             color: Colors.blue.withOpacity(
                                                 0.1), // Subtle background
@@ -196,16 +197,14 @@ class _ChildGroupsState extends State<ChildGroups> {
                                               width: 1,
                                             ),
                                           ),
-                                          child: IconButton(
-                                            icon: Icon(Icons.edit_outlined,
-                                                size:
-                                                    20), // Outlined version looks cleaner
-                                            color: Colors
-                                                .blue[700], // Deeper blue color
-
-                                            padding: EdgeInsets.all(0),  // Comfortable padding
+                                          child: IconButton(   
+                                              icon: Icon(Icons.edit_outlined,
+                                                size:20), // Outlined version looks cleaner
+                                            color: Colors.blue[700], // Deeper blue color
+                                            padding: EdgeInsets.all(
+                                                0), 
                                             constraints: BoxConstraints(
-                                              minWidth:
+                                              minWidth:        
                                                   36, // Minimum touch target size
                                               minHeight: 36,
                                             ),

@@ -18,56 +18,31 @@ import 'package:mykronicle_mobile/utils/platform.dart' as platform;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize();
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await FlutterDownloader.initialize();
 
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    debugPrint('Flutter UI Error: ${details.exception}');
-    debugPrint(
-        'Flutter UI Stacktrack: ${details.stack.toString()}');
-  };
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint('Flutter UI Error: ${details.exception}');
+      debugPrint('Flutter UI Stacktrace: ${details.stack.toString()}');
+    };
 
-  runZonedGuarded(() {
     ErrorWidget.builder = (FlutterErrorDetails details) {
       return Material(
-        color: Colors.white, // or any background color
+        color: Colors.white,
+        // Uncomment and customize if needed:
         // child: Center(
-        //   child: Padding(
-        //     padding: const EdgeInsets.all(16.0),
-        //     child: Column(
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-        //         const Icon(Icons.error_outline, size: 40, color: Colors.red),
-        //         const SizedBox(height: 10),
-        //         Text(
-        //           'Oops! Something went wrong.',
-        //           style: TextStyle(color: Colors.red[800], fontSize: 16),
-        //           textAlign: TextAlign.center,
-        //         ),
-        //         const SizedBox(height: 10),
-        //         // Text(
-        //         //   details.exception.toString(),
-        //         //   style: const TextStyle(fontSize: 12, color: Colors.grey),
-        //         //   textAlign: TextAlign.center,
-        //         // ),
-        //       ],
-        //     ),
-        //   ),
+        //   child: Text('Oops! Something went wrong.'),
         // ),
       );
     };
 
-    runApp(
-      RestartWidget(
-        child: MyApp(),
-      ),
-    );
+    runApp(RestartWidget(child: MyApp()));
   }, (error, stackTrace) {
     debugPrint('Async Error: $error');
-    print('stacktrace');
-    print(stackTrace);
+    debugPrint('Stacktrace: $stackTrace');
   });
 }
 
@@ -196,25 +171,108 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: Constants.kMain, hintColor: Color(0xfff2f4f5)),
-        home: FutureBuilder<String>(
-          future: isLoggedIn(), // ✅ Now it returns Future<String>
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
-              default:
-                if (snapshot.hasError) {
-                  return Text('Error : ${snapshot.error}');
-                } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-                  return UserType();
-                } else {
-                  return platform.Platform();
-                }
-            }
-          },
+        home: SplashScreen(
+          isLoggedIn: isLoggedIn(),
         ),
         routes: routes,
       ),
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  final Future<String> isLoggedIn;
+  const SplashScreen({super.key, required this.isLoggedIn});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Wait for 3 seconds then navigate
+    // if(false)
+    Timer(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (_) => FutureBuilder<String>(
+                  future: widget.isLoggedIn,
+                  builder:(BuildContext context, AsyncSnapshot<String> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Center(child: CircularProgressIndicator());
+                      default:
+                        if (snapshot.hasError) {
+                          return Text('Error : ${snapshot.error}');
+                        } else if (snapshot.data == null ||
+                            snapshot.data!.isEmpty) {
+                          return UserType();
+                        } else {
+                          return platform.Platform();
+                        }
+                    }
+                  },
+                )),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.height.toString());
+    print(MediaQuery.of(context).size.width.toString());
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Image.asset(
+        errorBuilder: (context, error, stackTrace) {
+          return SizedBox();
+        },
+        'assets/images/splash.png',
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.fill,
+      ),
+    );
+  }
+}
+
+class DecideScreen extends StatelessWidget {
+  const DecideScreen({super.key});
+  Future<String> isLoggedIn() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    MyApp.LOGIN_ID_VALUE = preferences.getString(Constants.LOGIN_ID) ?? "";
+    preferences.getString(Constants.AUTH_TOKEN) ?? "";
+    MyApp.IMG_URL_VALUE = preferences.getString(Constants.IMG_URL) ?? "";
+    MyApp.NAME_VALUE = preferences.getString(Constants.NAME) ?? "";
+    MyApp.USER_TYPE_VALUE = preferences.getString(Constants.USER_TYPE) ?? "";
+    MyApp.EMAIL_VALUE = preferences.getString(Constants.EMAIL) ?? "";
+    MyApp.PASSWORD_HASH_VALUE =
+        preferences.getString(Constants.PASSWORD_HASH) ?? "";
+    return MyApp.LOGIN_ID_VALUE;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+      future: isLoggedIn(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          default:
+            if (snapshot.hasError) {
+              return Text('Error : ${snapshot.error}');
+            } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+              return UserType();
+            } else {
+              return platform.Platform();
+            }
+        }
+      },
     );
   }
 }
